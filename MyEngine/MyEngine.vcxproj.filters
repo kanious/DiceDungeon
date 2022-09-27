@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Default">
+      <UniqueIdentifier>{fea9fe0c-3375-4a77-81a6-6dc840dac802}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Base">
+      <UniqueIdentifier>{9864d29a-c7aa-47b2-9858-6fbccfa8eeaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Manager">
+      <UniqueIdentifier>{2d1bb03c-20e7-4bcb-adc0-ed26f60191e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Headers">
+      <UniqueIdentifier>{09d95101-474a-4f5c-ab1b-2ddc769027e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Base.h">
+      <Filter>00.Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>01.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>01.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>01.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>00.Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>00.Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>00.Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>00.Base</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="Base.cpp">
+      <Filter>00.Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>01.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>01.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>01.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>00.Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>00.Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>00.Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>00.Base</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
