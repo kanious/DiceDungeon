@@ -31,14 +31,6 @@ void CLayer::Render()
 {
 }
 
-void CLayer::Enable()
-{
-}
-
-void CLayer::Disable()
-{
-}
-
 void CLayer::Destroy()
 {
 	vector<CGameObject*>::iterator iter = m_vecGameObjects.begin();

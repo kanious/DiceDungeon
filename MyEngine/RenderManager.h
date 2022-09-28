@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _RENDERMANAGER_H_
+#define _RENDERMANAGER_H_
 
 #include "Defines.h"
 #include "GameObject.h"
@@ -24,10 +25,13 @@ private:
 public:
 	void Render();
 	void Destroy();
+	void DestroyManager();
 
 public:
 	void AddRenderObj(CGameObject*);
-	void RemoveRenderObj();
+	void ClearAllRenderObjList();
 };
 
 NAMESPACE_END
+
+#endif //_RENDERMANAGER_H_

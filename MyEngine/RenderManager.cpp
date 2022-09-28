@@ -30,18 +30,23 @@ void CRenderManager::Render()
 
 void CRenderManager::Destroy()
 {
+	
+}
+
+void CRenderManager::DestroyManager()
+{
 	DestroyInstance();
 }
 
-void CRenderManager::AddRenderObj(CGameObject* obj)
+void CRenderManager::AddRenderObj(CGameObject* pInstance)
 {
-	if (nullptr == obj)
+	if (nullptr == pInstance)
 		return;
 
-	m_vecRenderObj.push_back(obj);
+	m_vecRenderObj.push_back(pInstance);
 }
 
-void CRenderManager::RemoveRenderObj()
+void CRenderManager::ClearAllRenderObjList()
 {
 	m_vecRenderObj.clear();
 }

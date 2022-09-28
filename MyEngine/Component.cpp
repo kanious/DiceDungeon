@@ -24,14 +24,21 @@ void CComponent::Render()
 {
 }
 
+void CComponent::Destroy()
+{
+}
+
 void CComponent::Enable()
 {
+	m_bEnable = true;
 }
 
 void CComponent::Disable()
 {
+	m_bEnable = false;
 }
 
-void CComponent::Destroy()
+void CComponent::SetObjectType(eCOMPONENT type)
 {
+	m_eType = type;
 }

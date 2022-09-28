@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _DEFINE_H_
+#define _DEFINE_H_
 #pragma warning(disable : 4251) // STL DLL Warning
 
 #include <list>
@@ -9,14 +10,21 @@
 #include <crtdbg.h>
 using namespace std;
 
+// For.UUID
+#include <Rpc.h>
+#pragma comment(lib, "Rpcrt4.lib")
+
+// Custom Headers
 #include "Enums.h"
 
 
+// Define/Typedef
 #ifdef MYENGINE_EXPORTS
 #define ENGINE_API __declspec(dllexport)
 #else
 #define ENGINE_API __declspec(dllimport)
 #endif
+
 
 #define NAMESPACE_BEGIN(NAMESPACE) namespace NAMESPACE {
 #define NAMESPACE_END }
@@ -25,9 +33,9 @@ using namespace std;
 #define SINGLETON(CLASSNAME)							\
 		private:										\
 			static CLASSNAME* m_pInstance;				\
+			void DestroyInstance();						\
 		public:											\
-			static CLASSNAME* GetInstance();			\
-			static void DestroyInstance();
+			static CLASSNAME* GetInstance();		
 
 #define SINGLETON_FUNCTION(CLASSNAME)					\
 		CLASSNAME* CLASSNAME::m_pInstance = nullptr;	\
@@ -61,3 +69,5 @@ typedef wchar_t _wchar_t;
 typedef bool _bool;
 
 typedef signed int RESULT;
+
+#endif //_DEFINE_H_

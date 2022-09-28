@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _GAMEMANAGER_H_
+#define _GAMEMANAGER_H_
 
 #include "Defines.h"
 #include "Scene.h"
@@ -28,9 +29,12 @@ public:
 	void Update(const _float&);
 	void Render();
 	void Destroy();
+	void DestroyManager();
 
 public:
 	void SetCurrentScene(CScene*);
 };
 
 NAMESPACE_END
+
+#endif //_GAMEMANAGER_H_

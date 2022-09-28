@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _LAYER_H_
+#define _LAYER_H_
 
 #include "Defines.h"
 #include "Base.h"
@@ -8,9 +9,9 @@ NAMESPACE_BEGIN(Engine)
 
 class CGameObject;
 
-class ENGINE_API CLayer : CBase
+class ENGINE_API CLayer : public CBase
 {
-private:
+protected:
 	eLAYER					m_tag = LAYER_END;
 	vector<CGameObject*>	m_vecGameObjects;
 
@@ -18,13 +19,11 @@ protected:
 	explicit CLayer();
 	virtual ~CLayer();
 
-private:
+protected:
 	virtual void Awake();
 public:
 	virtual void Update(const _float&);
 	virtual void Render();
-	virtual void Enable();
-	virtual void Disable();
 	virtual void Destroy();
 
 public:
@@ -37,3 +36,5 @@ public:
 };
 
 NAMESPACE_END
+
+#endif //_LAYER_H_

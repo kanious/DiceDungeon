@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _ENUM_H_
+#define _ENUM_H_
 
 enum eSCENE
 {
@@ -16,3 +17,23 @@ enum eLAYER
 	LAYER_UI,
 	LAYER_END
 };
+
+enum eOBJTYPE
+{
+	OBJ_PLAYER,
+	OBJ_BACKGROUND,
+	OBJ_STATIC,
+	OBJ_ITEM,
+	OBJ_END
+};
+
+enum eCOMPONENT
+{
+	COMP_TRANSFORM,
+	COMP_BUFFER,
+	COMP_TEXTURE,
+	COMP_SHADER,
+	COMP_END
+};
+
+#endif //_ENUM_H_

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _BASE_H_
+#define _BASE_H_
 
 #include "Defines.h"
 
@@ -10,14 +11,14 @@ protected:
 	explicit CBase();
 	virtual ~CBase();
 
-private:
+protected:
 	virtual void Awake();
 public:
 	virtual void Update(const _float&);
 	virtual void Render();
-	virtual void Enable();
-	virtual void Disable();
 	virtual void Destroy();
 };
 
 NAMESPACE_END
+
+#endif //_BASE_H_

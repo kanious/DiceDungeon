@@ -51,6 +51,9 @@
     <ClInclude Include="Layer.h">
       <Filter>00.Base</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>99.Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

@@ -6,7 +6,6 @@ USING(Engine)
 SINGLETON_FUNCTION(CGameManager)
 
 CGameManager::CGameManager()
-//: m_pCurrentScene(nullptr), m_pRenderManager(nullptr)
 {
 	Awake();
 }
@@ -27,7 +26,6 @@ void CGameManager::Update(const _float& dt)
 		nullptr == m_pCurrentScene)
 		return;
 
-	//m_pRenderManager->SetRenderOptions
 	m_pCurrentScene->Update(dt);
 }
 
@@ -38,10 +36,13 @@ void CGameManager::Render()
 		return;
 
 	m_pRenderManager->Render();
-	//m_pCurrentScene->Render(); // 렌더는 렌더러에서만 하는걸로
 }
 
 void CGameManager::Destroy()
+{
+}
+
+void CGameManager::DestroyManager()
 {
 	DestroyInstance();
 }

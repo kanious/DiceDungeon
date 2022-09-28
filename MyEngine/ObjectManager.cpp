@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ObjectManager.h"
 
 
@@ -15,67 +16,69 @@ CObjectManager::~CObjectManager()
 
 void CObjectManager::Awake()
 {
-	for (int i = 0; i < SCENE_END; ++i)
+	for (int i = 0; i < LAYER_END; ++i)
+		m_listGameObjects[i].clear();
+}
+
+void CObjectManager::Update(const _float& dt)
+{
+	list<CGameObject*>::iterator iter;
+	for (int i = 0; i < LAYER_END; ++i)
 	{
-		LAYER_MAP* pMap = new LAYER_MAP;
-		for (int j = 0; j < LAYER_END; ++j)
+		iter = m_listGameObjects[i].begin();
+		for (iter; iter != m_listGameObjects[i].end(); ++iter)
 		{
-			CLayer* pLayer = CLayer::Create((eLAYER)j);
-			pMap->insert(LAYER_MAP::value_type((eLAYER)j, pLayer));
+			if (nullptr != *iter)
+			{
+				if ((*iter)->GetEnable())
+					(*iter)->Update(dt);
+			}
 		}
-		m_mapLayer.insert(SCENE_MAP::value_type((eSCENE)i, pMap));
 	}
 }
 
 void CObjectManager::Destroy()
 {
-	for (int i = 0; i < SCENE_END; ++i)
-	{
-		SCENE_MAP::const_iterator iter = m_mapLayer.find((eSCENE)i);
-		if (iter != m_mapLayer.end())
-		{
-			LAYER_MAP* pMap = iter->second;
-			for (int j = 0; j < LAYER_END; ++j)
-			{
-				LAYER_MAP::const_iterator iter2 = pMap->find((eLAYER)j);
-				if (iter2 != pMap->end())
-				{
-					CLayer* pLayer = iter2->second;
-					if (nullptr != pLayer)
-						pLayer->Destroy();
-				}
-			}
-			pMap->clear();
-		}
-		m_mapLayer.clear();
-	}
+}
 
+void CObjectManager::DestroyManager()
+{
 	DestroyInstance();
-	// Destroy에서 자기 파괴 할껀지 소멸자를 public 하게 만들건지 결정
-	// Destroy에서 자기 파괴 하는게 나을 꺼 같긴 해.
-	// Destroy는 포인터일 때만 호출하는 걸로
 }
 
-void CObjectManager::Update(const _float& dt, eSCENE tag)
+void CObjectManager::AddGameObject(eLAYER tag, CGameObject* pInstance)
 {
-	SCENE_MAP::const_iterator iter = m_mapLayer.find(tag);
-	if (iter != m_mapLayer.end())
+	if (nullptr != pInstance)
+		m_listGameObjects[tag].push_back(pInstance);
+}
+
+void CObjectManager::RemoveGameObject(eLAYER tag, _wchar_t* uuid)
+{
+	list<CGameObject*>::iterator iter = m_listGameObjects[tag].begin();
+	for (iter; iter != m_listGameObjects[tag].end(); ++iter)
 	{
-		LAYER_MAP* pMap = iter->second;
-		for (int j = 0; j < LAYER_END; ++j)
+		if (nullptr != *iter)
 		{
-			LAYER_MAP::const_iterator iter2 = pMap->find((eLAYER)j);
-			if (iter2 != pMap->end())
+			if (uuid == (*iter)->GetUUID())
 			{
-				CLayer* pLayer = iter2->second;
-				if (nullptr != pLayer)
-					pLayer->Update(dt);
+				(*iter)->Destroy();
+				m_listGameObjects[tag].erase(iter);
 			}
 		}
-		pMap->clear();
 	}
 }
 
-void CObjectManager::AddGameObject(eSCENE, eLAYER, CGameObject*)
+void CObjectManager::RemoveAllObject()
 {
+	list<CGameObject*>::iterator iter;
+	for (int i = 0; i < LAYER_END; ++i)
+	{
+		iter = m_listGameObjects[i].begin();
+		for (iter; iter != m_listGameObjects[i].end(); ++iter)
+		{
+			if (nullptr != *iter)
+				(*iter)->Destroy();
+		}
+		m_listGameObjects[i].clear();
+	}
 }
