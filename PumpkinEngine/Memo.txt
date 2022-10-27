@@ -1,0 +1,79 @@
+
+
+상호작용 가능한 애들끼리만 따로 묶어서 관리
+GameObjects에 static/dynamic이나 이런 컨테이너가 따로 필요할듯
+
+Update, Render 루프 돌리고
+(필요 시 Start나 LateUpdate도 추가하기)
+(Enable이나 Disable은 당장은 필요없어보이는데)
+(아니야 얘네들도 추가하고 대신 루프하는 거 말고 게임오브젝트 껐다켰다 하는거
+
+클라이언트에서 OpenGL 윈도우 열기 (혹은 이것도 엔진에서 설정정보 만들어서 주는 걸로)
+큐브 출력하기
+메쉬 정보 불러오는거 (Mesh Component 만들기)
+애니메이션은 나중에
+
+Input Manager
+Camera (Component?)
+ - 어떤 식으로 화면에 영향을 주는건지 파악 후 Component로 작성
+ - 클라이언트의 최상층 매니저에서 curretCamera 들고 있기 (씬처럼)
+
+SceneManager보다는... 
+
+GameManager
+ - CurrentScene - Object Manager - LayerMap - Object lists
+ - RenderManager
+
+Component
+Transform 같은 건 저장했다가 복사해 올 필요는 없지만
+캐릭터 모델 같은건 파일에서 한번 불러와서 저장한 다음 복사해다 쓰는게 필요, 특히 적 캐릭터 모델링 같은거
+혹은 맵오브젝트들도 똑같은건 복사해다 써야지 만들때마다 로딩할 순 없잖아
+Game Data Manager를 하나 만들고 모델링 정보랑 이것저것 저장?
+Game Data Manager를 제일 상위에 두고 밑에 ModelManager, SoundManager, TextureManager,
+UserDataManager(save/load files)
+
+Game Data Manager
+
+
+UIManager
+
+
+Object Pooler
+
+// 깜짝상자 열리는 소리... 애니메이션 필요-_-
+			// statue 같은거 돌아가는 소리
+			// 
+			// 레퍼런스 카운트 대신 스마트 포인터 검색해보기.. (적용은 나중에)
+			// 컴포넌트 마스터의 키를 char형 말고 uint로 하고 데이터에 ID로 관리?
+
+			// 길 모델링 (숲 속이나 뭐 아무거나, 도로만 아니면 됨)
+			// 나무
+			// 나무 가로등 (판타지틱한 걸로)
+			// 낮은 산 같은 애들
+			// 손수레 같은거
+			// 돌
+			// 풀
+			// 꽃
+			// 동물
+			// 디오라마 Diorama 검색해보기
+
+			// 1. 디오라마 검색
+			// 2. 모델 파일 검색해서 다운
+			// 3. 다운 받은 모델링 한두개 출력
+			// 4. 라이트 클래스 작성하고 적용
+			// 5. 저장 키 만들고 씬의 현재 오브젝트 리스트 xml로 저장하기 / 불러오기
+			// 6. ImGUI 추가하고 하드코딩으로 메쉬리스트 콤보리스트 작성
+			// 7. 콤보리스트에서 선택한 메쉬 생성, 화살표 키로 움직이기/[]키로 회전
+			// 8. 장면 배치 완료
+			// 9. 라이트 배치
+
+			// 10. FMOD 클래스 작성, 스트리밍 사운드(배경음악) 1종류 출력
+			// 11. 사운드 정보 출력하는 UI 작성
+			// 12. 효과음 1종류 추가, sound channel 분리
+			// 13. 배경채널/효과음 채널에 각각 DSP 효과 적용(키나 UI로 컨트롤)
+			// 14. 스트리밍 사운드 3종류, 효과음 7종류, DSP 효과 채널별 3개씩 9종류 추가
+
+			// 15. 틱택톡 게임 만들고 언어 변환 // 아이디어: 1 TO 50 
+			// 16. Save/Load로 저장/불러오기 xml파일로
+
+			// 네트워크 프로젝트 2 (SQL, Auth 처리 - 회원가입/로그인 등)

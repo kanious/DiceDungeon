@@ -1,0 +1,7 @@
+<Shader_List>
+	<Shader>
+		<ID>DefaultShader</ID>
+		<VertexPath>Shader\MeshVertex.fx</VertexPath>
+		<FragmentPath>Shader\MeshFragment.fx</FragmentPath>
+	</Shader>
+</Shader_List>
