@@ -7,7 +7,6 @@
 NAMESPACE_BEGIN(Engine)
 
 class CVIBuffer;
-class CTransform;
 
 class ENGINE_API CAABB : public CComponent
 {
@@ -31,7 +30,7 @@ private:
 	virtual void Destroy();
 
 public:
-	VTX* GetVertices()					{ return m_pVertices; }
+	VTX* GetVertices()							{ return m_pVertices; }
 
 private:
 	RESULT Ready(glm::vec3 center, glm::vec3 half, glm::vec3 min, glm::vec3 max);

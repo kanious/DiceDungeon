@@ -97,6 +97,14 @@ vec3 CGameObject::GetPosition()
 	return m_pTransform->GetPosition();
 }
 
+vec3 CGameObject::GetRotation()
+{
+	if (nullptr == m_pTransform)
+		return vec3(0.f);
+
+	return m_pTransform->GetRotation();
+}
+
 _float CGameObject::GetRotationY()
 {
 	if (nullptr == m_pTransform)
@@ -105,12 +113,20 @@ _float CGameObject::GetRotationY()
 	return m_pTransform->GetRotationY();
 }
 
-glm::vec3 CGameObject::GetScale()
+vec3 CGameObject::GetScale()
 {
 	if (nullptr == m_pTransform)
 		return vec3(0.f);
 
 	return m_pTransform->GetScale();
+}
+
+const mat4x4* CGameObject::GetWorldMatrix()
+{
+	if (nullptr == m_pTransform)
+		return nullptr;
+
+	return m_pTransform->GetWorldMatrix();
 }
 
 void CGameObject::SetObjectTag(_uint objTag)
@@ -138,12 +154,20 @@ void CGameObject::SetDead(_bool dead)
 	m_bDead = dead;
 }
 
-void CGameObject::SetPosition(glm::vec3 vPos)
+void CGameObject::SetPosition(vec3 vPos)
 {
 	if (nullptr == m_pTransform)
 		return;
 
 	m_pTransform->SetPosition(vPos);
+}
+
+void CGameObject::SetRotation(vec3 vRot)
+{
+	if (nullptr == m_pTransform)
+		return;
+
+	m_pTransform->SetRotation(vRot);
 }
 
 void CGameObject::SetRotationY(_float fAngle)

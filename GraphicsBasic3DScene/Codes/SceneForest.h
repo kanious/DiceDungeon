@@ -9,13 +9,13 @@ namespace Engine
 	class CLayer;
 }
 class DefaultCamera;
-class Tree;
+class BGObject;
 class SceneForest : public Engine::CScene
 {
 private:
 	Engine::CInputDevice*			m_pInputDevice;
 	DefaultCamera*					m_pDefaultCamera;
-	Tree*							m_pTargetObject;
+	BGObject*							m_pTargetObject;
 	Engine::CLayer*					m_pBackgroundLayer;
 
 

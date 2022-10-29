@@ -46,7 +46,6 @@ public:
 	_bool IsKeyDown(_int key);
 	_bool IsAnyKeyDown(_int key);
 	_bool IsMousePressed(_int key);
-	_bool IsMousePressing(_int key);
 	void InitMousePos();
 	glm::vec2 GetMousePos() { return m_vecMousePos; }
 	glm::vec2 GetMouseMovedDistance();

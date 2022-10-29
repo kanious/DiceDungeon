@@ -35,6 +35,7 @@ CCamera::~CCamera()
 void CCamera::Update(const _float& dt)
 {
 	CalculateViewMatrix();
+	SetRatio();
 	CalculateProjMatrix();
 
 	COpenGLDevice::GetInstance()->SetViewMatrix(m_matView);
@@ -74,7 +75,10 @@ void CCamera::SetFieldOfView(_float fov)
 
 void CCamera::SetRatio()
 {
-	m_fRatio = COpenGLDevice::GetInstance()->GetWidthSize() / (_float)COpenGLDevice::GetInstance()->GetHeightSize();
+	if (0 == COpenGLDevice::GetInstance()->GetWidthSize() || 0 == COpenGLDevice::GetInstance()->GetHeightSize())
+		m_fRatio = 0.f;
+	else
+		m_fRatio = COpenGLDevice::GetInstance()->GetWidthSize() / (_float)COpenGLDevice::GetInstance()->GetHeightSize();
 }
 
 void CCamera::SetNear(_float fNear)
@@ -127,7 +131,7 @@ void CCamera::InitCameraSetting(glm::vec3 vEye, glm::vec3 vTarget, glm::vec3 vUp
 	m_vTarget = vTarget;
 	m_vUp = vUp;
 	m_fFov = fov;
-	m_fRatio = COpenGLDevice::GetInstance()->GetWidthSize() / (_float)COpenGLDevice::GetInstance()->GetHeightSize();
+	SetRatio();
 	m_fNear = fNear;
 	m_fFar = fFar;
 

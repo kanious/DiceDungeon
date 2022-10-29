@@ -7,6 +7,8 @@
 NAMESPACE_BEGIN(Engine)
 
 class CAABB;
+class CTransform;
+
 class ENGINE_API CCollisionMaster : public CBase
 {
 	SINGLETON(CCollisionMaster)
@@ -18,7 +20,7 @@ private:
 
 public:
 	_bool IntersectRayToVirtualPlane(_float planeSize, glm::vec3& vOrigin, glm::vec3& vDir, glm::vec3& vDest);
-	_bool IntersectRayToBoundingBox(CAABB* pBoundingBox, const glm::vec3& vParentPos, const glm::vec3& vParentScale, glm::vec3& vOrigin, glm::vec3& vDir);
+	_bool IntersectRayToBoundingBox(CAABB* pBoundingBox, CTransform* pParentTransform, glm::vec3& vOrigin, glm::vec3& vDir);
 	_bool IntersectPointToTriangle(glm::vec3& p0, glm::vec3& p1, glm::vec3& p2, glm::vec3& vOrigin, glm::vec3& vDir, glm::vec3& vDest);
 
 private:

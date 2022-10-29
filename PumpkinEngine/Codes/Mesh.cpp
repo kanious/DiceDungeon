@@ -16,23 +16,25 @@ USING(std)
 USING(glm)
 
 CMesh::CMesh()
-    : m_pOpenGLDevice(COpenGLDevice::GetInstance())
+    : m_meshID("")
+    , m_pOpenGLDevice(COpenGLDevice::GetInstance())
     , m_pVIBuffer(nullptr)
     , m_pBoundingBox_AABB(nullptr)
     , m_pDiffTexture(nullptr)
     , m_pShader(nullptr)
-    , m_pTransform(nullptr)
+    , m_pParentTransform(nullptr)
 {
     m_pOpenGLDevice->AddRefCnt();
 }
 
 CMesh::CMesh(const CMesh& rhs)
-    : m_pOpenGLDevice(rhs.m_pOpenGLDevice)
+    : m_meshID(rhs.m_meshID)
+    , m_pOpenGLDevice(rhs.m_pOpenGLDevice)
     , m_pVIBuffer(rhs.m_pVIBuffer)
     , m_pBoundingBox_AABB(rhs.m_pBoundingBox_AABB)
     , m_pDiffTexture(rhs.m_pDiffTexture)
     , m_pShader(rhs.m_pShader)
-    , m_pTransform(nullptr)
+    , m_pParentTransform(nullptr)
 {
     m_pOpenGLDevice->AddRefCnt();
     if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
@@ -47,10 +49,10 @@ CMesh::~CMesh()
 
 void CMesh::Render()
 {
-    if (nullptr == m_pTransform || nullptr == m_pShader)
+    if (nullptr == m_pParentTransform || nullptr == m_pShader)
         return;
 
-    mat4x4 matWorld = *m_pTransform->GetWorldMatrix();
+    mat4x4 matWorld = *m_pParentTransform->GetWorldMatrix();
     const mat4x4 matView = m_pOpenGLDevice->GetViewMatrix();
     const mat4x4 matProj = m_pOpenGLDevice->GetProjMatrix();
     m_pShader->SetMatrixInfo(matWorld, matView, matProj);
@@ -76,14 +78,15 @@ void CMesh::Destroy()
     SafeDestroy(m_pBoundingBox_AABB);
     SafeDestroy(m_pDiffTexture);
     SafeDestroy(m_pShader);
-    m_pTransform = nullptr;
+    m_pParentTransform = nullptr;
 
 	CComponent::Destroy();
 }
 
-RESULT CMesh::Ready(string filePath, string fileName, ModelType type, string shaderID, string vertexPath, string fragmentPath)
+RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type, string shaderID, string vertexPath, string fragmentPath)
 {
     m_tag = "Mesh";
+    m_meshID = ID;
 
     VTX* pVertices = nullptr;
     _uint* pIndices = nullptr;
@@ -451,10 +454,10 @@ CComponent* CMesh::Clone()
     return new CMesh(*this);
 }
 
-CMesh* CMesh::Create(string filePath, string fileName, ModelType type, string shaderID, string vertexPath, string fragmentPath)
+CMesh* CMesh::Create(string ID, string filePath, string fileName, ModelType type, string shaderID, string vertexPath, string fragmentPath)
 {
 	CMesh* pInstance = new CMesh();
-	if (PK_NOERROR != pInstance->Ready(filePath, fileName, type, shaderID, vertexPath, fragmentPath))
+	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type, shaderID, vertexPath, fragmentPath))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

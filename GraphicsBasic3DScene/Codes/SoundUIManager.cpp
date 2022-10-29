@@ -45,7 +45,7 @@ void SoundUIManager::RenderUI()
 	NewFrame();
 
 	SetNextWindowPos(ImVec2(800.f, 0.f));
-	SetNextWindowSize(ImVec2(400.f, 800.f));
+	SetNextWindowSize(ImVec2(400.f, COpenGLDevice::GetInstance()->GetHeightSize()));
 	if (Begin("Pumpkins Sound Setting", (bool*)0, ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))

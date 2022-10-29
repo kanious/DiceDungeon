@@ -16,12 +16,13 @@ class COpenGLDevice;
 class ENGINE_API CMesh : public CComponent
 {
 private:
+	std::string					m_meshID;
 	COpenGLDevice*				m_pOpenGLDevice;
 	CVIBuffer*					m_pVIBuffer;
 	CAABB*						m_pBoundingBox_AABB;
 	CTexture*					m_pDiffTexture;
 	CShader*					m_pShader;
-	CTransform*					m_pTransform;
+	CTransform*					m_pParentTransform;
 
 private:
 	explicit CMesh();
@@ -34,11 +35,12 @@ private:
 	virtual void Destroy();
 
 public:
-	CAABB* GetBoundingBoxAABB() { return m_pBoundingBox_AABB; }
-	void SetTransform(CTransform* transform) { m_pTransform = transform; }
+	std::string GetMeshID()							{ return m_meshID; }
+	CAABB* GetBoundingBoxAABB()						{ return m_pBoundingBox_AABB; }
+	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
 
 private:
-	RESULT Ready(std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string vertexPath, std::string fragmentPath);
+	RESULT Ready(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string vertexPath, std::string fragmentPath);
 	RESULT Ready_xyz_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	RESULT Ready_xyz_normal_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	RESULT Ready_xyz_normal_texUV_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
@@ -47,7 +49,7 @@ private:
 	void Ready_Shader(std::string shaderID, std::string vertexPath, std::string fragmentPath);
 public:
 	virtual CComponent* Clone();
-	static CMesh* Create(std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string vertexPath, std::string fragmentPath);
+	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string vertexPath, std::string fragmentPath);
 };
 
 NAMESPACE_END

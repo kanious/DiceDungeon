@@ -2,6 +2,7 @@
 #include "..\Headers\CollisionMaster.h"
 #include "..\Headers\OpenGLDefines.h"
 #include "..\Headers\AABB.h"
+#include "..\Headers\Transform.h"
 
 
 USING(Engine)
@@ -36,47 +37,42 @@ _bool CCollisionMaster::IntersectRayToVirtualPlane(_float planeSize, vec3& vOrig
 	return false;
 }
 
-_bool CCollisionMaster::IntersectRayToBoundingBox(CAABB* pBoundingBox, const vec3& vParentPos, const vec3& vParentScale, vec3& vOrigin, vec3& vDir)
+_bool CCollisionMaster::IntersectRayToBoundingBox(CAABB* pBoundingBox, CTransform* pParentTransform, vec3& vOrigin, vec3& vDir)
 {
-	if (nullptr == pBoundingBox)
+	if (nullptr == pBoundingBox || nullptr == pParentTransform)
 		return false;
 
+	vec3 vParentPos = pParentTransform->GetPosition();
+	_float fAngleY = pParentTransform->GetRotationY();
+	vec3 vParentScale = pParentTransform->GetScale();
+	fAngleY = radians(fAngleY);
 	VTX* pVertices = pBoundingBox->GetVertices();
 
-	vec3 p0 = (pVertices[0].vPos * vParentScale) + vParentPos;
-	vec3 p1 = (pVertices[1].vPos * vParentScale) + vParentPos;
-	vec3 p2 = (pVertices[2].vPos * vParentScale) + vParentPos;
-	vec3 p3 = (pVertices[3].vPos * vParentScale) + vParentPos;
-	vec3 p4 = (pVertices[4].vPos * vParentScale) + vParentPos;
-	vec3 p5 = (pVertices[5].vPos * vParentScale) + vParentPos;
-	vec3 p6 = (pVertices[6].vPos * vParentScale) + vParentPos;
-	vec3 p7 = (pVertices[7].vPos * vParentScale) + vParentPos;
+	vec3 point[8];
+	ZeroMemory(point, sizeof(point));
+	for (int i = 0; i < 8; ++i)
+	{
+		point[i] = pVertices[i].vPos * vParentScale;
+		_float x = point[i].x;
+		_float z = point[i].z;
+		point[i].x = (z * sin(fAngleY)) + (x * cos(fAngleY)); //x = zsin(b) + xcos(b);
+		point[i].z = (z * cos(fAngleY)) - (x * sin(fAngleY)); //z = zcos(b) - xsin(b);
+		point[i] = point[i] + vParentPos;
+	}
 
 	vec3 vDest;
-	if (IntersectPointToTriangle(p0, p1, p2, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p0, p2, p3, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p0, p4, p5, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p0, p5, p1, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p2, p6, p7, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p2, p7, p3, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p1, p5, p6, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p1, p6, p2, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p3, p7, p4, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p3, p4, p0, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p5, p4, p7, vOrigin, vDir, vDest))
-		return true;
-	if (IntersectPointToTriangle(p5, p7, p6, vOrigin, vDir, vDest))
-		return true;
+	if (IntersectPointToTriangle(point[0], point[1], point[2], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[0], point[2], point[3], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[0], point[4], point[5], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[0], point[5], point[1], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[2], point[6], point[7], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[2], point[7], point[3], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[1], point[5], point[6], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[1], point[6], point[2], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[3], point[7], point[4], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[3], point[4], point[0], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[5], point[4], point[7], vOrigin, vDir, vDest))return true;
+	if (IntersectPointToTriangle(point[5], point[7], point[6], vOrigin, vDir, vDest))return true;
 
 	return false;
 }

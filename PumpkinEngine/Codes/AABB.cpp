@@ -2,8 +2,6 @@
 #include "..\Headers\AABB.h"
 #include "..\Headers\OpenGLDefines.h"
 #include "..\Headers\VIBuffer.h"
-#include "..\Headers\Transform.h"
-
 
 USING(Engine)
 USING(glm)
@@ -36,8 +34,9 @@ void CAABB::Render()
 void CAABB::Destroy()
 {
 	delete[] m_pVertices;
-
 	SafeDestroy(m_pVIBuffer);
+
+	CComponent::Destroy();
 }
 
 RESULT CAABB::Ready(vec3 center, vec3 half, vec3 min, vec3 max)

@@ -24,11 +24,12 @@ private:
 	void Destroy();
 
 public:
-	GLFWwindow* GetWindow() { return m_pWindow; }
-	const _int GetWidthSize() { return m_iWidth; }
-	const _int GetHeightSize() { return m_iHeight; }
-	const glm::mat4x4 GetViewMatrix() { return m_matView; }
-	const glm::mat4x4 GetProjMatrix() { return m_matProj; }
+	GLFWwindow* GetWindow()						{ return m_pWindow; }
+	const glm::mat4x4 GetViewMatrix()			{ return m_matView; }
+	const glm::mat4x4 GetProjMatrix()			{ return m_matProj; }
+	const _int GetWidthSize()					{ return m_iWidth; }
+	const _int GetHeightSize()					{ return m_iHeight; }
+	void GetWindowSize();
 	void SetWindowSize(_int width, _int height);
 	void SetViewMatrix(glm::mat4x4 matView);
 	void SetProjMatrix(glm::mat4x4 matProj);

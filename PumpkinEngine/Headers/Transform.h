@@ -26,24 +26,25 @@ private:
 	virtual void Destroy();
 
 public:
-	const glm::mat4x4* GetWorldMatrix()			{ return &m_matWorld; }
-	const glm::vec3 GetPosition()				{ return m_vPos; }
+	const glm::mat4x4* GetWorldMatrix()				{ return &m_matWorld; }
+	const glm::vec3 GetPosition()					{ return m_vPos; }
 	const glm::vec3 GetPositionWithParent();
-	const _float GetPositionX()					{ return m_vPos.x; }
-	const _float GetPositionY()					{ return m_vPos.y; }
-	const _float GetPositionZ()					{ return m_vPos.z; }
-	const glm::vec3 GetRotation()				{ return m_vRot; }
+	const _float GetPositionX()						{ return m_vPos.x; }
+	const _float GetPositionY()						{ return m_vPos.y; }
+	const _float GetPositionZ()						{ return m_vPos.z; }
+	const glm::vec3 GetRotation()					{ return m_vRot; }
 	const glm::vec3 GetRotationWithParent();
-	const _float GetRotationX()					{ return m_vRot.x; }
-	const _float GetRotationY()					{ return m_vRot.y; }
-	const _float GetRotationZ()					{ return m_vRot.z; }
-	const glm::vec3 GetScale()					{ return m_vScale; }
-	const glm::vec3 GetRevolve()				{ return m_vRevolve; }
-	const CTransform* GetParent()				{ return m_pParentTransform; }
+	const _float GetRotationX()						{ return m_vRot.x; }
+	const _float GetRotationY()						{ return m_vRot.y; }
+	const _float GetRotationZ()						{ return m_vRot.z; }
+	const glm::vec3 GetScale()						{ return m_vScale; }
+	const glm::vec3 GetRevolve()					{ return m_vRevolve; }
+	const CTransform* GetParent()					{ return m_pParentTransform; }
 	const glm::mat4x4 GetParentMatrix();
-	const glm::vec3 GetRightVector()			{ return normalize(m_matWorld[0]); }
-	const glm::vec3 GetUpVector()				{ return normalize(m_matWorld[1]); }
-	const glm::vec3 GetLookVector()				{ return normalize(m_matWorld[2]); }
+	const glm::vec3 GetRightVector()				{ return normalize(m_matWorld[0]); }
+	const glm::vec3 GetUpVector()					{ return normalize(m_matWorld[1]); }
+	const glm::vec3 GetLookVector()					{ return normalize(m_matWorld[2]); }
+	const glm::vec3 GetPositionInWorldMatrix()		{ return m_matWorld[3]; }
 	void SetWorldMatrix(glm::mat4x4 matWorld);
 	void SetPosRotScale(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 	void SetPosition(glm::vec3 vPos);

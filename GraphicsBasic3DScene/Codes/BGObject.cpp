@@ -1,4 +1,4 @@
-#include "Tree.h"
+#include "BGObject.h"
 #include "ComponentMaster.h"
 #include "Layer.h"
 
@@ -14,32 +14,42 @@ USING(Engine)
 USING(glm)
 USING(std)
 
-Tree::Tree()
+BGObject::BGObject()
 	: m_pMesh(nullptr)
 {
 }
 
-Tree::~Tree()
+BGObject::~BGObject()
 {
 }
 
-void Tree::Update(const _float& dt)
+string BGObject::GetMeshID()
+{
+ 	string id = "";
+
+	if (nullptr != m_pMesh)
+		id = m_pMesh->GetMeshID();
+
+	return id;
+}
+
+void BGObject::Update(const _float& dt)
 {
 	CGameObject::Update(dt);
 	m_pRenderer->AddRenderObj(this);
 }
 
-void Tree::Render()
+void BGObject::Render()
 {
 	CGameObject::Render();
 }
 
-void Tree::Destroy()
+void BGObject::Destroy()
 {
 	CGameObject::Destroy();
 }
 
-RESULT Tree::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale)
+RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale)
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
@@ -62,9 +72,9 @@ RESULT Tree::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string me
 	return PK_NOERROR;
 }
 
-Tree* Tree::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale)
+BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale)
 {
-	Tree* pInstance = new Tree();
+	BGObject* pInstance = new BGObject();
 	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale))
 	{
 		pInstance->Destroy();
@@ -74,7 +84,7 @@ Tree* Tree::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string me
 	return pInstance;
 }
 
-CGameObject* Tree::Clone()
+CGameObject* BGObject::Clone()
 {
 	AddRefCnt();
 	return this;

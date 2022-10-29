@@ -19,7 +19,7 @@
 #include "MapEditorUIManager.h"
 #include "CollisionMaster.h"
 
-#include "Tree.h"
+#include "BGObject.h"
 #include "DefaultCamera.h"
 
 USING(Engine)
@@ -48,55 +48,62 @@ void SceneForest::KeyCheck(const _float& dt)
 			
 			if (m_bMapEditorUIOpened)
 			{
-				vec2 vMousePos = m_pInputDevice->GetMousePos();
-				if (vMousePos.x < 400)
+				if (MapEditorUIManager::GetInstance()->GetCursorIsOnTheUI())
 					goto NextCheck;
 			}
 
 			if (nullptr != m_pTargetObject)
 				m_pTargetObject = nullptr;
-			else
+			
+			// Ray랑 오브젝트들의 Bounding Box와의 충돌 체크 해야댐
+			if (nullptr != m_pBackgroundLayer)
 			{
-				// Ray랑 오브젝트들의 Bounding Box와의 충돌 체크 해야댐
-				if (nullptr != m_pBackgroundLayer)
-				{
-					vec3 vCameraPos = m_pDefaultCamera->GetCurrentPos();
-					vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+				vec3 vCameraPos = m_pDefaultCamera->GetCurrentPos();
+				vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
 
-					list<CGameObject*>* listObj = m_pBackgroundLayer->GetObjectList();
-					list<CGameObject*>::iterator iter;
-					for (iter = listObj->begin(); iter != listObj->end(); ++iter)
+				list<CGameObject*>* listObj = m_pBackgroundLayer->GetObjectList();
+				list<CGameObject*>::iterator iter;
+				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
+				{
+					//if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
+					//	(*iter)->GetBoundingBox_AABB(),
+					//	(*iter)->GetPosition(),
+					//	(*iter)->GetScale(), vCameraPos, vDir))
+					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
+						(*iter)->GetBoundingBox_AABB(),
+						(*iter)->GetTransform(), vCameraPos, vDir))
 					{
-						if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
-							(*iter)->GetBoundingBox_AABB(),
-							(*iter)->GetPosition(),
-							(*iter)->GetScale(), vCameraPos, vDir))
-						{
- 							m_pTargetObject = dynamic_cast<Tree*>(*iter);
-							break;
-						}
+						m_pTargetObject = dynamic_cast<BGObject*>(*iter);
+						break;
 					}
 				}
 			}
+
 		}
 	}
 	else
 		isMouseClicked = false;
 
-NextCheck:
-
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_KP_8))
+	static _bool isDelDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_DELETE))
 	{
-		if (nullptr != m_pTargetObject &&
-			m_pDefaultCamera->GetMouseEnable())
+		if (!isDelDown)
 		{
-			vec3 vPos = m_pTargetObject->GetPosition();
-			vPos.y += dt * 5.f;
-			m_pTargetObject->SetPosition(vPos);
+			isDelDown = true;
+
+			if (nullptr == m_pTargetObject)
+				goto NextCheck;
+
+			m_pTargetObject->SetDead(true);
+			m_pTargetObject = nullptr;
 		}
 	}
+	else
+		isDelDown = false;
 
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_KP_2))
+NextCheck:
+
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_4))
 	{
 		if (nullptr != m_pTargetObject &&
 			m_pDefaultCamera->GetMouseEnable())
@@ -107,7 +114,18 @@ NextCheck:
 		}
 	}
 
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_KP_0))
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_5))
+	{
+		if (nullptr != m_pTargetObject &&
+			m_pDefaultCamera->GetMouseEnable())
+		{
+			vec3 vPos = m_pTargetObject->GetPosition();
+			vPos.y += dt * 5.f;
+			m_pTargetObject->SetPosition(vPos);
+		}
+	}
+
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_3))
 	{
 		if (nullptr != m_pTargetObject &&
 			m_pDefaultCamera->GetMouseEnable())
@@ -127,12 +145,11 @@ void SceneForest::Update(const _float& dt)
  		nullptr != m_pTargetObject &&
 		m_pDefaultCamera->GetMouseEnable())
 	{
-		if (m_pInputDevice->IsMousePressing(GLFW_MOUSE_BUTTON_2))
+		if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_2))
 		{
 			if (m_bMapEditorUIOpened)
 			{
-				vec2 vMousePos = m_pInputDevice->GetMousePos();
-				if (vMousePos.x < 400)
+				if (MapEditorUIManager::GetInstance()->GetCursorIsOnTheUI())
 					goto NextCheck;
 			}
 
@@ -146,14 +163,15 @@ void SceneForest::Update(const _float& dt)
 				m_pTargetObject->SetPosition(vDest);
 			}
 		}
-			vec2 vScroll = m_pInputDevice->GetMouseScrollDistance();
-			_float fAngle = m_pTargetObject->GetRotationY();
-			fAngle += vScroll.y * dt * 500.f;
-			if (fAngle > 360.f)
-				fAngle -= 360.f;
-			if (fAngle < 0)
-				fAngle += 360.f;
-			m_pTargetObject->SetRotationY(fAngle);
+
+		vec2 vScroll = m_pInputDevice->GetMouseScrollDistance();
+		_float fAngle = m_pTargetObject->GetRotationY();
+		fAngle += vScroll.y * dt * 500.f;
+		if (fAngle > 360.f)
+			fAngle -= 360.f;
+		if (fAngle < 0)
+			fAngle += 360.f;
+		m_pTargetObject->SetRotationY(fAngle);
 	}
 NextCheck:
 
@@ -187,7 +205,7 @@ RESULT SceneForest::Ready()
 	CXMLParser::GetInstance()->LoadSoundData("Assets\\xmlData\\SoundData.xml");
 
 	//SoundUIManager::GetInstance()->Ready();
-	MapEditorUIManager::GetInstance()->Ready(this);
+	MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject);
 
 	return PK_NOERROR;
 }
@@ -217,7 +235,7 @@ RESULT SceneForest::ReadyComponent()
 	vector<CXMLParser::sMeshdata>::iterator iter;
 	for (iter = vecMesh.begin(); iter != vecMesh.end(); ++iter)
 	{
-		pComponent = CMesh::Create(iter->PATH, iter->FILENAME, (ModelType)iter->TYPE,
+		pComponent = CMesh::Create(iter->ID, iter->PATH, iter->FILENAME, (ModelType)iter->TYPE,
 			iter->SHADER_ID, iter->VERTEXSHADER_PATH, iter->FRAGMENTSHADER_PATH);
 		if (nullptr != pComponent)
 		{
@@ -246,7 +264,7 @@ RESULT SceneForest::ReadyLayerAndGameObject()
 		vector<CXMLParser::sObjectData>::iterator iter;
 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 		{
-			pGameObject = Tree::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
+			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
 				iter->vPos, iter->vRot, iter->vScale);
 			if (nullptr == pGameObject)
 				continue;

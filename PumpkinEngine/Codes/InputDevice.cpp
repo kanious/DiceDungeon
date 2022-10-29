@@ -118,18 +118,6 @@ _bool CInputDevice::IsMousePressed(_int key)
 	unordered_map<_int, KeyInfo*>::iterator iter = m_mapMouseButtonInfos.find(key);
 	if (iter != m_mapMouseButtonInfos.end())
 	{
-		if (nullptr != iter->second && iter->second->action == GLFW_RELEASE)
-			return true;
-	}
-
-	return false;
-}
-
-_bool CInputDevice::IsMousePressing(_int key)
-{
-	unordered_map<_int, KeyInfo*>::iterator iter = m_mapMouseButtonInfos.find(key);
-	if (iter != m_mapMouseButtonInfos.end())
-	{
 		if (nullptr != iter->second && iter->second->action == GLFW_PRESS)
 			return true;
 	}

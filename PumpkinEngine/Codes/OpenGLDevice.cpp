@@ -24,11 +24,13 @@ void COpenGLDevice::Destroy()
 	TerminateOpenGLWindow();
 }
 
+void COpenGLDevice::GetWindowSize()
+{
+	glfwGetWindowSize(m_pWindow, &m_iWidth, &m_iHeight);
+}
+
 void COpenGLDevice::SetWindowSize(_int width, _int height)
 {
-	m_iWidth = width;
-	m_iHeight = height;
-
 	glfwDestroyWindow(m_pWindow);
 	m_pWindow = glfwCreateWindow(width, height, m_title, NULL, NULL);
 	if (!m_pWindow)
@@ -72,10 +74,9 @@ RESULT COpenGLDevice::CreateOpenGLWindow(_int width, _int height, const char* ti
 	glfwMakeContextCurrent(m_pWindow);
 	glewExperimental = GL_TRUE;
 	glewInit();
-
+	
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
-
 	//glEnable(GL_DEPTH_TEST | GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
 

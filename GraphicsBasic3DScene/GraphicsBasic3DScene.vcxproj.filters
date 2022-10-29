@@ -39,7 +39,7 @@
     <ClCompile Include="Codes\SceneForest.cpp">
       <Filter>01.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\Tree.cpp">
+    <ClCompile Include="Codes\BGObject.cpp">
       <Filter>02.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Codes\DefaultCamera.cpp">
@@ -89,7 +89,7 @@
     <ClInclude Include="Codes\Enums.h">
       <Filter>99.Header</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\Tree.h">
+    <ClInclude Include="Codes\BGObject.h">
       <Filter>02.GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Codes\DefaultCamera.h">

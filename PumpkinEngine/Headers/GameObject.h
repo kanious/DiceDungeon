@@ -3,6 +3,7 @@
 
 #include "Base.h"
 #include "glm\vec3.hpp"
+#include "glm\mat4x4.hpp"
 
 NAMESPACE_BEGIN(Engine)
 
@@ -50,15 +51,19 @@ public:
 	const _bool GetEnable()					{ return m_bEnable; }
 	const _bool GetDead()					{ return m_bDead; }
 	CAABB* GetBoundingBox_AABB()			{ return m_pBoundingBox_AABB; }
+	CTransform* GetTransform()				{ return m_pTransform; }
 	glm::vec3 GetPosition();
+	glm::vec3 GetRotation();
 	_float GetRotationY();
 	glm::vec3 GetScale();
+	const glm::mat4x4* GetWorldMatrix();
 	void SetObjectTag(_uint objTag);
 	void SetLayerTag(_uint layerTag);
 	void SetSceneTag(_uint sceneTag);
 	void SetParentLayer(CLayer* pLayer);
 	void SetDead(_bool dead);
 	void SetPosition(glm::vec3 vPos);
+	void SetRotation(glm::vec3 vRot);
 	void SetRotationY(_float fAngle);
 	void SetScale(glm::vec3 vScale);
 public:

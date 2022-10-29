@@ -9,14 +9,17 @@ namespace Engine
 	class CMesh;
 	class CAABB;
 }
-class Tree : public Engine::CGameObject
+class BGObject : public Engine::CGameObject
 {
 private:
 	Engine::CMesh*					m_pMesh;
 
 private:
-	explicit Tree();
-	virtual ~Tree();
+	explicit BGObject();
+	virtual ~BGObject();
+
+public:
+	std::string GetMeshID();
 
 public:
 	virtual void Update(const _float& dt);
@@ -26,7 +29,7 @@ private:
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 public:
-	static Tree* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
+	static BGObject* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 	virtual CGameObject* Clone();
 };
