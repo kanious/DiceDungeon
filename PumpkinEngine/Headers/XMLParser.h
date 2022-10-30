@@ -10,6 +10,20 @@ class CComponent;
 class ENGINE_API CXMLParser : public CBase
 {
 	SINGLETON(CXMLParser)
+
+	struct sShaderdata
+	{
+		std::string ID;
+		std::string PATH_VERTEX;
+		std::string PATH_FRAGMENT;
+	};
+
+	struct sTexturedata
+	{
+		std::string ID;
+		std::string PATH;
+	};
+
 	struct sMeshdata
 	{
 		std::string ID;
@@ -17,22 +31,8 @@ class ENGINE_API CXMLParser : public CBase
 		std::string FILENAME;
 		_uint TYPE;
 		std::string SHADER_ID;
-		std::string VERTEXSHADER_PATH;
-		std::string FRAGMENTSHADER_PATH;
+		std::string TEXTURE_ID_DIFF;
 		std::string INITSIZE;
-	};
-
-	struct sShaderdata
-	{
-		std::string ID;
-		std::string PATH_VTX;
-		std::string PATH_IDX;
-	};
-
-	struct sTexturedata
-	{
-		std::string ID;
-		std::string PATH;
 	};
 
 	struct sObjectData
@@ -50,9 +50,12 @@ private:
 	void Destroy();
 
 public:
-	void LoadMeshData(std::vector<sMeshdata>& vector, std::string path);
+	void LoadShaderData(std::string path);
+	void LoadTextureData(std::string path);
+	void LoadMeshData(std::string path);
 	void LoadSoundData(std::string path);
-	void LoadMapObjectData(std::vector<sObjectData>& vector, std::string path);
+	void LoadMapObjectData(std::vector<sObjectData>& vec, sObjectData& cameraData, std::string path);
+	void SaveMapObjectData(std::vector<sObjectData>& vec, sObjectData& cameraData, std::string path);
 };
 
 NAMESPACE_END

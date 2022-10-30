@@ -22,10 +22,10 @@ public:
 	_uint GetTextureID()		{ return m_iTextureID; }
 
 private:
-	RESULT Ready(std::string filePath);
+	RESULT Ready(std::string ID, std::string filePath);
 public:
 	virtual CComponent* Clone();
-	static CTexture* Create(std::string filePath);
+	static CTexture* Create(std::string ID, std::string filePath);
 };
 
 NAMESPACE_END

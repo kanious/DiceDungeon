@@ -5,8 +5,7 @@
 		<FileName>Pumpkin_Orange_Free.ply</FileName>
 		<Type>2</Type>
 		<Shader_ID>DefaultShader</Shader_ID>
-		<VertexShaderPath>Shader\MeshVertex.fx</VertexShaderPath>
-		<FragmentShaderPath>Shader\MeshFragment.fx</FragmentShaderPath>
+		<Texture_ID_Diff>halloween_free</Texture_ID_Diff>
 		<InitSize>0.05</InitSize>
 	</Mesh>
 	<Mesh>
@@ -15,8 +14,7 @@
 		<FileName>Streetlight.ply</FileName>
 		<Type>2</Type>
 		<Shader_ID>DefaultShader</Shader_ID>
-		<VertexShaderPath>Shader\MeshVertex.fx</VertexShaderPath>
-		<FragmentShaderPath>Shader\MeshFragment.fx</FragmentShaderPath>
+		<Texture_ID_Diff>Streetlight_d</Texture_ID_Diff>
 		<InitSize>0.05</InitSize>
 	</Mesh>
 		<Mesh>
@@ -25,8 +23,7 @@
 		<FileName>Streetlight_holder.ply</FileName>
 		<Type>2</Type>
 		<Shader_ID>DefaultShader</Shader_ID>
-		<VertexShaderPath>Shader\MeshVertex.fx</VertexShaderPath>
-		<FragmentShaderPath>Shader\MeshFragment.fx</FragmentShaderPath>
+			<Texture_ID_Diff>Streetlight_holder_d</Texture_ID_Diff>
 		<InitSize>0.05</InitSize>
 	</Mesh>
 	<Mesh>
@@ -35,8 +32,7 @@
 		<FileName>tank.ply</FileName>
 		<Type>3</Type>
 		<Shader_ID>DefaultShader</Shader_ID>
-		<VertexShaderPath>Shader\MeshVertex.fx</VertexShaderPath>
-		<FragmentShaderPath>Shader\MeshFragment.fx</FragmentShaderPath>
+		<Texture_ID_Diff>tank_1001_diff</Texture_ID_Diff>
 		<InitSize>1</InitSize>
 	</Mesh>
 </Mesh_List>

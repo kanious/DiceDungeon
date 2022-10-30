@@ -93,3 +93,11 @@ RESULT CScene::AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance)
 	}
 	return PK_LAYER_CANNOT_FIND;
 }
+
+void CScene::SaveBackgroundObjects()
+{
+}
+
+void CScene::LoadBackgroundObjects()
+{
+}

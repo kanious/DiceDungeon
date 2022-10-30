@@ -10,14 +10,14 @@ namespace Engine
 }
 class DefaultCamera;
 class BGObject;
+
 class SceneForest : public Engine::CScene
 {
 private:
 	Engine::CInputDevice*			m_pInputDevice;
 	DefaultCamera*					m_pDefaultCamera;
-	BGObject*							m_pTargetObject;
+	BGObject*						m_pTargetObject;
 	Engine::CLayer*					m_pBackgroundLayer;
-
 
 	_bool m_bMapEditorUIOpened = true;
 	_bool m_bSoundUIOpened = false;
@@ -41,6 +41,8 @@ private:
 	RESULT ReadyLayerAndGameObject();
 public:
 	static SceneForest* Create();
+	virtual void SaveBackgroundObjects();
+	virtual void LoadBackgroundObjects();
 };
 
 #endif //_SCENEFOREST_H_

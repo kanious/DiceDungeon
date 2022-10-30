@@ -28,7 +28,7 @@ string BGObject::GetMeshID()
  	string id = "";
 
 	if (nullptr != m_pMesh)
-		id = m_pMesh->GetMeshID();
+		id = m_pMesh->GetTag();
 
 	return id;
 }
@@ -59,9 +59,12 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 
 	//Clone.Mesh
  	m_pMesh = CloneComponent<CMesh*>(meshID);
-	AttachComponent("Mesh", m_pMesh);
-	m_pMesh->SetTransform(m_pTransform);
-	m_pBoundingBox_AABB = m_pMesh->GetBoundingBoxAABB();
+	if (nullptr != m_pMesh)
+	{
+		AttachComponent("Mesh", m_pMesh);
+		m_pMesh->SetTransform(m_pTransform);
+		m_pBoundingBox_AABB = m_pMesh->GetBoundingBoxAABB();
+	}
 
 	if (nullptr != m_pTransform)
 	{

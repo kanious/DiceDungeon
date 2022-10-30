@@ -26,6 +26,7 @@ CShader::CShader(const CShader& rhs)
 	, m_matProjLocation(rhs.m_matProjLocation)
 	, m_diffTexLocation(rhs.m_diffTexLocation)
 {
+	m_tag = rhs.m_tag;
 }
 
 CShader::~CShader()
@@ -130,9 +131,9 @@ void CShader::SetTextureInfo()
 	glUniform1i(m_diffTexLocation, 0);
 }
 
-RESULT CShader::Ready(const char* vertexPath, const char* fragPath)
+RESULT CShader::Ready(string ID, const char* vertexPath, const char* fragPath)
 {
-	m_tag = "Shader";
+	m_tag = ID;
 
 	RESULT result;
 	result = CreateShaderProgram();
@@ -151,10 +152,10 @@ CComponent* CShader::Clone()
 	return new CShader(*this);
 }
 
-CShader* CShader::Create(const char* vertexPath, const char* fragPath)
+CShader* CShader::Create(string ID, const char* vertexPath, const char* fragPath)
 {
 	CShader* pInstance = new CShader;
-	if (PK_NOERROR != pInstance->Ready(vertexPath, fragPath))
+	if (PK_NOERROR != pInstance->Ready(ID, vertexPath, fragPath))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

@@ -35,10 +35,10 @@ public:
 	void SetTextureInfo();
 
 private:
-	RESULT Ready(const char* vertexPath, const char* fragPath);
+	RESULT Ready(std::string ID, const char* vertexPath, const char* fragPath);
 public:
 	virtual CComponent* Clone();
-	static CShader* Create(const char* vertexPath, const char* fragPath);
+	static CShader* Create(std::string ID, const char* vertexPath, const char* fragPath);
 };
 
 NAMESPACE_END

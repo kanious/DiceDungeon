@@ -84,5 +84,4 @@ _uint SafeDestroy(T* pInstance)
 	return iRefCnt;
 }
 
-
 #endif //_ENGINEDEFINE_H_

@@ -18,6 +18,7 @@ CAABB::CAABB(const CAABB& rhs)
 	, m_vCenter(rhs.m_vCenter), m_vHalfExtents(rhs.m_vHalfExtents)
 	, m_vMin(rhs.m_vMin), m_vMax(rhs.m_vMax), m_vMinWorld(rhs.m_vMinWorld), m_vMaxWorld(rhs.m_vMaxWorld)
 {
+	m_tag = rhs.m_tag;
 	if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
 }
 
@@ -56,15 +57,14 @@ RESULT CAABB::Ready(vec3 center, vec3 half, vec3 min, vec3 max)
 
 	m_pVertices = new VTX[vertexNum];
     memset(m_pVertices, 0, sizeof(*m_pVertices));
-	m_pVertices[0].vPos = vec3(min.x, max.y, max.z);
-	m_pVertices[1].vPos = vec3(min.x, max.y, min.z);
-	m_pVertices[2].vPos = vec3(max.x, max.y, min.z);
-	m_pVertices[3].vPos = vec3(max.x, max.y, max.z);
-
-	m_pVertices[4].vPos = vec3(min.x, min.y, max.z);
-	m_pVertices[5].vPos = vec3(min.x, min.y, min.z);
-	m_pVertices[6].vPos = vec3(max.x, min.y, min.z);
-	m_pVertices[7].vPos = vec3(max.x, min.y, max.z);
+	m_pVertices[0].vPos = vec4(min.x, max.y, max.z, 0.f);
+	m_pVertices[1].vPos = vec4(min.x, max.y, min.z, 0.f);
+	m_pVertices[2].vPos = vec4(max.x, max.y, min.z, 0.f);
+	m_pVertices[3].vPos = vec4(max.x, max.y, max.z, 0.f);
+	m_pVertices[4].vPos = vec4(min.x, min.y, max.z, 0.f);
+	m_pVertices[5].vPos = vec4(min.x, min.y, min.z, 0.f);
+	m_pVertices[6].vPos = vec4(max.x, min.y, min.z, 0.f);
+	m_pVertices[7].vPos = vec4(max.x, min.y, max.z, 0.f);
 
 	_uint* pIndices = new _uint[indexNum]
 	{

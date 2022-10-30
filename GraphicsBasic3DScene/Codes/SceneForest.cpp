@@ -1,16 +1,9 @@
 #include "SceneForest.h"
-#include "ComponentMaster.h"
-#include "Component.h"
 #include "glm\vec3.hpp"
 #include "Define.h"
 #include "Enums.h"
 
 #include "XMLParser.h"
-#include "Camera.h"
-#include "Transform.h"
-#include "Shader.h"
-#include "Mesh.h"
-#include "Texture.h"
 #include "Layer.h"
 #include "GameObject.h"
 #include "InputDevice.h"
@@ -20,7 +13,9 @@
 #include "CollisionMaster.h"
 
 #include "BGObject.h"
+#include "Camera.h"
 #include "DefaultCamera.h"
+#include <sstream>
 
 USING(Engine)
 USING(glm)
@@ -31,6 +26,13 @@ SceneForest::SceneForest()
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pInputDevice->SetMouseSensitivity(0.05f);
+
+	m_DataPath = "Assets\\xmlData\\";
+	m_SoundDataFileName = "SoundData.xml";
+	m_ShaderDataFileName = "SceneForest_shaderdataList.xml";
+	m_TextureDataFileName = "SceneForest_texturedataList.xml";
+	m_MeshDataFileName = "SceneForest_meshdataList.xml";
+	m_ObjListFileName = "SceneForest_mapObjects.xml";
 }
 
 SceneForest::~SceneForest()
@@ -58,17 +60,13 @@ void SceneForest::KeyCheck(const _float& dt)
 			// Ray랑 오브젝트들의 Bounding Box와의 충돌 체크 해야댐
 			if (nullptr != m_pBackgroundLayer)
 			{
-				vec3 vCameraPos = m_pDefaultCamera->GetCurrentPos();
+				vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
 				vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
 
 				list<CGameObject*>* listObj = m_pBackgroundLayer->GetObjectList();
 				list<CGameObject*>::iterator iter;
 				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 				{
-					//if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
-					//	(*iter)->GetBoundingBox_AABB(),
-					//	(*iter)->GetPosition(),
-					//	(*iter)->GetScale(), vCameraPos, vDir))
 					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
 						(*iter)->GetBoundingBox_AABB(),
 						(*iter)->GetTransform(), vCameraPos, vDir))
@@ -153,7 +151,7 @@ void SceneForest::Update(const _float& dt)
 					goto NextCheck;
 			}
 
-			vec3 vCameraPos = m_pDefaultCamera->GetCurrentPos();
+			vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
 			vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
 			vec3 vDest = vec3(0.f);
 			if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
@@ -202,7 +200,9 @@ RESULT SceneForest::Ready()
 	if (PK_NOERROR != result)
 		return result;
 
-	CXMLParser::GetInstance()->LoadSoundData("Assets\\xmlData\\SoundData.xml");
+	stringstream ss;
+	ss << m_DataPath << m_SoundDataFileName;
+	CXMLParser::GetInstance()->LoadSoundData(ss.str());
 
 	//SoundUIManager::GetInstance()->Ready();
 	MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject);
@@ -212,38 +212,20 @@ RESULT SceneForest::Ready()
 
 RESULT SceneForest::ReadyComponent()
 {
-	CComponentMaster* pMaster = CComponentMaster::GetInstance();
-	CComponent* pComponent = nullptr;
+	//Create.Shader
+	stringstream ss;
+	ss << m_DataPath << m_ShaderDataFileName;
+	CXMLParser::GetInstance()->LoadShaderData(ss.str());
 
-	//Create.Camera
-	pComponent = CCamera::Create();
-	if (nullptr != pComponent)
-		pMaster->AddNewComponent("Camera", pComponent);
-	else
-		return PK_CAMERA_CREATE_FAILED;
-
-	//Create.Transform
-	pComponent = CTransform::Create();
-	if (nullptr != pComponent)
-		pMaster->AddNewComponent("Transform", pComponent);
-	else
-		return PK_TRANSFORM_CREATE_FAILED;
+	//Create.Texture
+	ss.str("");
+	ss << m_DataPath << m_TextureDataFileName;
+	CXMLParser::GetInstance()->LoadTextureData(ss.str());
 
 	//Create.Mesh
-	vector<CXMLParser::sMeshdata> vecMesh;
-	CXMLParser::GetInstance()->LoadMeshData(vecMesh, "Assets\\xmlData\\SceneForest_meshdataList.xml");
-	vector<CXMLParser::sMeshdata>::iterator iter;
-	for (iter = vecMesh.begin(); iter != vecMesh.end(); ++iter)
-	{
-		pComponent = CMesh::Create(iter->ID, iter->PATH, iter->FILENAME, (ModelType)iter->TYPE,
-			iter->SHADER_ID, iter->VERTEXSHADER_PATH, iter->FRAGMENTSHADER_PATH);
-		if (nullptr != pComponent)
-		{
-			pMaster->AddNewComponent(iter->ID, pComponent);
-			pMaster->AddNewMeshInfo(iter->ID, iter->INITSIZE);
-		}
-	}
-	vecMesh.clear();
+	ss.str("");
+	ss << m_DataPath << m_MeshDataFileName;
+	CXMLParser::GetInstance()->LoadMeshData(ss.str());
 
 	return PK_NOERROR;
 }
@@ -253,26 +235,7 @@ RESULT SceneForest::ReadyLayerAndGameObject()
 	CLayer* pLayer = nullptr;
 	CGameObject* pGameObject = nullptr;
 
-	//Create.BackgroundLayer
-	pLayer = GetLayer((_uint)LAYER_BACKGROUND);
-	if (nullptr != pLayer)
-	{
-		m_pBackgroundLayer = pLayer;
-		//Create.Objects
-		vector<CXMLParser::sObjectData> vecObjects;
-		CXMLParser::GetInstance()->LoadMapObjectData(vecObjects, "Assets\\xmlData\\SceneForest_mapObjects.xml");
-		vector<CXMLParser::sObjectData>::iterator iter;
-		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
-		{
-			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
-				iter->vPos, iter->vRot, iter->vScale);
-			if (nullptr == pGameObject)
-				continue;
-			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
-		}
-		vecObjects.clear();
-	}
-
+	//Create.Camera
 	pLayer = GetLayer((_uint)LAYER_OBJECT);
 	if (nullptr != pLayer)
 	{
@@ -288,6 +251,10 @@ RESULT SceneForest::ReadyLayerAndGameObject()
 		}
 	}
 
+	//Create.BackgroundLayer
+	LoadBackgroundObjects();
+
+
 	return PK_NOERROR;
 }
 
@@ -301,4 +268,71 @@ SceneForest* SceneForest::Create()
 	}
 
 	return pInstance;
+}
+
+void SceneForest::SaveBackgroundObjects()
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND);
+	if (nullptr != pLayer)
+	{
+		vector<CXMLParser::sObjectData> vecObjects;
+
+		list<CGameObject*>* pObjList = pLayer->GetObjectList();
+		list<CGameObject*>::iterator iter;
+		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
+		{
+			BGObject* pObj = dynamic_cast<BGObject*>(*iter);
+			CXMLParser::sObjectData data;
+			data.ID = pObj->GetMeshID();
+			data.vPos = pObj->GetPosition();
+			data.vRot = pObj->GetRotation();
+			data.vScale = pObj->GetScale();
+			vecObjects.push_back(data);
+		}
+
+		CXMLParser::sObjectData cameraData;
+		if (nullptr != m_pDefaultCamera)
+		{
+			cameraData.vPos = m_pDefaultCamera->GetCameraEye();
+			cameraData.vRot = m_pDefaultCamera->GetCameraRot();
+			cameraData.vScale = m_pDefaultCamera->GetCameraTarget();
+		}
+
+		stringstream ss;
+		ss << m_DataPath << m_ObjListFileName;
+		CXMLParser::GetInstance()->SaveMapObjectData(vecObjects, cameraData, ss.str());
+	}
+}
+
+void SceneForest::LoadBackgroundObjects()
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND);
+	CGameObject* pGameObject = nullptr;
+
+	if (nullptr != pLayer)
+	{
+		pLayer->RemoveAllGameObject();
+		stringstream ss;
+		ss << m_DataPath << m_ObjListFileName;
+		vector<CXMLParser::sObjectData> vecObjects;
+		CXMLParser::sObjectData cameraData;
+		CXMLParser::GetInstance()->LoadMapObjectData(vecObjects, cameraData, ss.str());
+		vector<CXMLParser::sObjectData>::iterator iter;
+		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
+		{
+			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
+				iter->vPos, iter->vRot, iter->vScale);
+			if (nullptr == pGameObject)
+				continue;
+			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
+		}
+		vecObjects.clear();
+
+		if (nullptr != m_pDefaultCamera)
+		{
+			m_pDefaultCamera->SetCameraEye(cameraData.vPos);
+			m_pDefaultCamera->SetCameraRot(cameraData.vRot);
+			m_pDefaultCamera->SetCameraTarget(cameraData.vScale);
+		}
+	}
 }

@@ -33,6 +33,7 @@ public:
 
 private:
 	RESULT Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, ModelType type);
+	void Ready_Vertex_To_Shader();
 	void Ready_xyz();
 	void Ready_xyz_normal();
 	void Ready_xyz_normal_texUV();

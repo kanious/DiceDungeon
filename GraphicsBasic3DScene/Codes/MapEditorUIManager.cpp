@@ -75,9 +75,10 @@ void MapEditorUIManager::RenderUI()
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImVec2 screenSize = GetWindowSize();
+		//ImVec2 screenSize = GetWindowSize();
 
-		RenderTargetDetailUI(screenSize.x, screenSize.y);
+		RenderSceneDetailUI();
+		RenderTargetDetailUI();
 	}
 	End();
 
@@ -87,9 +88,7 @@ void MapEditorUIManager::RenderUI()
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImVec2 screenSize = GetWindowSize();
-
-		RenderMeshList(screenSize.x, screenSize.y);
+		RenderMeshList();
 	}
 	End();
 
@@ -125,10 +124,30 @@ RESULT MapEditorUIManager::Ready(CScene* pScene, BGObject** ppTarget)
 	return PK_NOERROR;
 }
 
-void MapEditorUIManager::RenderTargetDetailUI(_float screenX, _float screenY)
+void MapEditorUIManager::RenderSceneDetailUI()
+{
+	if (nullptr == m_pScene)
+		return;
+
+	Text("* Scene Detail Setting");
+	Text("Data Path: "); SameLine(120.f); Text(m_pScene->GetDataPath().c_str());
+	Text("Obj List File: "); SameLine(120.f); Text(m_pScene->GetObjListFileName().c_str());
+	if (Button("Object List Save", ImVec2(190.f, 0.f)))
+	{
+		ObjListSave();
+	}
+	SameLine(200.f);
+	if (Button("Object List Load", ImVec2(190.f, 0.f)))
+	{
+		ObjListLoad();
+	}
+}
+
+void MapEditorUIManager::RenderTargetDetailUI()
 {
 	//if (BeginChild("##TargetSetting", ImVec2(screenX * 0.983f, 200.f)))
 	//{
+	Text(" ");
 	Text("* Target Detail Setting");
 	if (nullptr == *m_ppTargetObject)
 	{
@@ -201,7 +220,7 @@ void MapEditorUIManager::RenderTargetDetailUI(_float screenX, _float screenY)
 	//EndChild();
 }
 
-void MapEditorUIManager::RenderMeshList(_float screenX, _float screenY)
+void MapEditorUIManager::RenderMeshList()
 {
 	Text(" ");
 	SameLine(110.f); Text("Add Button");
@@ -247,5 +266,23 @@ void MapEditorUIManager::ConvertFloatToCharArray(char* dest, _float value)
 	stringstream ss;
 	ss << value;
 	strcpy_s(dest, ss.str().length() + 1, ss.str().c_str());
+}
+
+void MapEditorUIManager::ObjListSave()
+{
+	if (nullptr != m_pScene)
+		m_pScene->SaveBackgroundObjects();
+}
+
+void MapEditorUIManager::ObjListLoad()
+{
+	if (nullptr != m_pScene)
+		m_pScene->LoadBackgroundObjects();
+
+	if (nullptr != m_ppTargetObject)
+	{
+		if (nullptr != (*m_ppTargetObject))
+			(*m_ppTargetObject) = nullptr;
+	}
 }
 

@@ -24,6 +24,7 @@ CTransform::CTransform(const CTransform& rhs)
 	, m_vRevolve((0.f))
 	, m_pParentTransform(nullptr)
 {
+	m_tag = rhs.m_tag;
 }
 
 CTransform::~CTransform()

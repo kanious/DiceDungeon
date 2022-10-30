@@ -43,10 +43,13 @@ public:
 	RESULT Ready(Engine::CScene* pScene, BGObject** ppTarget);
 
 private:
-	void RenderTargetDetailUI(_float screenX, _float screenY);
-	void RenderMeshList(_float screenX, _float screenY);
+	void RenderSceneDetailUI();
+	void RenderTargetDetailUI();
+	void RenderMeshList();
 private:
 	void ConvertFloatToCharArray(char* src, _float value);
+	void ObjListSave();
+	void ObjListLoad();
 };
 
 #endif //_MAPEDITORUIMANAGER_H_

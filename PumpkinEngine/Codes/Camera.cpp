@@ -26,6 +26,7 @@ CCamera::CCamera(const CCamera& rhs)
 	, m_fFov(rhs.m_fFov), m_fRatio(rhs.m_fRatio), m_fNear(rhs.m_fNear), m_fFar(rhs.m_fFar)
 	, m_matProj(rhs.m_matProj)
 {
+	m_tag = rhs.m_tag;
 }
 
 CCamera::~CCamera()

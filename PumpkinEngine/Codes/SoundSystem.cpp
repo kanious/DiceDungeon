@@ -48,19 +48,6 @@ void CSoundSystem::Destroy()
 	}
 }
 
-RESULT CSoundSystem::Ready(_int number, _int flag)
-{
-	FMOD_RESULT result = System_Create(&m_pSystem);
-	if (PK_NOERROR != ErrorCheck(result))
-		return PK_FMOD_ERROR;
-
-	result = m_pSystem->init(number, flag, nullptr);
-	if (PK_NOERROR != ErrorCheck(result))
-		return PK_FMOD_ERROR;
-
-	return PK_NOERROR;
-}
-
 RESULT CSoundSystem::LoadSound(string tag, string path, string channelTag, _int mode)
 {
 	Sound* pSound;
@@ -268,6 +255,19 @@ RESULT CSoundSystem::ErrorCheck(FMOD_RESULT result)
 		printf("fmod error: %d, %s", result, FMOD_ErrorString(result));
 		return PK_FMOD_ERROR;
 	}
+
+	return PK_NOERROR;
+}
+
+RESULT CSoundSystem::Ready(_int number, _int flag)
+{
+	FMOD_RESULT result = System_Create(&m_pSystem);
+	if (PK_NOERROR != ErrorCheck(result))
+		return PK_FMOD_ERROR;
+
+	result = m_pSystem->init(number, flag, nullptr);
+	if (PK_NOERROR != ErrorCheck(result))
+		return PK_FMOD_ERROR;
 
 	return PK_NOERROR;
 }

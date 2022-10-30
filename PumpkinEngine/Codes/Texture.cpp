@@ -16,6 +16,7 @@ CTexture::CTexture()
 CTexture::CTexture(const CTexture& rhs)
     : m_iTextureID(rhs.m_iTextureID)
 {
+    m_tag = rhs.m_tag;
 }
 
 CTexture::~CTexture()
@@ -29,9 +30,9 @@ void CTexture::Destroy()
     CComponent::Destroy();
 }
 
-RESULT CTexture::Ready(string filePath)
+RESULT CTexture::Ready(string ID, string filePath)
 {
-    m_tag = "Texture";
+    m_tag = ID;
 
     glGenTextures(2, &m_iTextureID);
     glBindTexture(GL_TEXTURE_2D, m_iTextureID);
@@ -59,10 +60,10 @@ CComponent* CTexture::Clone()
     return new CTexture(*this);
 }
 
-CTexture* CTexture::Create(string filePath)
+CTexture* CTexture::Create(string ID, string filePath)
 {
     CTexture* pInstance = new CTexture();
-    if (PK_NOERROR != pInstance->Ready(filePath))
+    if (PK_NOERROR != pInstance->Ready(ID, filePath))
     {
         pInstance->Destroy();
         pInstance = nullptr;

@@ -7,6 +7,9 @@
 #include "InputDevice.h"
 #include "SoundUIManager.h"
 #include "MapEditorUIManager.h"
+#include "ComponentMaster.h"
+#include "Camera.h"
+#include "Transform.h"
 
 #include "Scene.h"
 #include "SceneForest.h"
@@ -26,6 +29,19 @@ Client::Client()
 
 Client::~Client()
 {
+}
+
+void Client::Destroy()
+{
+	SafeDestroy(m_pTimer);
+	SafeDestroy(m_pInputDevice);
+	SafeDestroy(m_pGraphicDevice);
+	SafeDestroy(m_pGameMaster);
+
+	//SoundUIManager::GetInstance()->Destroy();
+	MapEditorUIManager::GetInstance()->Destroy();
+
+	delete this;
 }
 
 void Client::Loop()
@@ -106,19 +122,6 @@ void Client::Loop()
 	}
 }
 
-void Client::Destroy()
-{
-	SafeDestroy(m_pTimer);
-	SafeDestroy(m_pInputDevice);
-	SafeDestroy(m_pGraphicDevice);
-	SafeDestroy(m_pGameMaster);
-
-	//SoundUIManager::GetInstance()->Destroy();
-	MapEditorUIManager::GetInstance()->Destroy();
-
-	delete this;
-}
-
 RESULT Client::Ready()
 {
 	RESULT result = PK_NOERROR;
@@ -144,11 +147,37 @@ RESULT Client::Ready()
 			return result;
 	}
 
+	result = Ready_Basic_Component();
+	if (PK_NOERROR != result)
+		return result;
+
 	if (nullptr != m_pGameMaster)
 	{
 		CScene* pScene = SceneForest::Create();
 		m_pGameMaster->SetCurrentScene(pScene);
 	}
+
+	return PK_NOERROR;
+}
+
+RESULT Client::Ready_Basic_Component()
+{
+	CComponentMaster* pMaster = CComponentMaster::GetInstance();
+	CComponent* pComponent = nullptr;
+
+	//Create.Camera
+	pComponent = CCamera::Create();
+	if (nullptr != pComponent)
+		pMaster->AddNewComponent("Camera", pComponent);
+	else
+		return PK_CAMERA_CREATE_FAILED;
+
+	//Create.Transform
+	pComponent = CTransform::Create();
+	if (nullptr != pComponent)
+		pMaster->AddNewComponent("Transform", pComponent);
+	else
+		return PK_TRANSFORM_CREATE_FAILED;
 
 	return PK_NOERROR;
 }

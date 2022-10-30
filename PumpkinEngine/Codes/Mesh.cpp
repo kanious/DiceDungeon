@@ -16,8 +16,7 @@ USING(std)
 USING(glm)
 
 CMesh::CMesh()
-    : m_meshID("")
-    , m_pOpenGLDevice(COpenGLDevice::GetInstance())
+    : m_pOpenGLDevice(COpenGLDevice::GetInstance())
     , m_pVIBuffer(nullptr)
     , m_pBoundingBox_AABB(nullptr)
     , m_pDiffTexture(nullptr)
@@ -28,14 +27,14 @@ CMesh::CMesh()
 }
 
 CMesh::CMesh(const CMesh& rhs)
-    : m_meshID(rhs.m_meshID)
-    , m_pOpenGLDevice(rhs.m_pOpenGLDevice)
+    : m_pOpenGLDevice(rhs.m_pOpenGLDevice)
     , m_pVIBuffer(rhs.m_pVIBuffer)
     , m_pBoundingBox_AABB(rhs.m_pBoundingBox_AABB)
     , m_pDiffTexture(rhs.m_pDiffTexture)
     , m_pShader(rhs.m_pShader)
     , m_pParentTransform(nullptr)
 {
+    m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
     if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
     if (nullptr != m_pBoundingBox_AABB) m_pBoundingBox_AABB->AddRefCnt();
@@ -83,10 +82,9 @@ void CMesh::Destroy()
 	CComponent::Destroy();
 }
 
-RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type, string shaderID, string vertexPath, string fragmentPath)
+RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type, string shaderID, string texID_Diff)
 {
-    m_tag = "Mesh";
-    m_meshID = ID;
+    m_tag = ID;
 
     VTX* pVertices = nullptr;
     _uint* pIndices = nullptr;
@@ -117,7 +115,8 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type,
     delete[] pVertices;
     delete[] pIndices;
 
-    Ready_Shader(shaderID, vertexPath, fragmentPath);
+    Ready_Texture_Diff(texID_Diff);
+    Ready_Shader(shaderID);
 
 	return PK_NOERROR;
 }
@@ -153,13 +152,6 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
 
         if (next == "face")
             file >> triangleNum;
-
-        if (next == "TextureFile")
-        {
-            string textureName;
-            file >> textureName;
-            Ready_Texture(filePath, textureName);
-        }
     }
 
     vec3 vMin = vec3(FLT_MAX);
@@ -169,7 +161,7 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
     memset(*pVertices, 0, sizeof(**pVertices));
     for (_uint i = 0; i < vertexNum; ++i)
     {
-        vec3& vPos = (*pVertices)[i].vPos;
+        vec4& vPos = (*pVertices)[i].vPos;
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
@@ -248,13 +240,6 @@ RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName
 
         if (next == "face")
             file >> triangleNum;
-
-        if (next == "TextureFile")
-        {
-            string textureName;
-            file >> textureName;
-            Ready_Texture(filePath, textureName);
-        }
     }
 
     vec3 vMin = vec3(FLT_MAX);
@@ -264,7 +249,7 @@ RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName
     memset(*pVertices, 0, sizeof(**pVertices));
     for (_uint i = 0; i < vertexNum; ++i)
     {
-        vec3& vPos = (*pVertices)[i].vPos;
+        vec4& vPos = (*pVertices)[i].vPos;
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
@@ -345,13 +330,6 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
 
         if (next == "face")
             file >> triangleNum;
-
-        if (next == "TextureFile")
-        {
-            string textureName;
-            file >> textureName;
-            Ready_Texture(filePath, textureName);
-        }
     }
 
     vec3 vMin = vec3(FLT_MAX);
@@ -361,7 +339,7 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
     memset(*pVertices, 0, sizeof(**pVertices));
     for (_uint i = 0; i < vertexNum; ++i)
     {
-        vec3& vPos = (*pVertices)[i].vPos;
+        vec4& vPos = (*pVertices)[i].vPos;
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
@@ -419,32 +397,16 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
     return PK_NOERROR;
 }
 
-void CMesh::Ready_Texture(string path, string texName)
+void CMesh::Ready_Texture_Diff(string texID)
 {
-    CComponent* pComponent = CloneComponent<CTexture*>(texName);
-    if (nullptr == pComponent)
-    {
-        stringstream ss;
-        ss << path << texName;
-        pComponent = CTexture::Create(ss.str());
-        if (nullptr != pComponent)
-            CComponentMaster::GetInstance()->AddNewComponent(texName, pComponent);
-    }
-
+    CComponent* pComponent = CloneComponent<CTexture*>(texID);
     if (nullptr != pComponent)
         m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
-void CMesh::Ready_Shader(string shaderID, string vertexPath, string fragmentPath)
+void CMesh::Ready_Shader(string shaderID)
 {
     CComponent* pComponent = CloneComponent<CShader*>(shaderID);
-    if (nullptr == pComponent)
-    {
-        pComponent = CShader::Create(vertexPath.c_str(), fragmentPath.c_str());
-        if (nullptr != pComponent)
-            CComponentMaster::GetInstance()->AddNewComponent(shaderID, pComponent);
-    }
-
     if (nullptr != pComponent)
         m_pShader = dynamic_cast<CShader*>(pComponent);
 }
@@ -454,10 +416,10 @@ CComponent* CMesh::Clone()
     return new CMesh(*this);
 }
 
-CMesh* CMesh::Create(string ID, string filePath, string fileName, ModelType type, string shaderID, string vertexPath, string fragmentPath)
+CMesh* CMesh::Create(string ID, string filePath, string fileName, ModelType type, string shaderID, string texID_Diff)
 {
 	CMesh* pInstance = new CMesh();
-	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type, shaderID, vertexPath, fragmentPath))
+	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type, shaderID, texID_Diff))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

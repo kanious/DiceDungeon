@@ -21,12 +21,60 @@ DefaultCamera::~DefaultCamera()
 {
 }
 
-vec3 DefaultCamera::GetCurrentPos()
+glm::vec3 DefaultCamera::GetCameraEye()
+{
+	if (nullptr == m_pCamera)
+		return vec3(0.f);
+
+	return m_pCamera->GetCameraEye();
+}
+
+glm::vec3 DefaultCamera::GetCameraRot()
 {
 	if (nullptr == m_pTransform)
 		return vec3(0.f);
 
-	return m_pTransform->GetPosition();
+	return m_pTransform->GetRotation();
+}
+
+glm::vec3 DefaultCamera::GetCameraTarget()
+{
+	if (nullptr == m_pCamera)
+		return vec3(0.f);
+
+	return m_pCamera->GetCameraTarget();
+}
+
+void DefaultCamera::SetCameraEye(glm::vec3 eye)
+{
+	if (nullptr == m_pCamera || nullptr == m_pTransform || nullptr == m_pInputDevice)
+		return;
+
+	m_pTransform->SetPosition(eye);
+	m_pCamera->SetCameraEye(eye);
+}
+
+void DefaultCamera::SetCameraRot(glm::vec3 rot)
+{
+	if (nullptr == m_pTransform)
+		return;
+
+	m_pTransform->SetRotation(rot);
+}
+
+void DefaultCamera::SetCameraTarget(glm::vec3 target)
+{
+	if (nullptr == m_pCamera || nullptr == m_pTransform || nullptr == m_pInputDevice)
+		return;
+
+	vec3 vEye = m_pCamera->GetCameraEye();
+	vec3 vDir = target - vEye;
+	vDir = normalize(vDir);
+	m_pCamera->SetCameraTarget(vEye + vDir);
+	m_pInputDevice->InitMousePos();
+
+	m_fAngleX = m_pTransform->GetRotationX();
+	m_fAngleY = m_pTransform->GetRotationY();
 }
 
 void DefaultCamera::KeyCheck(const _float& dt)
@@ -112,8 +160,6 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
 	}
-
-
 
 	static _bool isLeftAltDown = false;
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_ALT))

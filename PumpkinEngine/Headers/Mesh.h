@@ -16,7 +16,6 @@ class COpenGLDevice;
 class ENGINE_API CMesh : public CComponent
 {
 private:
-	std::string					m_meshID;
 	COpenGLDevice*				m_pOpenGLDevice;
 	CVIBuffer*					m_pVIBuffer;
 	CAABB*						m_pBoundingBox_AABB;
@@ -35,21 +34,20 @@ private:
 	virtual void Destroy();
 
 public:
-	std::string GetMeshID()							{ return m_meshID; }
 	CAABB* GetBoundingBoxAABB()						{ return m_pBoundingBox_AABB; }
 	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
 
 private:
-	RESULT Ready(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string vertexPath, std::string fragmentPath);
+	RESULT Ready(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string texID_Diff);
 	RESULT Ready_xyz_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	RESULT Ready_xyz_normal_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	RESULT Ready_xyz_normal_texUV_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	RESULT Ready_xyz_normal_texUV_index_texNum(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
-	void Ready_Texture(std::string path, std::string texName);
-	void Ready_Shader(std::string shaderID, std::string vertexPath, std::string fragmentPath);
+	void Ready_Texture_Diff(std::string texID_Diff);
+	void Ready_Shader(std::string shaderID);
 public:
 	virtual CComponent* Clone();
-	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string vertexPath, std::string fragmentPath);
+	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string texID_Diff);
 };
 
 NAMESPACE_END

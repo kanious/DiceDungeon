@@ -38,11 +38,11 @@ RESULT CComponentMaster::AddNewComponent(string tag, CComponent* pComponent)
 	return PK_NOERROR;
 }
 
-RESULT CComponentMaster::AddNewMeshInfo(string ID, string initSize)
+RESULT CComponentMaster::AddNewMeshInfo(string tag, string initSize)
 {
-	MESH_MAP::iterator iter = m_mapMesh.find(ID);
+	MESH_MAP::iterator iter = m_mapMesh.find(tag);
 	if (iter == m_mapMesh.end())
-		m_mapMesh.insert(MESH_MAP::value_type(ID, initSize));
+		m_mapMesh.insert(MESH_MAP::value_type(tag, initSize));
 	else
 		return PK_COMPONENT_EXIST;
 

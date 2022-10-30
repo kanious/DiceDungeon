@@ -171,6 +171,8 @@
     <ClInclude Include="Headers\ComponentMaster.h" />
     <ClInclude Include="Headers\DSPInfo.h" />
     <ClInclude Include="Headers\EngineStruct.h" />
+    <ClInclude Include="Headers\Light.h" />
+    <ClInclude Include="Headers\LightMaster.h" />
     <ClInclude Include="Headers\SoundInfo.h" />
     <ClInclude Include="Headers\SoundSystem.h" />
     <ClInclude Include="Headers\SoundMaster.h" />
@@ -202,6 +204,8 @@
     <ClCompile Include="Codes\Component.cpp" />
     <ClCompile Include="Codes\ComponentMaster.cpp" />
     <ClCompile Include="Codes\DSPInfo.cpp" />
+    <ClCompile Include="Codes\Light.cpp" />
+    <ClCompile Include="Codes\LightMaster.cpp" />
     <ClCompile Include="Codes\SoundInfo.cpp" />
     <ClCompile Include="Codes\SoundSystem.cpp" />
     <ClCompile Include="Codes\SoundMaster.cpp" />

@@ -3,14 +3,20 @@
 
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 namespace Engine
 {
-	typedef struct sVertex_XYZ_N_RGBA_UV
+	typedef struct sVertex_RGBA_XYZ_N_UV_T_BiN_Bones
 	{
-		glm::vec3 vPos;
-		glm::vec3 vNormal;
-		glm::vec2 vTexUV;
+		glm::vec4 vColour;
+		glm::vec4 vPos;
+		glm::vec4 vNormal;
+		glm::vec4 vTexUV;
+		glm::vec4 vTangent;
+		glm::vec4 vBinormal;
+		glm::vec4 vBoneID;
+		glm::vec4 vBoneWeight;
 	}VTX;
 
 	typedef struct sIndex

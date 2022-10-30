@@ -26,8 +26,13 @@ private:
 	~DefaultCamera();
 
 public:
-	glm::vec3 GetCurrentPos();
-	_bool GetMouseEnable()			{ return m_bMouseEnable; }
+	_bool GetMouseEnable() { return m_bMouseEnable; }
+	glm::vec3 GetCameraEye();
+	glm::vec3 GetCameraRot();
+	glm::vec3 GetCameraTarget();
+	void SetCameraEye(glm::vec3 eye);
+	void SetCameraRot(glm::vec3 rot);
+	void SetCameraTarget(glm::vec3 target);
 
 private:
 	void KeyCheck(const _float& dt);

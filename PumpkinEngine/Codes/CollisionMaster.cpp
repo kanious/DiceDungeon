@@ -52,7 +52,8 @@ _bool CCollisionMaster::IntersectRayToBoundingBox(CAABB* pBoundingBox, CTransfor
 	ZeroMemory(point, sizeof(point));
 	for (int i = 0; i < 8; ++i)
 	{
-		point[i] = pVertices[i].vPos * vParentScale;
+		vec3 vPos = vec3(pVertices[i].vPos.x, pVertices[i].vPos.y, pVertices[i].vPos.z);
+		point[i] = vPos * vParentScale;
 		_float x = point[i].x;
 		_float z = point[i].z;
 		point[i].x = (z * sin(fAngleY)) + (x * cos(fAngleY)); //x = zsin(b) + xcos(b);

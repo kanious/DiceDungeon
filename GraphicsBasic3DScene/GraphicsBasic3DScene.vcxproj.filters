@@ -22,11 +22,11 @@
     <Filter Include="Default">
       <UniqueIdentifier>{bc5b46aa-cfaf-4b61-b77a-b86f90a8a410}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.UI">
-      <UniqueIdentifier>{0433eb22-2e11-48dc-b356-8ec5f7a72999}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Default\imgui">
       <UniqueIdentifier>{bfce669b-ea36-4f60-a604-01abf57501a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Manager\UI">
+      <UniqueIdentifier>{0433eb22-2e11-48dc-b356-8ec5f7a72999}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +46,7 @@
       <Filter>02.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Codes\SoundUIManager.cpp">
-      <Filter>03.UI</Filter>
+      <Filter>98.Manager\UI</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Default\imgui</Filter>
@@ -73,7 +73,7 @@
       <Filter>Default</Filter>
     </ClCompile>
     <ClCompile Include="Codes\MapEditorUIManager.cpp">
-      <Filter>03.UI</Filter>
+      <Filter>98.Manager\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,7 +96,7 @@
       <Filter>02.GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Codes\SoundUIManager.h">
-      <Filter>03.UI</Filter>
+      <Filter>98.Manager\UI</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>Default\imgui</Filter>
@@ -126,7 +126,7 @@
       <Filter>Default\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Codes\MapEditorUIManager.h">
-      <Filter>03.UI</Filter>
+      <Filter>98.Manager\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

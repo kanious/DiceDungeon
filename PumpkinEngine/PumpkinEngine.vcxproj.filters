@@ -49,6 +49,9 @@
     <Filter Include="04.Component\CollisionBox">
       <UniqueIdentifier>{915d2c3c-d4fd-44d2-a9e0-318485c77452}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.SingletonClasses\Light">
+      <UniqueIdentifier>{ec738422-2065-408d-9af3-784613c6a254}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Base.h">
@@ -147,6 +150,12 @@
     <ClInclude Include="Headers\EngineStruct.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Light.h">
+      <Filter>98.SingletonClasses\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\LightMaster.h">
+      <Filter>98.SingletonClasses\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -232,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="Codes\AABB.cpp">
       <Filter>04.Component\CollisionBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Light.cpp">
+      <Filter>98.SingletonClasses\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\LightMaster.cpp">
+      <Filter>98.SingletonClasses\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

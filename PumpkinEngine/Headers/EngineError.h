@@ -32,6 +32,8 @@ namespace Engine
 #define PK_FMOD_DSP_EXIST 26
 #define PK_FMOD_CHANNEL_NOT_EXIST 27
 #define PK_FMOD_DSP_NOT_EXIST 28
+#define PK_LIGHT_CANNOT_FIND 29
+#define PK_LIGHT_EXIST 30
 
 	// OpenGL
 #define PK_WINDOW_CREATE_ERROR 100

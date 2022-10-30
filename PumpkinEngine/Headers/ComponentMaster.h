@@ -27,7 +27,7 @@ private:
 
 public:
 	RESULT AddNewComponent(std::string tag, CComponent* pComponent);
-	RESULT AddNewMeshInfo(std::string ID, std::string initSize);
+	RESULT AddNewMeshInfo(std::string tag, std::string initSize);
 	CComponent* FindComponent(std::string tag);
 	COMPONENT_MAP* GetComponentMap()			{ return &m_mapComponent; }
 	MESH_MAP* GetMeshMap()						{ return &m_mapMesh; }

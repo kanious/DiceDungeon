@@ -22,11 +22,13 @@ private:
 public:
 	explicit Client();
 	~Client();
+	void Destroy();
 
 public:
 	void Loop();
 	RESULT Ready();
-	void Destroy();
+private:
+	RESULT Ready_Basic_Component();
 };
 
 #endif //_CLIENT_H_

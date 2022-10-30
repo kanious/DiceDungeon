@@ -40,7 +40,6 @@ public:
 	CHANNEL_MAP* GetSoundChannelMap()			{ return &m_mapChannels; }
 	DSP_MAP* GetDSPMap()						{ return &m_mapDSPs; }
 public:
-	RESULT Ready(_int number, _int flag);
 	RESULT LoadSound(std::string tag, std::string path, std::string channelTag, _int mode);
 	RESULT CreateChannelGroup(std::string tag);
 	void PlayBGMSound();
@@ -48,9 +47,10 @@ public:
 	void StopSampleSound(std::string tag);
 	RESULT CreateDSPEffect(std::string name, FMOD_DSP_TYPE type);
 	RESULT AddDSPEffect(std::string channelTag, std::string dspName);
+
 private:
 	RESULT ErrorCheck(FMOD_RESULT result);
-
+	RESULT Ready(_int number, _int flag);
 public:
 	static CSoundSystem* Create(_int number, _int flag);
 };
