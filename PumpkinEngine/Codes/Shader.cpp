@@ -16,6 +16,8 @@ CShader::CShader()
 	, m_matViewLocation(0)
 	, m_matProjLocation(0)
 	, m_diffTexLocation(0)
+	, m_lightEnableLocation(0)
+	, m_selectedLocation(0)
 {
 }
 
@@ -25,6 +27,8 @@ CShader::CShader(const CShader& rhs)
 	, m_matViewLocation(rhs.m_matViewLocation)
 	, m_matProjLocation(rhs.m_matProjLocation)
 	, m_diffTexLocation(rhs.m_diffTexLocation)
+	, m_lightEnableLocation(rhs.m_lightEnableLocation)
+	, m_selectedLocation(rhs.m_selectedLocation)
 {
 	m_tag = rhs.m_tag;
 }
@@ -112,23 +116,35 @@ _uint CShader::CreateShader(_uint shaderType, string source)
 
 void CShader::SetLocation()
 {
-	m_matWorldLocation = glGetUniformLocation(m_ShaderProgram, "g_matWorld");
-	m_matViewLocation = glGetUniformLocation(m_ShaderProgram, "g_matView");
-	m_matProjLocation = glGetUniformLocation(m_ShaderProgram, "g_matProj");
-	m_diffTexLocation = glGetUniformLocation(m_ShaderProgram, "g_diffTexture");
+ 	m_matWorldLocation = glGetUniformLocation(m_ShaderProgram, "matWorld");
+	m_matViewLocation = glGetUniformLocation(m_ShaderProgram, "matView");
+	m_matProjLocation = glGetUniformLocation(m_ShaderProgram, "matProj");
+	m_diffTexLocation = glGetUniformLocation(m_ShaderProgram, "diffTexture");
+	m_lightEnableLocation = glGetUniformLocation(m_ShaderProgram, "isLightEnable");
+	m_selectedLocation = glGetUniformLocation(m_ShaderProgram, "isSelected");
+ 	glUniform1i(m_diffTexLocation, 0);
 }
 
 void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 proj)
 {
+	glUseProgram(m_ShaderProgram);
 	glUniformMatrix4fv(m_matWorldLocation, 1, GL_FALSE, value_ptr(world));
 	glUniformMatrix4fv(m_matViewLocation, 1, GL_FALSE, value_ptr(view));
 	glUniformMatrix4fv(m_matProjLocation, 1, GL_FALSE, value_ptr(proj));
-	
 }
 
 void CShader::SetTextureInfo()
 {
-	glUniform1i(m_diffTexLocation, 0);
+}
+
+void CShader::SetLightEnableInfo(_bool lightEnable)
+{
+	glUniform1i(m_lightEnableLocation, lightEnable);
+}
+
+void CShader::SetSelected(_bool selected)
+{
+	glUniform1i(m_selectedLocation, selected);
 }
 
 RESULT CShader::Ready(string ID, const char* vertexPath, const char* fragPath)

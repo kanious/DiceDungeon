@@ -20,6 +20,7 @@ private:
 
 public:
 	std::string GetMeshID();
+	void SetSelected(_bool select);
 
 public:
 	virtual void Update(const _float& dt);

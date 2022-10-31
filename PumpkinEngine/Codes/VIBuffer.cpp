@@ -48,20 +48,6 @@ RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndi
 	glBindBuffer(GL_ARRAY_BUFFER, m_iVB_ID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(VTX) * m_iNumVtx, pVertices, GL_STATIC_DRAW);
 
-	//switch (type)
-	//{
-	//case xyz_index:
-	//	Ready_xyz();
-	//	break;
-	//case xyz_normal_index:
-	//	Ready_xyz_normal();
-	//	break;
-
-	//case xyz_normal_texUV_index:
-	//case xyz_normal_texUV_index_texNum:
-	//	Ready_xyz_normal_texUV();
-	//	break;
-	//}
 	Ready_Vertex_To_Shader();
 
 	glGenBuffers(1, &m_iIB_ID);

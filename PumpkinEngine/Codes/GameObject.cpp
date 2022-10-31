@@ -11,14 +11,19 @@
 
 USING(Engine)
 USING(glm)
+USING(std)
 
 CGameObject::CGameObject()
 {
 	m_UUID = UUIDGenerate();
+	m_name = "";
 	m_objTag = 0;
 	m_layerTag = 0;
 	m_sceneTag = 0;
 	m_bEnable = true;
+	m_bLock = false;
+	m_bDebug = true;
+	m_bWireFrame = false;
 	m_mapComponent.clear();
 	m_pRenderer = CRenderer::GetInstance(); m_pRenderer->AddRefCnt();
 	m_pLayer = nullptr;
@@ -127,6 +132,11 @@ const mat4x4* CGameObject::GetWorldMatrix()
 		return nullptr;
 
 	return m_pTransform->GetWorldMatrix();
+}
+
+void CGameObject::SetName(string name)
+{
+	m_name = name;
 }
 
 void CGameObject::SetObjectTag(_uint objTag)

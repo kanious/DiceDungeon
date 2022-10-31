@@ -130,11 +130,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader\MeshFragment.fx">
+    <None Include="Shader\MeshFragment.fx">
       <Filter>97.Shader</Filter>
-    </Text>
-    <Text Include="Shader\MeshVertex.fx">
+    </None>
+    <None Include="Shader\MeshVertex.fx">
       <Filter>97.Shader</Filter>
-    </Text>
+    </None>
+    <None Include="Shader\BoxFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="Shader\BoxVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -27,16 +27,17 @@ public:
             , ambient(glm::vec4(0.f, 0.f, 0.f, 0.2f))
             , atten(glm::vec4(0.01f, 0.01f, 0.f, 1.f))
             , param1(glm::vec4(0.f, 0.f, 0.f, 1.f))
-            , param2(glm::vec4(0.f))
+            , param2(glm::vec4(1.f, 0.f, 0.f, 0.f))
         {}
+        std::string     name;
         glm::vec4       position;
         glm::vec4       direction;
         glm::vec4       diffuse;
         glm::vec4       specular;       // rgp = highlight color, w = power
         glm::vec4       ambient;        // rgp = ambient color, w = power
         glm::vec4       atten;          // x = constant, y = linear, z = quadratic, w = cutoff range
-        glm::vec4       param1;         // x = lightType, y = inner angle, z = outer angle, w = TBD(?)
-        glm::vec4       param2;         // x = turn (0:on, 1:off)
+        glm::vec4       param1;         // x = lightType, y = inner angle(Theta), z = outer angle(Phi), w = TBD(?)
+        glm::vec4       param2;         // x = turn (1:on, 0:off)
     };
 
 private:

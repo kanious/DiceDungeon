@@ -27,6 +27,7 @@ public:
 	std::string GetTag()				{ return m_tag; }
 	const _bool GetEnable()				{ return m_bEnable; }
 	void SetTag(std::string componentTag);
+	void SetEnable(_bool enable)		{ m_bEnable = enable; }
 
 public:
 	virtual CComponent* Clone() = 0;

@@ -22,6 +22,8 @@ private:
 	CTexture*					m_pDiffTexture;
 	CShader*					m_pShader;
 	CTransform*					m_pParentTransform;
+	_bool						m_bWireFrame;
+	_bool						m_bSelected;
 
 private:
 	explicit CMesh();
@@ -36,6 +38,8 @@ private:
 public:
 	CAABB* GetBoundingBoxAABB()						{ return m_pBoundingBox_AABB; }
 	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
+	void SetWireFrame(_bool wire)					{ m_bWireFrame = wire; }
+	void SetSelcted(_bool select)					{ m_bSelected = select; }
 
 private:
 	RESULT Ready(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string texID_Diff);

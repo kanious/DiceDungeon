@@ -20,6 +20,8 @@ private:
 	void Destroy();
 
 public:
+	LIGHT_MAP* GetLightMap()			{ return &m_mapLights; }
+public:
 	RESULT AddLight(std::string tag, CLight::cLightInfo* pInfo);
 	RESULT RemoveLight(std::string tag);
 	void SetUniformLocation(_uint shaderID);

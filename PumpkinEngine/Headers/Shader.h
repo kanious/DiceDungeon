@@ -14,6 +14,8 @@ protected:
 	_uint				m_matViewLocation;
 	_uint				m_matProjLocation;
 	_uint				m_diffTexLocation;
+	_uint				m_lightEnableLocation;
+	_uint				m_selectedLocation;
 
 private:
 	explicit CShader();
@@ -31,8 +33,11 @@ private:
 	_uint CreateShader(_uint shaderType, std::string source);
 	void SetLocation();
 public:
+	_uint GetShaderProgram()		{ return m_ShaderProgram; }
 	void SetMatrixInfo(const glm::mat4x4 world, const glm::mat4x4 view, const glm::mat4x4 proj);
 	void SetTextureInfo();
+	void SetLightEnableInfo(_bool lightEnable);
+	void SetSelected(_bool selected);
 
 private:
 	RESULT Ready(std::string ID, const char* vertexPath, const char* fragPath);

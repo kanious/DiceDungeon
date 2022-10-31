@@ -4,4 +4,9 @@
 		<VertexPath>Shader\MeshVertex.fx</VertexPath>
 		<FragmentPath>Shader\MeshFragment.fx</FragmentPath>
 	</Shader>
+	<Shader>
+		<ID>DebugBoxShader</ID>
+		<VertexPath>Shader\BoxVertex.fx</VertexPath>
+		<FragmentPath>Shader\BoxFragment.fx</FragmentPath>
+	</Shader>
 </Shader_List>

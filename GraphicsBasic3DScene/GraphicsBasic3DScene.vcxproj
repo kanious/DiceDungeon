@@ -175,14 +175,22 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader\MeshFragment.fx">
+    <None Include="Shader\MeshFragment.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
-    </Text>
-    <Text Include="Shader\MeshVertex.fx">
+    </None>
+    <None Include="Shader\MeshVertex.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
-    </Text>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\BoxFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shader\BoxVertex.fx">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

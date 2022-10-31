@@ -21,18 +21,22 @@ private:
 	_float							m_fAngleX = 0.f;
 	_float							m_fAngleY = 0.f;
 
+	_uint							m_shaderLocation;
+
 private:
 	explicit DefaultCamera();
 	~DefaultCamera();
 
 public:
-	_bool GetMouseEnable() { return m_bMouseEnable; }
+	_bool GetMouseEnable()						{ return m_bMouseEnable; }
 	glm::vec3 GetCameraEye();
 	glm::vec3 GetCameraRot();
 	glm::vec3 GetCameraTarget();
+	_uint GetShaderLocation(_uint shaderID)		{ return m_shaderLocation; }
 	void SetCameraEye(glm::vec3 eye);
 	void SetCameraRot(glm::vec3 rot);
 	void SetCameraTarget(glm::vec3 target);
+	void SetShaderLocation(_uint shaderID);
 
 private:
 	void KeyCheck(const _float& dt);

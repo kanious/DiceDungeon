@@ -9,6 +9,7 @@
 #include "..\Headers\XMLParser.h"
 #include "..\Headers\SoundMaster.h"
 #include "..\Headers\CollisionMaster.h"
+#include "..\Headers\LightMaster.h"
 
 #include "..\Headers\Scene.h"
 
@@ -55,6 +56,7 @@ void CGameMaster::Destroy()
 	SafeDestroy(CSoundMaster::GetInstance());
 	SafeDestroy(CXMLParser::GetInstance());
 	SafeDestroy(CCollisionMaster::GetInstance());
+	SafeDestroy(CLightMaster::GetInstance());
 
 	m_pRenderer = nullptr;
 }

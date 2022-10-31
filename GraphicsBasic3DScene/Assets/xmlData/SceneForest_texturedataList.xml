@@ -15,4 +15,8 @@
 		<ID>tank_1001_diff</ID>
 		<Path>Assets\textures\tank_1001_diff.png</Path>
 	</Texture>
+	<Texture>
+		<ID>NaturePackLite_Texture_01</ID>
+		<Path>Assets\textures\NaturePackLite_Texture_01.png</Path>
+	</Texture>
 </Texture_List>

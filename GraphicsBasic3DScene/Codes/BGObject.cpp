@@ -33,10 +33,27 @@ string BGObject::GetMeshID()
 	return id;
 }
 
+void BGObject::SetSelected(_bool select)
+{
+	if (nullptr != m_pMesh)
+		m_pMesh->SetSelcted(select);
+}
+
 void BGObject::Update(const _float& dt)
 {
-	CGameObject::Update(dt);
-	m_pRenderer->AddRenderObj(this);
+	if (m_bEnable)
+	{
+		CGameObject::Update(dt);
+
+		if (nullptr != m_pRenderer)
+			m_pRenderer->AddRenderObj(this);
+
+		if (nullptr != m_pMesh)
+			m_pMesh->SetWireFrame(m_bWireFrame);
+		
+		if (nullptr != m_pBoundingBox_AABB)
+			m_pBoundingBox_AABB->SetEnable(m_bDebug);
+	}
 }
 
 void BGObject::Render()
@@ -53,6 +70,7 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
+	m_name = meshID;
 
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();
 	CComponent* pComponent = nullptr;
@@ -64,6 +82,8 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 		AttachComponent("Mesh", m_pMesh);
 		m_pMesh->SetTransform(m_pTransform);
 		m_pBoundingBox_AABB = m_pMesh->GetBoundingBoxAABB();
+		if (nullptr != m_pBoundingBox_AABB)
+			m_pBoundingBox_AABB->SetTransform(m_pTransform);
 	}
 
 	if (nullptr != m_pTransform)

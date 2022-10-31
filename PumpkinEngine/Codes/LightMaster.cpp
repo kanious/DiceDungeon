@@ -34,7 +34,10 @@ RESULT CLightMaster::AddLight(string tag, CLight::cLightInfo* pInfo)
 	{
 		CLight* newLight = CLight::Create(pInfo);
 		if (nullptr != newLight)
+		{
+			newLight->GetLightInfo()->name = tag;
 			m_mapLights.insert(LIGHT_MAP::value_type(tag, newLight));
+		}
 	}
 
 	return PK_NOERROR;

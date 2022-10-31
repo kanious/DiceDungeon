@@ -22,6 +22,7 @@ CMesh::CMesh()
     , m_pDiffTexture(nullptr)
     , m_pShader(nullptr)
     , m_pParentTransform(nullptr)
+    , m_bWireFrame(false)
 {
     m_pOpenGLDevice->AddRefCnt();
 }
@@ -29,17 +30,22 @@ CMesh::CMesh()
 CMesh::CMesh(const CMesh& rhs)
     : m_pOpenGLDevice(rhs.m_pOpenGLDevice)
     , m_pVIBuffer(rhs.m_pVIBuffer)
-    , m_pBoundingBox_AABB(rhs.m_pBoundingBox_AABB)
     , m_pDiffTexture(rhs.m_pDiffTexture)
     , m_pShader(rhs.m_pShader)
     , m_pParentTransform(nullptr)
+    , m_bWireFrame(rhs.m_bWireFrame)
 {
     m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
     if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
-    if (nullptr != m_pBoundingBox_AABB) m_pBoundingBox_AABB->AddRefCnt();
     if (nullptr != m_pDiffTexture) m_pDiffTexture->AddRefCnt();
     if (nullptr != m_pShader) m_pShader->AddRefCnt();
+
+    m_pBoundingBox_AABB = CAABB::Create(rhs.m_pBoundingBox_AABB->m_vCenter
+        , rhs.m_pBoundingBox_AABB->m_vHalfExtents
+        , rhs.m_pBoundingBox_AABB->m_vMin
+        , rhs.m_pBoundingBox_AABB->m_vMax
+        , rhs.m_pBoundingBox_AABB->m_shaderID);
 }
 
 CMesh::~CMesh()
@@ -55,7 +61,9 @@ void CMesh::Render()
     const mat4x4 matView = m_pOpenGLDevice->GetViewMatrix();
     const mat4x4 matProj = m_pOpenGLDevice->GetProjMatrix();
     m_pShader->SetMatrixInfo(matWorld, matView, matProj);
-    m_pShader->SetTextureInfo();
+    m_pShader->SetLightEnableInfo(!m_bWireFrame);
+    m_pShader->SetSelected(m_bSelected);
+    //m_pShader->SetTextureInfo();
 
     if (nullptr != m_pDiffTexture)
     {
@@ -64,7 +72,10 @@ void CMesh::Render()
     }
 
 	if (nullptr != m_pVIBuffer)
-		m_pVIBuffer->Render();
+    {
+        m_pVIBuffer->SetWireFrame(m_bWireFrame);
+        m_pVIBuffer->Render();
+    }
 
     if (nullptr != m_pBoundingBox_AABB)
         m_pBoundingBox_AABB->Render();
@@ -165,9 +176,11 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
+        vPos.w = 1.f;
         file >> (*pVertices)[i].vNormal.x;
         file >> (*pVertices)[i].vNormal.y;
         file >> (*pVertices)[i].vNormal.z;
+        (*pVertices)[i].vNormal.w = 1.f;
 
         if (vMin.x > vPos.x)
             vMin.x = vPos.x;
@@ -184,7 +197,7 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
     }
     vec3 vHalf = (vMax - vMin) / 2.f;
     vec3 vCenter = vMin + vHalf;
-    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax);
+    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax, "DebugBoxShader");
 
     IDX* pTriangles = new IDX[triangleNum];
     memset(pTriangles, 0, sizeof(*pTriangles));
@@ -216,7 +229,7 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
     return PK_NOERROR;
 }
 
-RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum) 
 {
     stringstream ss;
     ss << filePath << fileName;
@@ -253,9 +266,11 @@ RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
+        vPos.w = 1.f;
         file >> (*pVertices)[i].vNormal.x;
         file >> (*pVertices)[i].vNormal.y;
         file >> (*pVertices)[i].vNormal.z;
+        (*pVertices)[i].vNormal.w = 1.f;
         file >> (*pVertices)[i].vTexUV.x;
         file >> (*pVertices)[i].vTexUV.y;
 
@@ -274,7 +289,7 @@ RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName
     }
     vec3 vHalf = (vMax - vMin) / 2.f;
     vec3 vCenter = vMin + vHalf;
-    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax);
+    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax, "DebugBoxShader");
 
     IDX* pTriangles = new IDX[triangleNum];
     memset(pTriangles, 0, sizeof(*pTriangles));
@@ -343,9 +358,11 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
+        vPos.w = 1.f;
         file >> (*pVertices)[i].vNormal.x;
         file >> (*pVertices)[i].vNormal.y;
         file >> (*pVertices)[i].vNormal.z;
+        (*pVertices)[i].vNormal.w = 1.f;
         file >> (*pVertices)[i].vTexUV.x;
         file >> (*pVertices)[i].vTexUV.y;
 
@@ -364,7 +381,7 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
     }
     vec3 vHalf = (vMax - vMin) / 2.f;
     vec3 vCenter = vMin + vHalf;
-    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax);
+    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax, "DebugBoxShader");
 
     IDX* pTriangles = new IDX[triangleNum];
     memset(pTriangles, 0, sizeof(*pTriangles));

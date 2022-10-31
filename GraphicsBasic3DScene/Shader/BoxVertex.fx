@@ -14,21 +14,10 @@ in layout(location = 6) vec4 vBoneID;
 in layout(location = 7) vec4 vBoneWeight;
 
 out vec4 fColour;
-out vec4 fNormal;
-out vec4 fVtxWorldPos;
-out vec4 fTexUV;
-out vec4 fTangent;
-out vec4 fBinormal;
 
 void main()
 {
 	gl_Position = matProj * matView * matWorld * vPos;
 
-	fVtxWorldPos = vec4((matWorld * vPos).xyz, 1.0f);
-	fNormal = vec4(normalize(transpose(inverse(matWorld)) * vNormal).xyz, 1.0f);
-
 	fColour = vColour;
-	fTexUV = vTexUV;
-	fTangent = vTangent;
-	fBinormal = vBinormal;
 }

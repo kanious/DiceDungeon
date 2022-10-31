@@ -11,6 +11,8 @@
 #include "SoundUIManager.h"
 #include "MapEditorUIManager.h"
 #include "CollisionMaster.h"
+#include "LightMaster.h"
+#include "Light.h"
 
 #include "BGObject.h"
 #include "Camera.h"
@@ -55,7 +57,10 @@ void SceneForest::KeyCheck(const _float& dt)
 			}
 
 			if (nullptr != m_pTargetObject)
+			{
+				m_pTargetObject->SetSelected(false);
 				m_pTargetObject = nullptr;
+			}
 			
 			// Ray랑 오브젝트들의 Bounding Box와의 충돌 체크 해야댐
 			if (nullptr != m_pBackgroundLayer)
@@ -67,11 +72,15 @@ void SceneForest::KeyCheck(const _float& dt)
 				list<CGameObject*>::iterator iter;
 				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 				{
+					if ((*iter)->GetLock())
+						continue;
+
 					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
 						(*iter)->GetBoundingBox_AABB(),
 						(*iter)->GetTransform(), vCameraPos, vDir))
 					{
 						m_pTargetObject = dynamic_cast<BGObject*>(*iter);
+						m_pTargetObject->SetSelected(true);
 						break;
 					}
 				}
@@ -93,6 +102,7 @@ void SceneForest::KeyCheck(const _float& dt)
 				goto NextCheck;
 
 			m_pTargetObject->SetDead(true);
+			m_pTargetObject->SetSelected(false);
 			m_pTargetObject = nullptr;
 		}
 	}
@@ -137,6 +147,8 @@ NextCheck:
 
 void SceneForest::Update(const _float& dt)
 {
+	CLightMaster::GetInstance()->SetLightInfo();
+
 	KeyCheck(dt);
 
 	if (nullptr != m_pDefaultCamera &&
@@ -188,7 +200,9 @@ void SceneForest::Destroy()
 
 	CScene::Destroy();
 }
-
+#include "ComponentMaster.h"
+#include "Component.h"
+#include "Shader.h"
 RESULT SceneForest::Ready()
 {
 	RESULT result = PK_NOERROR;
@@ -205,7 +219,66 @@ RESULT SceneForest::Ready()
 	CXMLParser::GetInstance()->LoadSoundData(ss.str());
 
 	//SoundUIManager::GetInstance()->Ready();
-	MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject);
+	MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject, &m_pBackgroundLayer);
+
+	// Light
+	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
+	_uint shaderID = 0;
+	if (nullptr != shader)
+		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
+
+	CLight::cLightInfo* pInfo = new CLight::cLightInfo();
+	pInfo->direction = vec4(1.0f, -1.f, 1.0f, 1.0f);
+	pInfo->diffuse = vec4(1.0f, 1.0f, 1.0f, 0.2f);
+	CLightMaster::GetInstance()->AddLight("Directional_Light", pInfo);
+
+	pInfo = new CLight::cLightInfo();
+	pInfo->param1.x = 1; //POINT_LIGHT
+	pInfo->position = vec4(-20.f, 11.0f, 25.f, 1.0f);
+	pInfo->specular = vec4(0.0f, 0.9f, 0.0f, 1.0f);
+	pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	pInfo->atten = vec4(1.0f, 0.027f, 0.0028f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
+	CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
+
+	//	distance	constant	linear		quadratic
+	//	7			1.0			0.7			1.8
+	//	13			1.0			0.35		0.44
+	//	20			1.0			0.22		0.20
+	//	32			1.0			0.14		0.07
+	//	50			1.0			0.09		0.032
+	//	65			1.0			0.07		0.017
+	//	100			1.0			0.045		0.0075
+	//	160			1.0			0.027		0.0028
+	//	200			1.0			0.022		0.0019
+	//	325			1.0			0.014		0.0007
+	//	600			1.0			0.007		0.0002
+	//	3250		1.0			0.0014		0.000007
+
+	pInfo = new CLight::cLightInfo();
+	pInfo->param1.x = 2; //SPOT_LIGHT
+	pInfo->position = vec4(-10.f, 11.0f, -3.5f, 1.0f);
+	pInfo->direction = vec4(0.0f, -1.0f, 0.0f, 0.0f);
+	pInfo->specular = vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	pInfo->atten = vec4(1.0f, 0.014f, 0.0007f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
+	pInfo->param1.y = 25.f; //inner angle(Theta)
+	pInfo->param1.z = 35.f; //outer angle(Phi)
+	CLightMaster::GetInstance()->AddLight("Spot_Light01", pInfo);
+
+
+	//pInfo = new CLight::cLightInfo();
+	//pInfo->param1.x = 1; //POINT_LIGHT
+	////pInfo->position = vec4(-10.f, 5.0f/*10.9f*/, -3.5f, 1.0f);
+	//pInfo->position = vec4(-11, 1.0f, -3.88f, 1.0f);
+	//pInfo->specular = vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	//pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 0.5f);
+	//pInfo->atten = vec4(0.01f, 0.01f, 0.1f, 3.f); // x = constant, y = linear, z = quadratic, w = cutoff range
+	//CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
+
+	CLightMaster::GetInstance()->SetUniformLocation(shaderID);
+
+	if (nullptr != m_pDefaultCamera)
+		m_pDefaultCamera->SetShaderLocation(shaderID); 
 
 	return PK_NOERROR;
 }
@@ -251,7 +324,7 @@ RESULT SceneForest::ReadyLayerAndGameObject()
 		}
 	}
 
-	//Create.BackgroundLayer
+	//Create.BackgroundLayer 
 	LoadBackgroundObjects();
 
 
@@ -311,6 +384,7 @@ void SceneForest::LoadBackgroundObjects()
 
 	if (nullptr != pLayer)
 	{
+		m_pBackgroundLayer = pLayer;
 		pLayer->RemoveAllGameObject();
 		stringstream ss;
 		ss << m_DataPath << m_ObjListFileName;

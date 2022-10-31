@@ -21,7 +21,7 @@ DefaultCamera::~DefaultCamera()
 {
 }
 
-glm::vec3 DefaultCamera::GetCameraEye()
+vec3 DefaultCamera::GetCameraEye()
 {
 	if (nullptr == m_pCamera)
 		return vec3(0.f);
@@ -29,7 +29,7 @@ glm::vec3 DefaultCamera::GetCameraEye()
 	return m_pCamera->GetCameraEye();
 }
 
-glm::vec3 DefaultCamera::GetCameraRot()
+vec3 DefaultCamera::GetCameraRot()
 {
 	if (nullptr == m_pTransform)
 		return vec3(0.f);
@@ -37,7 +37,7 @@ glm::vec3 DefaultCamera::GetCameraRot()
 	return m_pTransform->GetRotation();
 }
 
-glm::vec3 DefaultCamera::GetCameraTarget()
+vec3 DefaultCamera::GetCameraTarget()
 {
 	if (nullptr == m_pCamera)
 		return vec3(0.f);
@@ -75,6 +75,11 @@ void DefaultCamera::SetCameraTarget(glm::vec3 target)
 
 	m_fAngleX = m_pTransform->GetRotationX();
 	m_fAngleY = m_pTransform->GetRotationY();
+}
+
+void DefaultCamera::SetShaderLocation(_uint shaderID)
+{
+	m_shaderLocation = glGetUniformLocation(shaderID, "eyeLocation");
 }
 
 void DefaultCamera::KeyCheck(const _float& dt)
@@ -187,6 +192,9 @@ void DefaultCamera::KeyCheck(const _float& dt)
 void DefaultCamera::Update(const _float& dt)
 {
 	CGameObject::Update(dt);
+
+	vec3 vEye = m_pCamera->GetCameraEye();
+	glUniform4f(m_shaderLocation, vEye.x, vEye.y, vEye.z, 1.0f);
 
 	KeyCheck(dt);
 }
