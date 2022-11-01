@@ -3,6 +3,7 @@
 
 #include "Base.h"
 #include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
 
 NAMESPACE_BEGIN(Engine)
 
@@ -38,9 +39,22 @@ class ENGINE_API CXMLParser : public CBase
 	struct sObjectData
 	{
 		std::string ID;
-		glm::vec3 vPos;
-		glm::vec3 vRot;
-		glm::vec3 vScale;
+		glm::vec3 POSITION;
+		glm::vec3 ROTATION;
+		glm::vec3 SCALE;
+	};
+
+	struct sLightData
+	{
+		std::string NAME;
+		glm::vec4 POSITION;
+		glm::vec4 DIRECTION;
+		glm::vec4 DIFFUSE;
+		glm::vec4 SPECULAR;
+		glm::vec4 AMBIENT;
+		glm::vec4 ATTEN;
+		glm::vec4 PARAM1;
+		glm::vec4 PARAM2;
 	};
 
 private:
@@ -54,8 +68,11 @@ public:
 	void LoadTextureData(std::string path);
 	void LoadMeshData(std::string path);
 	void LoadSoundData(std::string path);
-	void LoadMapObjectData(std::vector<sObjectData>& vec, sObjectData& cameraData, std::string path);
-	void SaveMapObjectData(std::vector<sObjectData>& vec, sObjectData& cameraData, std::string path);
+	void LoadMapObjectData(std::string path, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void SaveMapObjectData(std::string path, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void LoadLightData(std::string path, std::vector<sLightData>& vec);
+	void SaveLightData(std::string path, std::vector<sLightData>& vec);
+
 };
 
 NAMESPACE_END

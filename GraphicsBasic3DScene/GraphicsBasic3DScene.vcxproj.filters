@@ -75,6 +75,9 @@
     <ClCompile Include="Codes\MapEditorUIManager.cpp">
       <Filter>98.Manager\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\UIManager.cpp">
+      <Filter>98.Manager\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Codes\Client.h">
@@ -126,6 +129,9 @@
       <Filter>Default\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Codes\MapEditorUIManager.h">
+      <Filter>98.Manager\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\UIManager.h">
       <Filter>98.Manager\UI</Filter>
     </ClInclude>
   </ItemGroup>

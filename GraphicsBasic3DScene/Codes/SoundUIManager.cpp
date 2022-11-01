@@ -13,7 +13,6 @@
 #include <iomanip>
 
 
-SINGLETON_FUNCTION(SoundUIManager)
 USING(Engine)
 USING(ImGui)
 USING(std)
@@ -34,8 +33,6 @@ void SoundUIManager::Destroy()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	DestroyContext();
-
-	DestroyInstance();
 }
 
 void SoundUIManager::RenderUI()

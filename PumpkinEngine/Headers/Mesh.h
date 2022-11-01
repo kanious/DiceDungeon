@@ -24,6 +24,7 @@ private:
 	CTransform*					m_pParentTransform;
 	_bool						m_bWireFrame;
 	_bool						m_bSelected;
+	_bool						m_bDebug;
 
 private:
 	explicit CMesh();
@@ -40,6 +41,7 @@ public:
 	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
 	void SetWireFrame(_bool wire)					{ m_bWireFrame = wire; }
 	void SetSelcted(_bool select)					{ m_bSelected = select; }
+	void SetDebugBox(_bool select)					{ m_bDebug = select; }
 
 private:
 	RESULT Ready(std::string ID, std::string filePath, std::string fileName, ModelType type, std::string shaderID, std::string texID_Diff);

@@ -122,8 +122,7 @@ void CShader::SetLocation()
 	m_diffTexLocation = glGetUniformLocation(m_ShaderProgram, "diffTexture");
 	m_lightEnableLocation = glGetUniformLocation(m_ShaderProgram, "isLightEnable");
 	m_selectedLocation = glGetUniformLocation(m_ShaderProgram, "isSelected");
- 	glUniform1i(m_diffTexLocation, 0);
-}
+ }
 
 void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 proj)
 {
@@ -135,6 +134,7 @@ void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 
 
 void CShader::SetTextureInfo()
 {
+	glUniform1i(m_diffTexLocation, 0);
 }
 
 void CShader::SetLightEnableInfo(_bool lightEnable)

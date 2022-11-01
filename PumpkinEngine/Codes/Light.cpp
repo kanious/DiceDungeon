@@ -1,11 +1,13 @@
 #include "pch.h"
 #include "..\Headers\Light.h"
+#include "..\Headers\OpenGLDefines.h"
 
 USING(Engine)
 
 CLight::CLight()
-	: m_pInfo(nullptr)
+	: m_pInfo(nullptr), m_ShaderProgram(0)
 {
+	ZeroMemory(m_shaderLocation, sizeof(m_shaderLocation));
 }
 
 CLight::~CLight()
@@ -32,6 +34,14 @@ void CLight::SetLocation(_int index, _uint value)
 		return;
 
 	m_shaderLocation[index] = value;
+}
+
+void CLight::ResetLightInfo()
+{
+	glUseProgram(m_ShaderProgram);
+
+	for (int i = 0; i < 8; ++i)
+		glUniform4f(m_shaderLocation[i], 0.f, 0.f, 0.f, 0.f);
 }
 
 RESULT CLight::Ready(cLightInfo* pInfo)

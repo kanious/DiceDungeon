@@ -1,7 +1,7 @@
 #ifndef _SOUNDUIMANAGER_H_
 #define _SOUNDUIMANAGER_H_
 
-#include "EngineDefines.h"
+#include "Base.h"
 
 namespace Engine
 {
@@ -10,10 +10,8 @@ namespace Engine
 	class CDSPInfo;
 }
 
-class SoundUIManager
+class SoundUIManager : public Engine::CBase
 {
-	SINGLETON(SoundUIManager)
-
 private:
 	std::string						m_currentSoundName;
 	Engine::CSoundInfo*				m_pCurrentSound;

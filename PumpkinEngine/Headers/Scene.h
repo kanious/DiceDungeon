@@ -21,6 +21,7 @@ protected:
 	std::string						m_TextureDataFileName;
 	std::string						m_MeshDataFileName;
 	std::string						m_ObjListFileName;
+	std::string						m_LightListFileName;
 
 protected:
 	explicit CScene();
@@ -40,6 +41,7 @@ public:
 	std::string GetTextureDataFileName()			{ return m_TextureDataFileName; }
 	std::string GetMeshDataFileName()				{ return m_MeshDataFileName; }
 	std::string GetObjListFileName()				{ return m_ObjListFileName; }
+	std::string GetLightListFileName()				{ return m_LightListFileName; }
 
 	void SetSceneTag(_uint sceneTag);
 	void SetDataPath(std::string path)				{ m_DataPath = path; }
@@ -48,6 +50,7 @@ public:
 	void SetTextureDataFileName(std::string name) { m_TextureDataFileName = name; }
 	void SetMeshDataFileName(std::string name)		{ m_MeshDataFileName = name; }
 	void SetObjListFileName(std::string name)		{ m_ObjListFileName = name; }
+	void SetLightListFileName(std::string name)		{ m_LightListFileName = name; }
 
 	RESULT ToggleLayer(_uint layerTag, _bool turn);
 	CLayer* GetLayer(_uint layerTag);

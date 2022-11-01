@@ -8,11 +8,13 @@
 #include "GameObject.h"
 #include "InputDevice.h"
 #include "SoundMaster.h"
-#include "SoundUIManager.h"
-#include "MapEditorUIManager.h"
+#include "UIManager.h"
 #include "CollisionMaster.h"
 #include "LightMaster.h"
 #include "Light.h"
+#include "ComponentMaster.h"
+#include "Component.h"
+#include "Shader.h"
 
 #include "BGObject.h"
 #include "Camera.h"
@@ -28,6 +30,7 @@ SceneForest::SceneForest()
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pInputDevice->SetMouseSensitivity(0.05f);
+	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
 
 	m_DataPath = "Assets\\xmlData\\";
 	m_SoundDataFileName = "SoundData.xml";
@@ -35,6 +38,7 @@ SceneForest::SceneForest()
 	m_TextureDataFileName = "SceneForest_texturedataList.xml";
 	m_MeshDataFileName = "SceneForest_meshdataList.xml";
 	m_ObjListFileName = "SceneForest_mapObjects.xml";
+	m_LightListFileName = "SceneForest_lights.xml";
 }
 
 SceneForest::~SceneForest()
@@ -52,7 +56,7 @@ void SceneForest::KeyCheck(const _float& dt)
 			
 			if (m_bMapEditorUIOpened)
 			{
-				if (MapEditorUIManager::GetInstance()->GetCursorIsOnTheUI())
+				if (UIManager::GetInstance()->GetCursorIsOnTheUI())
 					goto NextCheck;
 			}
 
@@ -159,7 +163,7 @@ void SceneForest::Update(const _float& dt)
 		{
 			if (m_bMapEditorUIOpened)
 			{
-				if (MapEditorUIManager::GetInstance()->GetCursorIsOnTheUI())
+				if (UIManager::GetInstance()->GetCursorIsOnTheUI())
 					goto NextCheck;
 			}
 
@@ -190,19 +194,17 @@ NextCheck:
 
 void SceneForest::Render()
 {
-	//SoundUIManager::GetInstance()->RenderUI();
-	MapEditorUIManager::GetInstance()->RenderUI();
+	m_pUIManager->RenderUI();
 }
 
 void SceneForest::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
+	SafeDestroy(m_pUIManager);
 
 	CScene::Destroy();
 }
-#include "ComponentMaster.h"
-#include "Component.h"
-#include "Shader.h"
+
 RESULT SceneForest::Ready()
 {
 	RESULT result = PK_NOERROR;
@@ -218,52 +220,44 @@ RESULT SceneForest::Ready()
 	ss << m_DataPath << m_SoundDataFileName;
 	CXMLParser::GetInstance()->LoadSoundData(ss.str());
 
+	UIManager::GetInstance()->Ready(this);
 	//SoundUIManager::GetInstance()->Ready();
-	MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject, &m_pBackgroundLayer);
+	//MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject, &m_pBackgroundLayer);
 
 	// Light
 	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
 	_uint shaderID = 0;
 	if (nullptr != shader)
 		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
+	CLightMaster::GetInstance()->SetShader(shaderID);
 
-	CLight::cLightInfo* pInfo = new CLight::cLightInfo();
-	pInfo->direction = vec4(1.0f, -1.f, 1.0f, 1.0f);
-	pInfo->diffuse = vec4(1.0f, 1.0f, 1.0f, 0.2f);
-	CLightMaster::GetInstance()->AddLight("Directional_Light", pInfo);
+	ss.str("");
+	ss << m_DataPath << m_LightListFileName;
+	CLightMaster::GetInstance()->LoadLights(ss.str());
 
-	pInfo = new CLight::cLightInfo();
-	pInfo->param1.x = 1; //POINT_LIGHT
-	pInfo->position = vec4(-20.f, 11.0f, 25.f, 1.0f);
-	pInfo->specular = vec4(0.0f, 0.9f, 0.0f, 1.0f);
-	pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	pInfo->atten = vec4(1.0f, 0.027f, 0.0028f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
-	CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
+	//CLight::cLightInfo* pInfo = new CLight::cLightInfo();
+	//pInfo->direction = vec4(1.0f, -1.f, 1.0f, 1.0f);
+	//pInfo->diffuse = vec4(1.0f, 1.0f, 1.0f, 0.2f);
+	//CLightMaster::GetInstance()->AddLight("Directional_Light", pInfo);
 
-	//	distance	constant	linear		quadratic
-	//	7			1.0			0.7			1.8
-	//	13			1.0			0.35		0.44
-	//	20			1.0			0.22		0.20
-	//	32			1.0			0.14		0.07
-	//	50			1.0			0.09		0.032
-	//	65			1.0			0.07		0.017
-	//	100			1.0			0.045		0.0075
-	//	160			1.0			0.027		0.0028
-	//	200			1.0			0.022		0.0019
-	//	325			1.0			0.014		0.0007
-	//	600			1.0			0.007		0.0002
-	//	3250		1.0			0.0014		0.000007
+	//pInfo = new CLight::cLightInfo();
+	//pInfo->param1.x = 1; //POINT_LIGHT
+	//pInfo->position = vec4(-20.f, 11.0f, 25.f, 1.0f);
+	//pInfo->specular = vec4(0.0f, 0.9f, 0.0f, 1.0f);
+	//pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	//pInfo->atten = vec4(1.0f, 0.027f, 0.0028f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
+	//CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
 
-	pInfo = new CLight::cLightInfo();
-	pInfo->param1.x = 2; //SPOT_LIGHT
-	pInfo->position = vec4(-10.f, 11.0f, -3.5f, 1.0f);
-	pInfo->direction = vec4(0.0f, -1.0f, 0.0f, 0.0f);
-	pInfo->specular = vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	pInfo->atten = vec4(1.0f, 0.014f, 0.0007f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
-	pInfo->param1.y = 25.f; //inner angle(Theta)
-	pInfo->param1.z = 35.f; //outer angle(Phi)
-	CLightMaster::GetInstance()->AddLight("Spot_Light01", pInfo);
+	//pInfo = new CLight::cLightInfo();
+	//pInfo->param1.x = 2; //SPOT_LIGHT
+	//pInfo->position = vec4(-10.f, 11.0f, -3.5f, 1.0f);
+	//pInfo->direction = vec4(0.0f, -1.0f, 0.0f, 0.0f);
+	//pInfo->specular = vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	//pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	//pInfo->atten = vec4(1.0f, 0.014f, 0.0007f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
+	//pInfo->param1.y = 25.f; //inner angle(Theta)
+	//pInfo->param1.z = 35.f; //outer angle(Phi)
+	//CLightMaster::GetInstance()->AddLight("Spot_Light01", pInfo);
 
 
 	//pInfo = new CLight::cLightInfo();
@@ -275,7 +269,7 @@ RESULT SceneForest::Ready()
 	//pInfo->atten = vec4(0.01f, 0.01f, 0.1f, 3.f); // x = constant, y = linear, z = quadratic, w = cutoff range
 	//CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
 
-	CLightMaster::GetInstance()->SetUniformLocation(shaderID);
+	
 
 	if (nullptr != m_pDefaultCamera)
 		m_pDefaultCamera->SetShaderLocation(shaderID); 
@@ -357,23 +351,23 @@ void SceneForest::SaveBackgroundObjects()
 			BGObject* pObj = dynamic_cast<BGObject*>(*iter);
 			CXMLParser::sObjectData data;
 			data.ID = pObj->GetMeshID();
-			data.vPos = pObj->GetPosition();
-			data.vRot = pObj->GetRotation();
-			data.vScale = pObj->GetScale();
+			data.POSITION = pObj->GetPosition();
+			data.ROTATION = pObj->GetRotation();
+			data.SCALE = pObj->GetScale();
 			vecObjects.push_back(data);
 		}
 
 		CXMLParser::sObjectData cameraData;
 		if (nullptr != m_pDefaultCamera)
 		{
-			cameraData.vPos = m_pDefaultCamera->GetCameraEye();
-			cameraData.vRot = m_pDefaultCamera->GetCameraRot();
-			cameraData.vScale = m_pDefaultCamera->GetCameraTarget();
+			cameraData.POSITION = m_pDefaultCamera->GetCameraEye();
+			cameraData.ROTATION = m_pDefaultCamera->GetCameraRot();
+			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
 		}
 
 		stringstream ss;
 		ss << m_DataPath << m_ObjListFileName;
-		CXMLParser::GetInstance()->SaveMapObjectData(vecObjects, cameraData, ss.str());
+		CXMLParser::GetInstance()->SaveMapObjectData(ss.str(), vecObjects, cameraData);
 	}
 }
 
@@ -390,12 +384,12 @@ void SceneForest::LoadBackgroundObjects()
 		ss << m_DataPath << m_ObjListFileName;
 		vector<CXMLParser::sObjectData> vecObjects;
 		CXMLParser::sObjectData cameraData;
-		CXMLParser::GetInstance()->LoadMapObjectData(vecObjects, cameraData, ss.str());
+		CXMLParser::GetInstance()->LoadMapObjectData(ss.str(), vecObjects, cameraData);
 		vector<CXMLParser::sObjectData>::iterator iter;
 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 		{
 			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
-				iter->vPos, iter->vRot, iter->vScale);
+				iter->POSITION, iter->ROTATION, iter->SCALE);
 			if (nullptr == pGameObject)
 				continue;
 			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
@@ -404,9 +398,9 @@ void SceneForest::LoadBackgroundObjects()
 
 		if (nullptr != m_pDefaultCamera)
 		{
-			m_pDefaultCamera->SetCameraEye(cameraData.vPos);
-			m_pDefaultCamera->SetCameraRot(cameraData.vRot);
-			m_pDefaultCamera->SetCameraTarget(cameraData.vScale);
+			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
+			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
+			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
 		}
 	}
 }

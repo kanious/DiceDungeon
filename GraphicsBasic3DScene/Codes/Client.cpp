@@ -5,8 +5,7 @@
 #include "Timer.h"
 #include "OpenGLDevice.h"
 #include "InputDevice.h"
-#include "SoundUIManager.h"
-#include "MapEditorUIManager.h"
+#include "UIManager.h"
 #include "ComponentMaster.h"
 #include "Camera.h"
 #include "Transform.h"
@@ -38,8 +37,7 @@ void Client::Destroy()
 	SafeDestroy(m_pGraphicDevice);
 	SafeDestroy(m_pGameMaster);
 
-	//SoundUIManager::GetInstance()->Destroy();
-	MapEditorUIManager::GetInstance()->Destroy();
+	SafeDestroy(UIManager::GetInstance());
 
 	delete this;
 }

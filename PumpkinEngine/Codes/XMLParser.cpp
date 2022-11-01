@@ -228,7 +228,7 @@ void CXMLParser::LoadSoundData(string path)
 	}
 }
 
-void CXMLParser::LoadMapObjectData(vector<sObjectData>& vec, sObjectData& cameraData, string path)
+void CXMLParser::LoadMapObjectData(string path, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	xml_document xmlData;
 	xml_parse_result result = xmlData.load_file(path.c_str());
@@ -254,50 +254,50 @@ void CXMLParser::LoadMapObjectData(vector<sObjectData>& vec, sObjectData& camera
 			if (isCamera)
 			{
 				if (!strcmp(childNode.name(), "EyePosX"))
-					cameraData.vPos.x = (_float)atof(childNode.child_value());
+					cameraData.POSITION.x = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "EyePosY"))
-					cameraData.vPos.y = (_float)atof(childNode.child_value());
+					cameraData.POSITION.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "EyePosZ"))
-					cameraData.vPos.z = (_float)atof(childNode.child_value());
+					cameraData.POSITION.z = (_float)atof(childNode.child_value());
 
 				if (!strcmp(childNode.name(), "EyeRotX"))
-					cameraData.vRot.x = (_float)atof(childNode.child_value());
+					cameraData.ROTATION.x = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "EyeRotY"))
-					cameraData.vRot.y = (_float)atof(childNode.child_value());
+					cameraData.ROTATION.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "EyeRotZ"))
-					cameraData.vRot.z = (_float)atof(childNode.child_value());
+					cameraData.ROTATION.z = (_float)atof(childNode.child_value());
 
 				if (!strcmp(childNode.name(), "TargetPosX"))
-					cameraData.vScale.x = (_float)atof(childNode.child_value());
+					cameraData.SCALE.x = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "TargetPosY"))
-					cameraData.vScale.y = (_float)atof(childNode.child_value());
+					cameraData.SCALE.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "TargetPosZ"))
-					cameraData.vScale.z = (_float)atof(childNode.child_value());
+					cameraData.SCALE.z = (_float)atof(childNode.child_value());
 			}
 			else
 			{
 				if (!strcmp(childNode.name(), "ID"))
 					data.ID = childNode.child_value();
 				if (!strcmp(childNode.name(), "PosX"))
-					data.vPos.x = (_float)atof(childNode.child_value());
+					data.POSITION.x = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "PosY"))
-					data.vPos.y = (_float)atof(childNode.child_value());
+					data.POSITION.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "PosZ"))
-					data.vPos.z = (_float)atof(childNode.child_value());
+					data.POSITION.z = (_float)atof(childNode.child_value());
 
 				if (!strcmp(childNode.name(), "RotX"))
-					data.vRot.x = (_float)atof(childNode.child_value());
+					data.ROTATION.x = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "RotY"))
-					data.vRot.y = (_float)atof(childNode.child_value());
+					data.ROTATION.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "RotZ"))
-					data.vRot.z = (_float)atof(childNode.child_value());
+					data.ROTATION.z = (_float)atof(childNode.child_value());
 
 				if (!strcmp(childNode.name(), "ScaleX"))
-					data.vScale.x = (_float)atof(childNode.child_value());
+					data.SCALE.x = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "ScaleY"))
-					data.vScale.y = (_float)atof(childNode.child_value());
+					data.SCALE.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "ScaleZ"))
-					data.vScale.z = (_float)atof(childNode.child_value());
+					data.SCALE.z = (_float)atof(childNode.child_value());
 			}
 		}
 		if (!isCamera)
@@ -305,10 +305,9 @@ void CXMLParser::LoadMapObjectData(vector<sObjectData>& vec, sObjectData& camera
 	}
 }
 
-void CXMLParser::SaveMapObjectData(vector<sObjectData>& vec, sObjectData& cameraData, string path)
+void CXMLParser::SaveMapObjectData(string path, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	xml_document xmlData;
-	//xml_node root = xmlData.document_element();
 
 	xml_node declareNode = xmlData.append_child(node_declaration);
 	declareNode.append_attribute("version") = "1.0";
@@ -320,25 +319,25 @@ void CXMLParser::SaveMapObjectData(vector<sObjectData>& vec, sObjectData& camera
 	nodeCamera.append_attribute("category") = "Camera";
 
 	xml_node childCameraex = nodeCamera.append_child("EyePosX");
-	childCameraex.append_child(node_pcdata).set_value(to_string(cameraData.vPos.x).c_str());
+	childCameraex.append_child(node_pcdata).set_value(to_string(cameraData.POSITION.x).c_str());
 	xml_node childCameraey = nodeCamera.append_child("EyePosY");
-	childCameraey.append_child(node_pcdata).set_value(to_string(cameraData.vPos.y).c_str());
+	childCameraey.append_child(node_pcdata).set_value(to_string(cameraData.POSITION.y).c_str());
 	xml_node childCameraez = nodeCamera.append_child("EyePosZ");
-	childCameraez.append_child(node_pcdata).set_value(to_string(cameraData.vPos.z).c_str());
+	childCameraez.append_child(node_pcdata).set_value(to_string(cameraData.POSITION.z).c_str());
 
 	xml_node childCamerarx = nodeCamera.append_child("EyeRotX");
-	childCamerarx.append_child(node_pcdata).set_value(to_string(cameraData.vRot.x).c_str());
+	childCamerarx.append_child(node_pcdata).set_value(to_string(cameraData.ROTATION.x).c_str());
 	xml_node childCamerary = nodeCamera.append_child("EyeRotY");
-	childCamerary.append_child(node_pcdata).set_value(to_string(cameraData.vRot.y).c_str());
+	childCamerary.append_child(node_pcdata).set_value(to_string(cameraData.ROTATION.y).c_str());
 	xml_node childCamerarz = nodeCamera.append_child("EyeRotZ");
-	childCamerarz.append_child(node_pcdata).set_value(to_string(cameraData.vRot.z).c_str());
+	childCamerarz.append_child(node_pcdata).set_value(to_string(cameraData.ROTATION.z).c_str());
 
 	xml_node childCameratx = nodeCamera.append_child("TargetPosX");
-	childCameratx.append_child(node_pcdata).set_value(to_string(cameraData.vScale.x).c_str());
+	childCameratx.append_child(node_pcdata).set_value(to_string(cameraData.SCALE.x).c_str());
 	xml_node childCameraty = nodeCamera.append_child("TargetPosY");
-	childCameraty.append_child(node_pcdata).set_value(to_string(cameraData.vScale.y).c_str());
+	childCameraty.append_child(node_pcdata).set_value(to_string(cameraData.SCALE.y).c_str());
 	xml_node childCameratz = nodeCamera.append_child("TargetPosZ");
-	childCameratz.append_child(node_pcdata).set_value(to_string(cameraData.vScale.z).c_str());
+	childCameratz.append_child(node_pcdata).set_value(to_string(cameraData.SCALE.z).c_str());
 
 	vector<sObjectData>::iterator iter;
 	for (iter = vec.begin(); iter != vec.end(); ++iter)
@@ -347,50 +346,185 @@ void CXMLParser::SaveMapObjectData(vector<sObjectData>& vec, sObjectData& camera
 		xml_node child = nodeChild.append_child("ID");
 		child.append_child(node_pcdata).set_value(iter->ID.c_str());
 		xml_node childpx = nodeChild.append_child("PosX");
-		childpx.append_child(node_pcdata).set_value(to_string(iter->vPos.x).c_str());
+		childpx.append_child(node_pcdata).set_value(to_string(iter->POSITION.x).c_str());
 		xml_node childpy = nodeChild.append_child("PosY");
-		childpy.append_child(node_pcdata).set_value(to_string(iter->vPos.y).c_str());
+		childpy.append_child(node_pcdata).set_value(to_string(iter->POSITION.y).c_str());
 		xml_node childpz = nodeChild.append_child("PosZ");
-		childpz.append_child(node_pcdata).set_value(to_string(iter->vPos.z).c_str());
+		childpz.append_child(node_pcdata).set_value(to_string(iter->POSITION.z).c_str());
 
 		xml_node childrx = nodeChild.append_child("RotX");
-		childrx.append_child(node_pcdata).set_value(to_string(iter->vRot.x).c_str());
+		childrx.append_child(node_pcdata).set_value(to_string(iter->ROTATION.x).c_str());
 		xml_node childry = nodeChild.append_child("RotY");
-		childry.append_child(node_pcdata).set_value(to_string(iter->vRot.y).c_str());
+		childry.append_child(node_pcdata).set_value(to_string(iter->ROTATION.y).c_str());
 		xml_node childrz = nodeChild.append_child("RotZ");
-		childrz.append_child(node_pcdata).set_value(to_string(iter->vRot.z).c_str());
+		childrz.append_child(node_pcdata).set_value(to_string(iter->ROTATION.z).c_str());
 
 		xml_node childsx = nodeChild.append_child("ScaleX");
-		childsx.append_child(node_pcdata).set_value(to_string(iter->vScale.x).c_str());
+		childsx.append_child(node_pcdata).set_value(to_string(iter->SCALE.x).c_str());
 		xml_node childsy = nodeChild.append_child("ScaleY");
-		childsy.append_child(node_pcdata).set_value(to_string(iter->vScale.y).c_str());
+		childsy.append_child(node_pcdata).set_value(to_string(iter->SCALE.y).c_str());
 		xml_node childsz = nodeChild.append_child("ScaleZ");
-		childsz.append_child(node_pcdata).set_value(to_string(iter->vScale.z).c_str());
+		childsz.append_child(node_pcdata).set_value(to_string(iter->SCALE.z).c_str());
 	}
 
 	_bool result = xmlData.save_file(path.c_str());
+}
 
+void CXMLParser::LoadLightData(std::string path, std::vector<sLightData>& vec)
+{
+	xml_document xmlData;
+	xml_parse_result result = xmlData.load_file(path.c_str());
+	if (!result)
+		return;
 
+	xml_object_range<xml_node_iterator> list = xmlData.child("Light_Data").children();
+	if (list.empty())
+		return;
 
-	//pugi::xml_document doc;
+	xml_node_iterator iter;
+	for (iter = list.begin(); iter != list.end(); ++iter)
+	{
+		xml_node node = *iter;
+		xml_node_iterator childIter;
 
-	//pugi::xml_node root = doc.document_element();
+		sLightData data;
+		for (childIter = node.children().begin(); childIter != node.children().end(); ++childIter)
+		{
+			xml_node childNode = *childIter;
+			if (!strcmp(childNode.name(), "Name")) data.NAME = childNode.child_value();
 
-	//auto declarationNode = doc.append_child(pugi::node_declaration);
-	//declarationNode.append_attribute("version") = "1.0";
-	//declarationNode.append_attribute("encoding") = "UTF-8";
-	//declarationNode.append_attribute("standalone") = "yes";
+			if (!strcmp(childNode.name(), "PosX")) data.POSITION.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "PosY")) data.POSITION.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "PosZ")) data.POSITION.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "PosW")) data.POSITION.w = (_float)atof(childNode.child_value());
 
+			if (!strcmp(childNode.name(), "DirX")) data.DIRECTION.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "DirY")) data.DIRECTION.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "DirZ")) data.DIRECTION.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "DirW")) data.DIRECTION.w = (_float)atof(childNode.child_value());
 
-	//pugi::xml_node  element = doc.append_child("file");
+			if (!strcmp(childNode.name(), "DiffuseX")) data.DIFFUSE.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "DiffuseY")) data.DIFFUSE.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "DiffuseZ")) data.DIFFUSE.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "DiffuseW")) data.DIFFUSE.w = (_float)atof(childNode.child_value());
 
-	//pugi::xml_node nodeChild = element.append_child("Hello");
+			if (!strcmp(childNode.name(), "SpecularX")) data.SPECULAR.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "SpecularY")) data.SPECULAR.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "SpecularZ")) data.SPECULAR.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "SpecularW")) data.SPECULAR.w = (_float)atof(childNode.child_value());
 
-	//nodeChild.append_child(pugi::node_pcdata).set_value("World");
+			if (!strcmp(childNode.name(), "AmbientX")) data.AMBIENT.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "AmbientY")) data.AMBIENT.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "AmbientZ")) data.AMBIENT.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "AmbientW")) data.AMBIENT.w = (_float)atof(childNode.child_value());
 
-	//pugi::xml_node nodeChild1 = element.append_child("Happy");
+			if (!strcmp(childNode.name(), "AttenX")) data.ATTEN.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "AttenY")) data.ATTEN.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "AttenZ")) data.ATTEN.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "AttenW")) data.ATTEN.w = (_float)atof(childNode.child_value());
 
-	//nodeChild1.append_child(pugi::node_pcdata).set_value("India");
+			if (!strcmp(childNode.name(), "Param1X")) data.PARAM1.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "Param1Y")) data.PARAM1.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "Param1Z")) data.PARAM1.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "Param1W")) data.PARAM1.w = (_float)atof(childNode.child_value());
 
-	//bool saveSucceeded = doc.save_file("Demo.xml");
+			if (!strcmp(childNode.name(), "Param2X")) data.PARAM2.x = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "Param2Y")) data.PARAM2.y = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "Param2Z")) data.PARAM2.z = (_float)atof(childNode.child_value());
+			if (!strcmp(childNode.name(), "Param2W")) data.PARAM2.w = (_float)atof(childNode.child_value());
+		}
+		vec.push_back(data);
+	}
+}
+
+void CXMLParser::SaveLightData(std::string path, std::vector<sLightData>& vec)
+{
+	xml_document xmlData;
+
+	xml_node declareNode = xmlData.append_child(node_declaration);
+	declareNode.append_attribute("version") = "1.0";
+	declareNode.append_attribute("encoding") = "UTF-8";
+
+	xml_node element = xmlData.append_child("Light_Data");
+
+	vector<sLightData>::iterator iter;
+	for (iter = vec.begin(); iter != vec.end(); ++iter)
+	{
+		xml_node nodeChild = element.append_child("Lights");
+		xml_node child = nodeChild.append_child("Name");
+		child.append_child(node_pcdata).set_value(iter->NAME.c_str());
+		xml_node childpx = nodeChild.append_child("PosX");
+		childpx.append_child(node_pcdata).set_value(to_string(iter->POSITION.x).c_str());
+		xml_node childpy = nodeChild.append_child("PosY");
+		childpy.append_child(node_pcdata).set_value(to_string(iter->POSITION.y).c_str());
+		xml_node childpz = nodeChild.append_child("PosZ");
+		childpz.append_child(node_pcdata).set_value(to_string(iter->POSITION.z).c_str());
+		xml_node childpw = nodeChild.append_child("PosW");
+		childpw.append_child(node_pcdata).set_value(to_string(iter->POSITION.w).c_str());
+
+		xml_node childdx = nodeChild.append_child("DirX");
+		childdx.append_child(node_pcdata).set_value(to_string(iter->DIRECTION.x).c_str());
+		xml_node childdy = nodeChild.append_child("DirY");
+		childdy.append_child(node_pcdata).set_value(to_string(iter->DIRECTION.y).c_str());
+		xml_node childdz = nodeChild.append_child("DirZ");
+		childdz.append_child(node_pcdata).set_value(to_string(iter->DIRECTION.z).c_str());
+		xml_node childdw = nodeChild.append_child("DirW");
+		childdw.append_child(node_pcdata).set_value(to_string(iter->DIRECTION.w).c_str());
+
+		xml_node childdfx = nodeChild.append_child("DiffuseX");
+		childdfx.append_child(node_pcdata).set_value(to_string(iter->DIFFUSE.x).c_str());
+		xml_node childdfy = nodeChild.append_child("DiffuseY");
+		childdfy.append_child(node_pcdata).set_value(to_string(iter->DIFFUSE.y).c_str());
+		xml_node childdfz = nodeChild.append_child("DiffuseZ");
+		childdfz.append_child(node_pcdata).set_value(to_string(iter->DIFFUSE.z).c_str());
+		xml_node childdfw = nodeChild.append_child("DiffuseW");
+		childdfw.append_child(node_pcdata).set_value(to_string(iter->DIFFUSE.w).c_str());
+
+		xml_node childsx = nodeChild.append_child("SpecularX");
+		childsx.append_child(node_pcdata).set_value(to_string(iter->SPECULAR.x).c_str());
+		xml_node childsy = nodeChild.append_child("SpecularY");
+		childsy.append_child(node_pcdata).set_value(to_string(iter->SPECULAR.y).c_str());
+		xml_node childsz = nodeChild.append_child("SpecularZ");
+		childsz.append_child(node_pcdata).set_value(to_string(iter->SPECULAR.z).c_str());
+		xml_node childsw = nodeChild.append_child("SpecularW");
+		childsw.append_child(node_pcdata).set_value(to_string(iter->SPECULAR.w).c_str());
+
+		xml_node childax = nodeChild.append_child("AmbientX");
+		childax.append_child(node_pcdata).set_value(to_string(iter->AMBIENT.x).c_str());
+		xml_node childay = nodeChild.append_child("AmbientY");
+		childay.append_child(node_pcdata).set_value(to_string(iter->AMBIENT.y).c_str());
+		xml_node childaz = nodeChild.append_child("AmbientZ");
+		childaz.append_child(node_pcdata).set_value(to_string(iter->AMBIENT.z).c_str());
+		xml_node childaw = nodeChild.append_child("AmbientW");
+		childaw.append_child(node_pcdata).set_value(to_string(iter->AMBIENT.w).c_str());
+
+		xml_node childatx = nodeChild.append_child("AttenX");
+		childatx.append_child(node_pcdata).set_value(to_string(iter->ATTEN.x).c_str());
+		xml_node childaty = nodeChild.append_child("AttenY");
+		childaty.append_child(node_pcdata).set_value(to_string(iter->ATTEN.y).c_str());
+		xml_node childatz = nodeChild.append_child("AttenZ");
+		childatz.append_child(node_pcdata).set_value(to_string(iter->ATTEN.z).c_str());
+		xml_node childatw = nodeChild.append_child("AttenW");
+		childatw.append_child(node_pcdata).set_value(to_string(iter->ATTEN.w).c_str());
+
+		xml_node childp1x = nodeChild.append_child("Param1X");
+		childp1x.append_child(node_pcdata).set_value(to_string(iter->PARAM1.x).c_str());
+		xml_node childp1y = nodeChild.append_child("Param1Y");
+		childp1y.append_child(node_pcdata).set_value(to_string(iter->PARAM1.y).c_str());
+		xml_node childp1z = nodeChild.append_child("Param1Z");
+		childp1z.append_child(node_pcdata).set_value(to_string(iter->PARAM1.z).c_str());
+		xml_node childp1w = nodeChild.append_child("Param1W");
+		childp1w.append_child(node_pcdata).set_value(to_string(iter->PARAM1.w).c_str());
+
+		xml_node childp2x = nodeChild.append_child("Param2X");
+		childp2x.append_child(node_pcdata).set_value(to_string(iter->PARAM2.x).c_str());
+		xml_node childp2y = nodeChild.append_child("Param2Y");
+		childp2y.append_child(node_pcdata).set_value(to_string(iter->PARAM2.y).c_str());
+		xml_node childp2z = nodeChild.append_child("Param2Z");
+		childp2z.append_child(node_pcdata).set_value(to_string(iter->PARAM2.z).c_str());
+		xml_node childp2w = nodeChild.append_child("Param2W");
+		childp2w.append_child(node_pcdata).set_value(to_string(iter->PARAM2.w).c_str());
+	}
+
+	_bool result = xmlData.save_file(path.c_str());
 }

@@ -56,14 +56,14 @@ void CMesh::Render()
 {
     if (nullptr == m_pParentTransform || nullptr == m_pShader)
         return;
-
+    
     mat4x4 matWorld = *m_pParentTransform->GetWorldMatrix();
     const mat4x4 matView = m_pOpenGLDevice->GetViewMatrix();
     const mat4x4 matProj = m_pOpenGLDevice->GetProjMatrix();
     m_pShader->SetMatrixInfo(matWorld, matView, matProj);
     m_pShader->SetLightEnableInfo(!m_bWireFrame);
     m_pShader->SetSelected(m_bSelected);
-    //m_pShader->SetTextureInfo();
+    m_pShader->SetTextureInfo();
 
     if (nullptr != m_pDiffTexture)
     {
@@ -77,7 +77,7 @@ void CMesh::Render()
         m_pVIBuffer->Render();
     }
 
-    if (nullptr != m_pBoundingBox_AABB)
+    if (m_bDebug && nullptr != m_pBoundingBox_AABB)
         m_pBoundingBox_AABB->Render();
 }
 
@@ -128,6 +128,9 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type,
 
     Ready_Texture_Diff(texID_Diff);
     Ready_Shader(shaderID);
+
+    if (nullptr != m_pShader)
+        m_pShader->SetTextureInfo();
 
 	return PK_NOERROR;
 }

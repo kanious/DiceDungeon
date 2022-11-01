@@ -17,6 +17,7 @@ USING(std)
 BGObject::BGObject()
 	: m_pMesh(nullptr)
 {
+	//m_bDebug = false;
 }
 
 BGObject::~BGObject()
@@ -49,10 +50,10 @@ void BGObject::Update(const _float& dt)
 			m_pRenderer->AddRenderObj(this);
 
 		if (nullptr != m_pMesh)
+		{
 			m_pMesh->SetWireFrame(m_bWireFrame);
-		
-		if (nullptr != m_pBoundingBox_AABB)
-			m_pBoundingBox_AABB->SetEnable(m_bDebug);
+			m_pMesh->SetDebugBox(m_bDebug);
+		}
 	}
 }
 

@@ -42,6 +42,7 @@ public:
 
 private:
     cLightInfo*         m_pInfo;
+    _uint               m_ShaderProgram;
     _uint               m_shaderLocation[8];
 
 private:
@@ -64,7 +65,10 @@ public:
     void SetLightType(eLightType type);
     void SetInnerAngle(_float value);
     void SetOuterAngle(_float value);
+    void SetShaderProgram(_uint shaderID)       { m_ShaderProgram = shaderID; }
     void TurnOnOff(_bool onoff);
+public:
+    void ResetLightInfo();
 
 private:
     RESULT Ready(cLightInfo* pInfo);

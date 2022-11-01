@@ -1,7 +1,7 @@
 #ifndef _MAPEDITORUIMANAGER_H_
 #define _MAPEDITORUIMANAGER_H_
 
-#include "EngineDefines.h"
+#include "Base.h"
 
 namespace Engine
 {
@@ -12,9 +12,8 @@ namespace Engine
 
 class BGObject;
 
-class MapEditorUIManager
+class MapEditorUIManager : public Engine::CBase
 {
-	SINGLETON(MapEditorUIManager)
 private:
 	class MeshInfo
 	{
@@ -36,6 +35,7 @@ private:
 
 	//For.Target_Light_Setting
 	Engine::CLight*					m_pTargetLight;
+	char							m_chLightName[128];
 	char							m_chLightPos[4][128];
 	char							m_chLightDir[4][128];
 	char							m_chLightDiff[4][128];
@@ -67,9 +67,13 @@ public:
 	RESULT Ready(Engine::CScene* pScene, BGObject** ppTarget, Engine::CLayer** ppLayer);
 
 private:
+	//Objects
 	void RenderSceneDetailUI();
-	void RenderTargetDetailUI();
-	void RenderObjectList();
+	void RenderObjectTargetDetailUI();
+	void RenderObjectList(_float screenX, _float screenY);
+	//Lights
+	void RenderLightDetailUI();
+	void RenderLightTargetDetailUI();
 	void RenderLightList();
 private:
 	void RenderMeshList();
@@ -77,6 +81,11 @@ private:
 	void ConvertFloatToCharArray(char* src, _float value);
 	void ObjListSave();
 	void ObjListLoad();
+	void LightListSave();
+	void LightListLoad();
+
+public:
+	static MapEditorUIManager* Create();
 };
 
 #endif //_MAPEDITORUIMANAGER_H_

@@ -147,6 +147,7 @@
     <ClCompile Include="Codes\SceneForest.cpp" />
     <ClCompile Include="Codes\SoundUIManager.cpp" />
     <ClCompile Include="Codes\BGObject.cpp" />
+    <ClCompile Include="Codes\UIManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Codes\SceneForest.h" />
     <ClInclude Include="Codes\SoundUIManager.h" />
     <ClInclude Include="Codes\BGObject.h" />
+    <ClInclude Include="Codes\UIManager.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_glfw.h" />
