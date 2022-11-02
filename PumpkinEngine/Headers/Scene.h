@@ -46,8 +46,8 @@ public:
 	void SetSceneTag(_uint sceneTag);
 	void SetDataPath(std::string path)				{ m_DataPath = path; }
 	void SetSoundDataFileName(std::string name)		{ m_SoundDataFileName = name; }
-	void SetShaderDataFileName(std::string name) { m_ShaderDataFileName = name; }
-	void SetTextureDataFileName(std::string name) { m_TextureDataFileName = name; }
+	void SetShaderDataFileName(std::string name)	{ m_ShaderDataFileName = name; }
+	void SetTextureDataFileName(std::string name)	{ m_TextureDataFileName = name; }
 	void SetMeshDataFileName(std::string name)		{ m_MeshDataFileName = name; }
 	void SetObjListFileName(std::string name)		{ m_ObjListFileName = name; }
 	void SetLightListFileName(std::string name)		{ m_LightListFileName = name; }

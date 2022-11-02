@@ -1,5 +1,5 @@
-#ifndef _MAPEDITORUIMANAGER_H_
-#define _MAPEDITORUIMANAGER_H_
+#ifndef _MAPEDITORUI_H_
+#define _MAPEDITORUI_H_
 
 #include "Base.h"
 
@@ -8,11 +8,15 @@ namespace Engine
 	class CScene;
 	class CLayer;
 	class CLight;
+	class CInputDevice;
 }
 
+class UIManager;
+class DefaultCamera;
 class BGObject;
+class PumpkinString;
 
-class MapEditorUIManager : public Engine::CBase
+class MapEditorUI : public Engine::CBase
 {
 private:
 	class MeshInfo
@@ -23,15 +27,20 @@ private:
 	};
 
 private:
+	UIManager*						m_pUIManager;
 	std::vector<MeshInfo>			m_vecMeshInfo;
 	Engine::CScene*					m_pScene;
-	Engine::CLayer**				m_ppBGLayer;
-	BGObject**						m_ppTargetObject;
+	Engine::CLayer*					m_pBGLayer;
+	DefaultCamera*					m_pDefaultCamera;
+	BGObject*						m_pTargetObject;
+	Engine::CInputDevice*			m_pInputDevice;
+	PumpkinString*					m_pString;
 
 	//For.Target_Obj_Detail_Setting
 	char							m_chPos[3][128];
 	char							m_chRot[3][128];
 	char							m_chScale[3][128];
+	char							m_chSound[128];
 
 	//For.Target_Light_Setting
 	Engine::CLight*					m_pTargetLight;
@@ -55,16 +64,17 @@ private:
 	_bool							m_isPreviousZeroWire;
 	_bool							m_isZeroWire;
 
-public:
-	_bool GetCursorIsOnTheUI();
-
 private:
-	explicit MapEditorUIManager();
-	~MapEditorUIManager();
+	explicit MapEditorUI();
+	~MapEditorUI();
 public:
 	void Destroy();
+	void Update(const _float& dt);
 	void RenderUI();
-	RESULT Ready(Engine::CScene* pScene, BGObject** ppTarget, Engine::CLayer** ppLayer);
+	RESULT Ready(Engine::CScene* pScene);
+
+public:
+	void KeyCheck(const _float& dt);
 
 private:
 	//Objects
@@ -85,7 +95,7 @@ private:
 	void LightListLoad();
 
 public:
-	static MapEditorUIManager* Create();
+	static MapEditorUI* Create(Engine::CScene* pScene);
 };
 
-#endif //_MAPEDITORUIMANAGER_H_
+#endif //_MAPEDITORUI_H_

@@ -43,8 +43,8 @@ public:
 	RESULT LoadSound(std::string tag, std::string path, std::string channelTag, _int mode);
 	RESULT CreateChannelGroup(std::string tag);
 	void PlayBGMSound();
-	void PlaySampleSound(std::string tag);
-	void StopSampleSound(std::string tag);
+	void PlaySound(std::string tag);
+	void StopSound(std::string tag);
 	RESULT CreateDSPEffect(std::string name, FMOD_DSP_TYPE type);
 	RESULT AddDSPEffect(std::string channelTag, std::string dspName);
 

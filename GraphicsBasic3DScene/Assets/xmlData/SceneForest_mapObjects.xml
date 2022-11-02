@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Object_Data>
 	<Objects category="Camera">
-		<EyePosX>21.780003</EyePosX>
-		<EyePosY>71.047127</EyePosY>
-		<EyePosZ>-74.471970</EyePosZ>
-		<EyeRotX>31.399345</EyeRotX>
-		<EyeRotY>332.493774</EyeRotY>
+		<EyePosX>59.337887</EyePosX>
+		<EyePosY>114.234955</EyePosY>
+		<EyePosZ>-44.865780</EyePosZ>
+		<EyeRotX>43.049274</EyeRotX>
+		<EyeRotY>305.143280</EyeRotY>
 		<EyeRotZ>0.000000</EyeRotZ>
-		<TargetPosX>21.385792</TargetPosX>
-		<TargetPosY>70.526123</TargetPosY>
-		<TargetPosZ>-73.714897</TargetPosZ>
+		<TargetPosX>58.740326</TargetPosX>
+		<TargetPosY>113.552330</TargetPosY>
+		<TargetPosZ>-44.445133</TargetPosZ>
 	</Objects>
 	<Objects>
 		<ID>pumpkin</ID>
 		<PosX>-11.265400</PosX>
-		<PosY>0.000000</PosY>
+		<PosY>-1.583400</PosY>
 		<PosZ>-3.886990</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>191.675995</RotY>
@@ -22,11 +22,13 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.050000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>sol</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>pumpkin</ID>
 		<PosX>-5.960120</PosX>
-		<PosY>0.000000</PosY>
+		<PosY>-1.541730</PosY>
 		<PosZ>-2.016910</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>105.817001</RotY>
@@ -34,6 +36,8 @@
 		<ScaleX>0.040000</ScaleX>
 		<ScaleY>0.040000</ScaleY>
 		<ScaleZ>0.040000</ScaleZ>
+		<EffectSound>sol</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Streetlight</ID>
@@ -46,6 +50,8 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.050000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>hit</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Streetlight_holder</ID>
@@ -58,11 +64,13 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.050000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>hit</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>pumpkin</ID>
 		<PosX>-7.818550</PosX>
-		<PosY>0.000000</PosY>
+		<PosY>-1.916770</PosY>
 		<PosZ>-5.573170</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>159.987000</RotY>
@@ -70,11 +78,13 @@
 		<ScaleX>0.030000</ScaleX>
 		<ScaleY>0.030000</ScaleY>
 		<ScaleZ>0.030000</ScaleZ>
+		<EffectSound>sol</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>tank</ID>
 		<PosX>-10.085900</PosX>
-		<PosY>3.625180</PosY>
+		<PosY>1.750030</PosY>
 		<PosZ>-4.305950</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>133.330002</RotY>
@@ -82,6 +92,8 @@
 		<ScaleX>0.300000</ScaleX>
 		<ScaleY>0.300000</ScaleY>
 		<ScaleZ>0.300000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Ground_02</ID>
@@ -94,11 +106,13 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>1</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
 		<PosX>-4.602110</PosX>
-		<PosY>0.000000</PosY>
+		<PosY>-0.833352</PosY>
 		<PosZ>16.609501</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>0.000000</RotY>
@@ -106,11 +120,13 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>7.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_03</ID>
 		<PosX>-31.307301</PosX>
-		<PosY>0.000000</PosY>
+		<PosY>0.291670</PosY>
 		<PosZ>18.784500</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>322.497986</RotY>
@@ -118,6 +134,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_01</ID>
@@ -130,6 +148,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>7.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_02</ID>
@@ -142,6 +162,8 @@
 		<ScaleX>12.000000</ScaleX>
 		<ScaleY>12.000000</ScaleY>
 		<ScaleZ>12.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_01</ID>
@@ -154,6 +176,8 @@
 		<ScaleX>9.000000</ScaleX>
 		<ScaleY>9.000000</ScaleY>
 		<ScaleZ>9.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_01</ID>
@@ -166,6 +190,8 @@
 		<ScaleX>9.000000</ScaleX>
 		<ScaleY>9.000000</ScaleY>
 		<ScaleZ>9.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_02</ID>
@@ -178,6 +204,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_01</ID>
@@ -190,6 +218,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_04</ID>
@@ -202,6 +232,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_05</ID>
@@ -214,6 +246,8 @@
 		<ScaleX>0.040000</ScaleX>
 		<ScaleY>0.040000</ScaleY>
 		<ScaleZ>0.040000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_02</ID>
@@ -226,6 +260,8 @@
 		<ScaleX>13.000000</ScaleX>
 		<ScaleY>13.000000</ScaleY>
 		<ScaleZ>13.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_02</ID>
@@ -238,6 +274,8 @@
 		<ScaleX>9.000000</ScaleX>
 		<ScaleY>9.000000</ScaleY>
 		<ScaleZ>9.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_02</ID>
@@ -250,6 +288,8 @@
 		<ScaleX>15.000000</ScaleX>
 		<ScaleY>15.000000</ScaleY>
 		<ScaleZ>15.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Flowers_01</ID>
@@ -262,6 +302,8 @@
 		<ScaleX>0.100000</ScaleX>
 		<ScaleY>0.100000</ScaleY>
 		<ScaleZ>0.100000</ScaleZ>
+		<EffectSound>ra</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Flowers_02</ID>
@@ -274,6 +316,8 @@
 		<ScaleX>0.120000</ScaleX>
 		<ScaleY>0.120000</ScaleY>
 		<ScaleZ>0.120000</ScaleZ>
+		<EffectSound>ra</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_01</ID>
@@ -286,6 +330,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>8.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_02</ID>
@@ -298,11 +344,13 @@
 		<ScaleX>8.000000</ScaleX>
 		<ScaleY>8.000000</ScaleY>
 		<ScaleZ>8.000000</ScaleZ>
+		<EffectSound>fa</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_03</ID>
 		<PosX>-23.158199</PosX>
-		<PosY>0.875017</PosY>
+		<PosY>0.791679</PosY>
 		<PosZ>-9.119510</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>355.834015</RotY>
@@ -310,6 +358,8 @@
 		<ScaleX>0.040000</ScaleX>
 		<ScaleY>0.100000</ScaleY>
 		<ScaleZ>0.040000</ScaleZ>
+		<EffectSound>do_up</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Branch_01</ID>
@@ -322,6 +372,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>mi</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Branch_01</ID>
@@ -334,6 +386,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>mi</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Branch_01</ID>
@@ -346,6 +400,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>mi</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_05</ID>
@@ -358,6 +414,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_05</ID>
@@ -370,6 +428,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_03</ID>
@@ -382,6 +442,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>6.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -394,6 +456,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>4.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -406,6 +470,8 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>5.000000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -418,6 +484,8 @@
 		<ScaleX>6.000000</ScaleX>
 		<ScaleY>6.000000</ScaleY>
 		<ScaleZ>6.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -430,6 +498,8 @@
 		<ScaleX>6.000000</ScaleX>
 		<ScaleY>6.000000</ScaleY>
 		<ScaleZ>6.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -442,6 +512,8 @@
 		<ScaleX>6.000000</ScaleX>
 		<ScaleY>6.000000</ScaleY>
 		<ScaleZ>6.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_05</ID>
@@ -454,6 +526,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>7.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_05</ID>
@@ -466,11 +540,13 @@
 		<ScaleX>8.000000</ScaleX>
 		<ScaleY>8.000000</ScaleY>
 		<ScaleZ>8.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_04</ID>
 		<PosX>-44.306599</PosX>
-		<PosY>8.625790</PosY>
+		<PosY>7.417160</PosY>
 		<PosZ>54.111198</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>126.073997</RotY>
@@ -478,6 +554,8 @@
 		<ScaleX>0.100000</ScaleX>
 		<ScaleY>0.100000</ScaleY>
 		<ScaleZ>0.100000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -490,6 +568,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>7.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -502,11 +582,13 @@
 		<ScaleX>4.000000</ScaleX>
 		<ScaleY>4.000000</ScaleY>
 		<ScaleZ>4.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_03</ID>
 		<PosX>5.707670</PosX>
-		<PosY>0.166738</PosY>
+		<PosY>0.000000</PosY>
 		<PosZ>21.352800</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>154.175995</RotY>
@@ -514,6 +596,8 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.150000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>do_up</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_01</ID>
@@ -526,6 +610,8 @@
 		<ScaleX>8.000000</ScaleX>
 		<ScaleY>8.000000</ScaleY>
 		<ScaleZ>8.000000</ScaleZ>
+		<EffectSound>fa</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_02</ID>
@@ -538,6 +624,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>7.000000</ScaleZ>
+		<EffectSound>fa</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
@@ -550,6 +638,8 @@
 		<ScaleX>7.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>7.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_05</ID>
@@ -562,6 +652,8 @@
 		<ScaleX>4.000000</ScaleX>
 		<ScaleY>4.000000</ScaleY>
 		<ScaleZ>4.000000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_05</ID>
@@ -574,6 +666,8 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.050000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_01</ID>
@@ -586,6 +680,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_02</ID>
@@ -598,6 +694,8 @@
 		<ScaleX>15.000000</ScaleX>
 		<ScaleY>15.000000</ScaleY>
 		<ScaleZ>15.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Flowers_02</ID>
@@ -610,6 +708,8 @@
 		<ScaleX>0.100000</ScaleX>
 		<ScaleY>0.100000</ScaleY>
 		<ScaleZ>0.100000</ScaleZ>
+		<EffectSound>ra</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Flowers_01</ID>
@@ -622,6 +722,8 @@
 		<ScaleX>0.100000</ScaleX>
 		<ScaleY>0.100000</ScaleY>
 		<ScaleZ>0.100000</ScaleZ>
+		<EffectSound>ra</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_01</ID>
@@ -634,6 +736,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_02</ID>
@@ -646,6 +750,8 @@
 		<ScaleX>15.000000</ScaleX>
 		<ScaleY>15.000000</ScaleY>
 		<ScaleZ>15.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_02</ID>
@@ -658,6 +764,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Mushroom_02</ID>
@@ -670,6 +778,8 @@
 		<ScaleX>20.000000</ScaleX>
 		<ScaleY>20.000000</ScaleY>
 		<ScaleZ>20.000000</ScaleZ>
+		<EffectSound>ti</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Flowers_01</ID>
@@ -682,6 +792,8 @@
 		<ScaleX>0.150000</ScaleX>
 		<ScaleY>0.150000</ScaleY>
 		<ScaleZ>0.150000</ScaleZ>
+		<EffectSound>ra</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Flowers_02</ID>
@@ -694,6 +806,8 @@
 		<ScaleX>0.150000</ScaleX>
 		<ScaleY>0.150000</ScaleY>
 		<ScaleZ>0.150000</ScaleZ>
+		<EffectSound>ra</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_04</ID>
@@ -706,6 +820,8 @@
 		<ScaleX>3.000000</ScaleX>
 		<ScaleY>3.000000</ScaleY>
 		<ScaleZ>3.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_05</ID>
@@ -718,6 +834,8 @@
 		<ScaleX>0.030000</ScaleX>
 		<ScaleY>0.030000</ScaleY>
 		<ScaleZ>0.030000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_05</ID>
@@ -730,6 +848,8 @@
 		<ScaleX>0.040000</ScaleX>
 		<ScaleY>0.040000</ScaleY>
 		<ScaleZ>0.040000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_02</ID>
@@ -742,6 +862,8 @@
 		<ScaleX>25.000000</ScaleX>
 		<ScaleY>25.000000</ScaleY>
 		<ScaleZ>25.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_02</ID>
@@ -754,6 +876,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Streetlight_holder</ID>
@@ -766,6 +890,8 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.050000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>hit</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Streetlight</ID>
@@ -778,6 +904,8 @@
 		<ScaleX>0.050000</ScaleX>
 		<ScaleY>0.050000</ScaleY>
 		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>hit</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_02</ID>
@@ -790,6 +918,8 @@
 		<ScaleX>15.000000</ScaleX>
 		<ScaleY>15.000000</ScaleY>
 		<ScaleZ>15.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Grass_01</ID>
@@ -802,6 +932,8 @@
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>10.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound></EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Stump_01</ID>
@@ -809,23 +941,27 @@
 		<PosY>2.000590</PosY>
 		<PosZ>-11.569300</PosZ>
 		<RotX>0.000000</RotX>
-		<RotY>80.812401</RotY>
+		<RotY>105.814003</RotY>
 		<RotZ>0.000000</RotZ>
 		<ScaleX>10.000000</ScaleX>
 		<ScaleY>7.000000</ScaleY>
 		<ScaleZ>10.000000</ScaleZ>
+		<EffectSound>mi</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Tree_02</ID>
-		<PosX>7.647140</PosX>
+		<PosX>10.347700</PosX>
 		<PosY>-2.458470</PosY>
-		<PosZ>2.479820</PosZ>
+		<PosZ>6.162250</PosZ>
 		<RotX>0.000000</RotX>
 		<RotY>45.834202</RotY>
 		<RotZ>0.000000</RotZ>
 		<ScaleX>3.500000</ScaleX>
 		<ScaleY>3.500000</ScaleY>
 		<ScaleZ>3.500000</ScaleZ>
+		<EffectSound>do</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Rock_01</ID>
@@ -838,6 +974,8 @@
 		<ScaleX>2.000000</ScaleX>
 		<ScaleY>2.000000</ScaleY>
 		<ScaleZ>2.000000</ScaleZ>
+		<EffectSound>re</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 	<Objects>
 		<ID>Bush_01</ID>
@@ -850,5 +988,35 @@
 		<ScaleX>5.000000</ScaleX>
 		<ScaleY>2.500000</ScaleY>
 		<ScaleZ>5.000000</ScaleZ>
+		<EffectSound>fa</EffectSound>
+		<Lock>0</Lock>
+	</Objects>
+	<Objects>
+		<ID>pumpkin</ID>
+		<PosX>-0.471077</PosX>
+		<PosY>3.916930</PosY>
+		<PosZ>49.109901</PosZ>
+		<RotX>0.000000</RotX>
+		<RotY>159.983994</RotY>
+		<RotZ>0.000000</RotZ>
+		<ScaleX>0.050000</ScaleX>
+		<ScaleY>0.050000</ScaleY>
+		<ScaleZ>0.050000</ScaleZ>
+		<EffectSound>sol</EffectSound>
+		<Lock>0</Lock>
+	</Objects>
+	<Objects>
+		<ID>pumpkin</ID>
+		<PosX>-87.727798</PosX>
+		<PosY>2.041770</PosY>
+		<PosZ>36.247501</PosZ>
+		<RotX>0.000000</RotX>
+		<RotY>184.983994</RotY>
+		<RotZ>0.000000</RotZ>
+		<ScaleX>0.070000</ScaleX>
+		<ScaleY>0.070000</ScaleY>
+		<ScaleZ>0.070000</ScaleZ>
+		<EffectSound>sol</EffectSound>
+		<Lock>0</Lock>
 	</Objects>
 </Object_Data>

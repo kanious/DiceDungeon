@@ -42,6 +42,8 @@ class ENGINE_API CXMLParser : public CBase
 		glm::vec3 POSITION;
 		glm::vec3 ROTATION;
 		glm::vec3 SCALE;
+		std::string SOUNDTAG;
+		_bool LOCK;
 	};
 
 	struct sLightData
@@ -72,7 +74,7 @@ public:
 	void SaveMapObjectData(std::string path, std::vector<sObjectData>& vec, sObjectData& cameraData);
 	void LoadLightData(std::string path, std::vector<sLightData>& vec);
 	void SaveLightData(std::string path, std::vector<sLightData>& vec);
-
+	void LoadLanguageData(std::string path, std::unordered_map<std::string, std::string>& map);
 };
 
 NAMESPACE_END

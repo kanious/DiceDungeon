@@ -34,7 +34,7 @@ public:
 	void SetViewMatrix(glm::mat4x4 matView);
 	void SetProjMatrix(glm::mat4x4 matProj);
 public:
-	RESULT CreateOpenGLWindow(_int width, _int height, const char* title);
+	RESULT CreateOpenGLWindow(_int width, _int height, const char* title, _bool fullscreen, _bool borderedWindow);
 private:
 	void TerminateOpenGLWindow();
 

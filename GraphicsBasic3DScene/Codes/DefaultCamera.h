@@ -33,6 +33,7 @@ public:
 	glm::vec3 GetCameraRot();
 	glm::vec3 GetCameraTarget();
 	_uint GetShaderLocation(_uint shaderID)		{ return m_shaderLocation; }
+	void SetMouseEnable(_bool enable);
 	void SetCameraEye(glm::vec3 eye);
 	void SetCameraRot(glm::vec3 rot);
 	void SetCameraTarget(glm::vec3 target);

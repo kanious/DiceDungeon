@@ -6,6 +6,7 @@
 #include "OpenGLDevice.h"
 #include "InputDevice.h"
 #include "UIManager.h"
+#include "PumpkinString.h"
 #include "ComponentMaster.h"
 #include "Camera.h"
 #include "Transform.h"
@@ -38,6 +39,7 @@ void Client::Destroy()
 	SafeDestroy(m_pGameMaster);
 
 	SafeDestroy(UIManager::GetInstance());
+	SafeDestroy(PumpkinString::GetInstance());
 
 	delete this;
 }
@@ -55,46 +57,14 @@ void Client::Loop()
 		if (glfwWindowShouldClose(COpenGLDevice::GetInstance()->GetWindow()))
 			break;
 
-		if (m_pInputDevice->IsKeyDown(GLFW_KEY_ESCAPE))
-		{
+		if (m_pGameMaster->GetGameClose())
 			break;
-		}
-
-		// TO DO : 모델 배치하고 나서 해상도 확인해보기
-		//static bool isOneDown = false;
-		//if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
-		//{
-		//	if (!isOneDown)
-		//	{
-		//		isOneDown = true;
-		//		m_pGraphicDevice->SetWindowSize(800, 600);
-		//		m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
-		//		m_pInputDevice->ClearInputSystem();
-		//	}
-		//}
-		//else
-		//	isOneDown = false;
-
-		//static bool isTwoDown = false;
-		//if (m_pInputDevice->IsKeyDown(GLFW_KEY_2))
-		//{
-		//	if (!isTwoDown)
-		//	{
-		//		isTwoDown = true;
-		//		m_pGraphicDevice->SetWindowSize(1200, 800);
-		//		m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
-		//		m_pInputDevice->ClearInputSystem();
-		//	}
-		//}
-		//else
-		//	isTwoDown = false;
 
 		m_pTimer->Update();
 		if (m_pTimer->IsUpdateAvailable())
 		{
 			m_pGraphicDevice->GetWindowSize();
 			glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
-			//glClearColor(0.5, 0.5, 0.5, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			_float dt = m_pTimer->GetTimeDelta();
@@ -128,7 +98,7 @@ RESULT Client::Ready()
 
 	if (nullptr != m_pGraphicDevice)
 	{
-		result = m_pGraphicDevice->CreateOpenGLWindow(1200, 800, "OpenGL Window");
+		result = m_pGraphicDevice->CreateOpenGLWindow(1920, 1080, "OpenGL Window", false, false);
 		if (PK_NOERROR != result)
 			return result;
 	}
@@ -154,6 +124,8 @@ RESULT Client::Ready()
 		CScene* pScene = SceneForest::Create();
 		m_pGameMaster->SetCurrentScene(pScene);
 	}
+
+	PumpkinString::GetInstance()->Ready();
 
 	return PK_NOERROR;
 }

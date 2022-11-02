@@ -1,0 +1,80 @@
+Key,Content
+TEXT_01,Sistema
+TEXT_02,Volver al juego
+TEXT_03,Cerrar editor de mapas
+TEXT_04,Abrir editor de mapas
+TEXT_05,Cerrar editor de sonido
+TEXT_06,Editor de sonido abierto
+TEXT_07, Opciones de lenguaje :
+TEXT_08,Abandonar
+TEXT_09,Configuraci?n de sonido
+TEXT_10,* Archivos de sonido
+TEXT_11, Nombre del archivo
+TEXT_12, Escribe
+TEXT_13, Formato
+TEXT_14, Canales
+TEXT_15, Bits
+TEXT_16,C?rculo
+TEXT_17, Grupo de canales
+TEXT_18, Estado
+TEXT_19,S?
+TEXT_20,No
+TEXT_21,Tocar
+TEXT_22,Det?ngase
+TEXT_23, Frecuencia
+TEXT_24, Volumen
+TEXT_25, Tono
+TEXT_26, Sart?n
+TEXT_27,* Grupos de canales
+TEXT_28, DSPs
+TEXT_29,Comprobar todo
+TEXT_30,Desmarcar todo
+TEXT_31,Establecer valor predeterminado
+TEXT_32,Editor de mapas de calabazas
+TEXT_33,Objeto
+TEXT_34,Luz
+TEXT_35,Lista de mallas
+TEXT_36,* Configuraci?n de escena
+TEXT_37,Ruta de datos:
+TEXT_38,Archivo de lista de objetos:
+TEXT_39,Lista de objetos Guardar
+TEXT_40,Carga de lista de objetos
+TEXT_41,* Configuraci?n de objetivos de objetos
+TEXT_42,No hay objetivo de objeto.
+TEXT_43,Cerrar
+TEXT_44,Espect?culo
+TEXT_45,Caja
+TEXT_46,Cable
+TEXT_47,ID de malla:
+TEXT_48,Posici?n
+TEXT_49,Rotaci?n
+TEXT_50,Escala
+TEXT_51,* Listas de objetos
+TEXT_52,* Configuraci?n de luz
+TEXT_53,Ruta de datos:
+TEXT_54,Archivo de luz:
+TEXT_55,Lista de luces Guardar
+TEXT_56,Carga de lista de luces
+TEXT_57,Agregar luces
+TEXT_58,Direccional
+TEXT_59,Punto
+TEXT_60,Lugar
+TEXT_61,Copiar luz actual
+TEXT_62,* Configuraci?n de detalle de objetivo de luz
+TEXT_63,No hay un objetivo de luz.
+TEXT_64,Nombre
+TEXT_65,Direcci?n
+TEXT_66,Difuso
+TEXT_67,De espejo
+TEXT_68,Ambiente
+TEXT_69,Atenci?n
+TEXT_70,Param1
+TEXT_71,Param2
+TEXT_72,* Listas de luces
+TEXT_73,Borrar
+TEXT_74,A?adir objeto
+TEXT_75,Tama?o
+TEXT_76,* Versi?n de sonido actual:
+TEXT_77,Comprimido
+TEXT_78,sin comprimir
+TEXT_79,Etiqueta de sonido

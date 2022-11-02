@@ -15,6 +15,7 @@ class ENGINE_API CGameMaster : public CBase
 private:
 	CScene*				m_pCurrentScene;
 	CRenderer*			m_pRenderer;
+	_bool				m_bGameClose;
 
 
 private:
@@ -27,8 +28,10 @@ private:
 	void Destroy();
 
 public:
-	CScene* GetCurrentScene()		{ return m_pCurrentScene; }
+	CScene* GetCurrentScene()			{ return m_pCurrentScene; }
+	_bool GetGameClose()				{ return m_bGameClose; }
 	void SetCurrentScene(CScene* pScene);
+	void SetGameClose(_bool value)		{ m_bGameClose = value; }
 };
 
 NAMESPACE_END

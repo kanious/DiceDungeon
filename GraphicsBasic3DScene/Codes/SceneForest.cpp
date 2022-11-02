@@ -26,7 +26,8 @@ USING(glm)
 USING(std)
 
 SceneForest::SceneForest()
-	: m_pDefaultCamera(nullptr), m_pTargetObject(nullptr), m_pBackgroundLayer(nullptr)
+	: m_pDefaultCamera(nullptr), m_pBackgroundLayer(nullptr)
+	, m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pInputDevice->SetMouseSensitivity(0.05f);
@@ -53,25 +54,20 @@ void SceneForest::KeyCheck(const _float& dt)
 		if (!isMouseClicked)
 		{
 			isMouseClicked = true;
-			
-			if (m_bMapEditorUIOpened)
-			{
-				if (UIManager::GetInstance()->GetCursorIsOnTheUI())
-					goto NextCheck;
-			}
 
-			if (nullptr != m_pTargetObject)
-			{
-				m_pTargetObject->SetSelected(false);
-				m_pTargetObject = nullptr;
-			}
-			
-			// Ray랑 오브젝트들의 Bounding Box와의 충돌 체크 해야댐
+			if (nullptr == m_pUIManager)
+				goto NextCheck;
+
+			if (m_pUIManager->GetUIOpened(UIManager::UI_MAP_EDITOR_WINDOW) ||
+				m_pUIManager->GetUIOpened(UIManager::UI_SYSTEM_MENU_WINDOW))
+				goto NextCheck;
+
 			if (nullptr != m_pBackgroundLayer)
 			{
 				vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
 				vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
 
+				vector<CGameObject*> vecPicking;
 				list<CGameObject*>* listObj = m_pBackgroundLayer->GetObjectList();
 				list<CGameObject*>::iterator iter;
 				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
@@ -83,118 +79,80 @@ void SceneForest::KeyCheck(const _float& dt)
 						(*iter)->GetBoundingBox_AABB(),
 						(*iter)->GetTransform(), vCameraPos, vDir))
 					{
-						m_pTargetObject = dynamic_cast<BGObject*>(*iter);
-						m_pTargetObject->SetSelected(true);
-						break;
+						vecPicking.push_back(*iter);
 					}
 				}
-			}
 
+				if (vecPicking.size() > 0)
+				{
+					_float distanceMin = FLT_MAX; _int index = 0;
+					for (int i = 0; i < vecPicking.size(); ++i)
+					{
+						_float dis = distance(vCameraPos, vecPicking[i]->GetPosition());
+						if (dis < distanceMin)
+						{
+							distanceMin = dis;
+							index = i;
+						}
+					}
+
+					dynamic_cast<BGObject*>(vecPicking[index])->PlaySound();
+				}
+			}
 		}
 	}
 	else
 		isMouseClicked = false;
 
-	static _bool isDelDown = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_DELETE))
+NextCheck:
+	// Call System Menu Window
+	static _bool isEscapeDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_ESCAPE))
 	{
-		if (!isDelDown)
+		if (!isEscapeDown)
 		{
-			isDelDown = true;
+			isEscapeDown = true;
 
-			if (nullptr == m_pTargetObject)
-				goto NextCheck;
+			if (nullptr != m_pDefaultCamera && !m_pDefaultCamera->GetMouseEnable())
+				m_pDefaultCamera->SetMouseEnable(true);
 
-			m_pTargetObject->SetDead(true);
-			m_pTargetObject->SetSelected(false);
-			m_pTargetObject = nullptr;
+			m_pUIManager->SetUI(UIManager::UI_SYSTEM_MENU_WINDOW);
 		}
 	}
 	else
-		isDelDown = false;
+		isEscapeDown = false;
 
-NextCheck:
-
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_4))
+	// Reset Camera Pos
+	static _bool is1Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
 	{
-		if (nullptr != m_pTargetObject &&
-			m_pDefaultCamera->GetMouseEnable())
+		if (!is1Down)
 		{
-			vec3 vPos = m_pTargetObject->GetPosition();
-			vPos.y -= dt * 5.f;
-			m_pTargetObject->SetPosition(vPos);
+			is1Down = true;
+
+			ResetDefaultCameraPos();
 		}
 	}
-
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_5))
-	{
-		if (nullptr != m_pTargetObject &&
-			m_pDefaultCamera->GetMouseEnable())
-		{
-			vec3 vPos = m_pTargetObject->GetPosition();
-			vPos.y += dt * 5.f;
-			m_pTargetObject->SetPosition(vPos);
-		}
-	}
-
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_3))
-	{
-		if (nullptr != m_pTargetObject &&
-			m_pDefaultCamera->GetMouseEnable())
-		{
-			vec3 vPos = m_pTargetObject->GetPosition();
-			vPos.y = 0.f;
-			m_pTargetObject->SetPosition(vPos);
-		}
-	}
+	else
+		is1Down = false;
 }
 
 void SceneForest::Update(const _float& dt)
 {
 	CLightMaster::GetInstance()->SetLightInfo();
 
+	if (nullptr != m_pUIManager)
+		m_pUIManager->Update(dt);
+
 	KeyCheck(dt);
-
-	if (nullptr != m_pDefaultCamera &&
- 		nullptr != m_pTargetObject &&
-		m_pDefaultCamera->GetMouseEnable())
-	{
-		if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_2))
-		{
-			if (m_bMapEditorUIOpened)
-			{
-				if (UIManager::GetInstance()->GetCursorIsOnTheUI())
-					goto NextCheck;
-			}
-
-			vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
-			vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
-			vec3 vDest = vec3(0.f);
-			if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
-			{
-				vec3 vPos = m_pTargetObject->GetPosition();
-				vDest.y = vPos.y;
-				m_pTargetObject->SetPosition(vDest);
-			}
-		}
-
-		vec2 vScroll = m_pInputDevice->GetMouseScrollDistance();
-		_float fAngle = m_pTargetObject->GetRotationY();
-		fAngle += vScroll.y * dt * 500.f;
-		if (fAngle > 360.f)
-			fAngle -= 360.f;
-		if (fAngle < 0)
-			fAngle += 360.f;
-		m_pTargetObject->SetRotationY(fAngle);
-	}
-NextCheck:
 
 	CScene::Update(dt);
 }
 
 void SceneForest::Render()
 {
-	m_pUIManager->RenderUI();
+	if (nullptr != m_pUIManager)
+		m_pUIManager->RenderUI();
 }
 
 void SceneForest::Destroy()
@@ -203,6 +161,31 @@ void SceneForest::Destroy()
 	SafeDestroy(m_pUIManager);
 
 	CScene::Destroy();
+}
+
+void SceneForest::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
+{
+	m_vCameraSavedPos.x = vPos.x;
+	m_vCameraSavedPos.y = vPos.y;
+	m_vCameraSavedPos.z = vPos.z;
+
+	m_vCameraSavedRot.x = vRot.x;
+	m_vCameraSavedRot.y = vRot.y;
+	m_vCameraSavedRot.z = vRot.z;
+
+	m_vCameraSavedTarget.x = target.x;
+	m_vCameraSavedTarget.y = target.y;
+	m_vCameraSavedTarget.z = target.z;
+}
+
+void SceneForest::ResetDefaultCameraPos()
+{
+	if (nullptr != m_pDefaultCamera)
+	{
+		m_pDefaultCamera->SetCameraEye(m_vCameraSavedPos);
+		m_pDefaultCamera->SetCameraRot(m_vCameraSavedRot);
+		m_pDefaultCamera->SetCameraTarget(m_vCameraSavedTarget);
+	}
 }
 
 RESULT SceneForest::Ready()
@@ -219,10 +202,12 @@ RESULT SceneForest::Ready()
 	stringstream ss;
 	ss << m_DataPath << m_SoundDataFileName;
 	CXMLParser::GetInstance()->LoadSoundData(ss.str());
+	CSoundMaster::GetInstance()->PlaySound("peaceful_night");
+	CSoundMaster::GetInstance()->PlaySound("chirp");
+	CSoundMaster::GetInstance()->PlaySound("frames");
 
-	UIManager::GetInstance()->Ready(this);
-	//SoundUIManager::GetInstance()->Ready();
-	//MapEditorUIManager::GetInstance()->Ready(this, &m_pTargetObject, &m_pBackgroundLayer);
+	if (nullptr != m_pUIManager)
+		m_pUIManager->Ready(this);
 
 	// Light
 	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
@@ -234,42 +219,6 @@ RESULT SceneForest::Ready()
 	ss.str("");
 	ss << m_DataPath << m_LightListFileName;
 	CLightMaster::GetInstance()->LoadLights(ss.str());
-
-	//CLight::cLightInfo* pInfo = new CLight::cLightInfo();
-	//pInfo->direction = vec4(1.0f, -1.f, 1.0f, 1.0f);
-	//pInfo->diffuse = vec4(1.0f, 1.0f, 1.0f, 0.2f);
-	//CLightMaster::GetInstance()->AddLight("Directional_Light", pInfo);
-
-	//pInfo = new CLight::cLightInfo();
-	//pInfo->param1.x = 1; //POINT_LIGHT
-	//pInfo->position = vec4(-20.f, 11.0f, 25.f, 1.0f);
-	//pInfo->specular = vec4(0.0f, 0.9f, 0.0f, 1.0f);
-	//pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	//pInfo->atten = vec4(1.0f, 0.027f, 0.0028f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
-	//CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
-
-	//pInfo = new CLight::cLightInfo();
-	//pInfo->param1.x = 2; //SPOT_LIGHT
-	//pInfo->position = vec4(-10.f, 11.0f, -3.5f, 1.0f);
-	//pInfo->direction = vec4(0.0f, -1.0f, 0.0f, 0.0f);
-	//pInfo->specular = vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	//pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-	//pInfo->atten = vec4(1.0f, 0.014f, 0.0007f, 5.f); // x = constant, y = linear, z = quadratic, w = cutoff range
-	//pInfo->param1.y = 25.f; //inner angle(Theta)
-	//pInfo->param1.z = 35.f; //outer angle(Phi)
-	//CLightMaster::GetInstance()->AddLight("Spot_Light01", pInfo);
-
-
-	//pInfo = new CLight::cLightInfo();
-	//pInfo->param1.x = 1; //POINT_LIGHT
-	////pInfo->position = vec4(-10.f, 5.0f/*10.9f*/, -3.5f, 1.0f);
-	//pInfo->position = vec4(-11, 1.0f, -3.88f, 1.0f);
-	//pInfo->specular = vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	//pInfo->diffuse = vec4(0.5f, 0.5f, 0.5f, 0.5f);
-	//pInfo->atten = vec4(0.01f, 0.01f, 0.1f, 3.f); // x = constant, y = linear, z = quadratic, w = cutoff range
-	//CLightMaster::GetInstance()->AddLight("Point_Light01", pInfo);
-
-	
 
 	if (nullptr != m_pDefaultCamera)
 		m_pDefaultCamera->SetShaderLocation(shaderID); 
@@ -354,12 +303,15 @@ void SceneForest::SaveBackgroundObjects()
 			data.POSITION = pObj->GetPosition();
 			data.ROTATION = pObj->GetRotation();
 			data.SCALE = pObj->GetScale();
+			data.SOUNDTAG = pObj->GetSoundTag();
+			data.LOCK = pObj->GetLock();
 			vecObjects.push_back(data);
 		}
 
 		CXMLParser::sObjectData cameraData;
 		if (nullptr != m_pDefaultCamera)
 		{
+			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
 			cameraData.POSITION = m_pDefaultCamera->GetCameraEye();
 			cameraData.ROTATION = m_pDefaultCamera->GetCameraRot();
 			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
@@ -389,15 +341,17 @@ void SceneForest::LoadBackgroundObjects()
 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 		{
 			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
-				iter->POSITION, iter->ROTATION, iter->SCALE);
+				iter->POSITION, iter->ROTATION, iter->SCALE, iter->SOUNDTAG);
 			if (nullptr == pGameObject)
 				continue;
 			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
+			dynamic_cast<BGObject*>(pGameObject)->SetLock(iter->LOCK);
 		}
 		vecObjects.clear();
 
 		if (nullptr != m_pDefaultCamera)
 		{
+			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
 			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
 			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
 			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);

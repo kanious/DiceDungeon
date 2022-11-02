@@ -10,7 +10,7 @@ USING(std)
 SINGLETON_FUNCTION(CSoundMaster)
 
 CSoundMaster::CSoundMaster()
-	: m_pSound(nullptr)
+	: m_pSoundSystem(nullptr), m_bLoadCompressedSound(false), m_DataPath("")
 {
 }
 
@@ -20,104 +20,109 @@ CSoundMaster::~CSoundMaster()
 
 void CSoundMaster::Destroy()
 {
-	SafeDestroy(m_pSound);
+	SafeDestroy(m_pSoundSystem);
 }
 
 _uint CSoundMaster::GetSoundNumber()
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return 0;
 
-	return m_pSound->GetSoundNumber();
+	return m_pSoundSystem->GetSoundNumber();
 }
 
 _uint CSoundMaster::GetSoundChannelGroupNumber()
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return 0;
 
-	return m_pSound->GetSoundChannelGroupNumber();
+	return m_pSoundSystem->GetSoundChannelGroupNumber();
 }
 
 unordered_map<string, CSoundInfo*>* CSoundMaster::GetSoundMap()
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return nullptr;
 
-	return m_pSound->GetSoundMap();
+	return m_pSoundSystem->GetSoundMap();
 }
 
 unordered_map<string, CChannelGroupInfo*>* CSoundMaster::GetChannelMap()
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return nullptr;
 
-	return m_pSound->GetSoundChannelMap();
+	return m_pSoundSystem->GetSoundChannelMap();
 }
 
 std::unordered_map<std::string, CDSPInfo*>* CSoundMaster::GetDSPMap()
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return nullptr;
 
-	return m_pSound->GetDSPMap();
+	return m_pSoundSystem->GetDSPMap();
 }
 
 RESULT CSoundMaster::LoadSound(string tag, string path, string channelTag)
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 
-	return m_pSound->LoadSound(tag, path, channelTag, FMOD_DEFAULT);
+	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_DEFAULT);
 }
 
 RESULT CSoundMaster::LoadLoopSound(string tag, string path, string channelTag)
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 	
-	return m_pSound->LoadSound(tag, path, channelTag, FMOD_LOOP_NORMAL);
+	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_LOOP_NORMAL);
 }
 
 RESULT CSoundMaster::CreateChannelGroup(string name)
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 
-	return m_pSound->CreateChannelGroup(name);
+	return m_pSoundSystem->CreateChannelGroup(name);
 }
 
-void CSoundMaster::PlaySampleSound(string tag)
+void CSoundMaster::PlaySound(string tag)
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return;
 	
-	m_pSound->PlaySampleSound(tag);
+	m_pSoundSystem->PlaySound(tag);
 }
 
-void CSoundMaster::StopSampleSound(string tag)
+void CSoundMaster::StopSound(string tag)
 {
-	if (nullptr != m_pSound)
-		m_pSound->StopSampleSound(tag);
+	if (nullptr != m_pSoundSystem)
+		m_pSoundSystem->StopSound(tag);
 }
 
 RESULT CSoundMaster::CreateDSPEffect(string name, _int type)
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 
-	return m_pSound->CreateDSPEffect(name, (FMOD_DSP_TYPE)type);
+	return m_pSoundSystem->CreateDSPEffect(name, (FMOD_DSP_TYPE)type);
 }
 
 RESULT CSoundMaster::AddDSPEffect(string channelName, string dspName)
 {
-	if (nullptr == m_pSound)
+	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 
-	return m_pSound->AddDSPEffect(channelName, dspName);
+	return m_pSoundSystem->AddDSPEffect(channelName, dspName);
 }
 
-void CSoundMaster::Ready(int number)
+void CSoundMaster::ResetAllSoundData()
 {
-	m_pSound = CSoundSystem::Create(number, FMOD_INIT_NORMAL);
+	SafeDestroy(m_pSoundSystem);
+}
+
+void CSoundMaster::Ready(_int number)
+{
+	m_pSoundSystem = CSoundSystem::Create(number, FMOD_INIT_NORMAL);
 }

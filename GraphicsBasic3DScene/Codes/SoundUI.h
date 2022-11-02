@@ -1,5 +1,5 @@
-#ifndef _SOUNDUIMANAGER_H_
-#define _SOUNDUIMANAGER_H_
+#ifndef _SOUNDUI_H_
+#define _SOUNDUI_H_
 
 #include "Base.h"
 
@@ -9,12 +9,16 @@ namespace Engine
 	class CChannelGroupInfo;
 	class CDSPInfo;
 }
+class PumpkinString;
 
-class SoundUIManager : public Engine::CBase
+class SoundUI : public Engine::CBase
 {
 private:
 	std::string						m_currentSoundName;
 	Engine::CSoundInfo*				m_pCurrentSound;
+	PumpkinString*					m_pString;
+	_bool							m_bCompressed;
+
 	typedef std::unordered_map<std::string, Engine::CSoundInfo*> SOUND_MAP;
 	SOUND_MAP*						m_pMapSound;
 
@@ -27,19 +31,24 @@ private:
 	DSP_MAP*						m_pMapDSP;
 
 private:
-	explicit SoundUIManager();
-	~SoundUIManager();
+	explicit SoundUI();
+	~SoundUI();
 public:
 	void Destroy();
 	void RenderUI();
 	RESULT Ready();
+	void Reset();
 
 private:
+	void RenderSoundVersionOption();
 	void RenderSoundComboList();
 	void RenderDetailSoundInfo();
 	void RenderChannelGroupComboList();
 	void RenderDetailChannelGroupInfo();
 	void RenderDSPInfo();
+
+public:
+	static SoundUI* Create();
 };
 
-#endif //_SOUNDUIMANAGER_H_
+#endif //_SOUNDUI_H_

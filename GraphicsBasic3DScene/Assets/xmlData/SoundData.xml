@@ -12,6 +12,12 @@
 		<Tag>Effect</Tag>
 	</Sound>
 	<Sound category="ChannelGroup">
+		<Tag>PianoScale</Tag>
+	</Sound>
+	<Sound category="ChannelGroup">
+		<Tag>Environment2</Tag>
+	</Sound>
+	<Sound category="ChannelGroup">
 		<Tag>Voice</Tag>
 	</Sound>
 	<Sound category="SoundFile">
@@ -49,17 +55,129 @@
 		<Path>Assets\Sounds\music\chirp.wav</Path>
 		<ChannelTag>Environment</ChannelTag>
 		<Loop>1</Loop>
+	</Sound><Sound category="SoundFile">
+		<Tag>chirp</Tag>
+		<Path>Assets\Sounds\music\chirp.mp3</Path>
+		<ChannelTag>Environment</ChannelTag>
+		<Loop>1</Loop>
 	</Sound>
 	<Sound category="SoundFile">
 		<Tag>frames</Tag>
 		<Path>Assets\Sounds\fx\frames.wav</Path>
-		<ChannelTag>Effect</ChannelTag>
-		<Loop>0</Loop>
+		<ChannelTag>Environment2</ChannelTag>
+		<Loop>1</Loop>
+	</Sound><Sound category="SoundFile">
+		<Tag>frames</Tag>
+		<Path>Assets\Sounds\fx\frames.mp3</Path>
+		<ChannelTag>Environment2</ChannelTag>
+		<Loop>1</Loop>
 	</Sound>
 	<Sound category="SoundFile">
 		<Tag>hit</Tag>
 		<Path>Assets\Sounds\fx\hit.wav</Path>
 		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>hit</Tag>
+		<Path>Assets\Sounds\fx\hit.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>do</Tag>
+		<Path>Assets\Sounds\fx\1_do.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>re</Tag>
+		<Path>Assets\Sounds\fx\2_re.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>mi</Tag>
+		<Path>Assets\Sounds\fx\3_mi.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>fa</Tag>
+		<Path>Assets\Sounds\fx\4_fa.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>sol</Tag>
+		<Path>Assets\Sounds\fx\5_sol.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>ra</Tag>
+		<Path>Assets\Sounds\fx\6_ra.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>ti</Tag>
+		<Path>Assets\Sounds\fx\7_ti.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>do_up</Tag>
+		<Path>Assets\Sounds\fx\8_do.wav</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>do</Tag>
+		<Path>Assets\Sounds\fx\1_do.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>re</Tag>
+		<Path>Assets\Sounds\fx\2_re.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>mi</Tag>
+		<Path>Assets\Sounds\fx\3_mi.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>fa</Tag>
+		<Path>Assets\Sounds\fx\4_fa.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>sol</Tag>
+		<Path>Assets\Sounds\fx\5_sol.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>ra</Tag>
+		<Path>Assets\Sounds\fx\6_ra.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>ti</Tag>
+		<Path>Assets\Sounds\fx\7_ti.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>do_up</Tag>
+		<Path>Assets\Sounds\fx\8_do.mp3</Path>
+		<ChannelTag>PianoScale</ChannelTag>
 		<Loop>0</Loop>
 	</Sound>
 	<Sound category="DSP">

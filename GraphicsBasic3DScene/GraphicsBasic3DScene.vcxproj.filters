@@ -45,7 +45,7 @@
     <ClCompile Include="Codes\DefaultCamera.cpp">
       <Filter>02.GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\SoundUIManager.cpp">
+    <ClCompile Include="Codes\SoundUI.cpp">
       <Filter>98.Manager\UI</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
@@ -72,11 +72,17 @@
     <ClCompile Include="Codes\glad.c">
       <Filter>Default</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\MapEditorUIManager.cpp">
+    <ClCompile Include="Codes\MapEditorUI.cpp">
+      <Filter>98.Manager\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\SystemUI.cpp">
       <Filter>98.Manager\UI</Filter>
     </ClCompile>
     <ClCompile Include="Codes\UIManager.cpp">
       <Filter>98.Manager\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\PumpkinString.cpp">
+      <Filter>98.Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,7 +104,7 @@
     <ClInclude Include="Codes\DefaultCamera.h">
       <Filter>02.GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\SoundUIManager.h">
+    <ClInclude Include="Codes\SoundUI.h">
       <Filter>98.Manager\UI</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
@@ -128,11 +134,17 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>Default\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\MapEditorUIManager.h">
+    <ClInclude Include="Codes\MapEditorUI.h">
+      <Filter>98.Manager\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\SystemUI.h">
       <Filter>98.Manager\UI</Filter>
     </ClInclude>
     <ClInclude Include="Codes\UIManager.h">
       <Filter>98.Manager\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\PumpkinString.h">
+      <Filter>98.Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

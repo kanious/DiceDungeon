@@ -2,6 +2,7 @@
 #define _SCENEFOREST_H_
 
 #include "Scene.h"
+#include "glm\vec3.hpp"
 
 namespace Engine
 {
@@ -9,7 +10,6 @@ namespace Engine
 	class CLayer;
 }
 class DefaultCamera;
-class BGObject;
 class UIManager;
 
 class SceneForest : public Engine::CScene
@@ -18,11 +18,10 @@ private:
 	Engine::CInputDevice*			m_pInputDevice;
 	Engine::CLayer*					m_pBackgroundLayer;
 	DefaultCamera*					m_pDefaultCamera;
-	BGObject*						m_pTargetObject;
 	UIManager*						m_pUIManager;
-
-	_bool m_bMapEditorUIOpened = true;
-	_bool m_bSoundUIOpened = false;
+	glm::vec3						m_vCameraSavedPos;
+	glm::vec3						m_vCameraSavedRot;
+	glm::vec3						m_vCameraSavedTarget;
 
 private:
 	explicit SceneForest();
@@ -38,8 +37,9 @@ private:
 	virtual void Destroy();
 
 public:
-	BGObject* GetTargetObj() { return m_pTargetObject; }
-
+	DefaultCamera* GetDefaultCamera()					{ return m_pDefaultCamera; }
+	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
+	void ResetDefaultCameraPos();
 	
 private:
 	RESULT Ready();

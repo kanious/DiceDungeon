@@ -17,6 +17,7 @@ USING(Engine)
 SINGLETON_FUNCTION(CGameMaster)
 
 CGameMaster::CGameMaster()
+	: m_bGameClose(false)
 {
 	m_pRenderer = CRenderer::GetInstance();
 	m_pCurrentScene = nullptr;

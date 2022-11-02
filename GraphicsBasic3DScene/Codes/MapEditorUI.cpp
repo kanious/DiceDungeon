@@ -1,16 +1,22 @@
-#include "MapEditorUIManager.h"
+#include "MapEditorUI.h"
 #include "..\imgui\imgui_impl_glfw.h"
 #include "..\imgui\imgui_impl_opengl3.h"
 #include "Enums.h"
 #include "OpenGLDevice.h"
+#include "InputDevice.h"
+#include "CollisionMaster.h"
 #include "ComponentMaster.h"
 #include "Component.h"
 #include "Scene.h"
+#include "SceneForest.h"
 #include "Layer.h"
 #include "GameObject.h"
+#include "UIManager.h"
+#include "DefaultCamera.h"
 #include "BGObject.h"
 #include "LightMaster.h"
 #include "Light.h"
+#include "PumpkinString.h"
 #include "glm\vec3.hpp"
 #include <unordered_map>
 #include <string>
@@ -23,14 +29,66 @@ USING(ImGui)
 USING(std)
 USING(glm)
 
-MapEditorUIManager::MapEditorUIManager()
-	: m_pScene(nullptr), m_ppTargetObject(nullptr), m_ppBGLayer(nullptr), m_pTargetLight(nullptr)
+MapEditorUI::MapEditorUI()
+	: m_pScene(nullptr), m_pTargetObject(nullptr)
+	, m_pBGLayer(nullptr), m_pDefaultCamera(nullptr), m_pTargetLight(nullptr)
 {
+	m_pUIManager = UIManager::GetInstance();
+	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
+	m_pInputDevice->SetMouseSensitivity(0.05f);
+	m_pString = PumpkinString::GetInstance(); m_pString->AddRefCnt();
+
 	m_vecMeshInfo.clear();
 
 	ZeroMemory(m_chPos, sizeof(m_chPos));
 	ZeroMemory(m_chRot, sizeof(m_chRot));
 	ZeroMemory(m_chScale, sizeof(m_chScale));
+	ZeroMemory(m_chSound, sizeof(m_chSound));
+
+	ZeroMemory(m_chLightName, sizeof(m_chLightName));
+	ZeroMemory(m_chLightPos, sizeof(m_chLightPos));
+	ZeroMemory(m_chLightDir, sizeof(m_chLightDir));
+	ZeroMemory(m_chLightDiff, sizeof(m_chLightDiff));
+	ZeroMemory(m_chLightspec, sizeof(m_chLightspec));
+	ZeroMemory(m_chLightambi, sizeof(m_chLightambi));
+	ZeroMemory(m_chLightatten, sizeof(m_chLightatten));
+	ZeroMemory(m_chLightparam1, sizeof(m_chLightparam1));
+	ZeroMemory(m_chLightparam2, sizeof(m_chLightparam2));
+
+	m_isPreviousZeroLock = false;
+	m_isZeroLock = false;
+	m_isPreviousZeroShow = true;
+	m_isZeroShow = true;
+	m_isPreviousZeroDebug = true;
+	m_isZeroDebug = false;
+	m_isPreviousZeroWire = false;
+	m_isZeroWire = false;
+}
+
+MapEditorUI::~MapEditorUI()
+{
+}
+
+void MapEditorUI::Destroy()
+{
+	SafeDestroy(m_pInputDevice);
+	SafeDestroy(m_pString);
+
+	vector<MeshInfo>::iterator iter;
+	for (iter = m_vecMeshInfo.begin(); iter != m_vecMeshInfo.end(); ++iter)
+		delete iter->inputSize;
+	m_vecMeshInfo.clear();
+
+	m_pScene = nullptr;
+	m_pTargetObject = nullptr;
+	m_pBGLayer = nullptr;
+	m_pDefaultCamera = nullptr;
+	m_pTargetLight = nullptr;
+
+	ZeroMemory(m_chPos, sizeof(m_chPos));
+	ZeroMemory(m_chRot, sizeof(m_chRot));
+	ZeroMemory(m_chScale, sizeof(m_chScale));
+	ZeroMemory(m_chSound, sizeof(m_chSound));
 
 	ZeroMemory(m_chLightName, sizeof(m_chLightName));
 	ZeroMemory(m_chLightPos, sizeof(m_chLightPos));
@@ -52,42 +110,27 @@ MapEditorUIManager::MapEditorUIManager()
 	m_isZeroWire = false;
 }
 
-_bool MapEditorUIManager::GetCursorIsOnTheUI()
+void MapEditorUI::Update(const _float& dt)
 {
-	return GetIO().WantCaptureMouse;
+	KeyCheck(dt);
 }
 
-MapEditorUIManager::~MapEditorUIManager()
+void MapEditorUI::RenderUI()
 {
-}
-
-void MapEditorUIManager::Destroy()
-{
-	vector<MeshInfo>::iterator iter;
-	for (iter = m_vecMeshInfo.begin(); iter != m_vecMeshInfo.end(); ++iter)
-		delete iter->inputSize;
-	m_vecMeshInfo.clear();
-
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	DestroyContext();
-}
-
-void MapEditorUIManager::RenderUI()
-{
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	NewFrame();
-	
 	SetNextWindowPos(ImVec2(0.f, 0.f));
 	SetNextWindowSize(ImVec2(400.f, (_float)COpenGLDevice::GetInstance()->GetHeightSize()));
-	if (Begin("Pumpkins Map Editor", (bool*)0, ImGuiWindowFlags_NoResize |
+	stringstream ss;
+	ss << m_pString->GetString("TEXT_32") << "##Pumpkins Map Editor";
+	if (Begin(ss.str().c_str(), (bool*)0,
+		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		if (BeginTabBar("##Editor"))
 		{
-			if (BeginTabItem("Object##Edit", (bool*)0, ImGuiTabItemFlags_None))
+			ss.str("");
+			ss << m_pString->GetString("TEXT_33") << "##ObjectTab";
+			if (BeginTabItem(ss.str().c_str(), (bool*)0, ImGuiTabItemFlags_None))
 			{
 				ImVec2 screenSize = GetWindowSize();
 
@@ -98,7 +141,9 @@ void MapEditorUIManager::RenderUI()
 				EndTabItem();
 			}
 			
-			if (BeginTabItem("Light##Edit", (bool*)0, ImGuiTabItemFlags_None))
+			ss.str("");
+			ss << m_pString->GetString("TEXT_34") << "##LightTab";
+			if (BeginTabItem(ss.str().c_str(), (bool*)0, ImGuiTabItemFlags_None))
 			{
 				RenderLightDetailUI();
 				RenderLightTargetDetailUI();
@@ -114,33 +159,27 @@ void MapEditorUIManager::RenderUI()
 
 	SetNextWindowPos(ImVec2(COpenGLDevice::GetInstance()->GetWidthSize() - 360.f, 0.f));
 	SetNextWindowSize(ImVec2(360.f, (_float)COpenGLDevice::GetInstance()->GetHeightSize()));
-	if (Begin("Mesh List", (bool*)0, ImGuiWindowFlags_NoResize |
+	ss.str("");
+	ss << m_pString->GetString("TEXT_35") << "##Mesh List";
+	if (Begin(ss.str().c_str(), (bool*)0,
+		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		RenderMeshList();
 	}
 	End();
-
-	Render();
-	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
 }
 
-RESULT MapEditorUIManager::Ready(CScene* pScene, BGObject** ppTarget, CLayer** ppLayer)
+RESULT MapEditorUI::Ready(CScene* pScene)
 {
-	m_pScene = pScene;
-	m_ppTargetObject = ppTarget;
-	m_ppBGLayer = ppLayer;
+	if (nullptr != pScene)
+	{
+		m_pScene = pScene;
+		m_pBGLayer = pScene->GetLayer((_uint)LAYER_BACKGROUND);
+		m_pDefaultCamera = dynamic_cast<SceneForest*>(pScene)->GetDefaultCamera();
+	}
 
-	IMGUI_CHECKVERSION();
-	CreateContext();
-	ImGuiIO& io = GetIO();
-
-	if (!ImGui_ImplGlfw_InitForOpenGL(COpenGLDevice::GetInstance()->GetWindow(), true) ||
-		!ImGui_ImplOpenGL3_Init("#version 460"))
-		return PK_ERROR_IMGUI;
-	StyleColorsDark();
-	
 	unordered_map<string, string>* pMeshMap = CComponentMaster::GetInstance()->GetMeshMap();
 	unordered_map<string, string>::iterator iter;
 	for (iter = pMeshMap->begin(); iter != pMeshMap->end(); ++iter)
@@ -157,34 +196,197 @@ RESULT MapEditorUIManager::Ready(CScene* pScene, BGObject** ppTarget, CLayer** p
 	return PK_NOERROR;
 }
 
-void MapEditorUIManager::RenderSceneDetailUI()
+void MapEditorUI::KeyCheck(const _float& dt)
+{
+	if (nullptr == m_pInputDevice || nullptr == m_pUIManager)
+		return;
+
+	if (m_pUIManager->GetUIOpened(UIManager::UI_SYSTEM_MENU_WINDOW) || m_pUIManager->GetCursorIsOnTheUI())
+		goto NextCheck;
+
+	// Object Picking
+	static _bool isMouseClicked = false;
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
+	{
+		if (!isMouseClicked)
+		{
+			isMouseClicked = true;
+
+			if (nullptr != m_pTargetObject)
+			{
+				m_pTargetObject->SetSelected(false);
+				m_pTargetObject = nullptr;
+			}
+
+			if (nullptr != m_pBGLayer && nullptr != m_pDefaultCamera)
+			{
+				vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
+				vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+
+				vector<CGameObject*> vecPicking;
+				list<CGameObject*>* listObj = m_pBGLayer->GetObjectList();
+				list<CGameObject*>::iterator iter;
+				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
+				{
+					if ((*iter)->GetLock())
+						continue;
+
+					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
+						(*iter)->GetBoundingBox_AABB(),
+						(*iter)->GetTransform(), vCameraPos, vDir))
+					{
+						vecPicking.push_back(*iter);
+					}
+				}
+
+				if (vecPicking.size() > 0)
+				{
+					_float distanceMin = FLT_MAX; _int index = 0;
+					for (int i = 0; i < vecPicking.size(); ++i)
+					{
+						_float dis = distance(vCameraPos, vecPicking[i]->GetPosition());
+						if (dis < distanceMin)
+						{
+							distanceMin = dis;
+							index = i;
+						}
+					}
+					m_pTargetObject = dynamic_cast<BGObject*>(vecPicking[index]);
+					m_pTargetObject->SetSelected(true);
+				}
+			}
+
+		}
+	}
+	else
+		isMouseClicked = false;
+
+	// Object Moving
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_2))
+	{
+		if (nullptr != m_pDefaultCamera &&
+			nullptr != m_pTargetObject &&
+			m_pDefaultCamera->GetMouseEnable())
+		{
+			vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
+			vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+			vec3 vDest = vec3(0.f);
+			if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
+			{
+				vec3 vPos = m_pTargetObject->GetPosition();
+				vDest.y = vPos.y;
+				m_pTargetObject->SetPosition(vDest);
+			}
+		}
+	}
+
+	// Object Rotating Y Axis
+	if (nullptr != m_pTargetObject)
+	{
+		vec2 vScroll = m_pInputDevice->GetMouseScrollDistance();
+		if (0 == vScroll.y)
+			goto NextCheck;
+
+		_float fAngle = m_pTargetObject->GetRotationY();
+		fAngle += vScroll.y * dt * 500.f;
+		if (fAngle > 360.f)
+			fAngle -= 360.f;
+		if (fAngle < 0)
+			fAngle += 360.f;
+		m_pTargetObject->SetRotationY(fAngle);
+	}
+
+NextCheck:
+
+	// Object Delete
+	static _bool isDelDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_DELETE))
+	{
+		if (!isDelDown)
+		{
+			isDelDown = true;
+
+			if (nullptr != m_pTargetObject)
+			{
+				m_pTargetObject->SetDead(true);
+				m_pTargetObject->SetSelected(false);
+				m_pTargetObject = nullptr;
+			}
+		}
+	}
+	else
+		isDelDown = false;
+
+	// Object Y position : Up
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_O))
+	{
+		if (nullptr != m_pTargetObject &&
+			m_pDefaultCamera->GetMouseEnable())
+		{
+			vec3 vPos = m_pTargetObject->GetPosition();
+			vPos.y += dt * 5.f;
+			m_pTargetObject->SetPosition(vPos);
+		}
+	}
+
+	// Object Y position : Down
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_L))
+	{
+		if (nullptr != m_pTargetObject &&
+			m_pDefaultCamera->GetMouseEnable())
+		{
+			vec3 vPos = m_pTargetObject->GetPosition();
+			vPos.y -= dt * 5.f;
+			m_pTargetObject->SetPosition(vPos);
+		}
+	}
+
+	// Object Y position : Set 0
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_P))
+	{
+		if (nullptr != m_pTargetObject &&
+			m_pDefaultCamera->GetMouseEnable())
+		{
+			vec3 vPos = m_pTargetObject->GetPosition();
+			vPos.y = 0.f;
+			m_pTargetObject->SetPosition(vPos);
+		}
+	}
+}
+
+void MapEditorUI::RenderSceneDetailUI()
 {
 	if (nullptr == m_pScene)
 		return;
 
-	Text("* Scene Detail Setting");
-	Text("Data Path: "); SameLine(120.f); Text(m_pScene->GetDataPath().c_str());
-	Text("Obj List File: "); SameLine(120.f); Text(m_pScene->GetObjListFileName().c_str());
-	if (Button("Object List Save", ImVec2(190.f, 0.f)))
+	Text(m_pString->GetString("TEXT_36").c_str());
+	Text(m_pString->GetString("TEXT_37").c_str()); SameLine(120.f); Text(m_pScene->GetDataPath().c_str());
+	Text(m_pString->GetString("TEXT_38").c_str()); SameLine(120.f); Text(m_pScene->GetObjListFileName().c_str());
+
+	stringstream ss;
+	ss << m_pString->GetString("TEXT_39") << "##Object List Save";
+	if (Button(ss.str().c_str(), ImVec2(190.f, 0.f)))
 	{
 		ObjListSave();
 	}
 	SameLine(200.f);
-	if (Button("Object List Load", ImVec2(190.f, 0.f)))
+	ss.str("");
+	ss << m_pString->GetString("TEXT_40") << "##Object List Load";
+	if (Button(ss.str().c_str(), ImVec2(190.f, 0.f)))
 	{
 		ObjListLoad();
 	}
 }
 
-void MapEditorUIManager::RenderObjectTargetDetailUI()
+void MapEditorUI::RenderObjectTargetDetailUI()
 {
 	PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.2, 0.2, 0.2, 1));
-	if (BeginChild("##TargetSetting", ImVec2(380.f, 150.f)))
+	if (BeginChild("##TargetSetting", ImVec2(380.f, 170.f)))
 	{
-		Text("* Object Target Detail Setting");
-		if (nullptr == *m_ppTargetObject)
+		Text(m_pString->GetString("TEXT_41").c_str());
+		if (nullptr == m_pTargetObject)
 		{
-			Text("There is no object target.");
+			Text(m_pString->GetString("TEXT_42").c_str());
 			PopStyleColor();
 			EndChild();
 			return;
@@ -192,42 +394,54 @@ void MapEditorUIManager::RenderObjectTargetDetailUI()
 
 		Text(" ");
 		SameLine(140.f);
-		_bool isLock = (*m_ppTargetObject)->GetLock();
-		Checkbox("Lock##Target", &isLock);
-		(*m_ppTargetObject)->SetLock(isLock);
+		_bool isLock = m_pTargetObject->GetLock();
+		stringstream ss;
+		ss << m_pString->GetString("TEXT_43") << "##LockTarget";
+		Checkbox(ss.str().c_str(), &isLock);
+		m_pTargetObject->SetLock(isLock);
 
 		SameLine(200.f);
-		_bool isEnable = (*m_ppTargetObject)->GetEnable();
-		Checkbox("Show##Target", &isEnable);
-		(*m_ppTargetObject)->SetEnable(isEnable);
+		_bool isEnable = m_pTargetObject->GetEnable();
+		ss.str("");
+		ss << m_pString->GetString("TEXT_44") << "##ShowTarget";
+		Checkbox(ss.str().c_str(), &isEnable);
+		m_pTargetObject->SetEnable(isEnable);
 
 		SameLine(260.f);
-		_bool isDebug = (*m_ppTargetObject)->GetDebug();
-		Checkbox("Box##Target", &isDebug);
-		(*m_ppTargetObject)->SetDebug(isDebug);
+		_bool isDebug = m_pTargetObject->GetDebug();
+		ss.str("");
+		ss << m_pString->GetString("TEXT_45") << "##BoxTarget";
+		Checkbox(ss.str().c_str(), &isDebug);
+		m_pTargetObject->SetDebug(isDebug);
 
 		SameLine(320.f);
-		_bool isWire = (*m_ppTargetObject)->GetWireFrame();
-		Checkbox("Wire##Target", &isWire);
-		(*m_ppTargetObject)->SetWireFrame(isWire);
+		_bool isWire = m_pTargetObject->GetWireFrame();
+		ss.str("");
+		ss << m_pString->GetString("TEXT_46") << "##WireTarget";
+		Checkbox(ss.str().c_str(), &isWire);
+		m_pTargetObject->SetWireFrame(isWire);
 
-		Text("Mesh ID:"); SameLine(80.f); Text((*m_ppTargetObject)->GetMeshID().c_str());
+		Text(m_pString->GetString("TEXT_47").c_str()); SameLine(80.f); Text(m_pTargetObject->GetMeshID().c_str());
 		Text(" ");
 
-		vec3 vPos = (*m_ppTargetObject)->GetPosition();
+		vec3 vPos = m_pTargetObject->GetPosition();
 		ConvertFloatToCharArray(m_chPos[0], vPos.x);
 		ConvertFloatToCharArray(m_chPos[1], vPos.y);
 		ConvertFloatToCharArray(m_chPos[2], vPos.z);
-		vec3 vRot = (*m_ppTargetObject)->GetRotation();
+		vec3 vRot = m_pTargetObject->GetRotation();
 		ConvertFloatToCharArray(m_chRot[0], vRot.x);
 		ConvertFloatToCharArray(m_chRot[1], vRot.y);
 		ConvertFloatToCharArray(m_chRot[2], vRot.z);
-		vec3 vScale = (*m_ppTargetObject)->GetScale();
+		vec3 vScale = m_pTargetObject->GetScale();
 		ConvertFloatToCharArray(m_chScale[0], vScale.x);
 		ConvertFloatToCharArray(m_chScale[1], vScale.y);
 		ConvertFloatToCharArray(m_chScale[2], vScale.z);
+		string soundTag = m_pTargetObject->GetSoundTag();
+		ss.str("");
+		ss << soundTag;
+		strcpy_s(m_chSound, ss.str().length() + 1, ss.str().c_str());
 
-		Text("Position");
+		Text(m_pString->GetString("TEXT_48").c_str());
 		SameLine(80.f); Text("X:"); SameLine(100.f);
 		SetNextItemWidth(70); InputText("##PosX", m_chPos[0], sizeof(m_chPos[0]));
 		SameLine(180.f); Text("Y:"); SameLine(200.f);
@@ -235,7 +449,7 @@ void MapEditorUIManager::RenderObjectTargetDetailUI()
 		SameLine(280.f); Text("Z:"); SameLine(300.f);
 		SetNextItemWidth(70); InputText("##PosZ", m_chPos[2], sizeof(m_chPos[2]));
 
-		Text("Rotation");
+		Text(m_pString->GetString("TEXT_49").c_str());
 		SameLine(80.f); Text("X:"); SameLine(100.f);
 		SetNextItemWidth(70); InputText("##RotX", m_chRot[0], sizeof(m_chRot[0]));
 		SameLine(180.f); Text("Y:"); SameLine(200.f);
@@ -243,13 +457,16 @@ void MapEditorUIManager::RenderObjectTargetDetailUI()
 		SameLine(280.f); Text("Z:"); SameLine(300.f);
 		SetNextItemWidth(70); InputText("##RotZ", m_chRot[2], sizeof(m_chRot[2]));
 
-		Text("Scale");
+		Text(m_pString->GetString("TEXT_50").c_str());
 		SameLine(80.f); Text("X:"); SameLine(100.f);
 		SetNextItemWidth(70); InputText("##ScaleX", m_chScale[0], sizeof(m_chScale[0]));
 		SameLine(180.f); Text("Y:"); SameLine(200.f);
 		SetNextItemWidth(70); InputText("##ScaleY", m_chScale[1], sizeof(m_chScale[1]));
 		SameLine(280.f); Text("Z:"); SameLine(300.f);
 		SetNextItemWidth(70); InputText("##ScaleZ", m_chScale[2], sizeof(m_chScale[2]));
+
+		Text(m_pString->GetString("TEXT_79").c_str());
+		SameLine(80.f); SetNextItemWidth(210); InputText("##SoundTag", m_chSound, sizeof(m_chSound));
 
 		_float fPosX = vPos.x; _float fPosY = vPos.y; _float fPosZ = vPos.z;
 		_float fRotX = vRot.x; _float fRotY = vRot.y; _float fRotZ = vRot.z;
@@ -263,106 +480,112 @@ void MapEditorUIManager::RenderObjectTargetDetailUI()
 		if (m_chScale[0][0] != '\0') fScaleX = (_float)atof(m_chScale[0]);
 		if (m_chScale[1][0] != '\0') fScaleY = (_float)atof(m_chScale[1]);
 		if (m_chScale[2][0] != '\0') fScaleZ = (_float)atof(m_chScale[2]);
-		(*m_ppTargetObject)->SetPosition(vec3(fPosX, fPosY, fPosZ));
-		(*m_ppTargetObject)->SetRotation(vec3(fRotX, fRotY, fRotZ));
-		(*m_ppTargetObject)->SetScale(vec3(fScaleX, fScaleY, fScaleZ));
-
-		//Text(" ");
-		//Text("Interaction Sound Setting:");
+		m_pTargetObject->SetPosition(vec3(fPosX, fPosY, fPosZ));
+		m_pTargetObject->SetRotation(vec3(fRotX, fRotY, fRotZ));
+		m_pTargetObject->SetScale(vec3(fScaleX, fScaleY, fScaleZ));
+		m_pTargetObject->SetSoundTag(m_chSound);
 	}
 	PopStyleColor();
 	EndChild();
 }
 
-void MapEditorUIManager::RenderObjectList(_float screenX, _float screenY)
+void MapEditorUI::RenderObjectList(_float screenX, _float screenY)
 {
-	if (nullptr == m_ppBGLayer || nullptr == *m_ppBGLayer)
+	if (nullptr == m_pBGLayer)
 		return;
 
-	Text("* Object Lists");
+	Text(m_pString->GetString("TEXT_51").c_str());
 	Text(" ");
 	SameLine(148.f);
-	Checkbox("Lock##Zero", &m_isZeroLock);
+	stringstream ss;
+	ss << m_pString->GetString("TEXT_43") << "##LockZero";
+	Checkbox(ss.str().c_str(), &m_isZeroLock);
 	if (m_isPreviousZeroLock != m_isZeroLock)
 	{
 		m_isPreviousZeroLock = m_isZeroLock;
-		list<CGameObject*>* listObj = (*m_ppBGLayer)->GetObjectList();
+		list<CGameObject*>* listObj = m_pBGLayer->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 			(*iter)->SetLock(m_isZeroLock);
 	}
 
 	SameLine(208.f);
-	Checkbox("Show##Zero", &m_isZeroShow);
+	ss.str("");
+	ss << m_pString->GetString("TEXT_44") << "##ShowZero";
+	Checkbox(ss.str().c_str(), &m_isZeroShow);
 	if (m_isPreviousZeroShow != m_isZeroShow)
 	{
 		m_isPreviousZeroShow = m_isZeroShow;
-		list<CGameObject*>* listObj = (*m_ppBGLayer)->GetObjectList();
+		list<CGameObject*>* listObj = m_pBGLayer->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 			(*iter)->SetEnable(m_isZeroShow);
 	}
 
 	SameLine(268.f);
-	Checkbox("Box##Zero", &m_isZeroDebug);
+	ss.str("");
+	ss << m_pString->GetString("TEXT_45") << "##BoxZero";
+	Checkbox(ss.str().c_str(), &m_isZeroDebug);
 	if (m_isPreviousZeroDebug != m_isZeroDebug)
 	{
 		m_isPreviousZeroDebug = m_isZeroDebug;
-		list<CGameObject*>* listObj = (*m_ppBGLayer)->GetObjectList();
+		list<CGameObject*>* listObj = m_pBGLayer->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 			(*iter)->SetDebug(m_isZeroDebug);
 	}
 
 	SameLine(318.f);
-	Checkbox("Wire##Zero", &m_isZeroWire);
+	ss.str("");
+	ss << m_pString->GetString("TEXT_46") << "##WireZero";
+	Checkbox(ss.str().c_str(), &m_isZeroWire);
 	if (m_isPreviousZeroWire != m_isZeroWire)
 	{
 		m_isPreviousZeroWire = m_isZeroWire;
-		list<CGameObject*>* listObj = (*m_ppBGLayer)->GetObjectList();
+		list<CGameObject*>* listObj = m_pBGLayer->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 			(*iter)->SetWireFrame(m_isZeroWire);
 	}
 
-	if (BeginChild("##ObjectLists", ImVec2(390.f, screenY - 330.f)))
+	if (BeginChild("##ObjectLists", ImVec2(390.f, screenY - 350.f)))
 	{
 		_uint index = 0;
-		list<CGameObject*>* listObj = (*m_ppBGLayer)->GetObjectList();
+		list<CGameObject*>* listObj = m_pBGLayer->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 		{
-			stringstream ss;
+			ss.str("");
 			ss << (*iter)->GetName() << "##Pick_" << index;
 			if (Button(ss.str().c_str(), ImVec2(120.f, 0.f)))
 			{
-				if (nullptr != *m_ppTargetObject)
-					(*m_ppTargetObject)->SetSelected(false);
-				*m_ppTargetObject = dynamic_cast<BGObject*>(*iter);
-				(*m_ppTargetObject)->SetSelected(true);
+				if (nullptr != m_pTargetObject)
+					m_pTargetObject->SetSelected(false);
+				m_pTargetObject = dynamic_cast<BGObject*>(*iter);
+				m_pTargetObject->SetSelected(true);
 			}
 
 			SameLine(140.f);
 			_bool isLock = (*iter)->GetLock();
-			ss.str("");  ss << "Lock##" << index;
+			ss.str("");  ss << m_pString->GetString("TEXT_43") << "##Lock" << index;
 			Checkbox(ss.str().c_str(), &isLock);
 			(*iter)->SetLock(isLock);
 
 			SameLine(200.f);
 			_bool isEnable = (*iter)->GetEnable();
-			ss.str("");  ss << "Show##" << index;
+			ss.str("");  ss << m_pString->GetString("TEXT_44") << "##Show" << index;
 			Checkbox(ss.str().c_str(), &isEnable);
 			(*iter)->SetEnable(isEnable);
 
 			SameLine(260.f);
 			_bool isDebug = (*iter)->GetDebug();
-			ss.str("");  ss << "Box##" << index;
+			ss.str("");  ss << m_pString->GetString("TEXT_45") << "##Box" << index;
 			Checkbox(ss.str().c_str(), &isDebug);
 			(*iter)->SetDebug(isDebug);
 
 			SameLine(310.f);
 			_bool isWire = (*iter)->GetWireFrame();
-			ss.str("");  ss << "Wire##" << index;
+			ss.str("");  ss << m_pString->GetString("TEXT_46") << "##Wire" << index;
 			Checkbox(ss.str().c_str(), &isWire);
 			(*iter)->SetWireFrame(isWire);
 
@@ -372,25 +595,33 @@ void MapEditorUIManager::RenderObjectList(_float screenX, _float screenY)
 	EndChild();
 }
 
-void MapEditorUIManager::RenderLightDetailUI()
+void MapEditorUI::RenderLightDetailUI()
 {
 	if (nullptr == m_pScene)
 		return;
 
-	Text("* Light Detail Setting");
-	Text("Data Path: "); SameLine(120.f); Text(m_pScene->GetDataPath().c_str());
-	Text("Light File: "); SameLine(120.f); Text(m_pScene->GetLightListFileName().c_str());
-	if (Button("Light List Save", ImVec2(190.f, 0.f)))
+	Text(m_pString->GetString("TEXT_52").c_str());
+	Text(m_pString->GetString("TEXT_53").c_str()); SameLine(120.f); Text(m_pScene->GetDataPath().c_str());
+	Text(m_pString->GetString("TEXT_54").c_str()); SameLine(120.f); Text(m_pScene->GetLightListFileName().c_str());
+
+	stringstream ss;
+	ss << m_pString->GetString("TEXT_55") << "##Light List Save";
+	if (Button(ss.str().c_str(), ImVec2(190.f, 0.f)))
 	{
 		LightListSave();
 	}
 	SameLine(200.f);
-	if (Button("Light List Load", ImVec2(190.f, 0.f)))
+	ss.str("");
+	ss << m_pString->GetString("TEXT_56") << "##Light List Load";
+	if (Button(ss.str().c_str(), ImVec2(190.f, 0.f)))
 	{
 		LightListLoad();
 	}
-	Text("Add Ligts");
-	if (Button("Directional##LightAdd", ImVec2(125.f, 0.f)))
+	Text(m_pString->GetString("TEXT_57").c_str());
+
+	ss.str("");
+	ss << m_pString->GetString("TEXT_58") << "##DirectionalLightAdd";
+	if (Button(ss.str().c_str(), ImVec2(125.f, 0.f)))
 	{
 		CLight::cLightInfo* pInfo = new CLight::cLightInfo();
 		pInfo->name = "Directional Light";
@@ -399,7 +630,9 @@ void MapEditorUIManager::RenderLightDetailUI()
 		CLightMaster::GetInstance()->AddLight(pInfo);
 	}
 	SameLine(135.f);
-	if (Button("Point##LightAdd", ImVec2(128.f, 0.f)))
+	ss.str("");
+	ss << m_pString->GetString("TEXT_59") << "##PointLightAdd";
+	if (Button(ss.str().c_str(), ImVec2(128.f, 0.f)))
 	{
 		CLight::cLightInfo* pInfo = new CLight::cLightInfo();
 		pInfo->name = "Point Light";
@@ -408,7 +641,9 @@ void MapEditorUIManager::RenderLightDetailUI()
 		CLightMaster::GetInstance()->AddLight(pInfo);
 	}
 	SameLine(265.f);
-	if (Button("Spot##LightAdd", ImVec2(125.f, 0.f)))
+	ss.str("");
+	ss << m_pString->GetString("TEXT_60") << "##SpotLightAdd";
+	if (Button(ss.str().c_str(), ImVec2(125.f, 0.f)))
 	{
 		CLight::cLightInfo* pInfo = new CLight::cLightInfo();
 		pInfo->name = "Spot Light";
@@ -416,7 +651,9 @@ void MapEditorUIManager::RenderLightDetailUI()
 		pInfo->param2.x = 1;
 		CLightMaster::GetInstance()->AddLight(pInfo);
 	}
-	if (Button("Copy Current Light##LightAdd", ImVec2(382.f, 0.f)))
+	ss.str("");
+	ss << m_pString->GetString("TEXT_61") << "##Copy Current Light##LightAdd";
+	if (Button(ss.str().c_str(), ImVec2(382.f, 0.f)))
 	{
 		if (nullptr != m_pTargetLight)
 		{
@@ -440,22 +677,22 @@ void MapEditorUIManager::RenderLightDetailUI()
 	}
 }
 
-void MapEditorUIManager::RenderLightTargetDetailUI()
+void MapEditorUI::RenderLightTargetDetailUI()
 {
 	PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.2, 0.2, 0.2, 1));
 	if (BeginChild("##LightSetting", ImVec2(380.f, 225.f)))
 	{
-		Text("* Light Target Detail Setting");
+		Text(m_pString->GetString("TEXT_62").c_str());
 		if (nullptr == m_pTargetLight)
 		{
-			Text("There is no light target.");
+			Text(m_pString->GetString("TEXT_63").c_str());
 			Text(" ");
 		}
 		else
 		{
 			CLight::cLightInfo* pInfo = m_pTargetLight->GetLightInfo();
 			strcpy_s(m_chLightName, pInfo->name.c_str());
-			Text("Name"); SameLine(88.f); SetNextItemWidth(300); InputText("##LightName", m_chLightName, sizeof(m_chLightName));
+			Text(m_pString->GetString("TEXT_64").c_str()); SameLine(88.f); SetNextItemWidth(300); InputText("##LightName", m_chLightName, sizeof(m_chLightName));
 			pInfo->name = m_chLightName;
 
 			// position
@@ -465,7 +702,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightPos[2], value.z);
 			ConvertFloatToCharArray(m_chLightPos[3], value.w);
 
-			Text("Position");
+			Text(m_pString->GetString("TEXT_48").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##LightPosX", m_chLightPos[0], sizeof(m_chLightPos[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##LightPosY", m_chLightPos[1], sizeof(m_chLightPos[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##LightPosZ", m_chLightPos[2], sizeof(m_chLightPos[2]));
@@ -486,7 +723,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightDir[2], value.z);
 			ConvertFloatToCharArray(m_chLightDir[3], value.w);
 
-			Text("Direction");
+			Text(m_pString->GetString("TEXT_65").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##LightDirX", m_chLightDir[0], sizeof(m_chLightDir[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##LightDirY", m_chLightDir[1], sizeof(m_chLightDir[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##LightDirZ", m_chLightDir[2], sizeof(m_chLightDir[2]));
@@ -507,7 +744,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightDiff[2], value.z);
 			ConvertFloatToCharArray(m_chLightDiff[3], value.w);
 
-			Text("Diffuse");
+			Text(m_pString->GetString("TEXT_66").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##LightDiffX", m_chLightDiff[0], sizeof(m_chLightDiff[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##LightDiffY", m_chLightDiff[1], sizeof(m_chLightDiff[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##LightDiffZ", m_chLightDiff[2], sizeof(m_chLightDiff[2]));
@@ -528,7 +765,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightspec[2], value.z);
 			ConvertFloatToCharArray(m_chLightspec[3], value.w);
 
-			Text("Specular");
+			Text(m_pString->GetString("TEXT_67").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##LightSpecX", m_chLightspec[0], sizeof(m_chLightspec[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##LightSpecY", m_chLightspec[1], sizeof(m_chLightspec[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##LightSpecZ", m_chLightspec[2], sizeof(m_chLightspec[2]));
@@ -549,7 +786,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightambi[2], value.z);
 			ConvertFloatToCharArray(m_chLightambi[3], value.w);
 
-			Text("Ambient");
+			Text(m_pString->GetString("TEXT_68").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##LightAmbiX", m_chLightambi[0], sizeof(m_chLightambi[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##LightAmbiY", m_chLightambi[1], sizeof(m_chLightambi[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##LightAmbiZ", m_chLightambi[2], sizeof(m_chLightambi[2]));
@@ -570,7 +807,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightatten[2], value.z);
 			ConvertFloatToCharArray(m_chLightatten[3], value.w);
 
-			Text("Atten");
+			Text(m_pString->GetString("TEXT_69").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##LightAttenX", m_chLightatten[0], sizeof(m_chLightatten[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##LightAttenY", m_chLightatten[1], sizeof(m_chLightatten[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##LightAttenZ", m_chLightatten[2], sizeof(m_chLightatten[2]));
@@ -591,7 +828,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightparam1[2], value.z);
 			ConvertFloatToCharArray(m_chLightparam1[3], value.w);
 
-			Text("Param1");
+			Text(m_pString->GetString("TEXT_70").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##Lightparam1X", m_chLightparam1[0], sizeof(m_chLightparam1[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##Lightparam1Y", m_chLightparam1[1], sizeof(m_chLightparam1[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##Lightparam1Z", m_chLightparam1[2], sizeof(m_chLightparam1[2]));
@@ -612,7 +849,7 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 			ConvertFloatToCharArray(m_chLightparam2[2], value.z);
 			ConvertFloatToCharArray(m_chLightparam2[3], value.w);
 
-			Text("Param2");
+			Text(m_pString->GetString("TEXT_71").c_str());
 			SameLine(70.f); Text("X:"); SameLine(88.f); SetNextItemWidth(50); InputText("##Lightparam2X", m_chLightparam2[0], sizeof(m_chLightparam2[0]));
 			SameLine(148.f); Text("Y:"); SameLine(166.f); SetNextItemWidth(50); InputText("##Lightparam2Y", m_chLightparam2[1], sizeof(m_chLightparam2[1]));
 			SameLine(226.f); Text("Z:"); SameLine(244.f); SetNextItemWidth(50); InputText("##Lightparam2Z", m_chLightparam2[2], sizeof(m_chLightparam2[2]));
@@ -630,9 +867,9 @@ void MapEditorUIManager::RenderLightTargetDetailUI()
 	EndChild();
 }
 
-void MapEditorUIManager::RenderLightList()
+void MapEditorUI::RenderLightList()
 {
-	Text("* Light Lists");
+	Text(m_pString->GetString("TEXT_72").c_str());
 	vector<CLight*>* pLightVector = CLightMaster::GetInstance()->GetLightVector();
 	for (int i = 0; i < pLightVector->size(); ++i)
 	{
@@ -646,7 +883,7 @@ void MapEditorUIManager::RenderLightList()
 		}
 		SameLine(250.f);
 		ss.str("");
-		ss << "Delete##Light_" << i;
+		ss << m_pString->GetString("TEXT_73") << "##DeleteLight_" << i;
 		if (Button(ss.str().c_str(), ImVec2(140.f, 0.f)))
 		{
 			if (m_pTargetLight == pLight)
@@ -656,11 +893,11 @@ void MapEditorUIManager::RenderLightList()
 	}
 }
 
-void MapEditorUIManager::RenderMeshList()
+void MapEditorUI::RenderMeshList()
 {
 	Text(" ");
-	SameLine(110.f); Text("Add Object");
-	SameLine(300.f); Text("Size");
+	SameLine(110.f); Text(m_pString->GetString("TEXT_74").c_str());
+	SameLine(300.f); Text(m_pString->GetString("TEXT_75").c_str());
 
 	for (int i = 0; i < m_vecMeshInfo.size(); ++i)
 	{
@@ -683,7 +920,7 @@ void MapEditorUIManager::RenderMeshList()
 				pGameObject = BGObject::Create(m_pScene->GetSceneTag(), (_uint)LAYER_BACKGROUND, (_uint)OBJ_BACKGROUND
 					, m_pScene->GetLayer((_uint)LAYER_BACKGROUND)
 					, meshId
-					, vPos, vRot, vScale);
+					, vPos, vRot, vScale, "");
 
 				if (nullptr != pGameObject)
 					m_pScene->AddGameObjectToLayer((_uint)LAYER_BACKGROUND, pGameObject);
@@ -697,31 +934,28 @@ void MapEditorUIManager::RenderMeshList()
 	}
 }
 
-void MapEditorUIManager::ConvertFloatToCharArray(char* dest, _float value)
+void MapEditorUI::ConvertFloatToCharArray(char* dest, _float value)
 {
 	stringstream ss;
 	ss << value;
 	strcpy_s(dest, ss.str().length() + 1, ss.str().c_str());
 }
 
-void MapEditorUIManager::ObjListSave()
+void MapEditorUI::ObjListSave()
 {
 	if (nullptr != m_pScene)
 		m_pScene->SaveBackgroundObjects();
 }
 
-void MapEditorUIManager::ObjListLoad()
+void MapEditorUI::ObjListLoad()
 {
 	if (nullptr != m_pScene)
 		m_pScene->LoadBackgroundObjects();
 
-	if (nullptr != m_ppTargetObject)
+	if (nullptr != m_pTargetObject)
 	{
-		if (nullptr != (*m_ppTargetObject))
-		{
-			(*m_ppTargetObject)->SetSelected(false);
-			(*m_ppTargetObject) = nullptr;
-		}
+		m_pTargetObject->SetSelected(false);
+		m_pTargetObject = nullptr;
 	}
 
 	m_isPreviousZeroLock = false;
@@ -729,12 +963,12 @@ void MapEditorUIManager::ObjListLoad()
 	m_isPreviousZeroShow = true;
 	m_isZeroShow = true;
 	m_isPreviousZeroDebug = true;
-	m_isZeroDebug = true;
+	m_isZeroDebug = false;
 	m_isPreviousZeroWire = false;
 	m_isZeroWire = false;
 }
 
-void MapEditorUIManager::LightListSave()
+void MapEditorUI::LightListSave()
 {
 	if (nullptr == m_pScene)
 		return;
@@ -745,7 +979,7 @@ void MapEditorUIManager::LightListSave()
 	CLightMaster::GetInstance()->SaveLights(ss.str());
 }
 
-void MapEditorUIManager::LightListLoad()
+void MapEditorUI::LightListLoad()
 {
 	if (nullptr == m_pScene)
 		return;
@@ -758,8 +992,15 @@ void MapEditorUIManager::LightListLoad()
 	CLightMaster::GetInstance()->LoadLights(ss.str());
 }
 
-MapEditorUIManager* MapEditorUIManager::Create()
+MapEditorUI* MapEditorUI::Create(CScene* pScene)
 {
+	MapEditorUI* pInstance = new MapEditorUI();
+	if (PK_NOERROR != pInstance->Ready(pScene))
+	{
+		pInstance->Destroy();
+		pInstance = nullptr;
+	}
 
+	return pInstance;
 }
 

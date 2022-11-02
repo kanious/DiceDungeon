@@ -162,6 +162,8 @@ void CXMLParser::LoadSoundData(string path)
 		return;
 
 	CSoundMaster* pInstance = CSoundMaster::GetInstance();
+	_bool compressed = pInstance->GetCompressed();
+	pInstance->SetDataPath(path);
 
 	xml_node_iterator iter;
 	for (iter = list.begin(); iter != list.end(); ++iter)
@@ -218,10 +220,28 @@ void CXMLParser::LoadSoundData(string path)
 			pInstance->CreateChannelGroup(channelTag);
 		else if (!strcmp(category.value(), "SoundFile"))
 		{
+			// sound Path parcing
+			string token(soundPath);
+			size_t pos = token.find('.');
+			string command = token.substr(0, pos);
+			token.erase(0, command.size() + 1);
+
+			if (compressed)
+			{
+				if (!strcmp("wav", token.c_str()))
+					continue;
+			}
+			else
+			{
+				if (!strcmp("mp3", token.c_str()))
+					continue;
+			}
+
 			if (!loop)
 				pInstance->LoadSound(soundTag, soundPath, soundChannelTag);
 			else
 				pInstance->LoadLoopSound(soundTag, soundPath, soundChannelTag);
+			
 		}
 		else if (!strcmp(category.value(), "DSP"))
 			pInstance->CreateDSPEffect(dspTag, type);
@@ -298,6 +318,11 @@ void CXMLParser::LoadMapObjectData(string path, vector<sObjectData>& vec, sObjec
 					data.SCALE.y = (_float)atof(childNode.child_value());
 				if (!strcmp(childNode.name(), "ScaleZ"))
 					data.SCALE.z = (_float)atof(childNode.child_value());
+
+				if (!strcmp(childNode.name(), "EffectSound"))
+					data.SOUNDTAG = childNode.child_value();
+				if (!strcmp(childNode.name(), "Lock"))
+					data.LOCK = (_bool)atoi(childNode.child_value());
 			}
 		}
 		if (!isCamera)
@@ -365,6 +390,11 @@ void CXMLParser::SaveMapObjectData(string path, vector<sObjectData>& vec, sObjec
 		childsy.append_child(node_pcdata).set_value(to_string(iter->SCALE.y).c_str());
 		xml_node childsz = nodeChild.append_child("ScaleZ");
 		childsz.append_child(node_pcdata).set_value(to_string(iter->SCALE.z).c_str());
+
+		xml_node childsound = nodeChild.append_child("EffectSound");
+		childsound.append_child(node_pcdata).set_value(iter->SOUNDTAG.c_str());
+		xml_node childlock = nodeChild.append_child("Lock");
+		childlock.append_child(node_pcdata).set_value(to_string(iter->LOCK).c_str());
 	}
 
 	_bool result = xmlData.save_file(path.c_str());
@@ -527,4 +557,33 @@ void CXMLParser::SaveLightData(std::string path, std::vector<sLightData>& vec)
 	}
 
 	_bool result = xmlData.save_file(path.c_str());
+}
+
+void CXMLParser::LoadLanguageData(string path, unordered_map<string, string>& map)
+{
+	xml_document xmlData;
+	xml_parse_result result = xmlData.load_file(path.c_str());
+	if (!result)
+		return;
+
+	xml_object_range<xml_node_iterator> list = xmlData.child("Language_Data").children();
+	if (list.empty())
+		return;
+
+	xml_node_iterator iter;
+	for (iter = list.begin(); iter != list.end(); ++iter)
+	{
+		xml_node node = *iter;
+		xml_node_iterator childIter;
+
+		string key;
+		string content;
+		for (childIter = node.children().begin(); childIter != node.children().end(); ++childIter)
+		{
+			xml_node childNode = *childIter;
+			if (!strcmp(childNode.name(), "Key")) key = childNode.child_value();
+			if (!strcmp(childNode.name(), "Content")) content = childNode.child_value();
+		}
+		map.insert(unordered_map<string, string>::value_type(key, content));
+	}
 }

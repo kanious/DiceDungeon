@@ -129,7 +129,7 @@ void CSoundSystem::PlayBGMSound()
 {
 }
 
-void CSoundSystem::PlaySampleSound(string tag)
+void CSoundSystem::PlaySound(string tag)
 {
 	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
 	if (iterSound == m_mapSounds.end())
@@ -160,7 +160,7 @@ void CSoundSystem::PlaySampleSound(string tag)
 	pInfo->pChannel = pChannel;
 }
 
-void CSoundSystem::StopSampleSound(string tag)
+void CSoundSystem::StopSound(string tag)
 {
 	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
 	if (iterSound == m_mapSounds.end())
@@ -252,7 +252,7 @@ RESULT CSoundSystem::ErrorCheck(FMOD_RESULT result)
 {
 	if (result != FMOD_OK)
 	{
-		printf("fmod error: %d, %s", result, FMOD_ErrorString(result));
+		printf("fmod error: %d, %s\n", result, FMOD_ErrorString(result));
 		return PK_FMOD_ERROR;
 	}
 

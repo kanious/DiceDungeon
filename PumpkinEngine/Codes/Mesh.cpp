@@ -23,6 +23,8 @@ CMesh::CMesh()
     , m_pShader(nullptr)
     , m_pParentTransform(nullptr)
     , m_bWireFrame(false)
+    , m_bSelected(false)
+    , m_bDebug(false)
 {
     m_pOpenGLDevice->AddRefCnt();
 }
@@ -34,6 +36,8 @@ CMesh::CMesh(const CMesh& rhs)
     , m_pShader(rhs.m_pShader)
     , m_pParentTransform(nullptr)
     , m_bWireFrame(rhs.m_bWireFrame)
+    , m_bSelected(rhs.m_bSelected)
+    , m_bDebug(rhs.m_bDebug)
 {
     m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
@@ -63,7 +67,6 @@ void CMesh::Render()
     m_pShader->SetMatrixInfo(matWorld, matView, matProj);
     m_pShader->SetLightEnableInfo(!m_bWireFrame);
     m_pShader->SetSelected(m_bSelected);
-    m_pShader->SetTextureInfo();
 
     if (nullptr != m_pDiffTexture)
     {

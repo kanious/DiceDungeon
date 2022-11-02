@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "OpenGLDefines.h"
 #include "InputDevice.h"
+#include "UIManager.h"
 
 USING(Engine)
 USING(glm)
@@ -43,6 +44,17 @@ vec3 DefaultCamera::GetCameraTarget()
 		return vec3(0.f);
 
 	return m_pCamera->GetCameraTarget();
+}
+
+void DefaultCamera::SetMouseEnable(_bool enable)
+{
+	m_bMouseEnable = enable;
+	if (enable)
+		m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_NORMAL);
+	else
+		m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_DISABLED);
+
+	m_pInputDevice->InitMousePos();
 }
 
 void DefaultCamera::SetCameraEye(glm::vec3 eye)
@@ -172,17 +184,9 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		if (!isLeftAltDown)
 		{
 			isLeftAltDown = true;
-			if (m_bMouseEnable)
-			{
-				m_bMouseEnable = false;
-				m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_DISABLED);
-			}
-			else
-			{
-				m_bMouseEnable = true;
-				m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_NORMAL);
-			}
-			m_pInputDevice->InitMousePos();
+			
+			if (!UIManager::GetInstance()->GetUIOpened(UIManager::UI_SYSTEM_MENU_WINDOW))
+				SetMouseEnable(!m_bMouseEnable);
 		}
 	}
 	else

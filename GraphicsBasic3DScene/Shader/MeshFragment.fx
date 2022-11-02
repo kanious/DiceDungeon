@@ -28,7 +28,7 @@ const int NUMBEROFLIGHTS = 20;
 uniform sLight theLights[NUMBEROFLIGHTS];
 uniform vec4 eyeLocation;
 
-vec4 calculateLight(vec3 diffuse, vec3 normal, vec3 vtxWorldPos);
+vec4 calculateLight(vec3 diffuseColor, vec3 normal, vec3 vtxWorldPos);
 
 out vec4 daColor;
 void main()
@@ -44,10 +44,10 @@ void main()
 		return;
 	}
 
-	vec3 diffuse = vec3(diffColour.x, diffColour.y, diffColour.z);
+	vec3 vDiffuse = vec3(diffColour.x, diffColour.y, diffColour.z);
 	vec3 normal = vec3(fNormal.x, fNormal.y, fNormal.z);
 	vec3 vtxWorldPos = vec3(fVtxWorldPos.x, fVtxWorldPos.y, fVtxWorldPos.z);
-	vec4 outColour = calculateLight(diffuse, normal, vtxWorldPos);
+	vec4 outColour = calculateLight(vDiffuse, normal, vtxWorldPos);
 
 	if (!isSelected)
 		daColor = vec4(outColour.x, outColour.y, outColour.z, 1.0f);
@@ -58,7 +58,7 @@ void main()
 	//daColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 
-vec4 calculateLight(vec3 diffuse, vec3 normal, vec3 vtxWorldPos)
+vec4 calculateLight(vec3 diffuseColor, vec3 normal, vec3 vtxWorldPos)
 {
 	vec4 finalColour = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -82,7 +82,7 @@ vec4 calculateLight(vec3 diffuse, vec3 normal, vec3 vtxWorldPos)
 			lightContrib *= (dot + ambientPower);
 
 			float lightPower = theLights[i].diffuse.w;
-			vec3 result = diffuse * theLights[i].diffuse.xyz * lightContrib * lightPower;
+			vec3 result = diffuseColor * theLights[i].diffuse.xyz * lightContrib * lightPower;
 			finalColour.xyz += result;
 
 			continue;
@@ -149,7 +149,7 @@ vec4 calculateLight(vec3 diffuse, vec3 normal, vec3 vtxWorldPos)
 
 		}
 		
-		vec3 result = (diffuse * lightDiffuseContrib) + (theLights[i].specular.xyz * lightSpecularContrib);
+		vec3 result = (diffuseColor * lightDiffuseContrib) + (theLights[i].specular.xyz * lightSpecularContrib);
 		finalColour.xyz += result;
 	}
 

@@ -1,0 +1,80 @@
+Key,Content
+TEXT_01,System
+TEXT_02,Back To Game
+TEXT_03,Close Map Editor
+TEXT_04,Open Map Editor
+TEXT_05,Close Sound Editor
+TEXT_06,Open Sound Editor
+TEXT_07, Language Options :
+TEXT_08,Quit
+TEXT_09,Pumpkins Sound Setting
+TEXT_10,* Sound Files
+TEXT_11, FileName
+TEXT_12, Type
+TEXT_13, Format
+TEXT_14, Channels
+TEXT_15, Bits
+TEXT_16, Loop
+TEXT_17, ChannelGroup
+TEXT_18, State
+TEXT_19,Yes
+TEXT_20,No
+TEXT_21,Play
+TEXT_22,Stop
+TEXT_23, Frequency
+TEXT_24, Volumn
+TEXT_25, Pitch
+TEXT_26, Pan
+TEXT_27,* ChannelGroups
+TEXT_28, DSPs
+TEXT_29,Check All
+TEXT_30,UnCheck All
+TEXT_31,Set Default Value
+TEXT_32,Pumpkins Map Editor
+TEXT_33,Object
+TEXT_34,Light
+TEXT_35,Mesh List
+TEXT_36,* Scene Detail Setting
+TEXT_37,Data Path: 
+TEXT_38,Obj List File: 
+TEXT_39,Object List Save
+TEXT_40,Object List Load
+TEXT_41,* Object Target Detail Setting
+TEXT_42,There is no object target.
+TEXT_43,Lock
+TEXT_44,Show
+TEXT_45,Box
+TEXT_46,Wire
+TEXT_47,Mesh ID:
+TEXT_48,Position
+TEXT_49,Rotation
+TEXT_50,Scale
+TEXT_51,* Object Lists
+TEXT_52,* Light Detail Setting
+TEXT_53,Data Path: 
+TEXT_54,Light File: 
+TEXT_55,Light List Save
+TEXT_56,Light List Load
+TEXT_57,Add Ligts
+TEXT_58,Directional
+TEXT_59,Point
+TEXT_60,Spot
+TEXT_61,Copy Current Light
+TEXT_62,* Light Target Detail Setting
+TEXT_63,There is no light target.
+TEXT_64,Name
+TEXT_65,Direction
+TEXT_66,Diffuse
+TEXT_67,Specular
+TEXT_68,Ambient
+TEXT_69,Atten
+TEXT_70,Param1
+TEXT_71,Param2
+TEXT_72,* Light Lists
+TEXT_73,Delete
+TEXT_74,Add Object
+TEXT_75,Size
+TEXT_76,* Current Sound Versoin: 
+TEXT_77,Compressed
+TEXT_78,Uncompressed
+TEXT_79,Sound Tag
