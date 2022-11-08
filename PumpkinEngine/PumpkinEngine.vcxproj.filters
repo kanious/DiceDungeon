@@ -249,7 +249,4 @@
       <Filter>98.SingletonClasses\Light</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="Memo.txt" />
-  </ItemGroup>
 </Project>

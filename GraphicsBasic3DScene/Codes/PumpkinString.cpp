@@ -1,6 +1,7 @@
 #include "PumpkinString.h"
 #include "XMLParser.h"
 #include <sstream>
+#include <atlconv.h>
 
 
 SINGLETON_FUNCTION(PumpkinString)
@@ -11,7 +12,16 @@ PumpkinString::PumpkinString()
 	: m_eType(lang_en)
 {
 	m_mapString.clear();
-	m_DataPath = "Assets\\xmlData\\lang\\";
+
+	wchar_t path[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, path, MAX_PATH);
+	USES_CONVERSION;
+	std::string str = W2A(path);
+	str = str.substr(0, str.find_last_of("\\/"));
+	stringstream ss;
+	ss << str << "\\";
+
+	m_DataPath = ss.str();
 	m_FileName[lang_en] = "lang_en.xml";
 	m_FileName[lang_sp] = "lang_sp.xml";
 	m_FileName[lang_ko] = "lang_ko.xml";
@@ -62,7 +72,5 @@ void PumpkinString::LoadStrings(eLanguageType type)
 {
 	m_mapString.clear();
 
-	stringstream ss;
-	ss << m_DataPath << m_FileName[type];
-	CXMLParser::GetInstance()->LoadLanguageData(ss.str(), m_mapString);
+	CXMLParser::GetInstance()->LoadLanguageData(m_DataPath, m_FileName[type], m_mapString);
 }

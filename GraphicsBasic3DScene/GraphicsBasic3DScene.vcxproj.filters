@@ -148,16 +148,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\MeshFragment.fx">
+    <None Include="Assets\Shader\BoxFragment.fx">
       <Filter>97.Shader</Filter>
     </None>
-    <None Include="Shader\MeshVertex.fx">
+    <None Include="Assets\Shader\BoxVertex.fx">
       <Filter>97.Shader</Filter>
     </None>
-    <None Include="Shader\BoxFragment.fx">
+    <None Include="Assets\Shader\MeshFragment.fx">
       <Filter>97.Shader</Filter>
     </None>
-    <None Include="Shader\BoxVertex.fx">
+    <None Include="Assets\Shader\MeshVertex.fx">
       <Filter>97.Shader</Filter>
     </None>
   </ItemGroup>

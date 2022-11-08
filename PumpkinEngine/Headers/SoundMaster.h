@@ -17,6 +17,7 @@ private:
 	CSoundSystem*		m_pSoundSystem;
 	_bool				m_bLoadCompressedSound;
 	std::string			m_DataPath;
+	std::string			m_FileName;
 
 private:
 	explicit CSoundMaster();
@@ -28,11 +29,13 @@ public:
 	_uint GetSoundChannelGroupNumber();
 	_bool GetCompressed()					{ return m_bLoadCompressedSound; }
 	std::string GetDataPath()				{ return m_DataPath; }
+	std::string GetFileName()				{ return m_FileName; }
 	std::unordered_map<std::string, CSoundInfo*>* GetSoundMap();
 	std::unordered_map<std::string, CChannelGroupInfo*>* GetChannelMap();
 	std::unordered_map<std::string, CDSPInfo*>* GetDSPMap();
 	void SetCompressed(_bool compressed)	{ m_bLoadCompressedSound = compressed; }
 	void SetDataPath(std::string path)		{ m_DataPath = path; }
+	void SetFileName(std::string name)		{ m_FileName = name; }
 
 public:
 	RESULT LoadSound(std::string tag, std::string path, std::string channelTag);

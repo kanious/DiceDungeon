@@ -22,7 +22,7 @@ USING(std)
 SoundUI::SoundUI()
 	: m_currentSoundName(""), m_pCurrentSound(nullptr), m_pMapSound(nullptr)
 	, m_currentChannelTag(""), m_pCurrentChannel(nullptr), m_pMapChannel(nullptr)
-	, m_pMapDSP(nullptr), m_bCompressed(true)
+	, m_pMapDSP(nullptr)
 {
 	m_pString = PumpkinString::GetInstance(); m_pString->AddRefCnt();
 }
@@ -101,7 +101,8 @@ void SoundUI::Reset()
 
 	CSoundMaster::GetInstance()->ResetAllSoundData();
 	string path = CSoundMaster::GetInstance()->GetDataPath();
-	CXMLParser::GetInstance()->LoadSoundData(path);
+	string fileName = CSoundMaster::GetInstance()->GetFileName();
+	CXMLParser::GetInstance()->LoadSoundData(path, fileName);
 
 	Ready();
 }
@@ -110,7 +111,8 @@ void SoundUI::RenderSoundVersionOption()
 {
 	Text(m_pString->GetString("TEXT_76").c_str());
 	SameLine(250.f);
-	if (m_bCompressed)
+	_bool bCompressed = CSoundMaster::GetInstance()->GetCompressed();
+	if (bCompressed)
 		Text(m_pString->GetString("TEXT_77").c_str());
 	else
 		Text(m_pString->GetString("TEXT_78").c_str());

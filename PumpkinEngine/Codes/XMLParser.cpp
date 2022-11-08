@@ -7,6 +7,7 @@
 #include "..\Headers\Texture.h"
 #include "..\Headers\SoundMaster.h"
 #include <pugixml/pugixml.hpp>
+#include <sstream>
 
 
 USING(Engine)
@@ -16,6 +17,7 @@ SINGLETON_FUNCTION(CXMLParser)
 
 CXMLParser::CXMLParser()
 {
+	m_xmlDataPath = "Assets\\xmlData\\";
 }
 
 CXMLParser::~CXMLParser()
@@ -26,10 +28,30 @@ void CXMLParser::Destroy()
 {
 }
 
-void CXMLParser::LoadShaderData(string path)
+void testsave(string path)
 {
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+
+	xml_node declareNode = xmlData.append_child(node_declaration);
+	declareNode.append_attribute("version") = "1.0";
+	declareNode.append_attribute("encoding") = "UTF-8";
+
+	xml_node element = xmlData.append_child("Light_Data");
+
+	xml_node nodeChild = element.append_child("Lights");
+	xml_node child = nodeChild.append_child("Name");
+	child.append_child(node_pcdata).set_value(path.c_str());
+
+	_bool result = xmlData.save_file("D:\\test.xml");
+}
+
+void CXMLParser::LoadShaderData(string path, string fileName)
+{
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+	
+	xml_document xmlData;
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 
@@ -39,7 +61,7 @@ void CXMLParser::LoadShaderData(string path)
 
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();
 	CComponent* pComponent = nullptr;
-
+	
 	xml_node_iterator iter;
 	for (iter = list.begin(); iter != list.end(); ++iter)
 	{
@@ -57,17 +79,24 @@ void CXMLParser::LoadShaderData(string path)
 			if (!strcmp(childNode.name(), "FragmentPath"))
 				data.PATH_FRAGMENT= childNode.child_value();
 		}
-
-		pComponent = CShader::Create(data.ID, data.PATH_VERTEX.c_str(), data.PATH_FRAGMENT.c_str());
+		
+		ss.str("");
+		ss << path << data.PATH_VERTEX;
+		stringstream ss2;
+		ss2 << path << data.PATH_FRAGMENT;
+		pComponent = CShader::Create(data.ID, ss.str().c_str(), ss2.str().c_str());
 		if (nullptr != pComponent)
 			pMaster->AddNewComponent(data.ID, pComponent);
 	}
 }
 
-void CXMLParser::LoadTextureData(string path)
+void CXMLParser::LoadTextureData(string path, string fileName)
 {
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+	
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 
@@ -94,16 +123,21 @@ void CXMLParser::LoadTextureData(string path)
 				data.PATH = childNode.child_value();
 		}
 
-		pComponent = CTexture::Create(data.ID, data.PATH);
+		stringstream ss;
+		ss << path << data.PATH;
+		pComponent = CTexture::Create(data.ID, ss.str());
 		if (nullptr != pComponent)
 			pMaster->AddNewComponent(data.ID, pComponent);
 	}
 }
 
-void CXMLParser::LoadMeshData(string path)
+void CXMLParser::LoadMeshData(string path, string fileName)
 {
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 
@@ -140,7 +174,9 @@ void CXMLParser::LoadMeshData(string path)
 				data.INITSIZE = childNode.child_value();
 		}
 
-		pComponent = CMesh::Create(data.ID, data.PATH, data.FILENAME, (ModelType)data.TYPE,
+		stringstream ss;
+		ss << path << data.PATH;
+		pComponent = CMesh::Create(data.ID, ss.str(), data.FILENAME, (ModelType)data.TYPE,
 			data.SHADER_ID, data.TEXTURE_ID_DIFF);
 		if (nullptr != pComponent)
 		{
@@ -150,10 +186,13 @@ void CXMLParser::LoadMeshData(string path)
 	}
 }
 
-void CXMLParser::LoadSoundData(string path)
+void CXMLParser::LoadSoundData(string path, string fileName)
 {
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+	
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 
@@ -164,6 +203,7 @@ void CXMLParser::LoadSoundData(string path)
 	CSoundMaster* pInstance = CSoundMaster::GetInstance();
 	_bool compressed = pInstance->GetCompressed();
 	pInstance->SetDataPath(path);
+	pInstance->SetFileName(fileName);
 
 	xml_node_iterator iter;
 	for (iter = list.begin(); iter != list.end(); ++iter)
@@ -237,10 +277,12 @@ void CXMLParser::LoadSoundData(string path)
 					continue;
 			}
 
+			stringstream ss;
+			ss << path << soundPath;
 			if (!loop)
-				pInstance->LoadSound(soundTag, soundPath, soundChannelTag);
+				pInstance->LoadSound(soundTag, ss.str(), soundChannelTag);
 			else
-				pInstance->LoadLoopSound(soundTag, soundPath, soundChannelTag);
+				pInstance->LoadLoopSound(soundTag, ss.str(), soundChannelTag);
 			
 		}
 		else if (!strcmp(category.value(), "DSP"))
@@ -248,10 +290,13 @@ void CXMLParser::LoadSoundData(string path)
 	}
 }
 
-void CXMLParser::LoadMapObjectData(string path, vector<sObjectData>& vec, sObjectData& cameraData)
+void CXMLParser::LoadMapObjectData(string path, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 
@@ -330,7 +375,7 @@ void CXMLParser::LoadMapObjectData(string path, vector<sObjectData>& vec, sObjec
 	}
 }
 
-void CXMLParser::SaveMapObjectData(string path, vector<sObjectData>& vec, sObjectData& cameraData)
+void CXMLParser::SaveMapObjectData(string path, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	xml_document xmlData;
 
@@ -397,13 +442,18 @@ void CXMLParser::SaveMapObjectData(string path, vector<sObjectData>& vec, sObjec
 		childlock.append_child(node_pcdata).set_value(to_string(iter->LOCK).c_str());
 	}
 
-	_bool result = xmlData.save_file(path.c_str());
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+	_bool result = xmlData.save_file(ss.str().c_str());
 }
 
-void CXMLParser::LoadLightData(std::string path, std::vector<sLightData>& vec)
+void CXMLParser::LoadLightData(string path, string fileName, vector<sLightData>& vec)
 {
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 
@@ -467,7 +517,7 @@ void CXMLParser::LoadLightData(std::string path, std::vector<sLightData>& vec)
 	}
 }
 
-void CXMLParser::SaveLightData(std::string path, std::vector<sLightData>& vec)
+void CXMLParser::SaveLightData(string path, string fileName, vector<sLightData>& vec)
 {
 	xml_document xmlData;
 
@@ -556,13 +606,18 @@ void CXMLParser::SaveLightData(std::string path, std::vector<sLightData>& vec)
 		childp2w.append_child(node_pcdata).set_value(to_string(iter->PARAM2.w).c_str());
 	}
 
-	_bool result = xmlData.save_file(path.c_str());
+	stringstream ss;
+	ss << path << m_xmlDataPath << fileName;
+	_bool result = xmlData.save_file(ss.str().c_str());
 }
 
-void CXMLParser::LoadLanguageData(string path, unordered_map<string, string>& map)
+void CXMLParser::LoadLanguageData(string path, string fileName, unordered_map<string, string>& map)
 {
+	stringstream ss;
+	ss << path << m_xmlDataPath << "lang\\" << fileName;
+
 	xml_document xmlData;
-	xml_parse_result result = xmlData.load_file(path.c_str());
+	xml_parse_result result = xmlData.load_file(ss.str().c_str());
 	if (!result)
 		return;
 

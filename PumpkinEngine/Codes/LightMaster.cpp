@@ -159,7 +159,7 @@ void CLightMaster::SetLightInfo()
 			, (*iter)->GetLightInfo()->param2.w);
 	}
 }
-void CLightMaster::SaveLights(string path)
+void CLightMaster::SaveLights(string path, string fileName)
 {
 	vector<CXMLParser::sLightData> vecLights;
 
@@ -181,10 +181,10 @@ void CLightMaster::SaveLights(string path)
 
 		vecLights.push_back(data);
 	}
-	CXMLParser::GetInstance()->SaveLightData(path, vecLights);
+	CXMLParser::GetInstance()->SaveLightData(path, fileName, vecLights);
 }
 
-void CLightMaster::LoadLights(string path)
+void CLightMaster::LoadLights(string path, string fileName)
 {
 	vector<CLight*>::iterator iter;
 	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
@@ -192,7 +192,7 @@ void CLightMaster::LoadLights(string path)
 	m_vecLights.clear();
 
 	vector<CXMLParser::sLightData> vecLights;
-	CXMLParser::GetInstance()->LoadLightData(path, vecLights);
+	CXMLParser::GetInstance()->LoadLightData(path, fileName, vecLights);
 	vector<CXMLParser::sLightData>::iterator iterLight;
 	for (iterLight = vecLights.begin(); iterLight != vecLights.end(); ++iterLight)
 	{

@@ -60,21 +60,24 @@ class ENGINE_API CXMLParser : public CBase
 	};
 
 private:
+	std::string				m_xmlDataPath;
+
+private:
 	explicit CXMLParser();
 	virtual ~CXMLParser();
 private:
 	void Destroy();
 
 public:
-	void LoadShaderData(std::string path);
-	void LoadTextureData(std::string path);
-	void LoadMeshData(std::string path);
-	void LoadSoundData(std::string path);
-	void LoadMapObjectData(std::string path, std::vector<sObjectData>& vec, sObjectData& cameraData);
-	void SaveMapObjectData(std::string path, std::vector<sObjectData>& vec, sObjectData& cameraData);
-	void LoadLightData(std::string path, std::vector<sLightData>& vec);
-	void SaveLightData(std::string path, std::vector<sLightData>& vec);
-	void LoadLanguageData(std::string path, std::unordered_map<std::string, std::string>& map);
+	void LoadShaderData(std::string path, std::string fileName);
+	void LoadTextureData(std::string path, std::string fileName);
+	void LoadMeshData(std::string path, std::string fileName);
+	void LoadSoundData(std::string path, std::string fileName);
+	void LoadMapObjectData(std::string path, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void SaveMapObjectData(std::string path, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void LoadLightData(std::string path, std::string fileName, std::vector<sLightData>& vec);
+	void SaveLightData(std::string path, std::string fileName, std::vector<sLightData>& vec);
+	void LoadLanguageData(std::string path, std::string fileName, std::unordered_map<std::string, std::string>& map);
 };
 
 NAMESPACE_END

@@ -227,9 +227,6 @@
     <ClCompile Include="Codes\VIBuffer.cpp" />
     <ClCompile Include="Codes\XMLParser.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="Memo.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -973,10 +973,7 @@ void MapEditorUI::LightListSave()
 	if (nullptr == m_pScene)
 		return;
 
-	stringstream ss;
-	ss << m_pScene->GetDataPath() << m_pScene->GetLightListFileName();
-
-	CLightMaster::GetInstance()->SaveLights(ss.str());
+	CLightMaster::GetInstance()->SaveLights(m_pScene->GetDataPath(), m_pScene->GetLightListFileName());
 }
 
 void MapEditorUI::LightListLoad()
@@ -986,10 +983,7 @@ void MapEditorUI::LightListLoad()
 
 	m_pTargetLight = nullptr;
 
-	stringstream ss;
-	ss << m_pScene->GetDataPath() << m_pScene->GetLightListFileName();
-
-	CLightMaster::GetInstance()->LoadLights(ss.str());
+	CLightMaster::GetInstance()->LoadLights(m_pScene->GetDataPath(), m_pScene->GetLightListFileName());
 }
 
 MapEditorUI* MapEditorUI::Create(CScene* pScene)

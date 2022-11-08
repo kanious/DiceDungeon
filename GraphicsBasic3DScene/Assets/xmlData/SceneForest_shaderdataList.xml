@@ -1,12 +1,12 @@
 <Shader_List>
 	<Shader>
 		<ID>DefaultShader</ID>
-		<VertexPath>Shader\MeshVertex.fx</VertexPath>
-		<FragmentPath>Shader\MeshFragment.fx</FragmentPath>
+		<VertexPath>Assets\Shader\MeshVertex.fx</VertexPath>
+		<FragmentPath>Assets\Shader\MeshFragment.fx</FragmentPath>
 	</Shader>
 	<Shader>
 		<ID>DebugBoxShader</ID>
-		<VertexPath>Shader\BoxVertex.fx</VertexPath>
-		<FragmentPath>Shader\BoxFragment.fx</FragmentPath>
+		<VertexPath>Assets\Shader\BoxVertex.fx</VertexPath>
+		<FragmentPath>Assets\Shader\BoxFragment.fx</FragmentPath>
 	</Shader>
 </Shader_List>

@@ -17,7 +17,6 @@ private:
 	std::string						m_currentSoundName;
 	Engine::CSoundInfo*				m_pCurrentSound;
 	PumpkinString*					m_pString;
-	_bool							m_bCompressed;
 
 	typedef std::unordered_map<std::string, Engine::CSoundInfo*> SOUND_MAP;
 	SOUND_MAP*						m_pMapSound;

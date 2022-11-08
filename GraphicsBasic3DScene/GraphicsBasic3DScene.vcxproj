@@ -181,20 +181,16 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\MeshFragment.fx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    <None Include="Assets\Shader\BoxFragment.fx">
       <FileType>Document</FileType>
     </None>
-    <None Include="Shader\MeshVertex.fx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    <None Include="Assets\Shader\BoxVertex.fx">
       <FileType>Document</FileType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shader\BoxFragment.fx">
+    <None Include="Assets\Shader\MeshFragment.fx">
       <FileType>Document</FileType>
     </None>
-    <None Include="Shader\BoxVertex.fx">
+    <None Include="Assets\Shader\MeshVertex.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

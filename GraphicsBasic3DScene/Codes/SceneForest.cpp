@@ -20,6 +20,7 @@
 #include "Camera.h"
 #include "DefaultCamera.h"
 #include <sstream>
+#include <atlconv.h>
 
 USING(Engine)
 USING(glm)
@@ -33,7 +34,15 @@ SceneForest::SceneForest()
 	m_pInputDevice->SetMouseSensitivity(0.05f);
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
 
-	m_DataPath = "Assets\\xmlData\\";
+	wchar_t path[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, path, MAX_PATH);
+	USES_CONVERSION;
+	std::string str = W2A(path);
+	str = str.substr(0, str.find_last_of("\\/"));
+	stringstream ss;
+	ss << str << "\\";
+
+	m_DataPath = ss.str();
 	m_SoundDataFileName = "SoundData.xml";
 	m_ShaderDataFileName = "SceneForest_shaderdataList.xml";
 	m_TextureDataFileName = "SceneForest_texturedataList.xml";
@@ -60,6 +69,9 @@ void SceneForest::KeyCheck(const _float& dt)
 
 			if (m_pUIManager->GetUIOpened(UIManager::UI_MAP_EDITOR_WINDOW) ||
 				m_pUIManager->GetUIOpened(UIManager::UI_SYSTEM_MENU_WINDOW))
+				goto NextCheck;
+
+			if (m_pUIManager->GetCursorIsOnTheUI())
 				goto NextCheck;
 
 			if (nullptr != m_pBackgroundLayer)
@@ -199,9 +211,7 @@ RESULT SceneForest::Ready()
 	if (PK_NOERROR != result)
 		return result;
 
-	stringstream ss;
-	ss << m_DataPath << m_SoundDataFileName;
-	CXMLParser::GetInstance()->LoadSoundData(ss.str());
+	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CSoundMaster::GetInstance()->PlaySound("peaceful_night");
 	CSoundMaster::GetInstance()->PlaySound("chirp");
 	CSoundMaster::GetInstance()->PlaySound("frames");
@@ -215,10 +225,7 @@ RESULT SceneForest::Ready()
 	if (nullptr != shader)
 		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
 	CLightMaster::GetInstance()->SetShader(shaderID);
-
-	ss.str("");
-	ss << m_DataPath << m_LightListFileName;
-	CLightMaster::GetInstance()->LoadLights(ss.str());
+	CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
 
 	if (nullptr != m_pDefaultCamera)
 		m_pDefaultCamera->SetShaderLocation(shaderID); 
@@ -229,19 +236,13 @@ RESULT SceneForest::Ready()
 RESULT SceneForest::ReadyComponent()
 {
 	//Create.Shader
-	stringstream ss;
-	ss << m_DataPath << m_ShaderDataFileName;
-	CXMLParser::GetInstance()->LoadShaderData(ss.str());
+	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
 
 	//Create.Texture
-	ss.str("");
-	ss << m_DataPath << m_TextureDataFileName;
-	CXMLParser::GetInstance()->LoadTextureData(ss.str());
+	CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
 
 	//Create.Mesh
-	ss.str("");
-	ss << m_DataPath << m_MeshDataFileName;
-	CXMLParser::GetInstance()->LoadMeshData(ss.str());
+	CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
 
 	return PK_NOERROR;
 }
@@ -317,9 +318,7 @@ void SceneForest::SaveBackgroundObjects()
 			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
 		}
 
-		stringstream ss;
-		ss << m_DataPath << m_ObjListFileName;
-		CXMLParser::GetInstance()->SaveMapObjectData(ss.str(), vecObjects, cameraData);
+		CXMLParser::GetInstance()->SaveMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 	}
 }
 
@@ -332,11 +331,9 @@ void SceneForest::LoadBackgroundObjects()
 	{
 		m_pBackgroundLayer = pLayer;
 		pLayer->RemoveAllGameObject();
-		stringstream ss;
-		ss << m_DataPath << m_ObjListFileName;
 		vector<CXMLParser::sObjectData> vecObjects;
 		CXMLParser::sObjectData cameraData;
-		CXMLParser::GetInstance()->LoadMapObjectData(ss.str(), vecObjects, cameraData);
+		CXMLParser::GetInstance()->LoadMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 		vector<CXMLParser::sObjectData>::iterator iter;
 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 		{

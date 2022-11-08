@@ -27,8 +27,8 @@ public:
 	void SetShader(_uint shaderID);
 	void SetUniformLocation();
 	void SetLightInfo();
-	void SaveLights(std::string path);
-	void LoadLights(std::string path);
+	void SaveLights(std::string path, std::string fileName);
+	void LoadLights(std::string path, std::string fileName);
 };
 
 //	distance	constant	linear		quadratic
