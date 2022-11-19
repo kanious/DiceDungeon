@@ -18,6 +18,7 @@ CShader::CShader()
 	, m_diffTexLocation(0)
 	, m_lightEnableLocation(0)
 	, m_selectedLocation(0)
+	, m_colorLocation(0)
 {
 }
 
@@ -29,6 +30,7 @@ CShader::CShader(const CShader& rhs)
 	, m_diffTexLocation(rhs.m_diffTexLocation)
 	, m_lightEnableLocation(rhs.m_lightEnableLocation)
 	, m_selectedLocation(rhs.m_selectedLocation)
+	, m_colorLocation(rhs.m_colorLocation)
 {
 	m_tag = rhs.m_tag;
 }
@@ -122,6 +124,7 @@ void CShader::SetLocation()
 	m_diffTexLocation = glGetUniformLocation(m_ShaderProgram, "diffTexture");
 	m_lightEnableLocation = glGetUniformLocation(m_ShaderProgram, "isLightEnable");
 	m_selectedLocation = glGetUniformLocation(m_ShaderProgram, "isSelected");
+	m_colorLocation = glGetUniformLocation(m_ShaderProgram, "vColor");
  }
 
 void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 proj)
@@ -145,6 +148,12 @@ void CShader::SetLightEnableInfo(_bool lightEnable)
 void CShader::SetSelected(_bool selected)
 {
 	glUniform1i(m_selectedLocation, selected);
+}
+
+void CShader::SetColor(vec3 vColor)
+{
+	glUseProgram(m_ShaderProgram);
+	glUniform4f(m_colorLocation, vColor.x, vColor.y, vColor.z, 1.f);
 }
 
 RESULT CShader::Ready(string ID, const char* vertexPath, const char* fragPath)

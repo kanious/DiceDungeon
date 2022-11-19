@@ -96,34 +96,51 @@ void CBoundingBox::Destroy()
 	CComponent::Destroy();
 }
 
-void CBoundingBox::UpdateAABB(CTransform* parent)
+void CBoundingBox::UpdatBoundingBox(mat4x4& parentWorldMatrix)
 {
-	vec3 vParentPos = vParentPos = parent->GetPosition();
-	_float fAngleY = parent->GetRotationY();
-	vec3 vParentScale = parent->GetScale();
-	fAngleY = radians(fAngleY);
+	m_vMax = vec3(-100000.f);
+	m_vMin = vec3(100000.f);
 
-	m_vMax = m_vOriginMax * vParentScale;
-	_float x = m_vMax.x;
-	_float z = m_vMax.z;
-	m_vMax.x = (z * sin(fAngleY)) + (x * cos(fAngleY));
-	m_vMax.z = (z * cos(fAngleY)) - (x * sin(fAngleY));
-	m_vMax += vParentPos;
+	vec3 tempPos;
+	mat4x4 matWorld = mat4x4(1.f);
+	for (int i = 0; i < 8; ++i)
+	{
+		matWorld[3] = m_pVertices[i].vPos;
+		matWorld = parentWorldMatrix * matWorld;
+		tempPos = matWorld[3];
 
-	m_vMin = m_vOriginMin * vParentScale;
-	x = m_vMin.x;
-	z = m_vMin.z;
-	m_vMin.x = (z * sin(fAngleY)) + (x * cos(fAngleY));
-	m_vMin.z = (z * cos(fAngleY)) - (x * sin(fAngleY));
-	m_vMin += vParentPos;
+		if (tempPos.x > m_vMax.x)
+			m_vMax.x = tempPos.x;
+
+		if (tempPos.y > m_vMax.y)
+			m_vMax.y = tempPos.y;
+
+		if (tempPos.z > m_vMax.z)
+			m_vMax.z = tempPos.z;
+
+		if (tempPos.x < m_vMin.x)
+			m_vMin.x = tempPos.x;
+
+		if (tempPos.y < m_vMin.y)
+			m_vMin.y = tempPos.y;
+
+		if (tempPos.z < m_vMin.z)
+			m_vMin.z = tempPos.z;
+	}
 
 	m_vHalfExtents = (m_vMax - m_vMin) / 2.f;
 	m_vCenter = m_vMin + m_vHalfExtents;
 }
 
+void CBoundingBox::SetColor(glm::vec3 vColor)
+{
+	if (nullptr != m_pShader)
+		m_pShader->SetColor(vColor);
+}
+
 RESULT CBoundingBox::Ready(vec3 min, vec3 max, string shaderID)
 {
-	m_tag = "AABB";
+	m_tag = "BBox";
 
 	m_vMin = vec3(min.x - 0.01f, min.y - 0.01f, min.z - 0.01f);
 	m_vMax = vec3(max.x + 0.01f, max.y + 0.01f, max.z + 0.01f);

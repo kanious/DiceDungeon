@@ -219,6 +219,15 @@ void CTransform::AddRevolve(vec3 vRevolve)
 	m_vRevolve += vRevolve;
 }
 
+void CTransform::ComputeWorldMatrix(glm::mat4x4& matWorld, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
+{
+	matWorld = translate(matWorld, m_vPos + vPos);
+	matWorld = rotate(matWorld, radians(m_vRot.z + vRot.z), vec3(0.f, 0.f, 1.f));
+	matWorld = rotate(matWorld, radians(m_vRot.y + vRot.y), vec3(0.f, 1.f, 0.f));
+	matWorld = rotate(matWorld, radians(m_vRot.x + vRot.x), vec3(1.f, 0.f, 0.f));
+	matWorld = scale(matWorld, m_vScale + vScale);
+}
+
 RESULT CTransform::Ready()
 {
 	m_tag = "Transform";

@@ -21,9 +21,15 @@ private:
 	glm::vec3						m_vVelocity;
 	glm::vec3						m_vAccel;
 	glm::vec3						m_vForce;
+	glm::vec3						m_vRotForce;
 
 	BGObject*						m_pTerrain;
 	Engine::COctree*				m_pTerrainOctree;
+
+	_bool							m_bCollision;
+	_bool							m_bMove;
+	_float							m_fSpeed;
+	_float							m_fRotSpeed;
 
 private:
 	explicit Character();
@@ -38,7 +44,7 @@ public:
 
 private:
 	void KeyCheck(const _float& dt);
-	void CollisionCheck();
+	_bool CollisionCheck();
 
 public:
 	virtual void Update(const _float& dt);

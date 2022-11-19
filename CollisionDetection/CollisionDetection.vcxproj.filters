@@ -10,14 +10,17 @@
     <Filter Include="02.GameObject">
       <UniqueIdentifier>{e32822c7-01f1-46e2-a4c8-690491964e24}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98.Manager">
-      <UniqueIdentifier>{d09a9689-de46-4b67-b35e-a6082af4fb1c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99.Header">
       <UniqueIdentifier>{8b065ab5-1ae5-404e-a9ef-a0aacb4a9b53}</UniqueIdentifier>
     </Filter>
     <Filter Include="Default">
       <UniqueIdentifier>{5d55a362-57d4-4d56-b414-976914fa24e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Manager">
+      <UniqueIdentifier>{d09a9689-de46-4b67-b35e-a6082af4fb1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Shader">
+      <UniqueIdentifier>{6bd9f721-2e35-44ba-8dbd-a98e7ef9d4be}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -68,5 +71,19 @@
     <ClInclude Include="Code\Character.h">
       <Filter>02.GameObject</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\ColorVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\ColorFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\BoxFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\BoxVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

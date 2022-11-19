@@ -22,7 +22,8 @@ USING(std)
 
 Character::Character()
 	: m_pMesh(nullptr), m_vVelocity(vec3(0.f)), m_vAccel(vec3(0.f)), m_vForce(vec3(0.f))
-	, m_pTerrain(nullptr), m_pTerrainOctree(nullptr)
+	, m_vRotForce(vec3(0.f)), m_pTerrain(nullptr), m_pTerrainOctree(nullptr), m_bMove(false)
+	, m_fSpeed(3.f), m_fRotSpeed(50.f), m_bCollision(false)
 {
 	m_bDebug = false;
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
@@ -70,98 +71,144 @@ void Character::KeyCheck(const _float& dt)
 	if (nullptr == m_pTransform || nullptr == m_pInputDevice)
 		return;
 
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_UP))
+	m_bMove = false;
+
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_T))
 	{
-		AddForce(vec3(0.f, 0.f, -1.f) * 3.f);
+		m_bMove = true;
+		AddForce(vec3(0.f, 0.f, -1.f) * m_fSpeed * dt);
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_DOWN))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_G))
 	{
-		AddForce(vec3(0.f, 0.f, 1.f) * 3.f);
+		m_bMove = true;
+		AddForce(vec3(0.f, 0.f, 1.f) * m_fSpeed * dt);
+	}
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F))
+	{
+		m_bMove = true;
+		AddForce(vec3(-1.f, 0.f, 0.f) * m_fSpeed * dt);
+	}
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_H))
+	{
+		m_bMove = true;
+		AddForce(vec3(1.f, 0.f, 0.f) * m_fSpeed * dt);
+	}
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_U))
+	{
+		m_bMove = true;
+		AddForce(vec3(0.f, 1.f, 0.f) * m_fSpeed * dt);
+	}
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_J))
+	{
+		m_bMove = true;
+		AddForce(vec3(0.f, -1.f, 0.f) * m_fSpeed * dt);
+	}
+
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_R))
+	{
+		m_bMove = true;
+		m_vRotForce.y += m_fRotSpeed * dt;
+	}
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_Y))
+	{
+		m_bMove = true;
+		m_vRotForce.y -= m_fRotSpeed * dt;
 	}
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT))
 	{
-		AddForce(vec3(-1.f, 0.f, 0.f) * 3.f);
+		m_bMove = true;
+		m_vRotForce.z += m_fRotSpeed * dt;
 	}
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_RIGHT))
 	{
-		AddForce(vec3(1.f, 0.f, 0.f) * 3.f);
+		m_bMove = true;
+		m_vRotForce.z -= m_fRotSpeed * dt;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_O))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_UP))
 	{
-		AddForce(vec3(0.f, 1.f, 0.f) * 3.f);
+		m_bMove = true;
+		m_vRotForce.x += m_fRotSpeed * dt;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_L))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_DOWN))
 	{
-		AddForce(vec3(0.f, -1.f, 0.f) * 3.f);
+		m_bMove = true;
+		m_vRotForce.x -= m_fRotSpeed * dt;
 	}
+
+	static _bool isF1Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
+	{
+		if (!isF1Down)
+		{
+			isF1Down = true;
+
+			if (nullptr != m_pTerrainOctree)
+			{
+				m_pTerrainOctree->SetDebug(!m_pTerrainOctree->GetDebug());
+			}
+		}
+	}
+	else
+		isF1Down = false;
+
+	static _bool isF2Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F2))
+	{
+		if (!isF2Down)
+		{
+			isF2Down = true;
+
+			m_bDebug = !m_bDebug;
+		}
+	}
+	else
+		isF2Down = false;
+
+	static _bool isF3Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F3))
+	{
+		if (!isF3Down)
+		{
+			isF3Down = true;
+
+			m_pTransform->SetPosition(vec3(0.f, 0.f, 20.f));
+			m_pTransform->SetRotation(vec3(0.f, 0.f, 0.f));
+		}
+	}
+	else
+		isF3Down = false;
 }
 
-void Character::CollisionCheck()
+_bool Character::CollisionCheck()
 {
-	if (nullptr == m_pTerrain || nullptr == m_pTerrainOctree)
-		return;
+	if (!m_bMove || nullptr == m_pTransform || nullptr == m_pTerrainOctree || nullptr == m_pBoundingBox)
+		return false;
 
-	//m_pOctree->UpdateAABB(m_pTransform);
-	m_pBoundingBox->UpdateAABB(m_pTransform);
-	m_pMesh->SetDebugBox(false);
-
+	mat4x4 matWorld = mat4x4(1.f);
+	m_pTransform->ComputeWorldMatrix(matWorld, m_vForce, m_vRotForce, vec3(0.f));
+	m_pBoundingBox->UpdatBoundingBox(matWorld);
+	
 	vector<COctree::COctreeNode*> vecNode;
-	m_pTerrainOctree->CheckBoundingBox(m_pBoundingBox, vecNode);
+ 	m_pTerrainOctree->CheckBoundingBox(m_pBoundingBox, vecNode);
+	if (vecNode.size() <= 0)
+	{
+		m_bCollision = false;
+		return false;
+	}
+	m_bCollision = true;
+
 	for (int i = 0; i < vecNode.size(); ++i)
 	{
 		for (int j = 0; j < vecNode[i]->vecTriangles.size(); ++j)
 		{
 			TRIANGLE* tri = vecNode[i]->vecTriangles[j];
-			//_int result = CCollisionMaster::GetInstance()->IntersectTriangleToOBB(tri, m_pBoundingBox);
 			_bool result = CCollisionMaster::GetInstance()->IntersectTriangleToOBB(tri, m_pBoundingBox);
 			if (result)
-			{
-				if (m_vForce.z < 0.f)
-					m_vForce.z = 0.f;
-				m_pMesh->SetDebugBox(result);
-				return;
-			}
+				return true;
 		}
 	}
 
-	//for (int i = 0; i < vecNode.size(); ++i)
-	//{
-	//	for (int j = 0; j < vecNode[i]->vecTriangles.size(); ++j)
-	//	{
-	//		CAABB* tri = vecNode[i]->vecTriangles[j];
-	//		_int result = m_pOctree->CheckAABBToTriangle(tri);
-
-	//		switch (result)
-	//		{
-	//		case 1:
-	//			if (m_vForce.x < 0.f)
-	//				m_vForce.x = 0.f;
-	//			break;
-	//		case 2:
-	//			if (m_vForce.x > 0.f)
-	//				m_vForce.x = 0.f;
-	//			break;
-	//		case 3:
-	//			if (m_vForce.y < 0.f)
-	//				m_vForce.y = 0.f;
-	//			break;
-	//		case 4:
-	//			if (m_vForce.y > 0.f)
-	//				m_vForce.y = 0.f;
-	//			break;
-	//		case 5:
-	//			if (m_vForce.z < 0.f)
-	//				m_vForce.z = 0.f;
-	//			break;
-	//		case 6:
-	//			if (m_vForce.z > 0.f)
-	//				m_vForce.z = 0.f;
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//	}
-	//}
+	return false;
 }
 
 void Character::Update(const _float& dt)
@@ -169,29 +216,42 @@ void Character::Update(const _float& dt)
 	if (m_bEnable)
 	{
 		KeyCheck(dt);
-		CollisionCheck();
+		if (!CollisionCheck())
+		{
+			m_vAccel = m_vForce;
+			m_vVelocity = (m_vAccel);
+			m_pTransform->AddPosition(m_vVelocity);
+			m_pTransform->AddRotation(m_vRotForce);
+		}
 
-		m_vAccel = m_vForce;
-		m_vVelocity = (m_vAccel * dt);
-		m_pTransform->AddPosition(m_vVelocity);
 		m_vForce = vec3(0.f);
+		m_vRotForce = vec3(0.f);
 
 		CGameObject::Update(dt);
 
 		if (nullptr != m_pRenderer)
 			m_pRenderer->AddRenderObj(this);
-
-		//if (nullptr != m_pMesh)
-		//{
-		//	m_pMesh->SetWireFrame(false);
-		//	m_pMesh->SetDebugBox(false);
-		//}
 	}
 }
 
 void Character::Render()
 {
+	if (m_bCollision)
+		m_pBoundingBox->SetColor(vec3(1.f, 0.f, 0.f));
+	else
+		m_pBoundingBox->SetColor(vec3(0.f, 0.f, 1.f));
+
+	if (m_bDebug)
+	{
+		m_pMesh->SetDebugBox(m_bDebug);
+	}
+	else
+	{
+		m_pMesh->SetDebugBox(m_bCollision);
+	}
+
 	CGameObject::Render();
+
 }
 
 void Character::Destroy()
@@ -219,6 +279,8 @@ RESULT Character::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, stri
 		m_pBoundingBox = m_pMesh->GetBoundingBox();
 		if (nullptr != m_pBoundingBox)
 			m_pBoundingBox->SetTransform(m_pTransform);
+
+		m_pMesh->SetDebugBox(false);
 	}
 
 	if (nullptr != m_pTransform)

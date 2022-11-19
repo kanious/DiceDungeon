@@ -118,7 +118,8 @@ SceneCollision* SceneCollision::Create()
 
 	return pInstance;
 }
-
+#include <chrono>
+#include "SoundMaster.h"
 void SceneCollision::LoadBackgroundObjects()
 {
 	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND);
@@ -142,7 +143,15 @@ void SceneCollision::LoadBackgroundObjects()
 				AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
 				dynamic_cast<BGObject*>(pGameObject)->SetLock(iter->LOCK);
 				m_pTerrain = dynamic_cast<BGObject*>(pGameObject);
+				cout << "Start Setting Octree Up" << endl;
+				std::chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
 				m_pTerrain->SetupOctree(4);
+				cout << "End Setting Octree Up" << endl;
+				std::chrono::steady_clock::time_point endTime = chrono::steady_clock::now();
+				std::chrono::duration<_float> elapsed = endTime - startTime;
+				cout << "time interval: " << elapsed.count() << endl;
+
+				CSoundMaster::GetInstance()->PlaySound("peaceful_night");
 			}
 			else if (iter->ID == "character")
 			{

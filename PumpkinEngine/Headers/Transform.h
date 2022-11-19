@@ -71,6 +71,8 @@ public:
 	void AddRotationZ(_float z);
 	void AddScale(glm::vec3 vScale);
 	void AddRevolve(glm::vec3 vRevolve);
+public:
+	void ComputeWorldMatrix(glm::mat4x4& matWorld, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 
 private:
 	RESULT Ready();

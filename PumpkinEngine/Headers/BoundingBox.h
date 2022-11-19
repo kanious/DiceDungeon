@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "EngineStruct.h"
+#include "glm\mat4x4.hpp"
 
 NAMESPACE_BEGIN(Engine)
 
@@ -47,7 +48,8 @@ private:
 public:
 	VTX* GetVertices()							{ return m_pVertices; }
 	void SetTransform(CTransform* transform)	{ m_pParentTransform = transform; }
-	void UpdateAABB(CTransform* parent);
+	void UpdatBoundingBox(glm::mat4x4& parentWorldMatrix);
+	void SetColor(glm::vec3 vColor);
 
 private:
 	RESULT Ready(glm::vec3 min, glm::vec3 max, std::string shaderID);

@@ -46,7 +46,7 @@ private:
 public: //Physics #2 - second
 	_bool IntersectTriangleToAABB(TRIANGLE* triangle, CBoundingBox* boundingBox);
 	_bool IntersectTriangleToOBB(TRIANGLE* triangle, CBoundingBox* boundingBox);
-	_bool IntersectOBBToOBB(CBoundingBox* box1, CBoundingBox* box2);
+	_bool IntersectOBBToAABB(CBoundingBox* obb, CBoundingBox* aabb);
 private:
 	void ProjectTriangle(TRIANGLE* triangle, glm::vec3& axis, _float& fMin, _float& fMax);
 	void ProjectBox(glm::vec3& bbMin, glm::vec3& bbMax, glm::vec3& axis, _float& fMin, _float& fMax);

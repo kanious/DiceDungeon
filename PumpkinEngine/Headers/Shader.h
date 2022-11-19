@@ -16,6 +16,7 @@ protected:
 	_uint				m_diffTexLocation;
 	_uint				m_lightEnableLocation;
 	_uint				m_selectedLocation;
+	_uint				m_colorLocation;
 
 private:
 	explicit CShader();
@@ -38,6 +39,7 @@ public:
 	void SetTextureInfo();
 	void SetLightEnableInfo(_bool lightEnable);
 	void SetSelected(_bool selected);
+	void SetColor(glm::vec3 vColor);
 
 private:
 	RESULT Ready(std::string ID, const char* vertexPath, const char* fragPath);

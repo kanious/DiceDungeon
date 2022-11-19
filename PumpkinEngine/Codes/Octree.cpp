@@ -11,7 +11,7 @@ USING(glm)
 USING(std)
 
 COctree::COctree()
-	: m_pParentTransform(nullptr)
+	: m_pParentTransform(nullptr), m_bDebug(false)
 {
 	m_vecNodeInfo.clear();
 }
@@ -30,7 +30,6 @@ void COctree::Destroy()
 		}
 		m_vecNodeInfo[i]->vecTriangles.clear();
 		SafeDestroy(m_vecNodeInfo[i]->BBox);
-		SafeDestroy(m_vecNodeInfo[i]->BBox_fixed);
 		delete m_vecNodeInfo[i];
 	}
 	m_vecNodeInfo.clear();
@@ -40,9 +39,21 @@ void COctree::Render()
 {
 	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
 	{
-		if (m_vecNodeInfo[i]->BBox_Render && m_vecNodeInfo[i]->vecTriangles.size() > 0)
+		if (m_vecNodeInfo[i]->vecTriangles.size() <= 0)
+			continue;
+		
+		if (m_vecNodeInfo[i]->BBox_Render)
 		{
+			m_vecNodeInfo[i]->BBox->SetColor(vec3(1.f, 0.f, 0.f));
 			m_vecNodeInfo[i]->BBox->RenderWithoutParent();
+		}
+		else
+		{
+			if (m_bDebug)
+			{
+				m_vecNodeInfo[i]->BBox->SetColor(vec3(0.f, 1.f, 0.f));
+				m_vecNodeInfo[i]->BBox->RenderWithoutParent();
+			}
 		}
 	}
 }
@@ -55,7 +66,6 @@ void COctree::AddTriangle(TRIANGLE t, _uint& count)
 		if (!m_vecNodeInfo[i]->isLeaf)
 			continue;
 
-		//if (CCollisionMaster::GetInstance()->IntersectTriangleToBoundingBox(&t, m_vecNodeInfo[i]->AABB))
 		if (CCollisionMaster::GetInstance()->IntersectTriangleToOBB(&t, m_vecNodeInfo[i]->BBox))
 		{
 			TRIANGLE* tri = new TRIANGLE();
@@ -69,51 +79,19 @@ void COctree::AddTriangle(TRIANGLE t, _uint& count)
 
 	if (!flag)
 	{
-		cout << "Missed: " << t.p0.x << ", " << t.p0.y << ", " << t.p0.z << " \t\t ";
-		cout << t.p1.x << ", " << t.p1.y << ", " << t.p1.z << " \t\t ";
-		cout << t.p2.x << ", " << t.p2.y << ", " << t.p2.z << endl;
 		++count;
 	}
 }
-
-//void COctree::UpdateAABB(CTransform* parent)
-//{
-//	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
-//	{
-//		CBoundingBox* aabb = m_vecNodeInfo[i]->BBBox;
-//		CBoundingBox* aabb_fixed = m_vecNodeInfo[i]->BBBox_fixed;
-//
-//		vec3 vParentPos = vParentPos = parent->GetPosition();
-//		_float fAngleY = parent->GetRotationY();
-//		vec3 vParentScale = parent->GetScale();
-//		fAngleY = radians(fAngleY);
-//
-//		aabb_fixed->m_vMax = aabb->m_vMax * vParentScale;
-//		_float x = aabb_fixed->m_vMax.x;
-//		_float z = aabb_fixed->m_vMax.z;
-//		aabb_fixed->m_vMax.x = (z * sin(fAngleY)) + (x * cos(fAngleY));
-//		aabb_fixed->m_vMax.z = (z * cos(fAngleY)) - (x * sin(fAngleY));
-//		aabb_fixed->m_vMax += vParentPos;
-//
-//		aabb_fixed->m_vMin = aabb->m_vMin * vParentScale;
-//		x = aabb_fixed->m_vMin.x;
-//		z = aabb_fixed->m_vMin.z;
-//		aabb_fixed->m_vMin.x = (z * sin(fAngleY)) + (x * cos(fAngleY));
-//		aabb_fixed->m_vMin.z = (z * cos(fAngleY)) - (x * sin(fAngleY));
-//		aabb_fixed->m_vMin += vParentPos;
-//
-//		aabb_fixed->m_vHalfExtents = (aabb_fixed->m_vMax - aabb_fixed->m_vMin) / 2.f;
-//		aabb_fixed->m_vCenter = aabb_fixed->m_vMin + aabb_fixed->m_vHalfExtents;
-//	}
-//}
 
 void COctree::CheckBoundingBox(CBoundingBox* bbox, vector<COctreeNode*>& vecNode)
 {
 	if (nullptr == bbox)
 		return;
 
-	//for (int i = 0; i < m_vecNodeInfo.size(); ++i)
-	//	m_vecNodeInfo[i]->BBox_Render = false;
+	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
+	{
+		m_vecNodeInfo[i]->BBox_Render = false;
+	}
 	
 	CheckNodeBoundingBox(0, bbox, vecNode);
 }
@@ -121,13 +99,12 @@ void COctree::CheckBoundingBox(CBoundingBox* bbox, vector<COctreeNode*>& vecNode
 void COctree::CheckNodeBoundingBox(_int index, CBoundingBox* bbox, vector<COctreeNode*>& vecNode)
 {
 	COctreeNode* pNode = m_vecNodeInfo[index];
-	CBoundingBox* nodeBBBox = pNode->BBox_fixed;
+	CBoundingBox* nodeBBBox = pNode->BBox;
 
 	if (pNode->isLeaf && pNode->vecTriangles.size() == 0)
 		return;
 
-	//if (0 != CCollisionMaster::GetInstance()->IntersectAABBToAABB(aabb, nodeAABB))
-	if (0 != CCollisionMaster::GetInstance()->IntersectOBBToOBB(bbox, nodeBBBox))
+	if (CCollisionMaster::GetInstance()->IntersectOBBToAABB(bbox, nodeBBBox))
 	{
 		if (pNode->isLeaf)
 		{
@@ -147,188 +124,6 @@ void COctree::CheckNodeBoundingBox(_int index, CBoundingBox* bbox, vector<COctre
 		}
 	}
 }
-
-//_int COctree::CheckAABBToTriangle(CAABB* tri)
-//{
-//	if (nullptr == tri)
-//		return false;
-//
-//	//for (int i = 0; i < m_vecNodeInfo.size(); ++i)
-//	//	m_vecNodeInfo[i]->AABB_Render = false;
-//
-//	_int result = CheckNodeAABBToTriangle(0, tri);
-//	//_int result = CCollisionMaster::GetInstance()->IntersectAABBToAABB(tri, nodeAABB);
-//
-//	return result;
-//}
-//
-//_int COctree::CheckNodeAABBToTriangle(_int index, CAABB* tri)
-//{
-//	COctreeNode* pNode = m_vecNodeInfo[index];
-//	CAABB* nodeAABB = pNode->AABB_fixed;
-//
-//	if (pNode->isLeaf && pNode->vecTriangles.size() == 0)
-//		return false;
-//
-//	_int result = CCollisionMaster::GetInstance()->IntersectAABBToAABB(tri, nodeAABB);
-//	if (result != 0)
-//	{
-//		if (pNode->isLeaf)
-//		{
-//			pNode->AABB_Render = true;
-//			return result;
-//		}
-//		else
-//		{
-//			_int childResult = 0;
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[0], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[1], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[2], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[3], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[4], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[5], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[6], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//			childResult = CheckNodeAABBToTriangle(pNode->childIndex[7], tri);
-//			if (0 != childResult)
-//				return childResult;
-//
-//		}
-//	}
-//	return result;
-//}
-//
-//_int COctree::GetHashValue(_float x, _float y, _float z)
-//{
-//	_float xValue = floor(x);
-//	xValue = floor(xValue + m_vHashRange.x);
-//	xValue = floor(xValue / m_vHashRange.x);
-//	xValue *= 1000000;
-//
-//	_float yValue = floor(y);
-//	yValue = floor(yValue + m_vHashRange.y);
-//	yValue = floor(yValue / m_vHashRange.y);
-//	yValue *= 1000;
-//
-//	_float zValue = floor(z);
-//	zValue = floor(zValue + m_vHashRange.z);
-//	zValue = floor(zValue / m_vHashRange.z);
-//
-//	return (_int)xValue + (_int)yValue + (_int)zValue;
-//}
-//
-//void COctree::AddTriangleToTreeNode(_int hashKey, TRIANGLE triangle, _uint& index)
-//{
-//	MAP_NODE::iterator iter = m_mapNodes.find(hashKey);
-//	if (iter != m_mapNodes.end())
-//	{
-//		TRIANGLE* newTriangle = new TRIANGLE();
-//		newTriangle->p0 = triangle.p0;
-//		newTriangle->p1 = triangle.p1;
-//		newTriangle->p2 = triangle.p2;
-//		iter->second->vecTriangles.push_back(newTriangle);
-//	}
-//	else
-//		++index;
-//}
-//
-//void COctree::CheckTriangles()
-//{
-//	int count = 0;
-//	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
-//	{
-//		if (m_vecNodeInfo[i]->vecTriangles.size() > 0)
-//		{
-//			cout << "index " << m_vecNodeInfo[i]->myIndex;
-//			cout << " : " << m_vecNodeInfo[i]->vecTriangles.size() << " triangles." << endl;
-//			count++;
-//		}
-//	}
-//
-//	cout << "총 " << m_vecNodeInfo.size() << "개의 노드 중 " << count << "개의 노드가 삼각형 보유" << endl;
-//}
-//
-//
-//void COctree::GetLeafNodes(vec3 vMain, vec3 vTarget, vector<COctreeNode*>& vecNode)
-//{
-//	vec3 vMax(0.f);
-//	vec3 vMin(0.f);
-//
-//	if (vMain.x > vTarget.x) { vMax.x = vMain.x; vMin.x = vTarget.x; }
-//	else					 { vMax.x = vTarget.x; vMin.x = vMain.x; }
-//
-//	if (vMain.y > vTarget.y) { vMax.y = vMain.y; vMin.y = vTarget.y; }
-//	else					 { vMax.y = vTarget.y; vMin.y = vMain.y; }
-//
-//	if (vMain.z > vTarget.z) { vMax.z = vMain.z; vMin.z = vTarget.z; }
-//	else					 { vMax.z = vTarget.z; vMin.z = vMain.z; }
-//
-//	vec3 vHalf = (vMax - vMin) / 2.f;
-//	vec3 vCenter = vMin + vHalf;
-//	_float fRadius = distance(vCenter, vMax);
-//
-//	vec3 vDir = vTarget - vMain;
-//	vDir = normalize(vDir);
-//
-//	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
-//	{
-//		m_vecNodeInfo[i]->AABB_Render = false;
-//	}
-//
-//	CheckDistanceOctree(0, vCenter, fRadius, vMain, vDir, vecNode);
-//}
-//
-//void COctree::CheckDistanceOctree(_int index, vec3 vCenter, _float fRadius
-//	, vec3 vMain, vec3 vDir, vector<COctreeNode*>& vecNode)
-//{
-//	COctreeNode* pNode = m_vecNodeInfo[index];
-//	_float fCenterDist = distance(vCenter, pNode->vCenter);
-//
-//	if (fCenterDist <= fRadius + pNode->fRadius + 5.0f)
-//	{
-//		_bool check = CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(pNode->AABB, nullptr, vMain, vDir);
-//		if (check)
-//		{
-//			if (pNode->isLeaf)
-//			{
-// 				pNode->AABB_Render = true;
-//				vecNode.push_back(pNode);
-//			}
-//			else
-//			{
-//				CheckDistanceOctree(pNode->childIndex[0], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[1], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[2], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[3], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[4], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[5], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[6], vCenter, fRadius, vMain, vDir, vecNode);
-//				CheckDistanceOctree(pNode->childIndex[7], vCenter, fRadius, vMain, vDir, vecNode);
-//			}
-//		}
-//	}
-//
-//}
 
 _bool Compare(COctree::COctreeNode* t1, COctree::COctreeNode* t2)
 {
@@ -355,19 +150,16 @@ void COctree::ReadyOctree(_uint index, glm::vec3 vCenter, vec3 vHalf, _uint dept
 	pNode->vMax = vCenter + vHalf;
 	pNode->vHalf = vHalf;
 	pNode->vCenter = vCenter;
-	pNode->fRadius = distance(pNode->vCenter, pNode->vMax);
 	pNode->BBox = CBoundingBox::Create(pNode->vMin, pNode->vMax, "DebugBoxShader");
-	pNode->BBox_fixed = CBoundingBox::Create(pNode->vMin, pNode->vMax, "DebugBoxShader");
+	pNode->BBox_Render = false;
 
 	if (depth == maxDepth)
 	{
 		pNode->isLeaf = true;
-		pNode->BBox_Render = true;
 	}
 	else
 	{
 		pNode->isLeaf = false;
-		pNode->BBox_Render = false;
 
 		pNode->childIndex[0] = 1 + (8 * index);
 		pNode->childIndex[1] = 2 + (8 * index);

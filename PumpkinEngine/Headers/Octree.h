@@ -20,15 +20,13 @@ public:
 		glm::vec3				vMax;
 		glm::vec3				vCenter;
 		glm::vec3				vHalf;
-		_float					fRadius;
 		_uint					myIndex;
 		_uint					childIndex[8];
 		std::vector<TRIANGLE*>	vecTriangles;
 		CBoundingBox*			BBox;
-		CBoundingBox*			BBox_fixed;
 		_bool					BBox_Render;
 		explicit COctreeNode()
-			: isLeaf(false), myIndex(0), fRadius(0.f), BBox(nullptr), BBox_fixed(nullptr), BBox_Render(false)
+			: isLeaf(false), myIndex(0), BBox(nullptr), BBox_Render(false)
 			, vMin(glm::vec3(0.f)), vMax(glm::vec3(0.f)), vCenter(glm::vec3(0.f)), vHalf(glm::vec3(0.f))
 		{
 			vecTriangles.clear();
@@ -38,8 +36,9 @@ public:
 	};
 
 private:
-	std::vector<COctreeNode*>							m_vecNodeInfo;
-	CTransform*											m_pParentTransform;
+	std::vector<COctreeNode*>			m_vecNodeInfo;
+	CTransform*							m_pParentTransform;
+	_bool								m_bDebug;
 
 private:
 	explicit COctree();
@@ -50,24 +49,13 @@ public:
 
 public:
 	void SetParentTransform(CTransform* parent)		{ m_pParentTransform = parent; }
+	void SetDebug(_bool value)						{ m_bDebug = value; }
 	std::vector<COctreeNode*> GetNodeVector()		{ return m_vecNodeInfo; }
+	_bool GetDebug()							{ return m_bDebug; }
 	void AddTriangle(TRIANGLE t, _uint& count);
-	//void UpdateAABB(CTransform* parent);
 	void CheckBoundingBox(CBoundingBox* bbox, std::vector<COctreeNode*>& vecNode);
 private:
 	void CheckNodeBoundingBox(_int index, CBoundingBox* bbox, std::vector<COctreeNode*>& vecNode);
-
-//public:
-//	_int CheckAABBToTriangle(CBoundingBox* tri);
-//private:
-//	_int CheckNodeAABBToTriangle(_int index, CBoundingBox* tri);
-	//_int GetHashValue(_float x, _float y, _float z);
-	//void AddTriangleToTreeNode(_int hashKey, TRIANGLE triangle, _uint& index);
-	//void CheckTriangles();
-	//void GetLeafNodes(glm::vec3 vMain, glm::vec3 vTarget, std::vector<COctreeNode*>& vecNode);
-
-//private:
-//	void CheckDistanceOctree(_int index, glm::vec3 vCenter, _float fRadius, glm::vec3 vMain, glm::vec3 vDir, std::vector<COctreeNode*>& vecNode);
 
 private:
 	RESULT Ready(glm::vec3 vMax, glm::vec3 vMin, _uint depth);

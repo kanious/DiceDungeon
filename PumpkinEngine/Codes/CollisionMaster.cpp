@@ -632,35 +632,34 @@ _bool CCollisionMaster::IntersectTriangleToOBB(TRIANGLE* triangle, CBoundingBox*
 	return true;
 }
 
-_bool CCollisionMaster::IntersectOBBToOBB(CBoundingBox* box1, CBoundingBox* box2)
+_bool CCollisionMaster::IntersectOBBToAABB(CBoundingBox* obb, CBoundingBox* aabb)
 {
 	_float box1_min, box1_max;
 	_float box2_min, box2_max;
 
-	vec3 bbMin1 = box1->m_vMin;
-	vec3 bbMax1 = box1->m_vMax;
-	vec3 bbMin2 = box2->m_vMin;
-	vec3 bbMax2 = box2->m_vMax;
+	vec3 bbMin1 = obb->m_vMin;
+	vec3 bbMax1 = obb->m_vMax;
+	vec3 bbMin2 = aabb->m_vMin;
+	vec3 bbMax2 = aabb->m_vMax;
 
-	vec3 vLook1 = vec3(1.f, 0.f, 0.f);
+	vec3 vRight1 = vec3(1.f, 0.f, 0.f);
 	vec3 vUp1 = vec3(0.f, 1.f, 0.f);
-	vec3 vRight1 = vec3(0.f, 0.f, 1.f);
+	vec3 vLook1 = vec3(0.f, 0.f, 1.f);
 
-	vec3 vLook2 = vec3(1.f, 0.f, 0.f);
+	vec3 vRight2 = vec3(1.f, 0.f, 0.f);
 	vec3 vUp2 = vec3(0.f, 1.f, 0.f);
-	vec3 vRight2 = vec3(0.f, 0.f, 1.f);
+	vec3 vLook2 = vec3(0.f, 0.f, 1.f);
+	
+	_bool fix = false;
+	if (nullptr != obb->m_pParentTransform)
+	{
+		vLook1 = obb->m_pParentTransform->GetLookVector();
+		vUp1 = obb->m_pParentTransform->GetUpVector();
+		vRight1 = obb->m_pParentTransform->GetRightVector();
 
-	if (nullptr != box1->m_pParentTransform)
-	{
-		vLook1 = box1->m_pParentTransform->GetLookVector();
-		vUp1 = box1->m_pParentTransform->GetUpVector();
-		vRight1 = box1->m_pParentTransform->GetRightVector();
-	}
-	if (nullptr != box2->m_pParentTransform)
-	{
-		vLook2 = box2->m_pParentTransform->GetLookVector();
-		vUp2 = box2->m_pParentTransform->GetUpVector();
-		vRight2 = box2->m_pParentTransform->GetRightVector();
+		_float angle = obb->m_pParentTransform->GetRotationY();
+		if (angle < 90.f || (angle > 180.f && angle < 270.f))
+			fix = true;
 	}
 
 	ProjectBox(bbMin1, bbMax1, vLook1, box1_min, box1_max);
@@ -676,18 +675,14 @@ _bool CCollisionMaster::IntersectOBBToOBB(CBoundingBox* box1, CBoundingBox* box2
 	if (box2_max < box1_min || box2_min > box1_max)
 		return false;
 
-
 	ProjectBox(bbMin1, bbMax1, vLook2, box1_min, box1_max);
-	ProjectBox(bbMin2, bbMax2, vLook2, box2_min, box2_max);
-	if (box2_max < box1_min || box2_min > box1_max)
+	if (bbMax2.z < box1_min || bbMin2.z > box1_max)
 		return false;
 	ProjectBox(bbMin1, bbMax1, vUp2, box1_min, box1_max);
-	ProjectBox(bbMin2, bbMax2, vUp2, box2_min, box2_max);
-	if (box2_max < box1_min || box2_min > box1_max)
+	if (bbMax2.y < box1_min || bbMin2.y > box1_max)
 		return false;
 	ProjectBox(bbMin1, bbMax1, vRight2, box1_min, box1_max);
-	ProjectBox(bbMin2, bbMax2, vRight2, box2_min, box2_max);
-	if (box2_max < box1_min || box2_min > box1_max)
+	if (bbMax2.x < box1_min || bbMin2.x > box1_max)
 		return false;
 
 	vec3 axis = cross(vLook1, vLook2);

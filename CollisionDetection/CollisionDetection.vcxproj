@@ -157,6 +157,22 @@
     <ClInclude Include="Code\Enums.h" />
     <ClInclude Include="Code\SceneCollision.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\ColorFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\ColorVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\BoxFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\BoxVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
