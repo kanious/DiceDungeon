@@ -10,7 +10,7 @@ USING(std)
 SINGLETON_FUNCTION(CSoundMaster)
 
 CSoundMaster::CSoundMaster()
-	: m_pSoundSystem(nullptr), m_bLoadCompressedSound(false), m_DataPath("")
+	: m_pSoundSystem(nullptr), m_bLoadCompressedSound(true), m_DataPath("")
 {
 }
 

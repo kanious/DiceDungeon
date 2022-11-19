@@ -556,7 +556,7 @@ void MapEditorUI::RenderObjectList(_float screenX, _float screenY)
 		for (iter = listObj->begin(); iter != listObj->end(); ++iter)
 		{
 			ss.str("");
-			ss << (*iter)->GetName() << "##Pick_" << index;
+			ss << (*iter)->GetMeshName() << "##Pick_" << index;
 			if (Button(ss.str().c_str(), ImVec2(120.f, 0.f)))
 			{
 				if (nullptr != m_pTargetObject)
@@ -949,14 +949,14 @@ void MapEditorUI::ObjListSave()
 
 void MapEditorUI::ObjListLoad()
 {
-	if (nullptr != m_pScene)
-		m_pScene->LoadBackgroundObjects();
-
 	if (nullptr != m_pTargetObject)
 	{
 		m_pTargetObject->SetSelected(false);
 		m_pTargetObject = nullptr;
 	}
+
+	if (nullptr != m_pScene)
+		m_pScene->LoadBackgroundObjects();
 
 	m_isPreviousZeroLock = false;
 	m_isZeroLock = false;

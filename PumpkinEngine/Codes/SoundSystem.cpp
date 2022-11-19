@@ -143,8 +143,6 @@ void CSoundSystem::PlaySound(string tag)
 	if (iterChannel == m_mapChannels.end())
 		return;
 
-	iterChannel->second->pChannelGroup->stop();
-
 	if (pInfo->loop)
 	{
 		if (nullptr != pInfo->pChannel)
@@ -154,6 +152,7 @@ void CSoundSystem::PlaySound(string tag)
 				return;
 		}
 	}
+	iterChannel->second->pChannelGroup->stop();
 
 	FMOD::Channel* pChannel;
 	FMOD_RESULT result = m_pSystem->playSound(pInfo->pSound, iterChannel->second->pChannelGroup, 0, &pChannel);

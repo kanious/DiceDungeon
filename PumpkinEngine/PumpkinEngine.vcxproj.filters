@@ -144,7 +144,7 @@
     <ClInclude Include="Headers\CollisionMaster.h">
       <Filter>98.SingletonClasses\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\AABB.h">
+    <ClInclude Include="Headers\BoundingBox.h">
       <Filter>04.Component\CollisionBox</Filter>
     </ClInclude>
     <ClInclude Include="Headers\EngineStruct.h">
@@ -155,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="Headers\LightMaster.h">
       <Filter>98.SingletonClasses\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\QuadTree.h">
+      <Filter>98.SingletonClasses\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Octree.h">
+      <Filter>98.SingletonClasses\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,7 +245,7 @@
     <ClCompile Include="Codes\CollisionMaster.cpp">
       <Filter>98.SingletonClasses\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\AABB.cpp">
+    <ClCompile Include="Codes\BoindingBox.cpp">
       <Filter>04.Component\CollisionBox</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Light.cpp">
@@ -247,6 +253,12 @@
     </ClCompile>
     <ClCompile Include="Codes\LightMaster.cpp">
       <Filter>98.SingletonClasses\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\QuadTree.cpp">
+      <Filter>98.SingletonClasses\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Octree.cpp">
+      <Filter>98.SingletonClasses\Collision</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,12 +26,20 @@ namespace Engine
 		unsigned int _2;
 	}IDX;
 
+	typedef struct sTriangle
+	{
+		glm::vec3 p0;
+		glm::vec3 p1;
+		glm::vec3 p2;
+	}TRIANGLE;
+
 	enum ModelType
 	{
 		xyz_index,
 		xyz_normal_index,
 		xyz_normal_texUV_index,
-		xyz_normal_texUV_index_texNum
+		xyz_normal_texUV_index_texNum,
+		xyz_normal_color_index
 	};
 }
 

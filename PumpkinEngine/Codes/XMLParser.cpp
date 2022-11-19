@@ -221,7 +221,7 @@ void CXMLParser::LoadSoundData(string path, string fileName)
 		string dspTag = "";
 		_int type = 0;
 
-		for (childIter = node.children().begin(); childIter != node.children().end(); ++childIter)
+ 		for (childIter = node.children().begin(); childIter != node.children().end(); ++childIter)
 		{
 			xml_node childNode = *childIter;
 			if (!strcmp(category.value(), "MaxChannelCount"))
@@ -261,21 +261,21 @@ void CXMLParser::LoadSoundData(string path, string fileName)
 		else if (!strcmp(category.value(), "SoundFile"))
 		{
 			// sound Path parcing
-			string token(soundPath);
-			size_t pos = token.find('.');
-			string command = token.substr(0, pos);
-			token.erase(0, command.size() + 1);
+			//string token(soundPath);
+			//size_t pos = token.find('.');
+			//string command = token.substr(0, pos);
+			//token.erase(0, command.size() + 1);
 
-			if (compressed)
-			{
-				if (!strcmp("wav", token.c_str()))
-					continue;
-			}
-			else
-			{
-				if (!strcmp("mp3", token.c_str()))
-					continue;
-			}
+			//if (compressed)
+			//{
+			//	if (!strcmp("wav", token.c_str()))
+			//		continue;
+			//}
+			//else
+			//{
+			//	if (!strcmp("mp3", token.c_str()))
+			//		continue;
+			//}
 
 			stringstream ss;
 			ss << path << soundPath;

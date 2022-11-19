@@ -16,7 +16,7 @@ USING(std)
 CGameObject::CGameObject()
 {
 	m_UUID = UUIDGenerate();
-	m_name = "";
+	m_meshName = "";
 	m_objTag = 0;
 	m_layerTag = 0;
 	m_sceneTag = 0;
@@ -27,7 +27,7 @@ CGameObject::CGameObject()
 	m_mapComponent.clear();
 	m_pRenderer = CRenderer::GetInstance(); m_pRenderer->AddRefCnt();
 	m_pLayer = nullptr;
-	m_pBoundingBox_AABB = nullptr;
+	m_pBoundingBox = nullptr;
 
 	m_pTransform = CloneComponent<CTransform*>("Transform");
 	AttachComponent("Transform", m_pTransform);
@@ -134,9 +134,9 @@ const mat4x4* CGameObject::GetWorldMatrix()
 	return m_pTransform->GetWorldMatrix();
 }
 
-void CGameObject::SetName(string name)
+void CGameObject::SetMeshName(string name)
 {
-	m_name = name;
+	m_meshName = name;
 }
 
 void CGameObject::SetObjectTag(_uint objTag)

@@ -9,8 +9,7 @@ USING(Engine)
 USING(std)
 
 CScene::CScene()
-	: m_tag(0), m_DataPath(""), m_SoundDataFileName(""), m_ShaderDataFileName(""), m_TextureDataFileName("")
-	, m_MeshDataFileName(""), m_ObjListFileName(""), m_LightListFileName("")
+	: m_tag(0), m_DataPath(""), m_ObjListFileName(""), m_LightListFileName("")
 {
 	m_tag = 0;
 	m_vecLayer.clear();

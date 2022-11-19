@@ -6,6 +6,8 @@
 #include "MapEditorUI.h"
 #include "SoundUI.h"
 #include "Scene.h"
+#include <sstream>
+#include <atlconv.h>
 
 
 SINGLETON_FUNCTION(UIManager)
@@ -87,13 +89,35 @@ RESULT UIManager::Ready(CScene* pScene)
 		0x0370, 0x03FF, // Greek and Coptic
 		0,
 	};
-	
-	io.Fonts->AddFontFromFileTTF("Assets\\Fonts\\Korean\\PoorStory-Regular.ttf", 16.f, &config, io.Fonts->GetGlyphRangesKorean());
-	io.Fonts->AddFontFromFileTTF("Assets\\Fonts\\Japanese\\MPLUS1p-Regular.ttf", 18.f, &config, io.Fonts->GetGlyphRangesJapanese());
-	io.Fonts->AddFontFromFileTTF("Assets\\Fonts\\Noto_Sans\\NotoSans-Regular.ttf", 18.f, &config, io.Fonts->GetGlyphRangesCyrillic());
-	io.Fonts->AddFontFromFileTTF("Assets\\Fonts\\Thai\\Sarabun-Regular.ttf", 18.f, &config, io.Fonts->GetGlyphRangesThai());
-	io.Fonts->AddFontFromFileTTF("Assets\\Fonts\\Greek\\OpenSans-VariableFont_wdth,wght.ttf", 18.f, &config, greek_ranges);
-	io.Fonts->AddFontFromFileTTF("Assets\\Fonts\\Noto_Sans\\NotoSans-Regular.ttf", 18.f, &config, io.Fonts->GetGlyphRangesVietnamese());
+
+	wchar_t path[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, path, MAX_PATH);
+	USES_CONVERSION;
+	std::string str = W2A(path);
+	str = str.substr(0, str.find_last_of("\\/"));
+	stringstream ss;
+	ss << str << "\\..\\";
+
+	stringstream filePath;
+	filePath << ss.str() << "Assets\\Fonts\\Korean\\PoorStory-Regular.ttf";
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 16.f, &config, io.Fonts->GetGlyphRangesKorean());
+
+	filePath.str("");
+	filePath << ss.str() << "Assets\\Fonts\\Japanese\\MPLUS1p-Regular.ttf";
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesJapanese());
+
+	filePath.str("");
+	filePath << ss.str() << "Assets\\Fonts\\Thai\\Sarabun-Regular.ttf";
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesThai());
+
+	filePath.str("");
+	filePath << ss.str() << "Assets\\Fonts\\Greek\\OpenSans-VariableFont_wdth,wght.ttf";
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, greek_ranges);
+
+	filePath.str("");
+	filePath << ss.str() << "Assets\\Fonts\\Noto_Sans\\NotoSans-Regular.ttf";
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesCyrillic());
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesVietnamese());
 	io.Fonts->Build();
 
 	if (!ImGui_ImplGlfw_InitForOpenGL(COpenGLDevice::GetInstance()->GetWindow(), true) ||

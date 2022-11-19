@@ -11,13 +11,13 @@ class CComponent;
 class CRenderer;
 class CLayer;
 class CTransform;
-class CAABB;
+class CBoundingBox;
 
 class ENGINE_API CGameObject : public CBase
 {
 protected:
 	_wchar_t*							m_UUID;
-	std::string							m_name;
+	std::string							m_meshName;
 	_uint								m_objTag;
 	_uint								m_layerTag;
 	_uint								m_sceneTag;
@@ -32,7 +32,7 @@ protected:
 	CRenderer*							m_pRenderer;
 	CLayer*								m_pLayer;
 	CTransform*							m_pTransform;
-	CAABB*								m_pBoundingBox_AABB;
+	CBoundingBox*						m_pBoundingBox;
 
 protected:
 	explicit CGameObject();
@@ -49,7 +49,7 @@ protected:
 public:
 	void SetupGameObject(_uint sceneTag, _uint layerTag, _uint objTag);
 	const _wchar_t* GetUUID()				{ return m_UUID; }
-	const std::string GetName()				{ return m_name; }
+	const std::string GetMeshName()			{ return m_meshName; }
 	const _uint GetObjectTag()				{ return m_objTag; }
 	const _uint GetLayerTag()				{ return m_layerTag; }
 	const _uint GetSceneTag()				{ return m_sceneTag; }
@@ -58,14 +58,14 @@ public:
 	const _bool GetLock()					{ return m_bLock; }
 	const _bool GetDebug()					{ return m_bDebug; }
 	const _bool GetWireFrame()				{ return m_bWireFrame; }
-	CAABB* GetBoundingBox_AABB()			{ return m_pBoundingBox_AABB; }
+	CBoundingBox* GetBoundingBox()			{ return m_pBoundingBox; }
 	CTransform* GetTransform()				{ return m_pTransform; }
 	glm::vec3 GetPosition();
 	glm::vec3 GetRotation();
 	_float GetRotationY();
 	glm::vec3 GetScale();
 	const glm::mat4x4* GetWorldMatrix();
-	void SetName(std::string name);
+	void SetMeshName(std::string name);
 	void SetObjectTag(_uint objTag);
 	void SetLayerTag(_uint layerTag);
 	void SetSceneTag(_uint sceneTag);
@@ -84,8 +84,6 @@ public:
 	RESULT RemoveComponent(std::string componentTag);
 	CComponent* GetComponent(std::string componentTag);
 
-public:
-	virtual CGameObject* Clone() = 0;
 private:
 	_wchar_t* UUIDGenerate();
 };

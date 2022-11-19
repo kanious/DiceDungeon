@@ -86,7 +86,7 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
-	m_name = meshID;
+	m_meshName = meshID;
 	m_soundTag = soundTag;
 
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();
@@ -122,10 +122,4 @@ BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, s
 	}
 
 	return pInstance;
-}
-
-CGameObject* BGObject::Clone()
-{
-	AddRefCnt();
-	return this;
 }

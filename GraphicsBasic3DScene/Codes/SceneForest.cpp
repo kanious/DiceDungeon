@@ -1,5 +1,4 @@
 #include "SceneForest.h"
-#include "glm\vec3.hpp"
 #include "Define.h"
 #include "Enums.h"
 
@@ -40,15 +39,15 @@ SceneForest::SceneForest()
 	std::string str = W2A(path);
 	str = str.substr(0, str.find_last_of("\\/"));
 	stringstream ss;
-	ss << str << "\\";
+	ss << str << "\\..\\";
 
 	m_DataPath = ss.str();
-	m_SoundDataFileName = "SoundData.xml";
-	m_ShaderDataFileName = "SceneForest_shaderdataList.xml";
-	m_TextureDataFileName = "SceneForest_texturedataList.xml";
-	m_MeshDataFileName = "SceneForest_meshdataList.xml";
-	m_ObjListFileName = "SceneForest_mapObjects.xml";
-	m_LightListFileName = "SceneForest_lights.xml";
+	//m_SoundDataFileName = "SoundData.xml";
+	//m_ShaderDataFileName = "SceneArena_shaderdataList.xml";
+	//m_TextureDataFileName = "SceneArena_texturedataList.xml";
+	//m_MeshDataFileName = "SceneArena_meshdataList.xml";
+	m_ObjListFileName = "SceneCollision_mapObjects.xml";
+	m_LightListFileName = "SceneCollision_lights.xml";
 }
 
 SceneForest::~SceneForest()
@@ -135,18 +134,18 @@ NextCheck:
 		isEscapeDown = false;
 
 	// Reset Camera Pos
-	static _bool is1Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
+	static _bool isF1Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
 	{
-		if (!is1Down)
+		if (!isF1Down)
 		{
-			is1Down = true;
+			isF1Down = true;
 
 			ResetDefaultCameraPos();
 		}
 	}
 	else
-		is1Down = false;
+		isF1Down = false;
 }
 
 void SceneForest::Update(const _float& dt)
@@ -203,15 +202,11 @@ void SceneForest::ResetDefaultCameraPos()
 RESULT SceneForest::Ready()
 {
 	RESULT result = PK_NOERROR;
-	result = ReadyComponent();
-	if (PK_NOERROR != result)
-		return result;
 
 	result = ReadyLayerAndGameObject();
 	if (PK_NOERROR != result)
 		return result;
 
-	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CSoundMaster::GetInstance()->PlaySound("peaceful_night");
 	CSoundMaster::GetInstance()->PlaySound("chirp");
 	CSoundMaster::GetInstance()->PlaySound("frames");
@@ -220,7 +215,7 @@ RESULT SceneForest::Ready()
 		m_pUIManager->Ready(this);
 
 	// Light
-	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
+	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("ColorShader");
 	_uint shaderID = 0;
 	if (nullptr != shader)
 		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
@@ -229,20 +224,6 @@ RESULT SceneForest::Ready()
 
 	if (nullptr != m_pDefaultCamera)
 		m_pDefaultCamera->SetShaderLocation(shaderID); 
-
-	return PK_NOERROR;
-}
-
-RESULT SceneForest::ReadyComponent()
-{
-	//Create.Shader
-	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
-
-	//Create.Texture
-	CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
-
-	//Create.Mesh
-	CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
 
 	return PK_NOERROR;
 }

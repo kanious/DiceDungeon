@@ -163,7 +163,7 @@
     <ClInclude Include="Codes\framework.h" />
     <ClInclude Include="Codes\pch.h" />
     <ClInclude Include="Headers\Base.h" />
-    <ClInclude Include="Headers\AABB.h" />
+    <ClInclude Include="Headers\BoundingBox.h" />
     <ClInclude Include="Headers\Camera.h" />
     <ClInclude Include="Headers\ChannelGroupInfo.h" />
     <ClInclude Include="Headers\CollisionMaster.h" />
@@ -173,6 +173,8 @@
     <ClInclude Include="Headers\EngineStruct.h" />
     <ClInclude Include="Headers\Light.h" />
     <ClInclude Include="Headers\LightMaster.h" />
+    <ClInclude Include="Headers\Octree.h" />
+    <ClInclude Include="Headers\QuadTree.h" />
     <ClInclude Include="Headers\SoundInfo.h" />
     <ClInclude Include="Headers\SoundSystem.h" />
     <ClInclude Include="Headers\SoundMaster.h" />
@@ -197,7 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp" />
-    <ClCompile Include="Codes\AABB.cpp" />
+    <ClCompile Include="Codes\BoindingBox.cpp" />
     <ClCompile Include="Codes\Camera.cpp" />
     <ClCompile Include="Codes\ChannelGroupInfo.cpp" />
     <ClCompile Include="Codes\CollisionMaster.cpp" />
@@ -206,6 +208,8 @@
     <ClCompile Include="Codes\DSPInfo.cpp" />
     <ClCompile Include="Codes\Light.cpp" />
     <ClCompile Include="Codes\LightMaster.cpp" />
+    <ClCompile Include="Codes\Octree.cpp" />
+    <ClCompile Include="Codes\QuadTree.cpp" />
     <ClCompile Include="Codes\SoundInfo.cpp" />
     <ClCompile Include="Codes\SoundSystem.cpp" />
     <ClCompile Include="Codes\SoundMaster.cpp" />

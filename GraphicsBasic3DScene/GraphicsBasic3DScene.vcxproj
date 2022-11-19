@@ -181,16 +181,24 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shader\BoxFragment.fx">
+    <None Include="..\x64\Assets\Shader\BoxFragment.fx">
       <FileType>Document</FileType>
     </None>
-    <None Include="Assets\Shader\BoxVertex.fx">
+    <None Include="..\x64\Assets\Shader\BoxVertex.fx">
       <FileType>Document</FileType>
     </None>
-    <None Include="Assets\Shader\MeshFragment.fx">
+    <None Include="..\x64\Assets\Shader\MeshFragment.fx">
       <FileType>Document</FileType>
     </None>
-    <None Include="Assets\Shader\MeshVertex.fx">
+    <None Include="..\x64\Assets\Shader\MeshVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\ColorFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\ColorVertex.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

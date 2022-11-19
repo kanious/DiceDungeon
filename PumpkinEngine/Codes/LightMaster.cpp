@@ -212,3 +212,102 @@ void CLightMaster::LoadLights(string path, string fileName)
 
 	SetUniformLocation();
 }
+
+void CLightMaster::SetDirectionalLightPower(_float power)
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->param1.x == CLight::DIRECTIONAL_LIGHT)
+		{
+			pInfo->diffuse.w = power;
+		}
+	}
+}
+
+void CLightMaster::TurnOnAllLightsExceptDirectional()
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->param1.x != CLight::DIRECTIONAL_LIGHT)
+		{
+			pInfo->param2.x = true;
+		}
+	}
+}
+
+void CLightMaster::TurnOffAllLightsExceptDirectional()
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->param1.x != CLight::DIRECTIONAL_LIGHT)
+		{
+			pInfo->param2.x = false;
+		}
+	}
+}
+
+void CLightMaster::TurnOnLight(std::string name)
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->name == name)
+		{
+			pInfo->param2.x = true;
+			return;
+		}
+	}
+}
+
+void CLightMaster::TurnOffLight(std::string name)
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->name == name)
+		{
+			pInfo->param2.x = false;
+			return;
+		}
+	}
+}
+
+void CLightMaster::SetLightPosition(std::string name, glm::vec3 vPos)
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->name == name)
+		{
+			pInfo->position.x = vPos.x;
+			pInfo->position.y = vPos.y;
+			pInfo->position.z = vPos.z;
+			return;
+		}
+	}
+}
+
+void CLightMaster::SetLightDirection(std::string name, glm::vec3 vDir)
+{
+	vector<CLight*>::iterator iter;
+	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+	{
+		CLight::cLightInfo* pInfo = (*iter)->GetLightInfo();
+		if (pInfo->name == name)
+		{
+			pInfo->direction.x = vDir.x;
+			pInfo->direction.y = vDir.y;
+			pInfo->direction.z = vDir.z;
+			return;
+		}
+	}
+}

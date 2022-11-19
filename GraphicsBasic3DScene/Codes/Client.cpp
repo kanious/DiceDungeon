@@ -10,9 +10,13 @@
 #include "ComponentMaster.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "XMLParser.h"
+#include <sstream>
+#include <atlconv.h>
 
 #include "Scene.h"
 #include "SceneForest.h"
+#include "SceneArena.h"
 
 USING(Engine)
 USING(std)
@@ -25,6 +29,19 @@ Client::Client()
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 
 	m_iFPS = 120;
+
+	wchar_t path[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, path, MAX_PATH);
+	USES_CONVERSION;
+	std::string str = W2A(path);
+	str = str.substr(0, str.find_last_of("\\/"));
+	stringstream ss;
+	ss << str << "\\..\\";
+	m_DataPath = ss.str();
+	m_SoundDataFileName = "Data_sound.xml";
+	m_ShaderDataFileName = "SceneCollision_shader.xml";
+	m_TextureDataFileName = "Data_texture.xml";
+	m_MeshDataFileName = "SceneCollision_mesh.xml";
 }
 
 Client::~Client()
@@ -118,10 +135,12 @@ RESULT Client::Ready()
 	result = Ready_Basic_Component();
 	if (PK_NOERROR != result)
 		return result;
+	Ready_Basic_Data();
 
 	if (nullptr != m_pGameMaster)
 	{
 		CScene* pScene = SceneForest::Create();
+		pScene->SetDataPath(m_DataPath);
 		m_pGameMaster->SetCurrentScene(pScene);
 	}
 
@@ -150,4 +169,12 @@ RESULT Client::Ready_Basic_Component()
 		return PK_TRANSFORM_CREATE_FAILED;
 
 	return PK_NOERROR;
+}
+
+void Client::Ready_Basic_Data()
+{
+	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
+	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
+	//CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
+	CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
 }

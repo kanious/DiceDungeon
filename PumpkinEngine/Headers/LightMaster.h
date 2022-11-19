@@ -29,6 +29,14 @@ public:
 	void SetLightInfo();
 	void SaveLights(std::string path, std::string fileName);
 	void LoadLights(std::string path, std::string fileName);
+	
+	void SetDirectionalLightPower(_float power);
+	void TurnOnAllLightsExceptDirectional();
+	void TurnOffAllLightsExceptDirectional();
+	void TurnOnLight(std::string name);
+	void TurnOffLight(std::string name);
+	void SetLightPosition(std::string name, glm::vec3 vPos);
+	void SetLightDirection(std::string name, glm::vec3 vDir);
 };
 
 //	distance	constant	linear		quadratic

@@ -34,7 +34,7 @@ RESULT CTexture::Ready(string ID, string filePath)
 {
     m_tag = ID;
 
-    glGenTextures(2, &m_iTextureID);
+    glGenTextures(1, &m_iTextureID);
     glBindTexture(GL_TEXTURE_2D, m_iTextureID);
 
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

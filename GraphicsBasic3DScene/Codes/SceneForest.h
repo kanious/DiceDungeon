@@ -43,7 +43,6 @@ public:
 	
 private:
 	RESULT Ready();
-	RESULT ReadyComponent();
 	RESULT ReadyLayerAndGameObject();
 public:
 	static SceneForest* Create();

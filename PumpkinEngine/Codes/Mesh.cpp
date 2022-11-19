@@ -7,24 +7,37 @@
 #include "../Headers/Texture.h"
 #include "../Headers/Shader.h"
 #include "../Headers/Transform.h"
-#include "../Headers/AABB.h"
+#include "../Headers/BoundingBox.h"
+#include "../Headers/QuadTree.h"
+#include "../Headers/Octree.h"
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
+
 
 USING(Engine)
 USING(std)
 USING(glm)
 
+static int GetRandNum(int min, int max)
+{
+    return (rand() % (max - min + 1)) + min;
+}
+
 CMesh::CMesh()
     : m_pOpenGLDevice(COpenGLDevice::GetInstance())
     , m_pVIBuffer(nullptr)
-    , m_pBoundingBox_AABB(nullptr)
+    , m_pBoundingBox(nullptr)
     , m_pDiffTexture(nullptr)
     , m_pShader(nullptr)
     , m_pParentTransform(nullptr)
     , m_bWireFrame(false)
     , m_bSelected(false)
     , m_bDebug(false)
+    , m_iTriNum(0)
+    , m_pTriangles(nullptr)
+    , m_pQuadTree(nullptr)
+    , m_pOctree(nullptr)
 {
     m_pOpenGLDevice->AddRefCnt();
 }
@@ -38,19 +51,26 @@ CMesh::CMesh(const CMesh& rhs)
     , m_bWireFrame(rhs.m_bWireFrame)
     , m_bSelected(rhs.m_bSelected)
     , m_bDebug(rhs.m_bDebug)
+    , m_iTriNum(rhs.m_iTriNum)
+    , m_pQuadTree(rhs.m_pQuadTree)
+    , m_pOctree(rhs.m_pOctree)
 {
     m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
     if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
     if (nullptr != m_pDiffTexture) m_pDiffTexture->AddRefCnt();
     if (nullptr != m_pShader) m_pShader->AddRefCnt();
+    if (nullptr != m_pQuadTree) m_pQuadTree->AddRefCnt();
+    if (nullptr != m_pOctree) m_pOctree->AddRefCnt();
 
-    m_pBoundingBox_AABB = CAABB::Create(rhs.m_pBoundingBox_AABB->m_vCenter
-        , rhs.m_pBoundingBox_AABB->m_vHalfExtents
-        , rhs.m_pBoundingBox_AABB->m_vMin
-        , rhs.m_pBoundingBox_AABB->m_vMax
-        , rhs.m_pBoundingBox_AABB->m_shaderID);
-}
+    m_pBoundingBox = CBoundingBox::Create(
+        rhs.m_pBoundingBox->m_vMin
+        , rhs.m_pBoundingBox->m_vMax
+        , rhs.m_pBoundingBox->m_shaderID);
+
+    m_pTriangles = new TRIANGLE[rhs.m_iTriNum];
+    memcpy(m_pTriangles, rhs.m_pTriangles, sizeof(TRIANGLE) * rhs.m_iTriNum);
+;}
 
 CMesh::~CMesh()
 {
@@ -80,20 +100,39 @@ void CMesh::Render()
         m_pVIBuffer->Render();
     }
 
-    if (m_bDebug && nullptr != m_pBoundingBox_AABB)
-        m_pBoundingBox_AABB->Render();
+    if (m_bDebug && nullptr != m_pBoundingBox)
+        m_pBoundingBox->Render();
+
+    if (nullptr != m_pQuadTree)
+        m_pQuadTree->Render();
+
+    if (nullptr != m_pOctree)
+        m_pOctree->Render();
 }
 
 void CMesh::Destroy()
 {
     SafeDestroy(m_pOpenGLDevice);
     SafeDestroy(m_pVIBuffer);
-    SafeDestroy(m_pBoundingBox_AABB);
+    SafeDestroy(m_pBoundingBox);
     SafeDestroy(m_pDiffTexture);
     SafeDestroy(m_pShader);
+    SafeDestroy(m_pQuadTree);
+    SafeDestroy(m_pOctree);
     m_pParentTransform = nullptr;
+    if (nullptr != m_pTriangles)
+        delete m_pTriangles;
 
 	CComponent::Destroy();
+}
+
+void CMesh::SetTexture(std::string texID_diff)
+{
+    SafeDestroy(m_pDiffTexture);
+
+    CComponent* pComponent = CloneComponent<CTexture*>(texID_diff);
+    if (nullptr != pComponent)
+        m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
 RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type, string shaderID, string texID_Diff)
@@ -105,24 +144,30 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type,
     _uint vertexNum = 0;
     _uint indexNum = 0;
 
-    switch (type)
-    {
-    case xyz_index:
-        Ready_xyz_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
-        break;
+    Ready_VIBuffer(type, filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
 
-    case xyz_normal_index:
-        Ready_xyz_normal_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
-        break;
+    //switch (type)
+    //{
+    //case xyz_index:
+    //    Ready_xyz_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    //    break;
 
-    case xyz_normal_texUV_index:
-        Ready_xyz_normal_texUV_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
-        break;
+    //case xyz_normal_index:
+    //    Ready_xyz_normal_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    //    break;
 
-    case xyz_normal_texUV_index_texNum:
-        Ready_xyz_normal_texUV_index_texNum(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
-        break;
-    }
+    //case xyz_normal_texUV_index:
+    //    Ready_xyz_normal_texUV_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    //    break;
+
+    //case xyz_normal_texUV_index_texNum:
+    //    Ready_xyz_normal_texUV_index_texNum(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    //    break;
+    //    
+    //case xyz_normal_color_index:
+    //    Ready_xyz_normal_color_index(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    //    break;
+    //}
 	
     m_pVIBuffer = CVIBuffer::Create(vertexNum, pVertices, indexNum, pIndices, type);
     
@@ -138,14 +183,7 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type,
 	return PK_NOERROR;
 }
 
-RESULT CMesh::Ready_xyz_index(string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
-{
-    //mesh ¸¸µé°í 
-
-    return RESULT();
-}
-
-RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+RESULT CMesh::Ready_VIBuffer(ModelType type, string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
 {
     stringstream ss;
     ss << filePath << fileName;
@@ -173,6 +211,10 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
 
     vec3 vMin = vec3(FLT_MAX);
     vec3 vMax = vec3(FLT_MIN);
+    _int r = GetRandNum(0, 170);
+    _int g = GetRandNum(0, 170);
+    _int b = GetRandNum(0, 170);
+    vec3 rbg = vec3(r / 255.f, g / 255.f, b / 255.f);
 
     *pVertices = new VTX[vertexNum];
     memset(*pVertices, 0, sizeof(**pVertices));
@@ -183,194 +225,46 @@ RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVe
         file >> vPos.y;
         file >> vPos.z;
         vPos.w = 1.f;
-        file >> (*pVertices)[i].vNormal.x;
-        file >> (*pVertices)[i].vNormal.y;
-        file >> (*pVertices)[i].vNormal.z;
-        (*pVertices)[i].vNormal.w = 1.f;
 
-        if (vMin.x > vPos.x)
-            vMin.x = vPos.x;
-        if (vMin.y > vPos.y)
-            vMin.y = vPos.y;
-        if (vMin.z > vPos.z)
-            vMin.z = vPos.z;
-        if (vMax.x < vPos.x)
-            vMax.x = vPos.x;
-        if (vMax.y < vPos.y)
-            vMax.y = vPos.y;
-        if (vMax.z < vPos.z)
-            vMax.z = vPos.z;
-    }
-    vec3 vHalf = (vMax - vMin) / 2.f;
-    vec3 vCenter = vMin + vHalf;
-    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax, "DebugBoxShader");
-
-    IDX* pTriangles = new IDX[triangleNum];
-    memset(pTriangles, 0, sizeof(*pTriangles));
-    int discard = 0;
-    for (_uint i = 0; i < triangleNum; ++i)
-    {
-        file >> discard;
-        file >> pTriangles[i]._0;
-        file >> pTriangles[i]._1;
-        file >> pTriangles[i]._2;
-    }
-    file.close();
-
-    indexNum = triangleNum * 3;
-    *pIndices = new _uint[indexNum];
-    memset(*pIndices, 0, sizeof(**pIndices));
-    _uint indexCount = 0;
-    for (_uint i = 0; i < triangleNum; ++i)
-    {
-        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
-        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
-        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
-
-        indexCount += 3;
-    }
-
-    delete[] pTriangles;
-
-    return PK_NOERROR;
-}
-
-RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum) 
-{
-    stringstream ss;
-    ss << filePath << fileName;
-    ifstream file(ss.str());
-    if (!file.is_open())
-        return PK_ERROR_MESHFILE_OPEN;
-
-    _uint triangleNum = 0;
-    const _uint bufSize = 10000;
-    char buffer[bufSize];
-    file.getline(buffer, bufSize);
-
-    string next;
-    while (file >> next)
-    {
-        if (next == "end_header")
+        switch (type)
+        {
+        case xyz_index:
+            (*pVertices)[i].vNormal = vec4(0.f, 1.f, 0.f, 1.f);
             break;
 
-        if (next == "vertex")
-            file >> vertexNum;
-
-        if (next == "face")
-            file >> triangleNum;
-    }
-
-    vec3 vMin = vec3(FLT_MAX);
-    vec3 vMax = vec3(FLT_MIN);
-
-    *pVertices = new VTX[vertexNum];
-    memset(*pVertices, 0, sizeof(**pVertices));
-    for (_uint i = 0; i < vertexNum; ++i)
-    {
-        vec4& vPos = (*pVertices)[i].vPos;
-        file >> vPos.x;
-        file >> vPos.y;
-        file >> vPos.z;
-        vPos.w = 1.f;
-        file >> (*pVertices)[i].vNormal.x;
-        file >> (*pVertices)[i].vNormal.y;
-        file >> (*pVertices)[i].vNormal.z;
-        (*pVertices)[i].vNormal.w = 1.f;
-        file >> (*pVertices)[i].vTexUV.x;
-        file >> (*pVertices)[i].vTexUV.y;
-
-        if (vMin.x > vPos.x)
-            vMin.x = vPos.x;
-        if (vMin.y > vPos.y)
-            vMin.y = vPos.y;
-        if (vMin.z > vPos.z)
-            vMin.z = vPos.z;
-        if (vMax.x < vPos.x)
-            vMax.x = vPos.x;
-        if (vMax.y < vPos.y)
-            vMax.y = vPos.y;
-        if (vMax.z < vPos.z)
-            vMax.z = vPos.z;
-    }
-    vec3 vHalf = (vMax - vMin) / 2.f;
-    vec3 vCenter = vMin + vHalf;
-    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax, "DebugBoxShader");
-
-    IDX* pTriangles = new IDX[triangleNum];
-    memset(pTriangles, 0, sizeof(*pTriangles));
-    int discard = 0;
-    for (_uint i = 0; i < triangleNum; ++i)
-    {
-        file >> discard;
-        file >> pTriangles[i]._0;
-        file >> pTriangles[i]._1;
-        file >> pTriangles[i]._2;
-    }
-    file.close();
-
-    indexNum = triangleNum * 3;
-    *pIndices = new _uint[indexNum];
-    memset(*pIndices, 0, sizeof(**pIndices));
-    _uint indexCount = 0;
-    for (_uint i = 0; i < triangleNum; ++i)
-    {
-        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
-        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
-        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
-
-        indexCount += 3;
-    }
-
-    delete[] pTriangles;
-
-    return PK_NOERROR;
-}
-
-RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
-{
-    stringstream ss;
-    ss << filePath << fileName;
-    ifstream file(ss.str());
-    if (!file.is_open())
-        return PK_ERROR_MESHFILE_OPEN;
-
-    _uint triangleNum = 0;
-    const _uint bufSize = 10000;
-    char buffer[bufSize];
-    file.getline(buffer, bufSize);
-
-    string next;
-    while (file >> next)
-    {
-        if (next == "end_header")
+        case xyz_normal_index:
+        case xyz_normal_color_index:
+            file >> (*pVertices)[i].vNormal.x;
+            file >> (*pVertices)[i].vNormal.y;
+            file >> (*pVertices)[i].vNormal.z;
+            (*pVertices)[i].vNormal.w = 1.f;
             break;
 
-        if (next == "vertex")
-            file >> vertexNum;
+        case xyz_normal_texUV_index:
+        case xyz_normal_texUV_index_texNum:
+            file >> (*pVertices)[i].vNormal.x;
+            file >> (*pVertices)[i].vNormal.y;
+            file >> (*pVertices)[i].vNormal.z;
+            (*pVertices)[i].vNormal.w = 1.f;
+            file >> (*pVertices)[i].vTexUV.x;
+            file >> (*pVertices)[i].vTexUV.y;
+            break;
+        }
 
-        if (next == "face")
-            file >> triangleNum;
-    }
-
-    vec3 vMin = vec3(FLT_MAX);
-    vec3 vMax = vec3(FLT_MIN);
-
-    *pVertices = new VTX[vertexNum];
-    memset(*pVertices, 0, sizeof(**pVertices));
-    for (_uint i = 0; i < vertexNum; ++i)
-    {
-        vec4& vPos = (*pVertices)[i].vPos;
-        file >> vPos.x;
-        file >> vPos.y;
-        file >> vPos.z;
-        vPos.w = 1.f;
-        file >> (*pVertices)[i].vNormal.x;
-        file >> (*pVertices)[i].vNormal.y;
-        file >> (*pVertices)[i].vNormal.z;
-        (*pVertices)[i].vNormal.w = 1.f;
-        file >> (*pVertices)[i].vTexUV.x;
-        file >> (*pVertices)[i].vTexUV.y;
+        if (type == xyz_normal_color_index)
+        {
+            file >> (*pVertices)[i].vColour.x; (*pVertices)[i].vColour.x = (*pVertices)[i].vColour.x / 255.f;
+            file >> (*pVertices)[i].vColour.y; (*pVertices)[i].vColour.y = (*pVertices)[i].vColour.y / 255.f;
+            file >> (*pVertices)[i].vColour.z; (*pVertices)[i].vColour.z = (*pVertices)[i].vColour.z / 255.f;
+            file >> (*pVertices)[i].vColour.w; (*pVertices)[i].vColour.w = (*pVertices)[i].vColour.w / 255.f;
+        }
+        else
+        {
+            (*pVertices)[i].vColour.r = rbg.r;
+            (*pVertices)[i].vColour.g = rbg.g;
+            (*pVertices)[i].vColour.b = rbg.b;
+            (*pVertices)[i].vColour.a = 1.0f;
+        }
 
         if (vMin.x > vPos.x)
             vMin.x = vPos.x;
@@ -385,9 +279,11 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
         if (vMax.z < vPos.z)
             vMax.z = vPos.z;
     }
-    vec3 vHalf = (vMax - vMin) / 2.f;
-    vec3 vCenter = vMin + vHalf;
-    m_pBoundingBox_AABB = CAABB::Create(vCenter, vHalf, vMin, vMax, "DebugBoxShader");
+    m_pBoundingBox = CBoundingBox::Create(vMin, vMax, "DebugBoxShader");
+
+    m_iTriNum = triangleNum;
+    m_pTriangles = new TRIANGLE[triangleNum];
+    memset(m_pTriangles, 0, sizeof(*m_pTriangles));
 
     IDX* pTriangles = new IDX[triangleNum];
     memset(pTriangles, 0, sizeof(*pTriangles));
@@ -398,7 +294,12 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
         file >> pTriangles[i]._0;
         file >> pTriangles[i]._1;
         file >> pTriangles[i]._2;
-        file >> discard;
+        if (type == xyz_normal_texUV_index_texNum)
+            file >> discard;
+
+        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
+        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
+        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
     }
     file.close();
 
@@ -419,6 +320,499 @@ RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string f
 
     return PK_NOERROR;
 }
+
+//RESULT CMesh::Ready_xyz_index(string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+//{
+//    stringstream ss;
+//    ss << filePath << fileName;
+//    ifstream file(ss.str());
+//    if (!file.is_open())
+//        return PK_ERROR_MESHFILE_OPEN;
+//
+//    _uint triangleNum = 0;
+//    const _uint bufSize = 10000;
+//    char buffer[bufSize];
+//    file.getline(buffer, bufSize);
+//
+//    string next;
+//    while (file >> next)
+//    {
+//        if (next == "end_header")
+//            break;
+//
+//        if (next == "vertex")
+//            file >> vertexNum;
+//
+//        if (next == "face")
+//            file >> triangleNum;
+//    }
+//
+//    vec3 vMin = vec3(FLT_MAX);
+//    vec3 vMax = vec3(FLT_MIN);
+//
+//    *pVertices = new VTX[vertexNum];
+//    memset(*pVertices, 0, sizeof(**pVertices));
+//    for (_uint i = 0; i < vertexNum; ++i)
+//    {
+//        vec4& vPos = (*pVertices)[i].vPos;
+//        file >> vPos.x;
+//        file >> vPos.y;
+//        file >> vPos.z;
+//        vPos.w = 1.f;
+//
+//        (*pVertices)[i].vNormal = vec4(0.f, 1.f, 0.f, 1.f);
+//
+//        if (vMin.x > vPos.x)
+//            vMin.x = vPos.x;
+//        if (vMin.y > vPos.y)
+//            vMin.y = vPos.y;
+//        if (vMin.z > vPos.z)
+//            vMin.z = vPos.z;
+//        if (vMax.x < vPos.x)
+//            vMax.x = vPos.x;
+//        if (vMax.y < vPos.y)
+//            vMax.y = vPos.y;
+//        if (vMax.z < vPos.z)
+//            vMax.z = vPos.z;
+//    }
+//    m_pBoundingBox_AABB = CAABB::Create(vMin, vMax, "DebugBoxShader");
+//
+//    m_iTriNum = triangleNum;
+//    m_pTriangles = new TRIANGLE[triangleNum];
+//    memset(m_pTriangles, 0, sizeof(*m_pTriangles));
+//
+//    IDX* pTriangles = new IDX[triangleNum];
+//    memset(pTriangles, 0, sizeof(*pTriangles));
+//    int discard = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        file >> discard;
+//        file >> pTriangles[i]._0;
+//        file >> pTriangles[i]._1;
+//        file >> pTriangles[i]._2;
+//
+//        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
+//        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
+//        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
+//    }
+//    file.close();
+//
+//    indexNum = triangleNum * 3;
+//    *pIndices = new _uint[indexNum];
+//    memset(*pIndices, 0, sizeof(**pIndices));
+//    _uint indexCount = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
+//        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
+//        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
+//
+//        indexCount += 3;
+//    }
+//
+//    delete[] pTriangles;
+//
+//    return PK_NOERROR;
+//}
+//RESULT CMesh::Ready_xyz_normal_index(string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+//{
+//    stringstream ss;
+//    ss << filePath << fileName;
+//    ifstream file(ss.str());
+//    if (!file.is_open())
+//        return PK_ERROR_MESHFILE_OPEN;
+//
+//    _uint triangleNum = 0;
+//    const _uint bufSize = 10000;
+//    char buffer[bufSize];
+//    file.getline(buffer, bufSize);
+//
+//    string next;
+//    while (file >> next)
+//    {
+//        if (next == "end_header")
+//            break;
+//
+//        if (next == "vertex")
+//            file >> vertexNum;
+//
+//        if (next == "face")
+//            file >> triangleNum;
+//    }
+//
+//    vec3 vMin = vec3(FLT_MAX);
+//    vec3 vMax = vec3(FLT_MIN);
+//
+//    _int r = GetRandNum(0, 170);
+//    _int g = GetRandNum(0, 170);
+//    _int b = GetRandNum(0, 170);
+//    vec3 rbg = vec3(r / 255.f, g / 255.f, b / 255.f);
+//
+//    *pVertices = new VTX[vertexNum];
+//    memset(*pVertices, 0, sizeof(VTX) * vertexNum);
+//    for (_uint i = 0; i < vertexNum; ++i)
+//    {
+//        vec4& vPos = (*pVertices)[i].vPos;
+//        file >> vPos.x;
+//        file >> vPos.y;
+//        file >> vPos.z;
+//        vPos.w = 1.f;
+//        file >> (*pVertices)[i].vNormal.x;
+//        file >> (*pVertices)[i].vNormal.y;
+//        file >> (*pVertices)[i].vNormal.z;
+//        (*pVertices)[i].vNormal.w = 1.f;
+//
+//        (*pVertices)[i].vColour.r = rbg.r;
+//        (*pVertices)[i].vColour.g = rbg.g;
+//        (*pVertices)[i].vColour.b = rbg.b;
+//        (*pVertices)[i].vColour.a = 1.0f;
+//
+//        if (vMin.x > vPos.x)
+//            vMin.x = vPos.x;
+//        if (vMin.y > vPos.y)
+//            vMin.y = vPos.y;
+//        if (vMin.z > vPos.z)
+//            vMin.z = vPos.z;
+//        if (vMax.x < vPos.x)
+//            vMax.x = vPos.x;
+//        if (vMax.y < vPos.y)
+//            vMax.y = vPos.y;
+//        if (vMax.z < vPos.z)
+//            vMax.z = vPos.z;
+//    }
+//    m_pBoundingBox_AABB = CAABB::Create(vMin, vMax, "DebugBoxShader");
+//
+//    m_iTriNum = triangleNum;
+//    m_pTriangles = new TRIANGLE[triangleNum];
+//    memset(m_pTriangles, 0, sizeof(*m_pTriangles));
+//
+//    IDX* pTriangles = new IDX[triangleNum];
+//    memset(pTriangles, 0, sizeof(IDX) * triangleNum);
+//    int discard = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        file >> discard;
+//        file >> pTriangles[i]._0;
+//        file >> pTriangles[i]._1;
+//        file >> pTriangles[i]._2;
+//
+//        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
+//        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
+//        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
+//    }
+//    file.close();
+//
+//    indexNum = triangleNum * 3;
+//    *pIndices = new _uint[indexNum];
+//    memset(*pIndices, 0, sizeof(_uint) * indexNum);
+//    _uint indexCount = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
+//        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
+//        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
+//
+//        indexCount += 3;
+//    }
+//
+//    delete[] pTriangles;
+//
+//    return PK_NOERROR;
+//}
+//RESULT CMesh::Ready_xyz_normal_texUV_index(std::string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum) 
+//{
+//    stringstream ss;
+//    ss << filePath << fileName;
+//    ifstream file(ss.str());
+//    if (!file.is_open())
+//        return PK_ERROR_MESHFILE_OPEN;
+//
+//    _uint triangleNum = 0;
+//    const _uint bufSize = 10000;
+//    char buffer[bufSize];
+//    file.getline(buffer, bufSize);
+//
+//    string next;
+//    while (file >> next)
+//    {
+//        if (next == "end_header")
+//            break;
+//
+//        if (next == "vertex")
+//            file >> vertexNum;
+//
+//        if (next == "face")
+//            file >> triangleNum;
+//    }
+//
+//    vec3 vMin = vec3(FLT_MAX);
+//    vec3 vMax = vec3(FLT_MIN);
+//
+//    *pVertices = new VTX[vertexNum];
+//    memset(*pVertices, 0, sizeof(**pVertices));
+//    for (_uint i = 0; i < vertexNum; ++i)
+//    {
+//        vec4& vPos = (*pVertices)[i].vPos;
+//        file >> vPos.x;
+//        file >> vPos.y;
+//        file >> vPos.z;
+//        vPos.w = 1.f;
+//        file >> (*pVertices)[i].vNormal.x;
+//        file >> (*pVertices)[i].vNormal.y;
+//        file >> (*pVertices)[i].vNormal.z;
+//        (*pVertices)[i].vNormal.w = 1.f;
+//        file >> (*pVertices)[i].vTexUV.x;
+//        file >> (*pVertices)[i].vTexUV.y;
+//
+//        if (vMin.x > vPos.x)
+//            vMin.x = vPos.x;
+//        if (vMin.y > vPos.y)
+//            vMin.y = vPos.y;
+//        if (vMin.z > vPos.z)
+//            vMin.z = vPos.z;
+//        if (vMax.x < vPos.x)
+//            vMax.x = vPos.x;
+//        if (vMax.y < vPos.y)
+//            vMax.y = vPos.y;
+//        if (vMax.z < vPos.z)
+//            vMax.z = vPos.z;
+//    }
+//    m_pBoundingBox_AABB = CAABB::Create(vMin, vMax, "DebugBoxShader");
+//
+//    m_iTriNum = triangleNum;
+//    m_pTriangles = new TRIANGLE[triangleNum];
+//    memset(m_pTriangles, 0, sizeof(*m_pTriangles));
+//
+//    IDX* pTriangles = new IDX[triangleNum];
+//    memset(pTriangles, 0, sizeof(*pTriangles));
+//    int discard = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        file >> discard;
+//        file >> pTriangles[i]._0;
+//        file >> pTriangles[i]._1;
+//        file >> pTriangles[i]._2;
+//
+//        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
+//        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
+//        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
+//    }
+//    file.close();
+//
+//    indexNum = triangleNum * 3;
+//    *pIndices = new _uint[indexNum];
+//    memset(*pIndices, 0, sizeof(**pIndices));
+//    _uint indexCount = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
+//        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
+//        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
+//
+//        indexCount += 3;
+//    }
+//
+//    delete[] pTriangles;
+//
+//    return PK_NOERROR;
+//}
+//RESULT CMesh::Ready_xyz_normal_texUV_index_texNum(std::string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+//{
+//    stringstream ss;
+//    ss << filePath << fileName;
+//    ifstream file(ss.str());
+//    if (!file.is_open())
+//        return PK_ERROR_MESHFILE_OPEN;
+//
+//    _uint triangleNum = 0;
+//    const _uint bufSize = 10000;
+//    char buffer[bufSize];
+//    file.getline(buffer, bufSize);
+//
+//    string next;
+//    while (file >> next)
+//    {
+//        if (next == "end_header")
+//            break;
+//
+//        if (next == "vertex")
+//            file >> vertexNum;
+//
+//        if (next == "face")
+//            file >> triangleNum;
+//    }
+//
+//    vec3 vMin = vec3(FLT_MAX);
+//    vec3 vMax = vec3(FLT_MIN);
+//
+//    *pVertices = new VTX[vertexNum];
+//    memset(*pVertices, 0, sizeof(**pVertices));
+//    for (_uint i = 0; i < vertexNum; ++i)
+//    {
+//        vec4& vPos = (*pVertices)[i].vPos;
+//        file >> vPos.x;
+//        file >> vPos.y;
+//        file >> vPos.z;
+//        vPos.w = 1.f;
+//        file >> (*pVertices)[i].vNormal.x;
+//        file >> (*pVertices)[i].vNormal.y;
+//        file >> (*pVertices)[i].vNormal.z;
+//        (*pVertices)[i].vNormal.w = 1.f;
+//        file >> (*pVertices)[i].vTexUV.x;
+//        file >> (*pVertices)[i].vTexUV.y;
+//
+//        if (vMin.x > vPos.x)
+//            vMin.x = vPos.x;
+//        if (vMin.y > vPos.y)
+//            vMin.y = vPos.y;
+//        if (vMin.z > vPos.z)
+//            vMin.z = vPos.z;
+//        if (vMax.x < vPos.x)
+//            vMax.x = vPos.x;
+//        if (vMax.y < vPos.y)
+//            vMax.y = vPos.y;
+//        if (vMax.z < vPos.z)
+//            vMax.z = vPos.z;
+//    }
+//    m_pBoundingBox_AABB = CAABB::Create(vMin, vMax, "DebugBoxShader");
+//
+//    m_iTriNum = triangleNum;
+//    m_pTriangles = new TRIANGLE[triangleNum];
+//    memset(m_pTriangles, 0, sizeof(*m_pTriangles));
+//
+//    IDX* pTriangles = new IDX[triangleNum];
+//    memset(pTriangles, 0, sizeof(*pTriangles));
+//    int discard = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        file >> discard;
+//        file >> pTriangles[i]._0;
+//        file >> pTriangles[i]._1;
+//        file >> pTriangles[i]._2;
+//        file >> discard;
+//
+//        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
+//        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
+//        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
+//    }
+//    file.close();
+//
+//    indexNum = triangleNum * 3;
+//    *pIndices = new _uint[indexNum];
+//    memset(*pIndices, 0, sizeof(**pIndices));
+//    _uint indexCount = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
+//        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
+//        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
+//
+//        indexCount += 3;
+//    }
+//
+//    delete[] pTriangles;
+//
+//    return PK_NOERROR;
+//}
+//RESULT CMesh::Ready_xyz_normal_color_index(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+//{
+//    stringstream ss;
+//    ss << filePath << fileName;
+//    ifstream file(ss.str());
+//    if (!file.is_open())
+//        return PK_ERROR_MESHFILE_OPEN;
+//
+//    _uint triangleNum = 0;
+//    const _uint bufSize = 10000;
+//    char buffer[bufSize];
+//    file.getline(buffer, bufSize);
+//
+//    string next;
+//    while (file >> next)
+//    {
+//        if (next == "end_header")
+//            break;
+//
+//        if (next == "vertex")
+//            file >> vertexNum;
+//
+//        if (next == "face")
+//            file >> triangleNum;
+//    }
+//
+//    vec3 vMin = vec3(FLT_MAX);
+//    vec3 vMax = vec3(FLT_MIN);
+//
+//    *pVertices = new VTX[vertexNum];
+//    memset(*pVertices, 0, sizeof(**pVertices));
+//    for (_uint i = 0; i < vertexNum; ++i)
+//    {
+//        vec4& vPos = (*pVertices)[i].vPos;
+//        file >> vPos.x;
+//        file >> vPos.y;
+//        file >> vPos.z;
+//        vPos.w = 1.f;
+//        file >> (*pVertices)[i].vNormal.x;
+//        file >> (*pVertices)[i].vNormal.y;
+//        file >> (*pVertices)[i].vNormal.z;
+//        (*pVertices)[i].vNormal.w = 1.f;
+//        file >> (*pVertices)[i].vColour.x; (*pVertices)[i].vColour.x = (*pVertices)[i].vColour.x / 255.f;
+//        file >> (*pVertices)[i].vColour.y; (*pVertices)[i].vColour.y = (*pVertices)[i].vColour.y / 255.f;
+//        file >> (*pVertices)[i].vColour.z; (*pVertices)[i].vColour.z = (*pVertices)[i].vColour.z / 255.f;
+//        file >> (*pVertices)[i].vColour.w; (*pVertices)[i].vColour.w = (*pVertices)[i].vColour.w / 255.f;
+//
+//        if (vMin.x > vPos.x)
+//            vMin.x = vPos.x;
+//        if (vMin.y > vPos.y)
+//            vMin.y = vPos.y;
+//        if (vMin.z > vPos.z)
+//            vMin.z = vPos.z;
+//        if (vMax.x < vPos.x)
+//            vMax.x = vPos.x;
+//        if (vMax.y < vPos.y)
+//            vMax.y = vPos.y;
+//        if (vMax.z < vPos.z)
+//            vMax.z = vPos.z;
+//    }
+//    m_pBoundingBox_AABB = CAABB::Create(vMin, vMax, "DebugBoxShader");
+//
+//    m_iTriNum = triangleNum;
+//    m_pTriangles = new TRIANGLE[triangleNum];
+//    memset(m_pTriangles, 0, sizeof(*m_pTriangles));
+//
+//    IDX* pTriangles = new IDX[triangleNum];
+//    memset(pTriangles, 0, sizeof(*pTriangles));
+//    int discard = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        file >> discard;
+//        file >> pTriangles[i]._0;
+//        file >> pTriangles[i]._1;
+//        file >> pTriangles[i]._2;
+//
+//        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
+//        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
+//        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
+//    }
+//    file.close();
+//
+//    indexNum = triangleNum * 3;
+//    *pIndices = new _uint[indexNum];
+//    memset(*pIndices, 0, sizeof(**pIndices));
+//    _uint indexCount = 0;
+//    for (_uint i = 0; i < triangleNum; ++i)
+//    {
+//        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
+//        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
+//        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
+//
+//        indexCount += 3;
+//    }
+//
+//    delete[] pTriangles;
+//
+//    return PK_NOERROR;
+//}
 
 void CMesh::Ready_Texture_Diff(string texID)
 {
@@ -432,6 +826,45 @@ void CMesh::Ready_Shader(string shaderID)
     CComponent* pComponent = CloneComponent<CShader*>(shaderID);
     if (nullptr != pComponent)
         m_pShader = dynamic_cast<CShader*>(pComponent);
+}
+
+void CMesh::Ready_QuadTree(_uint depth)
+{
+    if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
+        return;
+
+    m_pQuadTree = CQuadTree::Create(m_pBoundingBox->m_vMax, m_pBoundingBox->m_vMin, depth);
+    if (nullptr == m_pQuadTree)
+        return;
+
+    for (_uint i = 0; i < m_iTriNum; ++i)
+    {
+        _int hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p0.x, m_pTriangles[i].p0.z);
+        m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
+
+        hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p1.x, m_pTriangles[i].p1.z);
+        m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
+
+        hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p2.x, m_pTriangles[i].p2.z);
+        m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
+    }
+}
+
+void CMesh::Ready_Qctree(_uint depth)
+{
+    if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
+        return;
+
+    m_pOctree = COctree::Create(m_pBoundingBox->m_vMax, m_pBoundingBox->m_vMin, depth);
+    if (nullptr == m_pOctree)
+        return;
+
+    _uint missed = 0;
+    for (_uint i = 0; i < m_iTriNum; ++i)
+    {
+        m_pOctree->AddTriangle(m_pTriangles[i], missed);
+    }
+    cout << "Octree setup - Missed triangle: " << missed << endl;
 }
 
 CComponent* CMesh::Clone()

@@ -1,5 +1,5 @@
-#ifndef _TREE_H_
-#define _TREE_H_
+#ifndef _BGOBJECT_H_
+#define _BGOBJECT_H_
 
 #include "Define.h"
 #include "GameObject.h"
@@ -7,7 +7,7 @@
 namespace Engine
 {
 	class CMesh;
-	class CAABB;
+	class CBoundingBox;
 }
 class BGObject : public Engine::CGameObject
 {
@@ -37,7 +37,6 @@ private:
 public:
 	static BGObject* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, std::string soundTag);
-	virtual CGameObject* Clone();
 };
 
-#endif //_TREE_H_
+#endif //_BGOBJECT_H_

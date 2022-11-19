@@ -17,7 +17,13 @@ private:
 	Engine::CTimer*					m_pTimer;
 	Engine::COpenGLDevice*			m_pGraphicDevice;
 	Engine::CInputDevice*			m_pInputDevice;
-	_int m_iFPS;
+	_int							m_iFPS;
+
+	std::string						m_DataPath;
+	std::string						m_SoundDataFileName;
+	std::string						m_ShaderDataFileName;
+	std::string						m_TextureDataFileName;
+	std::string						m_MeshDataFileName;
 
 public:
 	explicit Client();
@@ -29,6 +35,7 @@ public:
 	RESULT Ready();
 private:
 	RESULT Ready_Basic_Component();
+	void Ready_Basic_Data();
 };
 
 #endif //_CLIENT_H_
