@@ -48,6 +48,7 @@ public:
 	CQuadTree* GetQuadTree()						{ return m_pQuadTree; }
 	COctree* GetOctree()							{ return m_pOctree; }
 	_uint GetTriangleNumber()						{ return m_iTriNum; }
+	CShader* GetShader()							{ return m_pShader; }
 	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
 	void SetWireFrame(_bool wire)					{ m_bWireFrame = wire; }
 	void SetSelcted(_bool select)					{ m_bSelected = select; }

@@ -240,11 +240,11 @@ void SoundUI::RenderDetailSoundInfo()
 	CHANNEL_MAP::iterator iter = m_pMapChannel->find(m_pCurrentSound->channelGroupTag);
 	if (iter != m_pMapChannel->end())
 	{
-		float volumn = iter->second->GetVolumn();
+		float volumn = iter->second->GetVolume();
 		volumn *= 100;
 		Text(m_pString->GetString("TEXT_24").c_str()); SameLine(150.f); SetNextItemWidth(230.f); SliderFloat("##SoundVolume", &volumn, 0.0f, 200.f, "%.0f", ImGuiSliderFlags_AlwaysClamp);
 		volumn /= 100;
-		iter->second->SetVolumn(volumn);
+		iter->second->SetVolume(volumn);
 
 		float pitch = iter->second->GetPitch();
 		pitch *= 100;
@@ -259,7 +259,7 @@ void SoundUI::RenderDetailSoundInfo()
 		volumn *= 100;
 		Text(m_pString->GetString("TEXT_24").c_str()); SameLine(150.f); SetNextItemWidth(230.f); SliderFloat("##SoundVolume", &volumn, 0.0f, 200.f, "%.0f", ImGuiSliderFlags_AlwaysClamp);
 		volumn /= 100;
-		m_pCurrentSound->SetVolumn(volumn);
+		m_pCurrentSound->SetVolume(volumn);
 
 		float pitch = m_pCurrentSound->GetPitch();
 		pitch *= 100;
@@ -303,11 +303,11 @@ void SoundUI::RenderDetailChannelGroupInfo()
 	if (nullptr == m_pCurrentChannel || nullptr == m_pMapDSP)
 		return;
 
-	float volumn = m_pCurrentChannel->GetVolumn();
+	float volumn = m_pCurrentChannel->GetVolume();
 	volumn *= 100;
 	Text(m_pString->GetString("TEXT_24").c_str()); SameLine(150.f); SetNextItemWidth(230.f); SliderFloat("##ChannelVolume", &volumn, 0.0f, 200.f, "%.0f", ImGuiSliderFlags_AlwaysClamp);
 	volumn /= 100;
-	m_pCurrentChannel->SetVolumn(volumn);
+	m_pCurrentChannel->SetVolume(volumn);
 
 	float pitch = m_pCurrentChannel->GetPitch();
 	pitch *= 100;

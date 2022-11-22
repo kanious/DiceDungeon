@@ -232,7 +232,7 @@ void MapEditorUI::KeyCheck(const _float& dt)
 						continue;
 
 					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
-						(*iter)->GetBoundingBox_AABB(),
+						(*iter)->GetBoundingBox(),
 						(*iter)->GetTransform(), vCameraPos, vDir))
 					{
 						vecPicking.push_back(*iter);

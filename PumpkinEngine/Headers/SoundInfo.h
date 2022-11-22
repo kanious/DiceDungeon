@@ -29,7 +29,7 @@ public:
 	std::string			soundState;
 	_uint				currentPosition;
 	_float				speed;
-	_float				volumn;
+	_float				volume;
 	_float				pitch;
 	_float				pan;
 
@@ -49,7 +49,7 @@ public:
 	void SetSoundFormat(FMOD_SOUND_FORMAT format);
 	void SetCurrentPosition(_uint value);
 	void SetFrequency(_float value);
-	void SetVolumn(_float value);
+	void SetVolume(_float value);
 	void SetPitch(_float value);
 	void SetPan(_float value);
 

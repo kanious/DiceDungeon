@@ -1,12 +1,11 @@
 #include <sstream>
 
 #include "Client.h"
+#include "Define.h"
 #include "GameMaster.h"
 #include "Timer.h"
 #include "OpenGLDevice.h"
 #include "InputDevice.h"
-#include "UIManager.h"
-#include "PumpkinString.h"
 #include "ComponentMaster.h"
 #include "Camera.h"
 #include "Transform.h"
@@ -15,8 +14,7 @@
 #include <atlconv.h>
 
 #include "Scene.h"
-#include "SceneForest.h"
-#include "SceneArena.h"
+#include "Scene3DSound.h"
 
 USING(Engine)
 USING(std)
@@ -28,7 +26,7 @@ Client::Client()
 	m_pGraphicDevice = COpenGLDevice::GetInstance(); m_pGraphicDevice->AddRefCnt();
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 
-	m_iFPS = 120;
+	m_iFPS = FPS;
 
 	wchar_t path[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, path, MAX_PATH);
@@ -55,9 +53,6 @@ void Client::Destroy()
 	SafeDestroy(m_pGraphicDevice);
 	SafeDestroy(m_pGameMaster);
 
-	SafeDestroy(UIManager::GetInstance());
-	SafeDestroy(PumpkinString::GetInstance());
-
 	delete this;
 }
 
@@ -71,7 +66,8 @@ void Client::Loop()
 		if (nullptr == m_pGameMaster || nullptr == m_pTimer)
 			break;
 
-		if (glfwWindowShouldClose(COpenGLDevice::GetInstance()->GetWindow()))
+		if (glfwWindowShouldClose(COpenGLDevice::GetInstance()->GetWindow()) ||
+			m_pInputDevice->IsKeyDown(GLFW_KEY_ESCAPE))
 			break;
 
 		if (m_pGameMaster->GetGameClose())
@@ -83,6 +79,7 @@ void Client::Loop()
 			m_pGraphicDevice->GetWindowSize();
 			glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			//glClearColor(0.5, 0.5, 0.5, 1.f);
 
 			_float dt = m_pTimer->GetTimeDelta();
 			m_pGameMaster->Update(dt);
@@ -135,16 +132,13 @@ RESULT Client::Ready()
 	result = Ready_Basic_Component();
 	if (PK_NOERROR != result)
 		return result;
-	Ready_Basic_Data();
 
 	if (nullptr != m_pGameMaster)
 	{
-		CScene* pScene = SceneForest::Create();
+		CScene* pScene = Scene3DSound::Create();
 		pScene->SetDataPath(m_DataPath);
 		m_pGameMaster->SetCurrentScene(pScene);
 	}
-
-	PumpkinString::GetInstance()->Ready();
 
 	return PK_NOERROR;
 }
@@ -168,13 +162,10 @@ RESULT Client::Ready_Basic_Component()
 	else
 		return PK_TRANSFORM_CREATE_FAILED;
 
-	return PK_NOERROR;
-}
-
-void Client::Ready_Basic_Data()
-{
 	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
 	CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
 	CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
+
+	return PK_NOERROR;
 }

@@ -22,13 +22,13 @@ void CChannelGroupInfo::Destroy()
 		pChannelGroup->release();
 }
 
-_float CChannelGroupInfo::GetVolumn()
+_float CChannelGroupInfo::GetVolume()
 {
 	if (nullptr == pChannelGroup)
 		return 0.f;
 
-	pChannelGroup->getVolume(&volumn);
-	return volumn;
+	pChannelGroup->getVolume(&volume);
+	return volume;
 }
 
 _float CChannelGroupInfo::GetPitch()
@@ -48,7 +48,7 @@ _bool CChannelGroupInfo::GetDSP(FMOD_DSP_TYPE type)
 	return arrDspCheck[type];
 }
 
-void CChannelGroupInfo::SetVolumn(_float value)
+void CChannelGroupInfo::SetVolume(_float value)
 {
 	if (nullptr == pChannelGroup)
 		return;

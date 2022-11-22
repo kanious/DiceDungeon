@@ -13,7 +13,7 @@ class ENGINE_API CChannelGroupInfo : public CBase
 public:
 	FMOD::ChannelGroup*			pChannelGroup;
 	std::string					tag;
-	_float						volumn;
+	_float						volume;
 	_float						pitch;
 	_bool						arrDspCheck[FMOD_DSP_TYPE_MAX];
 
@@ -23,11 +23,11 @@ public:
 	void Destroy();
 
 public:
-	_float GetVolumn();
+	_float GetVolume();
 	_float GetPitch();
 	_bool GetDSP(FMOD_DSP_TYPE type);
 public:
-	void SetVolumn(_float value);
+	void SetVolume(_float value);
 	void SetPitch(_float value);
 	void SetDSP(FMOD::DSP* pDSP, FMOD_DSP_TYPE type, _bool isOn);
 	void SetDspCheckAll(_bool isOn);

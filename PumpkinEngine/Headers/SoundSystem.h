@@ -14,8 +14,6 @@ class CChannelGroupInfo;
 class CDSPInfo;
 class ENGINE_API CSoundSystem : public CBase
 {
-	//SINGLETON(CSoundSystem)
-
 private:
 	FMOD::System*					m_pSystem;
 
@@ -39,11 +37,14 @@ public:
 	SOUND_MAP* GetSoundMap()					{ return &m_mapSounds; }
 	CHANNEL_MAP* GetSoundChannelMap()			{ return &m_mapChannels; }
 	DSP_MAP* GetDSPMap()						{ return &m_mapDSPs; }
+	void SetListener(_float x, _float y, _float z);
+	void SetVolume(std::string tag, _float volume);
+	void Set3DSoundPosition(std::string tag, _float x, _float y, _float z);
 public:
 	RESULT LoadSound(std::string tag, std::string path, std::string channelTag, _int mode);
 	RESULT CreateChannelGroup(std::string tag);
-	void PlayBGMSound();
 	void PlaySound(std::string tag);
+	void Play3DSound(std::string tag, _float x, _float y, _float z);
 	void StopSound(std::string tag);
 	RESULT CreateDSPEffect(std::string name, FMOD_DSP_TYPE type);
 	RESULT AddDSPEffect(std::string channelTag, std::string dspName);

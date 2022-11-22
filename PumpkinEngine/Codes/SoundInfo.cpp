@@ -9,7 +9,7 @@ USING(FMOD)
 CSoundInfo::CSoundInfo()
 	: pSound(nullptr), pChannel(nullptr), tag(""), maxLength(0), strMaxLength("")
 	, soundType(""), soundFormat(""), channels(0), bits(0), loop(false), channelGroupTag("")
-	, soundState(""), currentPosition(0), speed(0.f), volumn(0.f), pitch(0.f)
+	, soundState(""), currentPosition(0), speed(0.f), volume(0.f), pitch(0.f)
 {
 	ZeroMemory(name, sizeof(name));
 }
@@ -60,8 +60,8 @@ _float CSoundInfo::GetVolumn()
 	if (nullptr == pChannel)
 		return 0.f;
 
-	pChannel->getVolume(&volumn);
-	return volumn;
+	pChannel->getVolume(&volume);
+	return volume;
 }
 
 _float CSoundInfo::GetPitch()
@@ -99,7 +99,7 @@ void CSoundInfo::SetFrequency(_float value)
 	pChannel->setFrequency(value);
 }
 
-void CSoundInfo::SetVolumn(_float value)
+void CSoundInfo::SetVolume(_float value)
 {
 	if (nullptr == pChannel)
 		return;

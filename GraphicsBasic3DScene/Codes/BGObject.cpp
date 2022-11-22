@@ -6,7 +6,7 @@
 #include "Transform.h"
 #include "Mesh.h"
 #include "Renderer.h"
-#include "AABB.h"
+#include "BoundingBox.h"
 #include "OpenGLDefines.h"
 #include "OpenGLDevice.h"
 #include "UIManager.h"
@@ -98,9 +98,12 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	{
 		AttachComponent("Mesh", m_pMesh);
 		m_pMesh->SetTransform(m_pTransform);
-		m_pBoundingBox_AABB = m_pMesh->GetBoundingBoxAABB();
-		if (nullptr != m_pBoundingBox_AABB)
-			m_pBoundingBox_AABB->SetTransform(m_pTransform);
+		m_pBoundingBox = m_pMesh->GetBoundingBox();
+		if (nullptr != m_pBoundingBox)
+		{
+			m_pBoundingBox->SetTransform(m_pTransform);
+			m_pBoundingBox->SetColor(vec3(0.f, 1.f, 0.f));
+		}
 	}
 
 	if (nullptr != m_pTransform)

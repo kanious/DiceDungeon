@@ -46,8 +46,8 @@ SceneForest::SceneForest()
 	//m_ShaderDataFileName = "SceneArena_shaderdataList.xml";
 	//m_TextureDataFileName = "SceneArena_texturedataList.xml";
 	//m_MeshDataFileName = "SceneArena_meshdataList.xml";
-	m_ObjListFileName = "SceneCollision_mapObjects.xml";
-	m_LightListFileName = "SceneCollision_lights.xml";
+	m_ObjListFileName = "Scene3DSound_mapObjects.xml";
+	m_LightListFileName = "Scene3DSound_lights.xml";
 }
 
 SceneForest::~SceneForest()
@@ -87,7 +87,7 @@ void SceneForest::KeyCheck(const _float& dt)
 						continue;
 
 					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
-						(*iter)->GetBoundingBox_AABB(),
+						(*iter)->GetBoundingBox(),
 						(*iter)->GetTransform(), vCameraPos, vDir))
 					{
 						vecPicking.push_back(*iter);
@@ -215,7 +215,7 @@ RESULT SceneForest::Ready()
 		m_pUIManager->Ready(this);
 
 	// Light
-	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("ColorShader");
+	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
 	_uint shaderID = 0;
 	if (nullptr != shader)
 		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();

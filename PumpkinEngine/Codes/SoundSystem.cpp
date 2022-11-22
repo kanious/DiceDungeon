@@ -10,7 +10,6 @@
 USING(Engine)
 USING(std)
 USING(FMOD)
-//SINGLETON_FUNCTION(CSoundSystem)
 
 CSoundSystem::CSoundSystem()
 	: m_pSystem(nullptr)
@@ -46,6 +45,42 @@ void CSoundSystem::Destroy()
 		m_pSystem->release();
 		m_pSystem = nullptr;
 	}
+}
+
+void CSoundSystem::SetListener(_float x, _float y, _float z)
+{
+	FMOD_VECTOR vPos;
+	vPos.x = x;
+	vPos.y = y;
+	vPos.z = z;
+
+	m_pSystem->set3DListenerAttributes(0, &vPos, nullptr, nullptr, nullptr);
+	m_pSystem->update();
+}
+
+void CSoundSystem::SetVolume(string tag, _float volume)
+{
+	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
+	if (iterSound == m_mapSounds.end())
+		return;
+
+	iterSound->second->SetVolume(volume);
+}
+
+void CSoundSystem::Set3DSoundPosition(string tag, _float x, _float y, _float z)
+{
+	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
+	if (iterSound == m_mapSounds.end())
+		return;
+
+	if (nullptr == iterSound->second->pChannel)
+		return;
+
+	FMOD_VECTOR vSoundPos;
+	vSoundPos.x = x;
+	vSoundPos.y = y;
+	vSoundPos.z = z;
+	iterSound->second->pChannel->set3DAttributes(&vSoundPos, nullptr);
 }
 
 RESULT CSoundSystem::LoadSound(string tag, string path, string channelTag, _int mode)
@@ -125,10 +160,6 @@ RESULT CSoundSystem::CreateChannelGroup(std::string tag)
 	return PK_NOERROR;
 }
 
-void CSoundSystem::PlayBGMSound()
-{
-}
-
 void CSoundSystem::PlaySound(string tag)
 {
 	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
@@ -155,8 +186,59 @@ void CSoundSystem::PlaySound(string tag)
 	iterChannel->second->pChannelGroup->stop();
 
 	FMOD::Channel* pChannel;
-	FMOD_RESULT result = m_pSystem->playSound(pInfo->pSound, iterChannel->second->pChannelGroup, 0, &pChannel);
+	m_pSystem->playSound(pInfo->pSound, iterChannel->second->pChannelGroup, 0, &pChannel);
 	pInfo->pChannel = pChannel;
+}
+
+void CSoundSystem::Play3DSound(string tag, _float x, _float y, _float z)
+{
+	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
+	if (iterSound == m_mapSounds.end())
+		return;
+
+	CSoundInfo* pInfo = iterSound->second;
+	if (nullptr == pInfo)
+		return;
+
+	CHANNEL_MAP::iterator iterChannel = m_mapChannels.find(pInfo->channelGroupTag);
+	if (iterChannel == m_mapChannels.end())
+		return;
+
+	if (pInfo->loop)
+	{
+		if (nullptr != pInfo->pChannel)
+		{
+			pInfo->GetSoundState();
+			if (pInfo->soundState == "PLAYING")
+				return;
+		}
+	}
+ 	iterChannel->second->pChannelGroup->stop();
+
+	FMOD::Channel* pChannel;
+	FMOD_RESULT result = m_pSystem->playSound(pInfo->pSound, iterChannel->second->pChannelGroup, 0, &pChannel);
+	if (PK_NOERROR != ErrorCheck(result))
+		return;
+
+	pInfo->pChannel = pChannel;
+
+	FMOD_VECTOR vSoundPos;
+	vSoundPos.x = x;
+	vSoundPos.y = y;
+	vSoundPos.z = z;
+	result = pChannel->set3DAttributes(&vSoundPos, nullptr);
+	if (PK_NOERROR != ErrorCheck(result))
+		return;
+
+	result = pChannel->set3DMinMaxDistance(1.0f, 10000);
+
+	//if ("ConstructionSite" == tag || "Helicopter" == tag)
+	//	result = pChannel->set3DMinMaxDistance(10.0f, 10000);
+	//else
+	//	result = pChannel->set3DMinMaxDistance(3.0f, 10000);
+	if (PK_NOERROR != ErrorCheck(result))
+		return;
+
 }
 
 void CSoundSystem::StopSound(string tag)

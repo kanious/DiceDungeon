@@ -36,12 +36,16 @@ public:
 	void SetCompressed(_bool compressed)	{ m_bLoadCompressedSound = compressed; }
 	void SetDataPath(std::string path)		{ m_DataPath = path; }
 	void SetFileName(std::string name)		{ m_FileName = name; }
+	void SetListener(_float x, _float y, _float z);
+	void SetVolume(std::string tag, _float volume);
+	void Set3DSoundPosition(std::string tag, _float x, _float y, _float z);
 
 public:
 	RESULT LoadSound(std::string tag, std::string path, std::string channelTag);
 	RESULT LoadLoopSound(std::string tag, std::string path, std::string channelTag);
 	RESULT CreateChannelGroup(std::string name);
 	void PlaySound(std::string tag);
+	void Play3DSound(std::string tag, _float x, _float y, _float z);
 	void StopSound(std::string tag);
 	RESULT CreateDSPEffect(std::string name, _int type);
 	RESULT AddDSPEffect(std::string channelName, std::string dspName);

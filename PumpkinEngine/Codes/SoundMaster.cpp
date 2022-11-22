@@ -63,12 +63,36 @@ std::unordered_map<std::string, CDSPInfo*>* CSoundMaster::GetDSPMap()
 	return m_pSoundSystem->GetDSPMap();
 }
 
+void CSoundMaster::SetListener(_float x, _float y, _float z)
+{
+	if (nullptr == m_pSoundSystem)
+		return;
+
+	m_pSoundSystem->SetListener(x, y, z);
+}
+
+void CSoundMaster::SetVolume(string tag, _float volume)
+{
+	if (nullptr == m_pSoundSystem)
+		return;
+
+	m_pSoundSystem->SetVolume(tag, volume);
+}
+
+void CSoundMaster::Set3DSoundPosition(string tag, _float x, _float y, _float z)
+{
+	if (nullptr == m_pSoundSystem)
+		return;
+
+	m_pSoundSystem->Set3DSoundPosition(tag, x, y, z);
+}
+
 RESULT CSoundMaster::LoadSound(string tag, string path, string channelTag)
 {
 	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 
-	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_DEFAULT);
+	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_3D | FMOD_DEFAULT);
 }
 
 RESULT CSoundMaster::LoadLoopSound(string tag, string path, string channelTag)
@@ -76,7 +100,7 @@ RESULT CSoundMaster::LoadLoopSound(string tag, string path, string channelTag)
 	if (nullptr == m_pSoundSystem)
 		return PK_ERROR_NULLPTR;
 	
-	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_LOOP_NORMAL);
+	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_DEFAULT | FMOD_3D | FMOD_LOOP_NORMAL);
 }
 
 RESULT CSoundMaster::CreateChannelGroup(string name)
@@ -93,6 +117,14 @@ void CSoundMaster::PlaySound(string tag)
 		return;
 	
 	m_pSoundSystem->PlaySound(tag);
+}
+
+void CSoundMaster::Play3DSound(string tag, _float x, _float y, _float z)
+{
+	if (nullptr == m_pSoundSystem)
+		return;
+
+	m_pSoundSystem->Play3DSound(tag, x, y, z);
 }
 
 void CSoundMaster::StopSound(string tag)
