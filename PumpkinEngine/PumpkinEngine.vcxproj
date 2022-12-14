@@ -173,6 +173,7 @@
     <ClInclude Include="Headers\EngineStruct.h" />
     <ClInclude Include="Headers\Light.h" />
     <ClInclude Include="Headers\LightMaster.h" />
+    <ClInclude Include="Headers\SkyBox.h" />
     <ClInclude Include="Headers\Octree.h" />
     <ClInclude Include="Headers\QuadTree.h" />
     <ClInclude Include="Headers\SoundInfo.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="Codes\DSPInfo.cpp" />
     <ClCompile Include="Codes\Light.cpp" />
     <ClCompile Include="Codes\LightMaster.cpp" />
+    <ClCompile Include="Codes\SkyBox.cpp" />
     <ClCompile Include="Codes\Octree.cpp" />
     <ClCompile Include="Codes\QuadTree.cpp" />
     <ClCompile Include="Codes\SoundInfo.cpp" />

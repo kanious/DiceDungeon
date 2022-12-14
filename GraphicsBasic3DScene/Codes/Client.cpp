@@ -38,10 +38,10 @@ Client::Client()
 	stringstream ss;
 	ss << str << "\\..\\";
 	m_DataPath = ss.str();
-	m_SoundDataFileName = "Data_sound.xml";
-	m_ShaderDataFileName = "Scene3DSound_shader.xml";
-	m_TextureDataFileName = "Scene3DSound_texture.xml";
-	m_MeshDataFileName = "Scene3DSound_mesh.xml";
+	m_SoundDataFileName = "FPSTraining_sound.xml";
+	m_ShaderDataFileName = "FPSTraining_shader.xml";
+	m_TextureDataFileName = "FPSTraining_texture.xml";
+	m_MeshDataFileName = "FPSTraining_mesh.xml";
 }
 
 Client::~Client()

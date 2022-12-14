@@ -9,6 +9,8 @@ class ENGINE_API CTexture : public CComponent
 {
 private:
 	_uint				m_iTextureID;
+	_int				m_iWidth;
+	_int				m_iHeight;
 
 private:
 	explicit CTexture();
@@ -20,6 +22,8 @@ private:
 
 public:
 	_uint GetTextureID()		{ return m_iTextureID; }
+	_int GetWidth()				{ return m_iWidth; }
+	_int GetHeight()			{ return m_iHeight; }
 
 private:
 	RESULT Ready(std::string ID, std::string filePath);

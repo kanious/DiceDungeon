@@ -258,6 +258,14 @@ RESULT CMesh::Ready_VIBuffer(ModelType type, string filePath, string fileName, V
         if (vMax.z < vPos.z)
             vMax.z = vPos.z;
     }
+    
+    if (type == xyz_normal_texUV_index && fileName == "pillar.ply")
+    {
+        vMin.x = -28.9368f;
+        vMin.z = -28.9368f;
+        vMax.x = 28.9368f;
+        vMax.z = 28.9368f;
+    }
     m_pBoundingBox = CBoundingBox::Create(vMin, vMax, "DebugBoxShader");
 
     m_iTriNum = triangleNum;

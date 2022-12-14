@@ -19,6 +19,7 @@ CInputDevice::CInputDevice()
 	m_vecScroll = vec2(0.f);
 	m_fMouseSensitivity = 0.15f;
 	m_bEntered = true;
+	m_bPosFixed = false;
 }
 
 CInputDevice::~CInputDevice()
@@ -143,8 +144,20 @@ vec2 CInputDevice::GetMouseMovedDistance()
 		m_vecMousePosPrevious = m_vecMousePos; 
 		m_bEntered = false;
 	}
+
  	vec2 movedDistance = m_vecMousePos - m_vecMousePosPrevious;
+	
+	if (m_bPosFixed)
+	{
+		int iWidth, iHeight;
+		glfwGetWindowSize(m_pWindow, &iWidth, &iHeight);
+		vec2 newPos = vec2(iWidth / 2, iHeight / 2);
+		glfwSetCursorPos(m_pWindow, newPos.x, newPos.y);
+		m_vecMousePos = newPos;
+	}
+
 	m_vecMousePosPrevious = m_vecMousePos;
+
 	return movedDistance * m_fMouseSensitivity;
 }
 
@@ -178,6 +191,41 @@ vec3 CInputDevice::GetMouseWorldCoord()
 	ray_dir = normalize(ray_dir);
 
 	return ray_dir;
+}
+
+vec3 CInputDevice::GetCenterMouseWorldCoord()
+{
+	int width = 0;
+	int height = 0;
+	glfwGetWindowSize(m_pWindow, &width, &height);
+
+	_float x = width / width - 1.f;
+	_float y = 1.f - height / height;
+	vec4 ray_clip = vec4(x, y, -1.f, 1.f);
+
+	const mat4x4 matProj = COpenGLDevice::GetInstance()->GetProjMatrix();
+	mat4x4 matProjInv = inverse(matProj);
+	vec4 ray_eye = matProjInv * ray_clip;
+	ray_eye = vec4(ray_eye.x, ray_eye.y, -1.f, 0.f);
+
+	const mat4x4 matView = COpenGLDevice::GetInstance()->GetViewMatrix();
+	mat4x4 matViewInv = inverse(matView);
+	vec4 ray_wor = matViewInv * ray_eye;
+	vec3 ray_dir = vec3(ray_wor.x, ray_wor.y, ray_wor.z);
+	ray_dir = normalize(ray_dir);
+
+	return ray_dir;
+}
+
+void CInputDevice::SetCustomCrosshair()
+{
+ 	GLFWcursor* pCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+	glfwSetCursor(m_pWindow, pCursor);
+}
+
+void CInputDevice::RemoveCustomCrosshair()
+{
+	glfwSetCursor(m_pWindow, NULL);
 }
 
 void CInputDevice::SetInputKey(_int key, _int scancode, _int action, _int mods)

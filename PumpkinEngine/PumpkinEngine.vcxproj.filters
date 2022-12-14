@@ -162,6 +162,9 @@
     <ClInclude Include="Headers\Octree.h">
       <Filter>98.SingletonClasses\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\SkyBox.h">
+      <Filter>03.GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -259,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="Codes\Octree.cpp">
       <Filter>98.SingletonClasses\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\SkyBox.cpp">
+      <Filter>03.GameObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

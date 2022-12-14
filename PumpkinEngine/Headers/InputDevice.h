@@ -29,6 +29,7 @@ private:
 	glm::vec2								m_vecScroll;
 	_float									m_fMouseSensitivity;
 	_bool									m_bEntered;
+	_bool									m_bPosFixed;
 
 private:
 	explicit CInputDevice();
@@ -51,7 +52,11 @@ public:
 	glm::vec2 GetMouseMovedDistance();
 	glm::vec2 GetMouseScrollDistance();
 	glm::vec3 GetMouseWorldCoord();
+	glm::vec3 GetCenterMouseWorldCoord();
 	void SetMouseSensitivity(_float value) { m_fMouseSensitivity = value; }
+	void SetCustomCrosshair();
+	void RemoveCustomCrosshair();
+	void SetMousePosFixed(_bool value) { m_bPosFixed = value; }
 
 private:
 	void SetInputKey(_int key, _int scancode, _int action, _int mods);

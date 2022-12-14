@@ -43,6 +43,20 @@ _bool CCollisionMaster::IntersectRayToVirtualPlane(_float planeSize, vec3& vOrig
 	return false;
 }
 
+_bool CCollisionMaster::IntersectRayToSphere(vec3& vOrigin, vec3& vDir, vec3 sCenter, _float sphereRadius)
+{
+	vec3 between = vOrigin - sCenter;
+
+	_float p = dot(vDir, between);
+	_float q = dot(between, between) - (sphereRadius * sphereRadius);
+
+	float discriminant = (p * p) - q;
+	if (discriminant < 0.f)
+		return false;
+
+	return true;
+}
+
 _bool CCollisionMaster::IntersectRayToBoundingBox(CBoundingBox* pBoundingBox, CTransform* pParentTransform, vec3& vOrigin, vec3& vDir)
 {
 	if (nullptr == pBoundingBox)

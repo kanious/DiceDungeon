@@ -9,12 +9,12 @@ USING(Engine)
 USING(std)
 
 CTexture::CTexture()
-    : m_iTextureID(0)
+    : m_iTextureID(0), m_iWidth(0), m_iHeight(0)
 {
 }
 
 CTexture::CTexture(const CTexture& rhs)
-    : m_iTextureID(rhs.m_iTextureID)
+    : m_iTextureID(rhs.m_iTextureID), m_iWidth(rhs.m_iWidth), m_iHeight(rhs.m_iHeight)
 {
     m_tag = rhs.m_tag;
 }
@@ -42,12 +42,12 @@ RESULT CTexture::Ready(string ID, string filePath)
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 0);
+    int nrChannels;
+    unsigned char* data = stbi_load(filePath.c_str(), &m_iWidth, &m_iHeight, &nrChannels, 0);
 
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_iWidth, m_iHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     stbi_image_free(data);

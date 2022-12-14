@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+
 class CBoundingBox;
 class CTransform;
 class CQuadTree;
@@ -22,6 +23,7 @@ private:
 
 public:
 	_bool IntersectRayToVirtualPlane(_float planeSize, glm::vec3& vOrigin, glm::vec3& vDir, glm::vec3& vDest);
+	_bool IntersectRayToSphere(glm::vec3& vOrigin, glm::vec3& vDir, glm::vec3 sCenter, _float sphereRadius);
 	_bool IntersectRayToBoundingBox(CBoundingBox* pBoundingBox, CTransform* pParentTransform, glm::vec3& vOrigin, glm::vec3& vDir);
 private:
 	_bool IntersectPointToTriangle(glm::vec3& p0, glm::vec3& p1, glm::vec3& p2, glm::vec3& vOrigin, glm::vec3& vDir, glm::vec3& vDest);

@@ -16,7 +16,6 @@
 // Libraries
 #pragma comment(lib, "Rpcrt4.lib")
 
-
 // Define/Typedef
 #ifdef PUMPKIN_ENGINE_EXPORTS
 #define ENGINE_API __declspec(dllexport)

@@ -20,7 +20,7 @@ private:
 
 	_float							m_fAngleX = 0.f;
 	_float							m_fAngleY = 0.f;
-	_float							m_fSpeed = 40.f;
+	_float							m_fSpeed;
 
 	_uint							m_shaderLocation;
 

@@ -30,7 +30,6 @@ void CVIBuffer::Destroy()
 {
 	glDeleteVertexArrays(1, &m_iVAO_ID);
 	glDeleteBuffers(1, &m_iVB_ID);
-	glDeleteBuffers(1, &m_iIB_ID);
 }
 
 RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, ModelType type)

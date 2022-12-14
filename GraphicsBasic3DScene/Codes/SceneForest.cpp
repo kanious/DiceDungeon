@@ -42,12 +42,8 @@ SceneForest::SceneForest()
 	ss << str << "\\..\\";
 
 	m_DataPath = ss.str();
-	//m_SoundDataFileName = "SoundData.xml";
-	//m_ShaderDataFileName = "SceneArena_shaderdataList.xml";
-	//m_TextureDataFileName = "SceneArena_texturedataList.xml";
-	//m_MeshDataFileName = "SceneArena_meshdataList.xml";
-	m_ObjListFileName = "Scene3DSound_mapObjects.xml";
-	m_LightListFileName = "Scene3DSound_lights.xml";
+	m_ObjListFileName = "FPSTraining_mapObjects.xml";
+	m_LightListFileName = "FPSTraining_lights.xml";
 }
 
 SceneForest::~SceneForest()

@@ -13,7 +13,8 @@ USING(Engine)
 USING(glm)
 
 DefaultCamera::DefaultCamera()
-	: m_pCamera(nullptr), m_bMouseEnable(true), m_fAngleY(0.f), m_fAngleX(0.f)
+	: m_pCamera(nullptr), m_bMouseEnable(true)
+	, m_fSpeed(10.f), m_fAngleY(0.f), m_fAngleX(0.f)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 }
