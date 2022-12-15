@@ -141,15 +141,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Codes\BGObject.cpp" />
+    <ClCompile Include="Codes\Blocks.cpp" />
     <ClCompile Include="Codes\Client.cpp" />
     <ClCompile Include="Codes\DefaultCamera.cpp" />
-    <ClCompile Include="Codes\Firework.cpp" />
     <ClCompile Include="Codes\glad.c" />
     <ClCompile Include="Codes\main.cpp" />
-    <ClCompile Include="Codes\ParticleSystem.cpp" />
-    <ClCompile Include="Codes\PhysicsSystem.cpp" />
-    <ClCompile Include="Codes\SceneFPS.cpp" />
-    <ClCompile Include="Codes\Target.cpp" />
+    <ClCompile Include="Codes\MapManager.cpp" />
+    <ClCompile Include="Codes\Rooms.cpp" />
+    <ClCompile Include="Codes\Scene3D.cpp" />
+    <ClCompile Include="Codes\TorchEffect.cpp" />
     <ClCompile Include="Codes\UIManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -161,16 +161,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Codes\BGObject.h" />
+    <ClInclude Include="Codes\Blocks.h" />
     <ClInclude Include="Codes\Client.h" />
     <ClInclude Include="Codes\DefaultCamera.h" />
     <ClInclude Include="Codes\Define.h" />
     <ClInclude Include="Codes\Enums.h" />
-    <ClInclude Include="Codes\Firework.h" />
     <ClInclude Include="Codes\Function.h" />
-    <ClInclude Include="Codes\ParticleSystem.h" />
-    <ClInclude Include="Codes\PhysicsSystem.h" />
-    <ClInclude Include="Codes\SceneFPS.h" />
-    <ClInclude Include="Codes\Target.h" />
+    <ClInclude Include="Codes\MapManager.h" />
+    <ClInclude Include="Codes\Rooms.h" />
+    <ClInclude Include="Codes\Scene3D.h" />
+    <ClInclude Include="Codes\TorchEffect.h" />
     <ClInclude Include="Codes\UIManager.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -207,6 +207,22 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\x64\Assets\Shader\SkyBoxVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\FireEffectFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\FireEffectVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\GlowFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\GlowVertex.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

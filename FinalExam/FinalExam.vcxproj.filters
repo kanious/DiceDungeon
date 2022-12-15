@@ -25,9 +25,12 @@
     <Filter Include="Default\imgui">
       <UniqueIdentifier>{3ab694ac-5cfd-404e-b290-5947e7273c76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.Manager\MapInfo">
+      <UniqueIdentifier>{d2d79c70-fe22-48f7-b579-c3eae0f77722}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Codes\SceneFPS.cpp">
+    <ClCompile Include="Codes\Scene3D.cpp">
       <Filter>01.Scene</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Client.cpp">
@@ -44,18 +47,6 @@
     </ClCompile>
     <ClCompile Include="Codes\main.cpp">
       <Filter>Default</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\Target.cpp">
-      <Filter>02.GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\PhysicsSystem.cpp">
-      <Filter>98.Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\ParticleSystem.cpp">
-      <Filter>98.Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\Firework.cpp">
-      <Filter>02.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Default\imgui</Filter>
@@ -81,9 +72,21 @@
     <ClCompile Include="Codes\UIManager.cpp">
       <Filter>98.Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\TorchEffect.cpp">
+      <Filter>02.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\MapManager.cpp">
+      <Filter>98.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Rooms.cpp">
+      <Filter>98.Manager\MapInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Blocks.cpp">
+      <Filter>98.Manager\MapInfo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Codes\SceneFPS.h">
+    <ClInclude Include="Codes\Scene3D.h">
       <Filter>01.Scene</Filter>
     </ClInclude>
     <ClInclude Include="Codes\Client.h">
@@ -103,18 +106,6 @@
     </ClInclude>
     <ClInclude Include="Codes\Function.h">
       <Filter>99.Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Target.h">
-      <Filter>02.GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\PhysicsSystem.h">
-      <Filter>98.Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\ParticleSystem.h">
-      <Filter>98.Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\Firework.h">
-      <Filter>02.GameObject</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
       <Filter>Default\imgui</Filter>
@@ -146,6 +137,18 @@
     <ClInclude Include="Codes\UIManager.h">
       <Filter>98.Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Codes\TorchEffect.h">
+      <Filter>02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\MapManager.h">
+      <Filter>98.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Rooms.h">
+      <Filter>98.Manager\MapInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Blocks.h">
+      <Filter>98.Manager\MapInfo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\x64\Assets\Shader\BoxFragment.fx">
@@ -170,6 +173,18 @@
       <Filter>97.Shader</Filter>
     </None>
     <None Include="..\x64\Assets\Shader\SkyBoxVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\FireEffectFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\FireEffectVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\GlowFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\GlowVertex.fx">
       <Filter>97.Shader</Filter>
     </None>
   </ItemGroup>

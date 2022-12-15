@@ -4,14 +4,9 @@
 #include "Base.h"
 
 
-class PhysicsSystem;
-
 class UIManager : public Engine::CBase
 {
 	SINGLETON(UIManager)
-
-private:
-	PhysicsSystem*			m_pPhysicsSystem;
 
 private:
 	explicit UIManager();

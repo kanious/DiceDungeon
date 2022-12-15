@@ -166,5 +166,11 @@
     <None Include="..\x64\Assets\Shader\MeshVertex.fx">
       <Filter>97.Shader</Filter>
     </None>
+    <None Include="..\x64\Assets\Shader\FireEffectFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\FireEffectVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

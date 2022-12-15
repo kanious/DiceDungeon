@@ -26,7 +26,7 @@ public:
 	void Update();
 
 public:
-	_float GetTimeDelta() { return m_fTimeDelta > 1.0 ? 0 : m_fTimeDelta; }
+	_float GetTimeDelta() { return m_fTimeDelta > 0.1 ? 0 : m_fTimeDelta; }
 	_float GetTimeDefault() { return m_fTimeDefault; }
 	void SetFrameRate(_int frameRate);
 	_bool IsUpdateAvailable();

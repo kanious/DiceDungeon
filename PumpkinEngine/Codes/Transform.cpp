@@ -56,8 +56,6 @@ void CTransform::Update(const _float& dt)
 
 void CTransform::Destroy()
 {
-	SafeDestroy(m_pParentTransform);
-
 	CComponent::Destroy();
 }
 

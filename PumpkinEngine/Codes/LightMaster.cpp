@@ -36,7 +36,7 @@ RESULT CLightMaster::AddLight(CLight::cLightInfo* pInfo)
 	newLight->SetShaderProgram(m_ShaderProgram);
 	m_vecLights.push_back(newLight);
 
-	SetUniformLocation();
+	SetUniformLocation(m_vecLights.size() - 1);
 
 	return PK_NOERROR;
 }
@@ -61,46 +61,41 @@ void CLightMaster::SetShader(_uint shaderID)
 	m_ShaderProgram = shaderID;
 }
 
-void CLightMaster::SetUniformLocation()
+void CLightMaster::SetUniformLocation(_uint index)
 {
-	_int index = 0;
-	vector<CLight*>::iterator iter;
-	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
-	{
-		stringstream ss;
-		ss << "theLights[" << index << "].position";
-		(*iter)->SetLocation(0, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	CLight* pLight = m_vecLights[index];
 
-		ss.str("");
-		ss << "theLights[" << index << "].direction";
-		(*iter)->SetLocation(1, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	stringstream ss;
+	ss << "theLights[" << index << "].position";
+	pLight->SetLocation(0, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		ss.str("");
-		ss << "theLights[" << index << "].diffuse";
-		(*iter)->SetLocation(2, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	ss.str("");
+	ss << "theLights[" << index << "].direction";
+	pLight->SetLocation(1, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		ss.str("");
-		ss << "theLights[" << index << "].specular";
-		(*iter)->SetLocation(3, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	ss.str("");
+	ss << "theLights[" << index << "].diffuse";
+	pLight->SetLocation(2, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		ss.str("");
-		ss << "theLights[" << index << "].ambient";
-		(*iter)->SetLocation(4, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	ss.str("");
+	ss << "theLights[" << index << "].specular";
+	pLight->SetLocation(3, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		ss.str("");
-		ss << "theLights[" << index << "].atten";
-		(*iter)->SetLocation(5, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	ss.str("");
+	ss << "theLights[" << index << "].ambient";
+	pLight->SetLocation(4, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		ss.str("");
-		ss << "theLights[" << index << "].param1";
-		(*iter)->SetLocation(6, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	ss.str("");
+	ss << "theLights[" << index << "].atten";
+	pLight->SetLocation(5, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		ss.str("");
-		ss << "theLights[" << index << "].param2";
-		(*iter)->SetLocation(7, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
+	ss.str("");
+	ss << "theLights[" << index << "].param1";
+	pLight->SetLocation(6, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 
-		++index;
-	}
+	ss.str("");
+	ss << "theLights[" << index << "].param2";
+	pLight->SetLocation(7, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 }
 
 void CLightMaster::SetLightInfo()
@@ -108,7 +103,7 @@ void CLightMaster::SetLightInfo()
 	glUseProgram(m_ShaderProgram);
 
 	vector<CLight*>::iterator iter;
-	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
+ 	for (iter = m_vecLights.begin(); iter != m_vecLights.end(); ++iter)
 	{
 		glUniform4f((*iter)->GetLocation(0)
 			, (*iter)->GetLightInfo()->position.x
@@ -209,8 +204,6 @@ void CLightMaster::LoadLights(string path, string fileName)
 
 		AddLight(pInfo);
 	}
-
-	SetUniformLocation();
 }
 
 void CLightMaster::SetDirectionalLightPower(_float power)

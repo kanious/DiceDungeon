@@ -28,23 +28,6 @@ void CXMLParser::Destroy()
 {
 }
 
-void testsave(string path)
-{
-	xml_document xmlData;
-
-	xml_node declareNode = xmlData.append_child(node_declaration);
-	declareNode.append_attribute("version") = "1.0";
-	declareNode.append_attribute("encoding") = "UTF-8";
-
-	xml_node element = xmlData.append_child("Light_Data");
-
-	xml_node nodeChild = element.append_child("Lights");
-	xml_node child = nodeChild.append_child("Name");
-	child.append_child(node_pcdata).set_value(path.c_str());
-
-	_bool result = xmlData.save_file("D:\\test.xml");
-}
-
 void CXMLParser::LoadShaderData(string path, string fileName)
 {
 	stringstream ss;

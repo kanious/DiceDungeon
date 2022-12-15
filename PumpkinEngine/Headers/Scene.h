@@ -16,10 +16,6 @@ protected:
 
 protected:
 	std::string						m_DataPath;
-	//std::string						m_SoundDataFileName;
-	//std::string						m_ShaderDataFileName;
-	//std::string						m_TextureDataFileName;
-	//std::string						m_MeshDataFileName;
 	std::string						m_ObjListFileName;
 	std::string						m_LightListFileName;
 

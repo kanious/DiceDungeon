@@ -3,7 +3,7 @@
 
 enum eSCENETAG
 {
-	SCENE_FPS,
+	SCENE_3D,
 	SCENE_END
 };
 

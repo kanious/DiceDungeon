@@ -50,7 +50,6 @@ void CSkyBox::Render()
 void CSkyBox::Destroy()
 {
     SafeDestroy(m_pOpenGLDevice);
-    SafeDestroy(m_pShader);
     glDeleteVertexArrays(1, &m_iVAO);
     glDeleteBuffers(1, &m_iVBO);
     glDeleteTextures(2, &m_iTextureID);

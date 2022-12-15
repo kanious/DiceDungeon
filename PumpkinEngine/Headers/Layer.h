@@ -37,6 +37,7 @@ public:
 	RESULT AddGameObject(CGameObject* obj);
 	RESULT RemoveGameObject(CGameObject* obj);
 	void RemoveAllGameObject();
+	CGameObject* FindGameObjectByObjName(std::string objName);
 
 private:
 	RESULT Ready(_uint tag);

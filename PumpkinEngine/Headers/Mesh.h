@@ -27,6 +27,8 @@ private:
 	_bool						m_bWireFrame;
 	_bool						m_bSelected;
 	_bool						m_bDebug;
+	_bool						m_bTransparency;
+	_bool						m_bBiilboard;
 	_uint						m_iTriNum;
 	TRIANGLE*					m_pTriangles;
 	CQuadTree*					m_pQuadTree;
@@ -52,7 +54,9 @@ public:
 	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
 	void SetWireFrame(_bool wire)					{ m_bWireFrame = wire; }
 	void SetSelcted(_bool select)					{ m_bSelected = select; }
-	void SetDebugBox(_bool select)					{ m_bDebug = select; }
+	void SetTransparency(_bool value)				{ m_bTransparency = value; }
+	void SetDebugBox(_bool value)					{ m_bDebug = value; }
+	void SetBillboard(_bool value)					{ m_bBiilboard = value; }
 	void SetTexture(std::string texID_diff);
 
 private:

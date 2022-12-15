@@ -34,6 +34,8 @@ CMesh::CMesh()
     , m_bWireFrame(false)
     , m_bSelected(false)
     , m_bDebug(false)
+    , m_bTransparency(false)
+    , m_bBiilboard(false)
     , m_iTriNum(0)
     , m_pTriangles(nullptr)
     , m_pQuadTree(nullptr)
@@ -51,6 +53,8 @@ CMesh::CMesh(const CMesh& rhs)
     , m_bWireFrame(rhs.m_bWireFrame)
     , m_bSelected(rhs.m_bSelected)
     , m_bDebug(rhs.m_bDebug)
+    , m_bBiilboard(rhs.m_bBiilboard)
+    , m_bTransparency(rhs.m_bTransparency)
     , m_iTriNum(rhs.m_iTriNum)
     , m_pQuadTree(rhs.m_pQuadTree)
     , m_pOctree(rhs.m_pOctree)
@@ -84,9 +88,27 @@ void CMesh::Render()
     mat4x4 matWorld = *m_pParentTransform->GetWorldMatrix();
     const mat4x4 matView = m_pOpenGLDevice->GetViewMatrix();
     const mat4x4 matProj = m_pOpenGLDevice->GetProjMatrix();
-    m_pShader->SetMatrixInfo(matWorld, matView, matProj);
+
+    if (!m_bBiilboard)
+        m_pShader->SetMatrixInfo(matWorld, matView, matProj);
+    else
+    {
+        mat4x4 newView = mat4x4(matView);
+        newView[3] = vec4(0.f);
+        mat4x4 matViewInv = inverse(matView);
+        matViewInv[3] = matWorld[3];
+        vec3 vScale = m_pParentTransform->GetScale();
+        for (int i = 0; i < 3; ++i)
+        {
+            matViewInv[0][i] *= vScale.x;
+            matViewInv[1][i] *= vScale.y;
+        }
+        m_pShader->SetMatrixInfo(matViewInv, matView, matProj);
+    }
+
     m_pShader->SetLightEnableInfo(!m_bWireFrame);
     m_pShader->SetSelected(m_bSelected);
+    m_pShader->SetTransparency(m_bTransparency);
 
     if (nullptr != m_pDiffTexture)
     {
@@ -96,8 +118,14 @@ void CMesh::Render()
 
 	if (nullptr != m_pVIBuffer)
     {
+        if (m_bTransparency)
+            glDepthMask(GL_FALSE);
+        else
+            glDepthMask(GL_TRUE);
         m_pVIBuffer->SetWireFrame(m_bWireFrame);
         m_pVIBuffer->Render();
+
+        glDepthMask(GL_TRUE);
     }
 
     if (nullptr != m_pQuadTree)
@@ -259,13 +287,6 @@ RESULT CMesh::Ready_VIBuffer(ModelType type, string filePath, string fileName, V
             vMax.z = vPos.z;
     }
     
-    if (type == xyz_normal_texUV_index && fileName == "pillar.ply")
-    {
-        vMin.x = -28.9368f;
-        vMin.z = -28.9368f;
-        vMax.x = 28.9368f;
-        vMax.z = 28.9368f;
-    }
     m_pBoundingBox = CBoundingBox::Create(vMin, vMax, "DebugBoxShader");
 
     m_iTriNum = triangleNum;
@@ -358,7 +379,6 @@ void CMesh::Ready_Qctree(_uint depth)
     {
         m_pOctree->AddTriangle(m_pTriangles[i], missed);
     }
-    cout << "Octree setup - Missed triangle: " << missed << endl;
 }
 
 CComponent* CMesh::Clone()

@@ -1,5 +1,5 @@
-#ifndef _MESHCUBE_H_
-#define _MESHCUBE_H_
+#ifndef _SKYBOX_H_
+#define _SKYBOX_H_
 
 #include "GameObject.h"
 #include "EngineStruct.h"
@@ -42,4 +42,4 @@ public:
 
 NAMESPACE_END
 
-#endif //_MESHCUBE_H_
+#endif //_SKYBOX_H_

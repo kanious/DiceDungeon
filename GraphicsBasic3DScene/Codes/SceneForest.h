@@ -8,9 +8,11 @@ namespace Engine
 {
 	class CInputDevice;
 	class CLayer;
+	class CSkyBox;
 }
 class DefaultCamera;
 class UIManager;
+class BGObject;
 
 class SceneForest : public Engine::CScene
 {
@@ -22,6 +24,7 @@ private:
 	glm::vec3						m_vCameraSavedPos;
 	glm::vec3						m_vCameraSavedRot;
 	glm::vec3						m_vCameraSavedTarget;
+	Engine::CSkyBox*				m_pSkyBox;
 
 private:
 	explicit SceneForest();

@@ -38,10 +38,10 @@ Client::Client()
 	stringstream ss;
 	ss << str << "\\..\\";
 	m_DataPath = ss.str();
-	m_SoundDataFileName = "FPSTraining_sound.xml";
-	m_ShaderDataFileName = "FPSTraining_shader.xml";
-	m_TextureDataFileName = "FPSTraining_texture.xml";
-	m_MeshDataFileName = "FPSTraining_mesh.xml";
+	m_SoundDataFileName = "FinalExam_sound.xml";
+	m_ShaderDataFileName = "FinalExam_shader.xml";
+	m_TextureDataFileName = "FinalExam_texture.xml";
+	m_MeshDataFileName = "FinalExam_mesh.xml";
 }
 
 Client::~Client()
@@ -83,6 +83,11 @@ void Client::Loop()
 			m_pGraphicDevice->GetWindowSize();
 			glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glCullFace(GL_BACK);
+			glEnable(GL_CULL_FACE);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			_float dt = m_pTimer->GetTimeDelta();
 			m_pGameMaster->Update(dt);

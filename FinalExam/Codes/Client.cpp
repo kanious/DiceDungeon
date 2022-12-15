@@ -14,10 +14,9 @@
 #include <atlconv.h>
 
 #include "Scene.h"
-#include "SceneFPS.h"
-#include "PhysicsSystem.h"
-#include "ParticleSystem.h"
+#include "Scene3D.h"
 #include "UIManager.h"
+#include "MapManager.h"
 
 USING(Engine)
 USING(std)
@@ -39,10 +38,10 @@ Client::Client()
 	stringstream ss;
 	ss << str << "\\..\\";
 	m_DataPath = ss.str();
-	m_SoundDataFileName = "FPSTraining_sound.xml";
-	m_ShaderDataFileName = "FPSTraining_shader.xml";
-	m_TextureDataFileName = "FPSTraining_texture.xml";
-	m_MeshDataFileName = "FPSTraining_mesh.xml";
+	m_SoundDataFileName = "FinalExam_sound.xml";
+	m_ShaderDataFileName = "FinalExam_shader.xml";
+	m_TextureDataFileName = "FinalExam_texture.xml";
+	m_MeshDataFileName = "FinalExam_mesh.xml";
 }
 
 Client::~Client()
@@ -56,9 +55,8 @@ void Client::Destroy()
 	SafeDestroy(m_pGraphicDevice);
 	SafeDestroy(m_pGameMaster);
 
-	SafeDestroy(PhysicsSystem::GetInstance());
-	SafeDestroy(ParticleSystem::GetInstance());
 	SafeDestroy(UIManager::GetInstance());
+	SafeDestroy(MapManager::GetInstance());
 
 	delete this;
 }
@@ -86,7 +84,11 @@ void Client::Loop()
 			m_pGraphicDevice->GetWindowSize();
 			glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//glClearColor(0.5, 0.5, 0.5, 1.f);
+			glCullFace(GL_BACK);
+			glEnable(GL_CULL_FACE);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			_float dt = m_pTimer->GetTimeDelta();
 			m_pGameMaster->Update(dt);
@@ -141,7 +143,7 @@ RESULT Client::Ready()
 
 	if (nullptr != m_pGameMaster)
 	{
-		CScene* pScene = SceneFPS::Create();
+		CScene* pScene = Scene3D::Create();
 		pScene->SetDataPath(m_DataPath);
 		m_pGameMaster->SetCurrentScene(pScene);
 	}

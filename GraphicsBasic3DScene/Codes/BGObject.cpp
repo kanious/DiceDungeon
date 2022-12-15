@@ -104,6 +104,10 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 			m_pBoundingBox->SetTransform(m_pTransform);
 			m_pBoundingBox->SetColor(vec3(0.f, 1.f, 0.f));
 		}
+		if (meshID == "Effect")
+		{
+			m_pMesh->SetTransparency(true);
+		}
 	}
 
 	if (nullptr != m_pTransform)

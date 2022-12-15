@@ -14,6 +14,8 @@
 #include "ComponentMaster.h"
 #include "Component.h"
 #include "Shader.h"
+#include "SkyBox.h"
+#include "Renderer.h"
 
 #include "BGObject.h"
 #include "Camera.h"
@@ -26,7 +28,7 @@ USING(glm)
 USING(std)
 
 SceneForest::SceneForest()
-	: m_pDefaultCamera(nullptr), m_pBackgroundLayer(nullptr)
+	: m_pDefaultCamera(nullptr), m_pBackgroundLayer(nullptr), m_pSkyBox(nullptr)
 	, m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
@@ -42,8 +44,8 @@ SceneForest::SceneForest()
 	ss << str << "\\..\\";
 
 	m_DataPath = ss.str();
-	m_ObjListFileName = "FPSTraining_mapObjects.xml";
-	m_LightListFileName = "FPSTraining_lights.xml";
+	m_ObjListFileName = "FinalExam_mapObjects.xml";
+	m_LightListFileName = "FinalExam_lights.xml";
 }
 
 SceneForest::~SceneForest()
@@ -146,6 +148,9 @@ NextCheck:
 
 void SceneForest::Update(const _float& dt)
 {
+	if (nullptr != m_pSkyBox)
+		CRenderer::GetInstance()->AddRenderObj(m_pSkyBox);
+
 	CLightMaster::GetInstance()->SetLightInfo();
 
 	if (nullptr != m_pUIManager)
@@ -166,6 +171,7 @@ void SceneForest::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
 	SafeDestroy(m_pUIManager);
+	SafeDestroy(m_pSkyBox);
 
 	CScene::Destroy();
 }
@@ -220,6 +226,23 @@ RESULT SceneForest::Ready()
 
 	if (nullptr != m_pDefaultCamera)
 		m_pDefaultCamera->SetShaderLocation(shaderID); 
+
+	if (nullptr == m_pSkyBox)
+	{
+		stringstream ss, ss2;
+		ss << m_DataPath << "Assets\\Texture\\SkyBox\\";
+
+		vector<string> faces;
+		ss2.str(""); ss2 << ss.str() << "right.jpg"; faces.push_back(ss2.str());
+		ss2.str(""); ss2 << ss.str() << "left.jpg"; faces.push_back(ss2.str());
+		ss2.str(""); ss2 << ss.str() << "top.jpg"; faces.push_back(ss2.str());
+		ss2.str(""); ss2 << ss.str() << "bottom.jpg"; faces.push_back(ss2.str());
+		ss2.str(""); ss2 << ss.str() << "front.jpg"; faces.push_back(ss2.str());
+		ss2.str(""); ss2 << ss.str() << "back.jpg"; faces.push_back(ss2.str());
+
+		CComponent* skyboxShader = CComponentMaster::GetInstance()->FindComponent("SkyBoxShader");
+		m_pSkyBox = CSkyBox::Create(faces, dynamic_cast<CShader*>(skyboxShader));
+	}
 
 	return PK_NOERROR;
 }

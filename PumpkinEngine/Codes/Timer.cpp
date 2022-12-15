@@ -41,7 +41,7 @@ void CTimer::SetFrameRate(_int frameRate)
 
 _bool CTimer::IsUpdateAvailable()
 {
-    if (m_fCurrentTime >= m_fFrameRate)
+    if (m_fCurrentTime > m_fFrameRate)
     {
         m_fTimeDelta = m_fCurrentTime;
         m_fCurrentTime = 0.f;

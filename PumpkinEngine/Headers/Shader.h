@@ -17,6 +17,8 @@ protected:
 	_uint				m_lightEnableLocation;
 	_uint				m_selectedLocation;
 	_uint				m_colorLocation;
+	_uint				m_transparencyLocation;
+	_uint				m_frameLocation;
 
 private:
 	explicit CShader();
@@ -40,6 +42,8 @@ public:
 	void SetLightEnableInfo(_bool lightEnable);
 	void SetSelected(_bool selected);
 	void SetColor(glm::vec3 vColor);
+	void SetTransparency(_bool value);
+	void SetFrameIndex(_uint index);
 
 private:
 	RESULT Ready(std::string ID, const char* vertexPath, const char* fragPath);

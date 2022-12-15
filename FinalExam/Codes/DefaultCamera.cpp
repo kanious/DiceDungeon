@@ -7,14 +7,13 @@
 #include "Transform.h"
 #include "OpenGLDefines.h"
 #include "InputDevice.h"
-#include "SoundMaster.h"
 
 USING(Engine)
 USING(glm)
 
 DefaultCamera::DefaultCamera()
 	: m_pCamera(nullptr), m_bMouseEnable(true), m_fAngleY(0.f), m_fAngleX(0.f)
-	, m_fSpeed(10.f), m_fRotSpeed(10.f)
+	, m_fSpeed(20.f), m_fRotSpeed(20.f)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 }
@@ -50,11 +49,10 @@ vec3 DefaultCamera::GetCameraTarget()
 void DefaultCamera::SetMouseEnable(_bool enable)
 {
 	m_bMouseEnable = enable;
-
-	//if (enable)
-	//	m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_NORMAL);
-	//else
-	//	m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_HIDDEN);
+	if (enable)
+		m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_NORMAL);
+	else
+		m_pInputDevice->SetMouseCursorMode(GLFW_CURSOR_DISABLED);
 
 	m_pInputDevice->InitMousePos();
 }
@@ -96,6 +94,11 @@ void DefaultCamera::SetShaderLocation(_uint shaderID)
 	m_shaderLocation = glGetUniformLocation(shaderID, "eyeLocation");
 }
 
+void DefaultCamera::SetShaderLocation2(_uint shaderID)
+{
+	m_shaderLocation2 = glGetUniformLocation(shaderID, "eyeLocation");
+}
+
 void DefaultCamera::KeyCheck(const _float& dt)
 {
 	if (nullptr == m_pInputDevice || nullptr == m_pTransform)
@@ -129,67 +132,69 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
 	{
 		vec3 vDir = m_pTransform->GetLookVector();
-		vec3 vPos = m_pTransform->GetPosition();
-		vPos += vDir * dt * m_fSpeed;
-		vPos = CheckBoundary(vPos);
-		
-		m_pTransform->SetPosition(vPos);
-		m_pCamera->SetCameraEye(vPos);
-		m_pCamera->SetCameraTarget(vPos + vDir);
+		m_pTransform->AddPosition(vDir * dt * 20.f);
+
+		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
 	{
 		vec3 vDir = m_pTransform->GetLookVector();
-		vec3 vPos = m_pTransform->GetPosition();
-		vPos += vDir * dt * -m_fSpeed;
-		vPos = CheckBoundary(vPos);
+		m_pTransform->AddPosition(vDir * dt * -20.f);
 
-		m_pTransform->SetPosition(vPos);
-		m_pCamera->SetCameraEye(vPos);
-		m_pCamera->SetCameraTarget(vPos + vDir);
+		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
 	{
 		vec3 vRight = m_pTransform->GetRightVector();
-		vec3 vPos = m_pTransform->GetPosition();
-		vPos += vRight * dt * m_fSpeed;
-		vPos = CheckBoundary(vPos);
+		m_pTransform->AddPosition(vRight * dt * 20.f);
 
-		m_pTransform->SetPosition(vPos);
-		m_pCamera->SetCameraEye(vPos);
-		m_pCamera->SetCameraTarget(vPos + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
 	{
 		vec3 vRight = m_pTransform->GetRightVector();
-		vec3 vPos = m_pTransform->GetPosition();
-		vPos += vRight * dt * -m_fSpeed;
-		vPos = CheckBoundary(vPos);
+		m_pTransform->AddPosition(vRight * dt * -20.f);
 
-		m_pTransform->SetPosition(vPos);
-		m_pCamera->SetCameraEye(vPos);
-		m_pCamera->SetCameraTarget(vPos + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
 	}
-}
 
-vec3 DefaultCamera::CheckBoundary(vec3 vPos)
-{
-	if (vPos.x > 50.f)
-		vPos.x = 50.f;
-	else if (vPos.x < -50.f)
-		vPos.x = -50.f;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+	{
+		vec3 vUp = vec3(0.f, 1.f, 0.f);
+		m_pTransform->AddPosition(vUp * dt * -20.f);
 
-	if (vPos.z > 50.f)
-		vPos.z = 50.f;
-	else if (vPos.z < -50.f)
-		vPos.z = -50.f;
+		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+	}
 
-	vPos.y = 4.f;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_SPACE))
+	{
+		vec3 vUp = vec3(0.f, -1.f, 0.f);
+		m_pTransform->AddPosition(vUp * dt * -20.f);
 
-	return vPos;
+		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+	}
+
+	static _bool isLeftAltDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_ALT))
+	{
+		if (!isLeftAltDown)
+		{
+			isLeftAltDown = true;
+			
+			SetMouseEnable(!m_bMouseEnable);
+		}
+	}
+	else
+		isLeftAltDown = false;
 }
 
 void DefaultCamera::Update(const _float& dt)
@@ -199,7 +204,7 @@ void DefaultCamera::Update(const _float& dt)
 
 	vec3 vEye = m_pCamera->GetCameraEye();
 	glUniform4f(m_shaderLocation, vEye.x, vEye.y, vEye.z, 1.0f);
-	CSoundMaster::GetInstance()->SetListener(vEye.x, vEye.y, vEye.z);
+	glUniform4f(m_shaderLocation2, vEye.x, vEye.y, vEye.z, 1.0f);
 }
 
 void DefaultCamera::Destroy()
@@ -231,11 +236,6 @@ RESULT DefaultCamera::Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* 
 		if (nullptr != m_pCamera)
 			m_pCamera->InitCameraSetting(m_pTransform->GetPosition(), m_pTransform->GetLookVector(), vec3(0.f, 1.f, 0.f), fov, fNear, fFar);
 	}
-
-	m_pInputDevice->SetCustomCrosshair();
-	m_pInputDevice->SetMousePosFixed(true);
-	SetMouseEnable(false);
-
 	return PK_NOERROR;
 }
 

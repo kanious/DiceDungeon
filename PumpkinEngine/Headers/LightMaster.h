@@ -25,7 +25,7 @@ public:
 	RESULT AddLight(CLight::cLightInfo* pInfo);
 	RESULT RemoveLight(CLight* pLight);
 	void SetShader(_uint shaderID);
-	void SetUniformLocation();
+	void SetUniformLocation(_uint index);
 	void SetLightInfo();
 	void SaveLights(std::string path, std::string fileName);
 	void LoadLights(std::string path, std::string fileName);

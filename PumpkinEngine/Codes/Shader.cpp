@@ -19,6 +19,8 @@ CShader::CShader()
 	, m_lightEnableLocation(0)
 	, m_selectedLocation(0)
 	, m_colorLocation(0)
+	, m_transparencyLocation(0)
+	, m_frameLocation(0)
 {
 }
 
@@ -31,6 +33,8 @@ CShader::CShader(const CShader& rhs)
 	, m_lightEnableLocation(rhs.m_lightEnableLocation)
 	, m_selectedLocation(rhs.m_selectedLocation)
 	, m_colorLocation(rhs.m_colorLocation)
+	, m_transparencyLocation(rhs.m_transparencyLocation)
+	, m_frameLocation(rhs.m_frameLocation)
 {
 	m_tag = rhs.m_tag;
 }
@@ -125,6 +129,8 @@ void CShader::SetLocation()
 	m_lightEnableLocation = glGetUniformLocation(m_ShaderProgram, "isLightEnable");
 	m_selectedLocation = glGetUniformLocation(m_ShaderProgram, "isSelected");
 	m_colorLocation = glGetUniformLocation(m_ShaderProgram, "vColor");
+	m_transparencyLocation = glGetUniformLocation(m_ShaderProgram, "isTransparency");
+	m_frameLocation = glGetUniformLocation(m_ShaderProgram, "iFrameIndex");
  }
 
 void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 proj)
@@ -137,16 +143,19 @@ void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 
 
 void CShader::SetTextureInfo()
 {
+	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_diffTexLocation, 0);
 }
 
 void CShader::SetLightEnableInfo(_bool lightEnable)
 {
+	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_lightEnableLocation, lightEnable);
 }
 
 void CShader::SetSelected(_bool selected)
 {
+	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_selectedLocation, selected);
 }
 
@@ -154,6 +163,18 @@ void CShader::SetColor(vec3 vColor)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform4f(m_colorLocation, vColor.x, vColor.y, vColor.z, 1.f);
+}
+
+void CShader::SetTransparency(_bool value)
+{
+	glUseProgram(m_ShaderProgram);
+	glUniform1i(m_transparencyLocation, value);
+}
+
+void CShader::SetFrameIndex(_uint index)
+{
+	glUseProgram(m_ShaderProgram);
+	glUniform1i(m_frameLocation, index);
 }
 
 RESULT CShader::Ready(string ID, const char* vertexPath, const char* fragPath)
