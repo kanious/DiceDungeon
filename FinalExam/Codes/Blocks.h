@@ -8,17 +8,22 @@
 class Blocks
 {
 public:
-	_uint		m_iIndex;
-	glm::vec3	m_vCenterPos;
-	_bool		m_bIsExist;
+	_uint			m_iIndex;
+	glm::vec3		m_vCenterPos;
+	_bool			m_bIsExist;
 
-	_bool		m_bIsWall[4];//up, left, right, down
-	_bool		m_bIsDoor[4];
-	_bool		m_bIsTorch[4];
+	_bool			m_bIsWall[4];//up, left, right, down
+	_bool			m_bIsDoor[4];
+	std::string		m_wallID[4];
 
-	_bool		m_bPath;
-	_bool		m_bTorch;
-	_uint		m_iRoomIndex;
+	_bool			m_bPath;
+	_bool			m_bTorch;
+	_uint			m_iRoomIndex;
+
+	_bool			m_bCrystal;
+	_bool			m_bIsPathway;
+
+	_int			m_iDir;
 
 public:
 	explicit Blocks();

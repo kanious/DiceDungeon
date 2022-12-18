@@ -7,13 +7,18 @@
 #include "Transform.h"
 #include "OpenGLDefines.h"
 #include "InputDevice.h"
+#include "Shader.h"
+#include "ComponentMaster.h"
+#include "Component.h"
+#include "Beholder.h"
 
 USING(Engine)
 USING(glm)
+USING(std)
 
 DefaultCamera::DefaultCamera()
 	: m_pCamera(nullptr), m_bMouseEnable(true), m_fAngleY(0.f), m_fAngleX(0.f)
-	, m_fSpeed(20.f), m_fRotSpeed(20.f)
+	, m_fSpeed(20.f), m_fRotSpeed(20.f), m_pTarget(nullptr)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 }
@@ -89,14 +94,15 @@ void DefaultCamera::SetCameraTarget(glm::vec3 target)
 	m_fAngleY = m_pTransform->GetRotationY();
 }
 
-void DefaultCamera::SetShaderLocation(_uint shaderID)
+void DefaultCamera::AddShaderLocation(string shaderTag)
 {
-	m_shaderLocation = glGetUniformLocation(shaderID, "eyeLocation");
-}
-
-void DefaultCamera::SetShaderLocation2(_uint shaderID)
-{
-	m_shaderLocation2 = glGetUniformLocation(shaderID, "eyeLocation");
+	CComponent* shader = CComponentMaster::GetInstance()->FindComponent(shaderTag);
+	if (nullptr != shader)
+	{
+		_uint shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
+		_uint shaderLocation = glGetUniformLocation(shaderID, "eyeLocation");
+		m_vecShaders.push_back(shaderLocation);
+	}
 }
 
 void DefaultCamera::KeyCheck(const _float& dt)
@@ -126,7 +132,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->Update(0);
 		vec3 vDir = m_pTransform->GetLookVector();
 
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir);
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
@@ -135,7 +141,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->AddPosition(vDir * dt * 20.f);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
@@ -144,7 +150,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->AddPosition(vDir * dt * -20.f);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
@@ -153,7 +159,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->AddPosition(vRight * dt * 20.f);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
@@ -162,7 +168,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->AddPosition(vRight * dt * -20.f);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_SHIFT))
@@ -171,7 +177,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->AddPosition(vUp * dt * -20.f);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_SPACE))
@@ -180,7 +186,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		m_pTransform->AddPosition(vUp * dt * -20.f);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector());
+		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
 	}
 
 	static _bool isLeftAltDown = false;
@@ -197,14 +203,60 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		isLeftAltDown = false;
 }
 
+void DefaultCamera::FollowTarget(const _float& dt)
+{
+	if (nullptr == m_pTarget)
+		return;
+
+	vec3 vPos = m_pTarget->GetPosition();
+
+	CTransform* pTransform = m_pTarget->GetTransform();
+	vec3 vLook = pTransform->GetLookVector();
+	vPos -= vLook * 15.f;
+	vec3 vUp = pTransform->GetUpVector();
+	vPos += vUp * 15.f;
+	vec3 vCameraPos = m_pCamera->GetCameraEye();
+
+	vec3 vOriginTargetDir(0.f);
+	_float dist = distance(vPos, vCameraPos);
+	if (1.f < dist)
+	{
+		vec3 vDir = vPos - vCameraPos;
+		vDir = normalize(vDir);
+
+		vec3 vTargetPos = m_pCamera->GetCameraTarget();
+		vOriginTargetDir = vTargetPos - vCameraPos;
+
+		vCameraPos += vDir * dt * dist;
+		m_pCamera->SetCameraEye(vCameraPos);
+	}
+
+	vec3 vTargetPos = vCameraPos + vOriginTargetDir;
+	_float dist2 = distance(vTargetPos, m_pTarget->GetPosition());
+
+	if (0.1f < dist2)
+	{
+		vec3 vTargetDir = m_pTarget->GetPosition() - vTargetPos;
+		vTargetDir = normalize(vTargetDir);
+		vTargetPos += vTargetDir * dt * dist2;
+		m_pCamera->SetCameraTarget(vTargetPos);
+	}
+
+}
+
 void DefaultCamera::Update(const _float& dt)
 {
-	KeyCheck(dt);
+	if (m_bFollowingMonster)
+		FollowTarget(dt);
+	else
+		KeyCheck(dt);
+
 	CGameObject::Update(dt);
 
 	vec3 vEye = m_pCamera->GetCameraEye();
-	glUniform4f(m_shaderLocation, vEye.x, vEye.y, vEye.z, 1.0f);
-	glUniform4f(m_shaderLocation2, vEye.x, vEye.y, vEye.z, 1.0f);
+
+	for (int i = 0; i < m_vecShaders.size(); ++i)
+		glUniform4f(m_vecShaders[i], vEye.x, vEye.y, vEye.z, 1.0f);
 }
 
 void DefaultCamera::Destroy()

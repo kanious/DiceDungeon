@@ -38,10 +38,10 @@ Client::Client()
 	stringstream ss;
 	ss << str << "\\..\\";
 	m_DataPath = ss.str();
-	m_SoundDataFileName = "FinalExam_sound.xml";
-	m_ShaderDataFileName = "FinalExam_shader.xml";
-	m_TextureDataFileName = "FinalExam_texture.xml";
-	m_MeshDataFileName = "FinalExam_mesh.xml";
+	m_SoundDataFileName = "UDPGame_sound.xml";
+	m_ShaderDataFileName = "UDPGame_shader.xml";
+	m_TextureDataFileName = "UDPGame_texture.xml";
+	m_MeshDataFileName = "UDPGame_mesh.xml";
 }
 
 Client::~Client()

@@ -5,6 +5,7 @@
 #include "Rooms.h"
 #include "Blocks.h"
 #include "Function.h"
+#include "Beholder.h"
 
 SINGLETON_FUNCTION(MapManager)
 USING(Engine)
@@ -16,10 +17,11 @@ USING(std)
 #define TOTAL WIDTH*HEIGHT
 
 MapManager::MapManager()
-	: m_pScene(nullptr)
+	: m_pScene(nullptr), m_iCurCameraTarget(0), m_bBattleMode(false)
 {
 	m_vecBlocks.clear();
 	m_vecRooms.clear();
+	m_vecBeholders.clear();
 }
 
 MapManager::~MapManager()
@@ -35,6 +37,10 @@ void MapManager::Destroy()
 	for (int i = 0; i < m_vecRooms.size(); ++i)
 		delete m_vecRooms[i];
 	m_vecRooms.clear();
+
+	for (int i = 0; i < m_vecBeholders.size(); ++i)
+		delete m_vecBeholders[i];
+	m_vecBeholders.clear();
 }
 
 RESULT MapManager::Ready(Scene3D* pScene)
@@ -52,11 +58,142 @@ RESULT MapManager::Ready(Scene3D* pScene)
 	}
 
 	SetMapInformation();
-	AddTorch();
-	CreateBackgroundObjects();
-	AddCrystal();
+	AddRandomTorchAndCrystal();
 
+	CreateBackgroundObjects();
+	CreateBeholder();
+	CreateTorchAndCrystal();
+	CreateWater();
 	return PK_NOERROR;
+}
+
+Beholder* MapManager::GetNextCameraTarget()
+{
+	sBeholderInfo* pInfo = m_vecBeholders[m_iCurCameraTarget];
+	Beholder* target = pInfo->beholder;
+
+	++m_iCurCameraTarget;
+	if (m_iCurCameraTarget >= m_vecBeholders.size())
+		m_iCurCameraTarget -= m_vecBeholders.size();
+
+	return target; 
+}
+
+void MapManager::ResetCameraTarget()
+{
+	m_iCurCameraTarget = 0;
+}
+
+vec3 MapManager::GetNextTargetPos(_uint beholderIdx)
+{
+	sBeholderInfo* info = m_vecBeholders[beholderIdx];
+
+	_uint roomIdx = info->beholder->GetRoomId();
+	Rooms* pRoom = m_vecRooms[roomIdx];
+	
+	vec3 newPos = pRoom->m_vCornerPos[info->curRoamingIndex];
+
+	++info->curRoamingIndex;
+	if (4 <= info->curRoamingIndex)
+		info->curRoamingIndex -= 4;
+
+	return newPos;
+}
+
+void MapManager::SetBattleMode()
+{
+	m_bBattleMode = !m_bBattleMode;
+
+	for (int i = 0; i < m_vecBeholders.size(); ++i)
+	{
+		m_vecBeholders[i]->beholder->SetBattleMode(m_bBattleMode);
+	}
+}
+
+Beholder* MapManager::GetLockOnTarget(Beholder* me)
+{
+	for (int i = 0; i < m_vecBeholders.size(); ++i)
+	{
+		Beholder* target = m_vecBeholders[i]->beholder;
+		if (target->GetBeholderId() == me->GetBeholderId())
+			continue;
+
+		if (!target->GetDeadEffect())
+			return target; 
+	}
+
+	return nullptr;
+}
+
+void MapManager::KillEnemy(Beholder* target)
+{
+	target->DeadByEnemy();
+}
+
+void MapManager::RemoveBeholder()
+{
+	_uint iCount = 0;
+	for (int i = 0; i < m_vecBeholders.size(); ++i)
+	{
+		if (m_vecBeholders[i]->beholder->GetEnable())
+			++iCount;
+	}
+	if (1 >= iCount)
+	{
+		for (int i = 0; i < m_vecBeholders.size(); ++i)
+ 			m_vecBeholders[i]->beholder->SetGameEnd(true);
+	}
+}
+
+vec3 MapManager::GetNextPathPos(Beholder* me, Beholder* target) 
+{
+	if (nullptr == me || nullptr == target)
+		return vec3(0.f);
+
+	vec3 vPos = me->GetPosition();
+	vPos.y = 0.f;
+	vec3 vTargetPos = target->GetPosition();
+	vTargetPos.y = 0.f;
+
+	Rooms* pRoom = nullptr;
+	for (int i = 0; i < m_vecRooms.size(); ++i)
+	{
+		if (m_vecRooms[i]->IsInside(vPos))
+		{
+			pRoom = m_vecRooms[i];
+			break;
+		}
+	}
+
+	Blocks* pClosestBlock = pRoom->GetClosestEscape(vTargetPos);
+
+	_float dist = distance(vPos, pClosestBlock->m_vCenterPos);
+	if (0.5f < dist)
+		return pClosestBlock->m_vCenterPos;
+
+	// Search Path
+	_int dir = pClosestBlock->m_iDir;
+	_uint iDestIdx = 0;
+	switch (dir)
+	{
+	case 0:
+		iDestIdx = pClosestBlock->m_iIndex - WIDTH - WIDTH;
+		break;
+
+	case 1:
+		iDestIdx = pClosestBlock->m_iIndex - 2;
+		break;
+		
+	case 2:
+		iDestIdx = pClosestBlock->m_iIndex + 2;
+		break;
+
+	case 3:
+		iDestIdx = pClosestBlock->m_iIndex + WIDTH + WIDTH;
+		break;
+	}
+	Blocks* pDest = m_vecBlocks[iDestIdx];
+	return pDest->m_vCenterPos;
 }
 
 void MapManager::SetMapInformation()
@@ -81,7 +218,6 @@ void MapManager::SetMapInformation()
 		m_vecBlocks[vecPassage[i]]->m_bIsExist = true;
 		m_vecBlocks[vecPassage[i]]->m_bPath = true;
 	}
-
 
 	// Set Rooms
 	Rooms* pRoom = nullptr;
@@ -127,9 +263,10 @@ void MapManager::SetMapInformation()
 	}
 }
 
-void MapManager::AddTorch()
+void MapManager::AddRandomTorchAndCrystal()
 {
-	vector<_uint> vecTemp;
+	vector<_uint> vecTorchTemp;
+	vector<_uint> vecCrystalTemp;
 	for (int i = 0; i < TOTAL; ++i)
 	{
 		Blocks* pBlock = m_vecBlocks[i];
@@ -140,7 +277,7 @@ void MapManager::AddTorch()
 
 		//if (pBlock->m_bIsWall[0] || pBlock->m_bIsWall[1]
 		//	|| pBlock->m_bIsWall[2] || pBlock->m_bIsWall[3])
-		if (pBlock->m_bIsWall[0] || pBlock->m_bIsWall[2])
+		if (pBlock->m_bIsWall[0] || pBlock->m_bIsWall[1] || pBlock->m_bIsWall[2])
 		{
 			if (pBlock->m_bIsWall[0] && pBlock->m_bIsWall[1])
 				continue;
@@ -148,20 +285,33 @@ void MapManager::AddTorch()
 			if (pBlock->m_bIsWall[0] && pBlock->m_bIsWall[2])
 				continue;
 
+			if (pBlock->m_bIsWall[1] && pBlock->m_bIsWall[3])
+				continue;
+
 			if (pBlock->m_bIsWall[2] && pBlock->m_bIsWall[3])
 				continue;
 
-			vecTemp.push_back(i);
+			vecTorchTemp.push_back(i);
 		}
+
+		if (!pBlock->m_bIsWall[0] && !pBlock->m_bIsWall[1] &&
+			!pBlock->m_bIsWall[2] && !pBlock->m_bIsWall[3] &&
+			!pBlock->m_bIsPathway)
+			vecCrystalTemp.push_back(i);
 	}
+
+	Blocks* pBlock = m_vecBlocks[125];  // water room
+	pBlock->m_bTorch = true;
+	Rooms* room = m_vecRooms[pBlock->m_iRoomIndex];
+	++room->m_iTorchCount;
 
 	_uint iCount = 0;
 	_uint randNum = 0;
 	
 	while (iCount < 8)
 	{
-		randNum = GetRandNum(0, vecTemp.size() - 1);
-		Blocks* pBlock = m_vecBlocks[vecTemp[randNum]];
+		randNum = GetRandNum(0, vecTorchTemp.size() - 1);
+		Blocks* pBlock = m_vecBlocks[vecTorchTemp[randNum]];
 		if (pBlock->m_bTorch)
 			continue;
 		Rooms* room = m_vecRooms[pBlock->m_iRoomIndex];
@@ -173,8 +323,17 @@ void MapManager::AddTorch()
 		++room->m_iTorchCount;
 	}
 
-	Blocks* pBlock = m_vecBlocks[125];
-	pBlock->m_bTorch = true;
+	iCount = 0;
+	while (iCount < 7)
+	{
+		randNum = GetRandNum(0, vecCrystalTemp.size() - 1);
+		Blocks* pBlock = m_vecBlocks[vecCrystalTemp[randNum]];
+		if (pBlock->m_bCrystal)
+			continue;
+
+		pBlock->m_bCrystal = true;
+		++iCount;
+	}
 }
 
 void MapManager::CreateBackgroundObjects()
@@ -183,22 +342,17 @@ void MapManager::CreateBackgroundObjects()
 	vec3 vScale(0.01f);
 	string floorID = "";
 	string wallID = "";
-	string torchID = "";
 
 	for (int i = 0; i < TOTAL; ++i)
 	{
 		Blocks* pBlock = m_vecBlocks[i];
-		vec3 vPos = pBlock->m_vCenterPos; 
-		
-		_int dir = 0;
-		vec3 vTorchPos(0.f);
-		vec3 vTorchRot(0.f);
 
-		if (pBlock->m_bIsExist)
-		{
-			floorID = GetRandomFloor();
-			m_pScene->AddBGObject(floorID, vPos, vRot, vScale);
-		}
+		if (!pBlock->m_bIsExist)
+			continue;
+
+		vec3 vPos = pBlock->m_vCenterPos; 
+		floorID = GetRandomFloor();
+		m_pScene->AddBGObject(floorID, vPos, vRot, vScale);
 
 		// up
 		vPos.z -= 2.5f;
@@ -208,15 +362,8 @@ void MapManager::CreateBackgroundObjects()
 		else if (pBlock->m_bIsWall[0])
 		{
 			wallID = GetRandomWall();
+			pBlock->m_wallID[0] = wallID;
 			m_pScene->AddBGObject(wallID, vPos, vRot, vScale);
-			if (pBlock->m_bTorch)
-			{
-				vTorchPos = vPos;
-				vTorchRot = vRot;
-				dir = 0;
-				if ("Wall01" == wallID)
-					vTorchPos.z += 0.2f;
-			}
 		}
 
 		// left
@@ -228,15 +375,8 @@ void MapManager::CreateBackgroundObjects()
 		if (pBlock->m_bIsWall[1])
 		{
 			wallID = GetRandomWall();
+			pBlock->m_wallID[1] = wallID;
 			m_pScene->AddBGObject(wallID, vPos, vRot, vScale);
-			//if (pBlock->m_bTorch)
-			//{
-			//	vTorchPos = vPos;
-			//	vTorchRot = vRot;
-			//	dir = 1;
-			//	if ("Wall01" == wallID)
-			//		vTorchPos.x += 0.2f;
-			//}
 		}
 
 		// right
@@ -248,15 +388,8 @@ void MapManager::CreateBackgroundObjects()
 		if (pBlock->m_bIsWall[2])
 		{
 			wallID = GetRandomWall();
+			pBlock->m_wallID[2] = wallID;
 			m_pScene->AddBGObject(wallID, vPos, vRot, vScale);
-			if (pBlock->m_bTorch)
-			{
-				vTorchPos = vPos;
-				vTorchRot = vRot;
-				dir = 2;
-				if ("Wall01" == wallID)
-					vTorchPos.x -= 0.2f;
-			}
 		}
 
 		// down
@@ -268,43 +401,138 @@ void MapManager::CreateBackgroundObjects()
 		if (pBlock->m_bIsWall[3])
 		{
 			wallID = GetRandomWall();
+			pBlock->m_wallID[3] = wallID;
 			m_pScene->AddBGObject(wallID, vPos, vRot, vScale);
-			//if (pBlock->m_bTorch)
-			//{
-			//	vTorchPos = vPos;
-			//	vTorchRot = vRot;
-			//	dir = 3;
-			//	if ("Wall01" == wallID)
-			//		vTorchPos.z -= 0.2f;
-			//}
-		}
-
-		// Torch
-		if (pBlock->m_bTorch)
-		{
-			torchID = GetRandomTorch();
-			vTorchPos.y += 2.5f;
-			m_pScene->AddBGObject(torchID, vTorchPos, vTorchRot, vScale, dir);
 		}
 	}
 }
 
-void MapManager::AddCrystal()
+void MapManager::CreateBeholder()
 {
-	vec3 vPos = vec3(30.f, 0.f, 60.f);
-	vec3 vRot = vec3(0.f);
-	vec3 vScale = vec3(0.005f);
+	vec3 vPos(0.f);
+	vec3 vRot(0.f, 0.f, 0.f);
+	vec3 vScale(1.f, 1.f, 1.f);
+	Beholder* pBeholder = nullptr;
 
- 	m_pScene->AddBGObject("Crystal1", vPos, vRot, vScale);
+	Rooms* room = m_vecRooms[0];
+	room->m_bHasBeholder = true;
+	vPos = room->GetCenterPos();
+	vPos.y += 2.5f;
+	pBeholder = m_pScene->AddBeholder(vPos, vRot, vScale);
+	if (nullptr != pBeholder)
+		pBeholder->SetBeholderIndex(0, 0);
+	sBeholderInfo* newInfo = new sBeholderInfo;
+	newInfo->beholder = pBeholder;
+	newInfo->curRoamingIndex = 0;
+	m_vecBeholders.push_back(newInfo);
 
-	vPos = vec3(35.f, 0.f, 60.f);
-	m_pScene->AddBGObject("Crystal2", vPos, vRot, vScale);
+	room = m_vecRooms[5];
+	room->m_bHasBeholder = true;
+	vPos = room->GetCenterPos();
+	vPos.y += 2.5f;
+	pBeholder = m_pScene->AddBeholder(vPos, vRot, vScale);
+	if (nullptr != pBeholder)
+		pBeholder->SetBeholderIndex(1, 5);
+	newInfo = new sBeholderInfo;
+	newInfo->beholder = pBeholder;  
+	newInfo->curRoamingIndex = 0;
+	m_vecBeholders.push_back(newInfo);
 
-	vPos = vec3(45.f, 0.f, 65.f);
-	m_pScene->AddBGObject("Crystal3", vPos, vRot, vScale);
+	room = m_vecRooms[11];
+	room->m_bHasBeholder = true;
+	vPos = room->GetCenterPos();
+	vPos.y += 2.5f;
+	pBeholder = m_pScene->AddBeholder(vPos, vRot, vScale);
+	if (nullptr != pBeholder)
+		pBeholder->SetBeholderIndex(2, 11);
+	newInfo = new sBeholderInfo;
+	newInfo->beholder = pBeholder;
+	newInfo->curRoamingIndex = 0;
+	m_vecBeholders.push_back(newInfo);
 }
 
-std::string MapManager::GetRandomWall()
+void MapManager::CreateTorchAndCrystal()
+{
+	vec3 vRot(0.f);
+
+	_int dir = 0;
+	string torchID = "";
+	string crystalID = "";
+	_uint crystalCount = 0;
+
+	for (int i = 0; i < TOTAL; ++i)
+	{
+		Blocks* pBlock = m_vecBlocks[i];
+
+		if (pBlock->m_bTorch)
+		{
+			vec3 vPos = pBlock->m_vCenterPos;
+			vec3 vScale(0.01f);
+			vPos.y += 2.5f;
+			if (pBlock->m_bIsWall[0])
+			{
+				vPos.z -= 2.5;
+				dir = 0;
+				if ("Wall01" == pBlock->m_wallID[0])
+					vPos.z += 0.2f;
+				vRot.y = 180.f;
+
+				torchID = GetRandomTorch();
+				m_pScene->AddBGObject(torchID, vPos, vRot, vScale, dir);
+			}
+			else if (pBlock->m_bIsWall[1])
+			{
+				vPos.x -= 2.5f;
+				dir = 1;
+				if ("Wall01" == pBlock->m_wallID[1])
+					vPos.x += 0.2f;
+				vRot.y -= 90.f;
+
+				torchID = GetRandomTorch();
+				m_pScene->AddBGObject(torchID, vPos, vRot, vScale, dir);
+			}
+			else if (pBlock->m_bIsWall[2])
+			{
+				vPos.x += 2.5f;
+				dir = 2;
+				if ("Wall01" == pBlock->m_wallID[2])
+					vPos.x -= 0.2f;
+				vRot.y = 90.f;
+
+				torchID = GetRandomTorch();
+				m_pScene->AddBGObject(torchID, vPos, vRot, vScale, dir);
+			}
+		}
+
+		vRot.y = 0.f;
+
+		if (pBlock->m_bCrystal)
+		{
+			vec3 vPos = pBlock->m_vCenterPos;
+			vec3 vScale = vec3(0.005f);
+
+			if (0 == crystalCount % 3)
+				crystalID = "Crystal1";
+			else if (1 == crystalCount % 3)
+				crystalID = "Crystal2";
+			else
+				crystalID = "Crystal3";
+
+			m_pScene->AddBGObject(crystalID, vPos, vRot, vScale);
+			++crystalCount;
+		}
+	}
+}
+
+void MapManager::CreateWater()
+{
+	vec3 vPos(130.f, 0.7f, 20.4f);
+	vec3 vRot(0.f, 180.f, 0.f);
+	vec3 vScale(0.24f, 0.1f, 0.24f);
+	m_pScene->AddBGObject("Water", vPos, vRot, vScale);
+}
+
+string MapManager::GetRandomWall()
 {
 	string str = "Wall02";
 
@@ -315,7 +543,7 @@ std::string MapManager::GetRandomWall()
 	return str;
 }
 
-std::string MapManager::GetRandomFloor()
+string MapManager::GetRandomFloor()
 {
 	string str = "Floor01";
 
@@ -326,7 +554,7 @@ std::string MapManager::GetRandomFloor()
 	return str;
 }
 
-std::string MapManager::GetRandomTorch()
+string MapManager::GetRandomTorch()
 {
 	string str = "Torch";
 
@@ -336,3 +564,4 @@ std::string MapManager::GetRandomTorch()
 
 	return str;
 }
+

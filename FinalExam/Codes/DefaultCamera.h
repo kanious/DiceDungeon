@@ -8,6 +8,7 @@ namespace Engine
 	class CCamera;
 	class CInputDevice;
 }
+class Beholder;
 
 class DefaultCamera : public Engine::CGameObject
 {
@@ -22,8 +23,10 @@ private:
 	_float							m_fSpeed;
 	_float							m_fRotSpeed;
 
-	_uint							m_shaderLocation;
-	_uint							m_shaderLocation2;
+	std::vector<_uint>				m_vecShaders;
+
+	_bool							m_bFollowingMonster;
+	Beholder*						m_pTarget;
 
 private:
 	explicit DefaultCamera();
@@ -34,16 +37,18 @@ public:
 	glm::vec3 GetCameraEye();
 	glm::vec3 GetCameraRot();
 	glm::vec3 GetCameraTarget();
-	_uint GetShaderLocation(_uint shaderID)		{ return m_shaderLocation; }
+	Beholder* GetFollowinTarget()				{ return m_pTarget; }
 	void SetMouseEnable(_bool enable);
 	void SetCameraEye(glm::vec3 eye);
 	void SetCameraRot(glm::vec3 rot);
 	void SetCameraTarget(glm::vec3 target);
-	void SetShaderLocation(_uint shaderID);
-	void SetShaderLocation2(_uint shaderID);
+	void SetFollowingMode(_bool value)			{ m_bFollowingMonster = value; }
+	void SetFollowingTarget(Beholder* target)	{ m_pTarget = target; }
+	void AddShaderLocation(std::string shaderTag);
 
 private:
 	void KeyCheck(const _float& dt);
+	void FollowTarget(const _float& dt);
 
 public:
 	virtual void Update(const _float& dt);

@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Codes\Beholder.cpp" />
     <ClCompile Include="Codes\BGObject.cpp" />
     <ClCompile Include="Codes\Blocks.cpp" />
     <ClCompile Include="Codes\Client.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Codes\Beholder.h" />
     <ClInclude Include="Codes\BGObject.h" />
     <ClInclude Include="Codes\Blocks.h" />
     <ClInclude Include="Codes\Client.h" />
@@ -223,6 +225,22 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\x64\Assets\Shader\GlowVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\WaterFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\WaterVertex.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\x64\Assets\Shader\CrystalFragment.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\x64\Assets\Shader\CrystalVertex.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

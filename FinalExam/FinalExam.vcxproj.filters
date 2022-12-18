@@ -84,6 +84,9 @@
     <ClCompile Include="Codes\Blocks.cpp">
       <Filter>98.Manager\MapInfo</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\Beholder.cpp">
+      <Filter>02.GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Codes\Scene3D.h">
@@ -149,6 +152,9 @@
     <ClInclude Include="Codes\Blocks.h">
       <Filter>98.Manager\MapInfo</Filter>
     </ClInclude>
+    <ClInclude Include="Codes\Beholder.h">
+      <Filter>02.GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\x64\Assets\Shader\BoxFragment.fx">
@@ -185,6 +191,18 @@
       <Filter>97.Shader</Filter>
     </None>
     <None Include="..\x64\Assets\Shader\GlowVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\WaterFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\WaterVertex.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\CrystalFragment.fx">
+      <Filter>97.Shader</Filter>
+    </None>
+    <None Include="..\x64\Assets\Shader\CrystalVertex.fx">
       <Filter>97.Shader</Filter>
     </None>
   </ItemGroup>

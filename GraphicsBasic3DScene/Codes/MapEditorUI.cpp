@@ -920,7 +920,7 @@ void MapEditorUI::RenderMeshList()
 				pGameObject = BGObject::Create(m_pScene->GetSceneTag(), (_uint)LAYER_BACKGROUND, (_uint)OBJ_BACKGROUND
 					, m_pScene->GetLayer((_uint)LAYER_BACKGROUND)
 					, meshId
-					, vPos, vRot, vScale, "");
+					, vPos, vRot, vScale, 0);
 
 				if (nullptr != pGameObject)
 					m_pScene->AddGameObjectToLayer((_uint)LAYER_BACKGROUND, pGameObject);

@@ -19,6 +19,7 @@
 #include "Renderer.h"
 #include "TorchEffect.h"
 #include "MapManager.h"
+#include "Beholder.h"
 
 
 USING(Engine)
@@ -27,6 +28,8 @@ USING(std)
 
 Scene3D::Scene3D()
 	: m_pDefaultCamera(nullptr), m_pObjLayer(nullptr), m_pSkyBox(nullptr)
+	, m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
+	, m_bFollowingMode(false)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pInputDevice->SetMouseSensitivity(0.05f);
@@ -53,16 +56,60 @@ Scene3D::~Scene3D()
 
 void Scene3D::KeyCheck()
 {
-	//static _bool isF1Down = false;
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
-	//{
-	//	if (!isF1Down)
-	//	{
-	//		isF1Down = true;
-	//	}
-	//}
-	//else
-	//	isF1Down = false;
+	static _bool isF5Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F5))
+	{
+		if (!isF5Down)
+		{
+			isF5Down = true;
+			ResetDefaultCameraPos();
+
+			m_bFollowingMode = false;
+			m_pDefaultCamera->SetFollowingMode(false);
+			m_pDefaultCamera->SetFollowingTarget(nullptr);
+			m_pMapManager->ResetCameraTarget();
+		}
+	}
+	else
+		isF5Down = false;
+
+	static _bool isF6Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F6))
+	{
+		if (!isF6Down)
+		{
+			isF6Down = true;
+
+			if (m_bFollowingMode)
+			{
+				Beholder* pTarget = m_pMapManager->GetNextCameraTarget();
+				m_pDefaultCamera->SetFollowingTarget(pTarget);
+			}
+			else
+			{
+				m_bFollowingMode = true;
+				m_pDefaultCamera->SetFollowingMode(true);
+
+				Beholder* pTarget = m_pMapManager->GetNextCameraTarget();
+				m_pDefaultCamera->SetFollowingTarget(pTarget);
+			}
+		}
+	}
+	else
+		isF6Down = false;
+
+	static _bool isF7Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F7))
+	{
+		if (!isF7Down)
+		{
+			isF7Down = true;
+
+			m_pMapManager->SetBattleMode();
+		}
+	}
+	else
+		isF7Down = false;
 }
 
 void Scene3D::AddBGObject(string meshID, vec3 vPos, vec3 vRot, vec3 vScale, int dir)
@@ -75,6 +122,44 @@ void Scene3D::AddBGObject(string meshID, vec3 vPos, vec3 vRot, vec3 vScale, int 
 		return;
 
 	AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
+}
+
+Beholder* Scene3D::AddBeholder(vec3 vPos, vec3 vRot, vec3 vScale)
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_CHARACTER);
+	CGameObject* pGameObject = Beholder::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND
+		, pLayer, "Beholder", vPos, vRot, vScale);
+
+	if (nullptr == pGameObject)
+		return nullptr;
+
+	AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
+	return dynamic_cast<Beholder*>(pGameObject);
+}
+
+void Scene3D::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
+{
+	m_vCameraSavedPos.x = vPos.x;
+	m_vCameraSavedPos.y = vPos.y;
+	m_vCameraSavedPos.z = vPos.z;
+
+	m_vCameraSavedRot.x = vRot.x;
+	m_vCameraSavedRot.y = vRot.y;
+	m_vCameraSavedRot.z = vRot.z;
+
+	m_vCameraSavedTarget.x = target.x;
+	m_vCameraSavedTarget.y = target.y;
+	m_vCameraSavedTarget.z = target.z;
+}
+
+void Scene3D::ResetDefaultCameraPos()
+{
+	if (nullptr != m_pDefaultCamera)
+	{
+		m_pDefaultCamera->SetCameraEye(m_vCameraSavedPos);
+		m_pDefaultCamera->SetCameraRot(m_vCameraSavedRot);
+		m_pDefaultCamera->SetCameraTarget(m_vCameraSavedTarget);
+	}
 }
 
 void Scene3D::Update(const _float& dt)
@@ -125,11 +210,9 @@ RESULT Scene3D::Ready()
 
 	if (nullptr != m_pDefaultCamera)
 	{
-		m_pDefaultCamera->SetShaderLocation(shaderID);
-		shader = CComponentMaster::GetInstance()->FindComponent("ColorShader");
-		if (nullptr != shader)
-			shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
-		m_pDefaultCamera->SetShaderLocation2(shaderID);
+		m_pDefaultCamera->AddShaderLocation("DefaultShader");
+		m_pDefaultCamera->AddShaderLocation("CrystalShader");
+		m_pDefaultCamera->AddShaderLocation("WaterShader");
 	}
 
 	if (nullptr != m_pUIManager)
@@ -217,6 +300,7 @@ void Scene3D::LoadBackgroundObjects()
 
 		if (nullptr != m_pDefaultCamera)
 		{
+			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
 			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
 			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
 			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);

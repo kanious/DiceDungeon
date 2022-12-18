@@ -33,6 +33,7 @@ private:
 private:
 	void KeyCheck(const _float& dt);
 
+
 public:
 	virtual void Update(const _float& dt);
 	virtual void Render();

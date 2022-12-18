@@ -22,7 +22,7 @@ USING(glm)
 USING(std)
 
 BGObject::BGObject()
-	: m_pMesh(nullptr), m_pTorchObj(nullptr)
+	: m_pMesh(nullptr), m_pTorchObj(nullptr), m_bTransparent(false)
 {
 	m_bDebug = false;
 }
@@ -41,7 +41,7 @@ void BGObject::Update(const _float& dt)
 		CGameObject::Update(dt);
 
 		if (nullptr != m_pRenderer)
-			m_pRenderer->AddRenderObj(this);
+			m_pRenderer->AddRenderObj(this, m_bTransparent);
 	}
 }
 
@@ -66,6 +66,12 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	m_pLayer = pLayer;
 	m_meshName = meshID;
 
+	if ("Crystal1" == meshID || "Crystal2" == meshID || "Crystal3" == meshID ||
+		"Water" == meshID || "VisionCone" == meshID)
+		m_bTransparent = true;
+	else
+		m_bTransparent = false;
+
 	//Clone.Mesh
  	m_pMesh = CloneComponent<CMesh*>(meshID);
 	if (nullptr != m_pMesh)
@@ -77,6 +83,7 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 			m_pBoundingBox->SetTransform(m_pTransform);
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
+		m_pMesh->SetTransparency(m_bTransparent);
 
 		if ("Torch" == meshID || "Torch2" == meshID)
 		{

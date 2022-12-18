@@ -29,17 +29,26 @@ void CRenderer::Render()
 		if (nullptr != *iter)
 			(*iter)->Render();
 	}
+	for (iter = m_vecTRenderObj.begin(); iter != m_vecTRenderObj.end(); ++iter)
+	{
+		if (nullptr != *iter)
+			(*iter)->Render();
+	}
 	ClearAllRenderObjList();
 }
-void CRenderer::AddRenderObj(CGameObject* pInstance)
+void CRenderer::AddRenderObj(CGameObject* pInstance, _bool isTransparent)
 {
 	if (nullptr == pInstance)
 		return;
 
-	m_vecRenderObj.push_back(pInstance);
+	if (!isTransparent)
+		m_vecRenderObj.push_back(pInstance);
+	else
+		m_vecTRenderObj.push_back(pInstance);
 }
 
 void CRenderer::ClearAllRenderObjList()
 {
 	m_vecRenderObj.clear();
+	m_vecTRenderObj.clear();
 }

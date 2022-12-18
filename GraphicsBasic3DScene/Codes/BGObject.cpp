@@ -82,12 +82,11 @@ void BGObject::Destroy()
 	CGameObject::Destroy();
 }
 
-RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale, string soundTag)
+RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale, _int dir)
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
 	m_meshName = meshID;
-	m_soundTag = soundTag;
 
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();
 	CComponent* pComponent = nullptr;
@@ -119,10 +118,10 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	return PK_NOERROR;
 }
 
-BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale, string soundTag)
+BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale, _int dir)
 {
 	BGObject* pInstance = new BGObject();
-	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, soundTag))
+	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, dir))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

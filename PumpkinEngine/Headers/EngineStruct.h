@@ -1,6 +1,7 @@
 #ifndef _ENGINESTRUCT_H_
 #define _ENGINESTRUCT_H_
 
+#include <string>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -40,6 +41,42 @@ namespace Engine
 		xyz_normal_texUV_index,
 		xyz_normal_texUV_index_texNum,
 		xyz_normal_color_index
+	};
+
+	struct sUserInfo
+	{
+		int64_t userId;
+		std::string email;
+		std::string username;
+		std::string lastlogin;
+		std::string creationdate;
+	};
+
+	struct sUserInput
+	{
+		bool W, A, S, D;
+	};
+
+	struct sPlayerInfo
+	{
+		float PosX;
+		float PosY;
+		float PosZ;
+		float VelX;
+		float VelY;
+		float VelZ;
+		float RotY;
+	};
+
+	struct sGameState
+	{
+		sPlayerInfo player[4];
+	};
+
+	enum MessageType
+	{
+		Msg_UserInput,
+		Msg_GameState
 	};
 }
 

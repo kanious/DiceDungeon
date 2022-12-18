@@ -95,6 +95,11 @@ void DefaultCamera::SetShaderLocation(_uint shaderID)
 	m_shaderLocation = glGetUniformLocation(shaderID, "eyeLocation");
 }
 
+void DefaultCamera::SetShaderLocation2(_uint shaderID)
+{
+	m_shaderLocation2 = glGetUniformLocation(shaderID, "eyeLocation");
+}
+
 void DefaultCamera::KeyCheck(const _float& dt)
 {
 	if (nullptr == m_pInputDevice || nullptr == m_pTransform)

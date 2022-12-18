@@ -13,6 +13,7 @@ class ENGINE_API CRenderer : public CBase
 
 private:
 	std::vector<CGameObject*>		m_vecRenderObj;
+	std::vector<CGameObject*>		m_vecTRenderObj;
 
 
 private:
@@ -23,7 +24,7 @@ public:
 	void Render();
 
 public:
-	void AddRenderObj(CGameObject* pInstance);
+	void AddRenderObj(CGameObject* pInstance, _bool isTransparent = false);
 	void ClearAllRenderObjList();
 };
 

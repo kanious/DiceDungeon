@@ -44,8 +44,8 @@ SceneForest::SceneForest()
 	ss << str << "\\..\\";
 
 	m_DataPath = ss.str();
-	m_ObjListFileName = "FinalExam_mapObjects.xml";
-	m_LightListFileName = "FinalExam_lights.xml";
+	m_ObjListFileName = "UDPGame_mapObjects.xml";
+	m_LightListFileName = "UDPGame_lights.xml";
 }
 
 SceneForest::~SceneForest()
@@ -225,7 +225,16 @@ RESULT SceneForest::Ready()
 	CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
 
 	if (nullptr != m_pDefaultCamera)
-		m_pDefaultCamera->SetShaderLocation(shaderID); 
+		m_pDefaultCamera->SetShaderLocation(shaderID);
+
+	//if (nullptr != m_pDefaultCamera)
+	//{
+	//	m_pDefaultCamera->SetShaderLocation(shaderID);
+	//	shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
+	//	if (nullptr != shader)
+	//		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
+	//	m_pDefaultCamera->SetShaderLocation2(shaderID);
+	//}
 
 	if (nullptr == m_pSkyBox)
 	{
@@ -338,7 +347,7 @@ void SceneForest::LoadBackgroundObjects()
 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 		{
 			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
-				iter->POSITION, iter->ROTATION, iter->SCALE, iter->SOUNDTAG);
+				iter->POSITION, iter->ROTATION, iter->SCALE, 0);
 			if (nullptr == pGameObject)
 				continue;
 			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);

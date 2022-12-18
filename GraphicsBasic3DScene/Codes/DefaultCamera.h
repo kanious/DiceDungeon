@@ -23,6 +23,7 @@ private:
 	_float							m_fSpeed;
 
 	_uint							m_shaderLocation;
+	_uint							m_shaderLocation2;
 
 private:
 	explicit DefaultCamera();
@@ -39,6 +40,7 @@ public:
 	void SetCameraRot(glm::vec3 rot);
 	void SetCameraTarget(glm::vec3 target);
 	void SetShaderLocation(_uint shaderID);
+	void SetShaderLocation2(_uint shaderID);
 
 private:
 	void KeyCheck(const _float& dt);
