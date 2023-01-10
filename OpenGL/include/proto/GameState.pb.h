@@ -257,7 +257,7 @@ class Object final :
     kVelZFieldNumber = 9,
     kRotYFieldNumber = 10,
   };
-  // required int64 tick_number = 1;
+  // optional int64 tick_number = 1;
   bool has_tick_number() const;
   private:
   bool _internal_has_tick_number() const;
@@ -632,7 +632,7 @@ class GameState final :
 #endif  // __GNUC__
 // Object
 
-// required int64 tick_number = 1;
+// optional int64 tick_number = 1;
 inline bool Object::_internal_has_tick_number() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;

@@ -19,7 +19,7 @@ USING(std)
 
 NetworkManager::NetworkManager()
 	: m_socket(INVALID_SOCKET), m_addrInfo(), m_addressSize(0), m_eNetwokeState(NotInitialized)
-	, m_pScene(nullptr), m_userInput(), m_sGameState()
+	, m_pScene(nullptr), m_userInput()
 	, m_fRecvElaspedTime(0.f), m_fSendElaspedTime(0.f), m_tickNumber(0)
 {
 	m_fRecvTime = 1.f / 5.f;
@@ -164,8 +164,6 @@ void NetworkManager::SendTo(const _float& dt)
 	int size = 0;
 	Serialize(Msg_UserInput, serialize, buffer, size);
 
-	//_int bufSize = sizeof(m_sUserInput);
-	//_int result = sendto(m_socket, (const char*)&m_sUserInput, bufSize, 0, (SOCKADDR*)&m_addrInfo, m_addressSize);
 	_int result = sendto(m_socket, (char*)&(buffer.m_data[0]), size, 0, (SOCKADDR*)&m_addrInfo, m_addressSize);
 	if (result == SOCKET_ERROR)
 	{
@@ -175,10 +173,7 @@ void NetworkManager::SendTo(const _float& dt)
 		return;
 	}
 
-	//cout << "SendTo:" << m_sUserInput.W << ", " << m_sUserInput.A << ", " << m_sUserInput.S;
-	//cout << ", " << m_sUserInput.D << "  /  ";
 	++m_tickNumber;
-	m_pScene->ResetInput();
 }
 
 void NetworkManager::RecvFrom(const _float& dt)
@@ -186,14 +181,12 @@ void NetworkManager::RecvFrom(const _float& dt)
 	if (m_eNetwokeState != Initialized)
 		return;
 
-	// TODO: recv 시간 제한
 	m_fRecvElaspedTime += dt;
 	if (m_fRecvElaspedTime < m_fRecvTime)
 		return;
 	m_fRecvElaspedTime = 0.f;
 
-	//const _int bufSize = sizeof(sGameState);
-	//char buf[bufSize];
+	m_pScene->ResetInput();
 
 	char buf[CHUNK_SIZE];
 
@@ -205,11 +198,8 @@ void NetworkManager::RecvFrom(const _float& dt)
 		return;
 	}
 
-	//memcpy(&m_sGameState, (const void*)buf, sizeof(sGameState));
-
 	std::string packetInfo;
-	uint32_t fullLength = ReadLengthInfo(buf);
-	Deserialize(buf, fullLength, packetInfo);
+	Deserialize(buf, result, packetInfo);
 
 	GameState packet;
 	_bool success = packet.ParseFromString(packetInfo);
@@ -217,10 +207,6 @@ void NetworkManager::RecvFrom(const _float& dt)
 	{
 		m_pScene->SetGameState(packet);
 	}
-
-	//cout << "[" << m_sGameState.sequence << "] " << "RecvFrom:" << m_sGameState.player[m_sGameState.sequence].x;
-	//cout << ", " << m_sGameState.player[m_sGameState.sequence].y;
-	//cout << ", " << m_sGameState.player[m_sGameState.sequence].z << endl;
 }
 
 void NetworkManager::Serialize(unsigned int messageId, std::string packetInfo, Buffer& buffer, int& size)

@@ -7,6 +7,7 @@
 #include "InputInfo.h"
 
 class ClientInfo;
+class BulletInfo;
 class Buffer;
 class Server
 {
@@ -17,19 +18,14 @@ private:
 	unsigned int				UserID;
 
 public:
-	//ClientInfo*					m_clientInfo;
-	//Engine::sUserInput			m_input;
-	//Engine::sGameState			m_gameState;
-
-	ClientInfo*						m_curClientInfo;
+	ClientInfo*					m_curClientInfo;
 
 	typedef std::unordered_map<_ushort, ClientInfo*> MAP_CLIENT;
-	MAP_CLIENT								m_mapClients;
-	std::vector<Engine::sUserInput>			m_vecUserInputs;
-	Engine::sGameState						m_GameState;
+	MAP_CLIENT					m_mapClients;
 
-	PlayerInfo*								m_playerInfo[4];
-	InputInfo								m_inputInfo[4];
+	PlayerInfo*					m_playerInfo[4];
+	BulletInfo*					m_bulletInfo[4];
+	InputInfo					m_inputInfo[4];
 
 	_float						m_fRecvElaspedTime;
 	_float						m_fSendElaspedTime;

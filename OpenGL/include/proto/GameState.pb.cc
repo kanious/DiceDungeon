@@ -111,7 +111,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_GameState_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\017GameState.proto\"\320\001\n\006Object\022\023\n\013tick_num"
-  "ber\030\001 \002(\003\022\035\n\004type\030\002 \001(\0162\017.Object.ObjType"
+  "ber\030\001 \001(\003\022\035\n\004type\030\002 \001(\0162\017.Object.ObjType"
   "\022\r\n\005state\030\003 \001(\005\022\014\n\004posX\030\004 \001(\002\022\014\n\004posY\030\005 "
   "\001(\002\022\014\n\004posZ\030\006 \001(\002\022\014\n\004velX\030\007 \001(\002\022\014\n\004velY\030"
   "\010 \001(\002\022\014\n\004velZ\030\t \001(\002\022\014\n\004rotY\030\n \001(\002\"!\n\007Obj"
@@ -190,9 +190,6 @@ class Object::_Internal {
   static void set_has_roty(HasBits* has_bits) {
     (*has_bits)[0] |= 512u;
   }
-  static bool MissingRequiredFields(const HasBits& has_bits) {
-    return ((has_bits[0] & 0x00000001) ^ 0x00000001) != 0;
-  }
 };
 
 Object::Object(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -270,7 +267,7 @@ const char* Object::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // required int64 tick_number = 1;
+      // optional int64 tick_number = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
           _Internal::set_has_tick_number(&has_bits);
@@ -395,7 +392,7 @@ failure:
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // required int64 tick_number = 1;
+  // optional int64 tick_number = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(1, this->_internal_tick_number(), target);
@@ -468,16 +465,17 @@ size_t Object::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:Object)
   size_t total_size = 0;
 
-  // required int64 tick_number = 1;
-  if (_internal_has_tick_number()) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_tick_number());
-  }
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x000000feu) {
+  if (cached_has_bits & 0x000000ffu) {
+    // optional int64 tick_number = 1;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int64SizePlusOne(this->_internal_tick_number());
+    }
+
     // optional .Object.ObjType type = 2;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
@@ -597,7 +595,6 @@ void Object::CopyFrom(const Object& from) {
 }
 
 bool Object::IsInitialized() const {
-  if (_Internal::MissingRequiredFields(_has_bits_)) return false;
   return true;
 }
 
@@ -916,8 +913,6 @@ void GameState::CopyFrom(const GameState& from) {
 
 bool GameState::IsInitialized() const {
   if (_Internal::MissingRequiredFields(_has_bits_)) return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(players_)) return false;
-  if (!::PROTOBUF_NAMESPACE_ID::internal::AllAreInitialized(bullets_)) return false;
   return true;
 }
 

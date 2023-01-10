@@ -30,17 +30,16 @@ private:
 
 	NetworkManager*				m_pNetworkManager;
 	Player*						m_pPlayer[4];
+	Player*						m_pBullet[4];
 	InputInfo*					m_pInputInfo;
 
-	//Engine::sUserInput*			m_pPlayerInput;
-	Engine::sGameState*			m_pPlayerState;
-
-	_int m_iIndex;
+	_int						m_iIndex;
 
 	glm::vec3					m_vCameraSavedPos;
 	glm::vec3					m_vCameraSavedRot;
 	glm::vec3					m_vCameraSavedTarget;
 
+	_int test;
 private:
 	explicit Scene3D();
 	virtual ~Scene3D();

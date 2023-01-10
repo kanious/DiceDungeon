@@ -52,27 +52,6 @@ namespace Engine
 		std::string creationdate;
 	};
 
-	struct sUserInput
-	{
-		bool W, A, S, D;
-	};
-
-	struct sPlayerInfo
-	{
-		float PosX;
-		float PosY;
-		float PosZ;
-		float VelX;
-		float VelY;
-		float VelZ;
-		float RotY;
-	};
-
-	struct sGameState
-	{
-		sPlayerInfo player[4];
-	};
-
 	enum MessageType
 	{
 		Msg_UserInput,

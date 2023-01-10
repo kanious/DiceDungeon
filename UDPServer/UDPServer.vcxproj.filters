@@ -30,6 +30,9 @@
     <ClCompile Include="Codes\PlayerInfo.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\BulletInfo.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Codes\Server.h">
@@ -54,6 +57,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Codes\InputInfo.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\BulletInfo.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>

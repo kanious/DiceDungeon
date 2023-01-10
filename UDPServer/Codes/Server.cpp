@@ -1,5 +1,6 @@
 #include "Server.h"
 #include "ClientInfo.h"
+#include "BulletInfo.h"
 #include "Buffer.h"
 #include "proto\UserInput.pb.h"
 #include "proto\GameState.pb.h"
@@ -7,25 +8,25 @@
 
 
 USING(Engine)
-//USING(std)
 USING(glm)
 
 const int SHORT_SIZE = 2;
 const int INTEGER_SIZE = 4;
 Server::Server()
-	: m_recvAddr(), m_socket(INVALID_SOCKET), UserID(0)/*, m_input(), m_gameState()*/
+	: m_recvAddr(), m_socket(INVALID_SOCKET), UserID(0)
 	, m_fRecvElaspedTime(0.f), m_fSendElaspedTime(0.f)
 {
 	m_curClientInfo = new ClientInfo();
-	//m_clientInfo = new ClientInfo();
 	m_fRecvTime = 1.f / 5.f;
 	m_fSendTime = 1.f / 5.f;
 
 	m_mapClients.clear();
-	m_vecUserInputs.clear();
 
 	for (int i = 0; i < 4; ++i)
+	{
 		m_playerInfo[i] = new PlayerInfo();
+		m_bulletInfo[i] = new BulletInfo();
+	}
 }
 
 Server::~Server()
@@ -109,9 +110,6 @@ int Server::Bind()
 		return result;
 	}
 
-	//m_clientInfo->m_iClientAddrSize = sizeof(m_clientInfo->m_clientAddr);
-	//m_clientInfo->haveInfo = false;
-
 	m_curClientInfo->m_iClientAddrSize = sizeof(m_curClientInfo->m_clientAddr);
 	m_curClientInfo->haveInfo = false;
 
@@ -120,8 +118,6 @@ int Server::Bind()
 
 int Server::RecvFromClient()
 {
-	//const int bufsize = sizeof(sUserInput);
-	//char buf[bufsize];
 	char buf[CHUNK_SIZE];
 
 	int result = recvfrom(m_socket, buf, CHUNK_SIZE, 0, (SOCKADDR*)&m_curClientInfo->m_clientAddr
@@ -154,14 +150,13 @@ int Server::RecvFromClient()
 		newClient->haveInfo = m_curClientInfo->haveInfo;
 		m_mapClients.insert(MAP_CLIENT::value_type(port, newClient));
 
-		m_vecUserInputs.push_back(sUserInput());
+		m_playerInfo[nextIdx]->m_iState = 1;
 	}
 
 	iter = m_mapClients.find(port);
 	ClientInfo* pClient = iter->second;
 
 	_ushort playerIndex = m_mapClients[port]->m_iIndex;
-	//sUserInput& userInput = m_vecUserInputs[playerId];
 
 	std::string packetInfo;
 	uint32_t fullLength = ReadLengthInfo(buf);
@@ -176,12 +171,6 @@ int Server::RecvFromClient()
 		m_inputInfo[playerIndex].Calculate(packet.input());
 	}
 
-
-	//memcpy(&userInput, (const void*)buf, bufsize);
-
-	//cout << "RecvFrom:" << userInput.W << ", " << userInput.A << ", " << userInput.S;
-	//cout << ", " << userInput.D << endl;
-
 	return 1;
 }
 
@@ -193,25 +182,40 @@ void Server::RecvFrom(const _float& dt)
 
 	m_fRecvElaspedTime = 0.f;
 
-	_int recvCount = 0;
 	_bool readFinished = false;
 	while (!readFinished)
 	{
 		_int recvResult = RecvFromClient();
-		recvCount += recvResult;
 
 		if (0 == recvResult)
 			readFinished = true;
 	}
-
-	//if (recvCount > 0)
-	//	cout << "Recv Count: " << recvCount << endl;
 }
 
 void Server::Update(const _float& dt)
 {
 	for (int i = 0; i < 4; ++i)
 	{
+		if (0 == m_bulletInfo[i]->m_iState)
+			continue;
+
+		m_bulletInfo[i]->Update(dt);
+	}
+
+	for (int i = 0; i < 4; ++i)
+	{
+		if (0 == m_playerInfo[i]->m_iState)
+		{
+			if (m_inputInfo[i].respawn)
+			{
+				m_playerInfo[i]->Respawn();
+				m_inputInfo[i].respawn = false;
+			}
+			continue;
+		}
+
+		m_playerInfo[i]->UpdateTransform();
+
 		if (m_inputInfo[i].forward)
 			m_playerInfo[i]->Forward(dt);
 
@@ -232,28 +236,27 @@ void Server::Update(const _float& dt)
 		
 		if (m_inputInfo[i].fire)
 		{
-			m_playerInfo[i]->Fire();
+			m_playerInfo[i]->Fire(m_bulletInfo[i]);
 			m_inputInfo[i].fire = false;
 		}
 
-		if (m_inputInfo[i].respawn)
+		vec3 vPlayerPos = m_playerInfo[i]->GetPosition();
+		for (int j = 0; j < 4; ++j)
 		{
-			m_playerInfo[i]->Respawn();
-			m_inputInfo[i].respawn = false;
+			if (i == j || 0 == m_bulletInfo[j]->m_iState)
+				continue;
+
+			vec3 vBulletPos = m_bulletInfo[j]->GetPosition();
+			_float dist = distance(vPlayerPos, vBulletPos);
+			if (dist < 3.f)
+			{
+				m_playerInfo[i]->m_iState = 0;
+				m_bulletInfo[j]->m_iState = 0;
+				if (2 == m_playerInfo[j]->m_iState)
+					m_playerInfo[j]->m_iState = 1;
+			}
 		}
 	}
-
-	//for (int i = 0; i < m_vecUserInputs.size(); ++i)
-	//{
-	//	if (m_vecUserInputs[i].W)
-	//		m_GameState.player[i].z--;
-	//	if (m_vecUserInputs[i].A)
-	//		m_GameState.player[i].x--;
-	//	if (m_vecUserInputs[i].S)
-	//		m_GameState.player[i].z++;
-	//	if (m_vecUserInputs[i].D)
-	//		m_GameState.player[i].x++;
-	//}
 }
 
 void Server::SendTo(const _float& dt)
@@ -264,22 +267,37 @@ void Server::SendTo(const _float& dt)
 
 	m_fSendElaspedTime = 0.f;
 
-	//int bufSize = sizeof(sGameState);
-	//Buffer buffer(0);
 	GameState buf;
 	for (int i = 0; i < 4; ++i)
 	{
 		Object* player = buf.add_players();
 		PlayerInfo* info = m_playerInfo[i];
+		BulletInfo* myBullet = m_bulletInfo[i];
+
 		info->m_tickNumber++;
 		player->set_tick_number(info->m_tickNumber);
+		if (2 == info->m_iState)
+		{
+			if (0 == myBullet->m_iState)
+				info->m_iState = 1;
+		}
 		player->set_state(info->m_iState);
 		vec3 vPos = info->GetPosition();
 		player->set_posx(vPos.x);
 		player->set_posy(vPos.y);
 		player->set_posz(vPos.z);
 		player->set_roty(info->GetRotationY());
+
+		Object* bullet = buf.add_bullets();
+		bullet->set_tick_number(0);
+		bullet->set_state(myBullet->m_iState);
+		vPos = myBullet->GetPosition();
+		bullet->set_posx(vPos.x);
+		bullet->set_posy(vPos.y);
+		bullet->set_posz(vPos.z);
+		bullet->set_roty(myBullet->GetRotationY());
 	}
+
 	buf.set_messageid(Msg_GameState);
 
 	MAP_CLIENT::iterator iter;
@@ -308,22 +326,8 @@ void Server::SendTo(const _float& dt)
 		}
 	}
 
-	test++;
-
+	++test;
 	std::cout << test << ". ";
-
-	//int result = sendto(m_socket, (const char*)&m_gameState, bufSize, 0, (SOCKADDR*)&m_clientInfo->m_clientAddr
-	//	, m_clientInfo->m_iClientAddrSize);
-	//if (result == SOCKET_ERROR)
-	//{
-	//	if (WSAEWOULDBLOCK != WSAGetLastError())
-	//		printf("Socket Error (SendTo) : %d\n", WSAGetLastError());
-	//	m_clientInfo->haveInfo = false;
-	//	return;
-	//}
-
-	//cout << "[" << test << "] " << "SendTo:" << m_GameState.player[0].x << ", " << m_GameState.player[0].y;
-	//cout << ", " << m_GameState.player[0].z << endl;
 }
 
 void Server::Close()
@@ -336,13 +340,14 @@ void Server::Close()
 		delete iter->second;
 
 	m_mapClients.clear();
-	m_vecUserInputs.clear();
 
 	for (int i = 0; i < 4; ++i)
+	{
 		delete m_playerInfo[i];
+		delete m_bulletInfo[i];
+	}
 
 	delete m_curClientInfo;
-	//delete m_clientInfo;
 }
 
 void Server::Serialize(unsigned int messageId, std::string packetInfo, Buffer& buffer, int& size)

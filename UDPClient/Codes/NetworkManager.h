@@ -27,9 +27,7 @@ private:
 	_int					m_addressSize;
 	NetworkClientState		m_eNetwokeState;
 
-	//Engine::sUserInput		m_sUserInput;
 	InputInfo				m_userInput;
-	Engine::sGameState		m_sGameState;
 
 	Scene3D*				m_pScene;
 
@@ -46,9 +44,7 @@ private:
 	~NetworkManager();
 
 public:
-	//Engine::sUserInput* GetUserInput()		{ return &m_sUserInput; }
 	InputInfo* GetUserInput()				{ return &m_userInput; }
-	Engine::sGameState* GetUserState()		{ return &m_sGameState; }
 	_long GetTickNumber()					{ return m_tickNumber; }
 	void SetScene(Scene3D* pScene)			{ m_pScene = pScene; }
 

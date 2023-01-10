@@ -31,7 +31,7 @@ USING(std)
 Scene3D::Scene3D()
 	: m_pDefaultCamera(nullptr), m_pObjLayer(nullptr), m_pSkyBox(nullptr)
 	, m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
-	, /*m_pPlayerInput(nullptr), */m_pPlayerState(nullptr), m_pInputInfo(nullptr), m_iIndex(-1)
+	, m_pInputInfo(nullptr), m_iIndex(-1)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pInputDevice->SetMouseSensitivity(0.05f);
@@ -39,7 +39,10 @@ Scene3D::Scene3D()
 	m_pNetworkManager = NetworkManager::GetInstance(); m_pNetworkManager->AddRefCnt();
 
 	for (int i = 0; i < 4; ++i)
+	{
 		m_pPlayer[i] = nullptr;
+		m_pBullet[i] = nullptr;
+	}
 
 	wchar_t path[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, path, MAX_PATH);
@@ -72,140 +75,66 @@ void Scene3D::KeyCheck(const _float& dt)
 	else
 		isF1Down = false;
 
-	//if (nullptr == m_pPlayerInput)
-	//	return;
-
-	//m_pPlayerInput->W = m_pInputDevice->IsKeyDown(GLFW_KEY_W);
-	//m_pPlayerInput->S = m_pInputDevice->IsKeyDown(GLFW_KEY_S);
-	//m_pPlayerInput->A = m_pInputDevice->IsKeyDown(GLFW_KEY_A);
-	//m_pPlayerInput->D = m_pInputDevice->IsKeyDown(GLFW_KEY_D);
-
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
-	//	m_pPlayerInput->W = true;
-
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
-	//	m_pPlayerInput->A = true;
-
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
-	//	m_pPlayerInput->S = true;
-
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
-	//	m_pPlayerInput->D = true;
-
-	//static _bool isWDown = false;
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
-	//{
-	//	if (!isWDown)
-	//	{
-	//		isWDown = true;
-	//		m_pInputInfo->forward = true;
-
-	//		if (-1 != m_iIndex)
-	//			m_pPlayer[m_iIndex]->GetTransform()->AddPositionZ(-1.f);
-
-	//		//m_pPlayerInput->W = true;
-	//	}
-	//}
-	//else
-	//	isWDown = false;
-
-	//static _bool isADown = false;
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
-	//{
-	//	if (!isADown)
-	//	{
-	//		isADown = true;
-	//		m_pInputInfo->left = true;
-	//		//m_pPlayerInput->A = true;
-
-	//		if (-1 != m_iIndex)
-	//			m_pPlayer[m_iIndex]->GetTransform()->AddPositionX(-1.f);
-	//	}
-	//}
-	//else
-	//	isADown = false;
-
-	//static _bool isSDown = false;
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
-	//{
-	//	if (!isSDown)
-	//	{
-	//		isSDown = true;
-	//		m_pInputInfo->backward = true;
-	//		//m_pPlayerInput->S = true;
-
-	//		if (-1 != m_iIndex)
-	//			m_pPlayer[m_iIndex]->GetTransform()->AddPositionZ(1.f);
-	//	}
-	//}
-	//else
-	//	isSDown = false;
-
-	//static _bool isDDown = false;
-	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
-	//{
-	//	if (!isDDown)
-	//	{
-	//		isDDown = true;
-	//		m_pInputInfo->right = true;
-	//		//m_pPlayerInput->D = true;
-
-	//		if (-1 != m_iIndex)
-	//			m_pPlayer[m_iIndex]->GetTransform()->AddPositionX(1.f);
-	//	}
-	//}
-	//else
-	//	isDDown = false;
-
-
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
-	{
 		m_pInputInfo->forward = true;
-		//if (-1 != m_iIndex)
-		//	m_pPlayer[m_iIndex]->GetTransform()->AddPositionZ(-dt * 10.f);
-	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
-	{
 		m_pInputInfo->left = true;
-		//if (-1 != m_iIndex)
-		//	m_pPlayer[m_iIndex]->GetTransform()->AddPositionX(-dt * 10.f);
-	}
-
+	
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
-	{
 		m_pInputInfo->backward = true;
-		//if (-1 != m_iIndex)
-		//	m_pPlayer[m_iIndex]->GetTransform()->AddPositionZ(dt * 10.f);
-	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
-	{
 		m_pInputInfo->right = true;
-		//if (-1 != m_iIndex)
-		//	m_pPlayer[m_iIndex]->GetTransform()->AddPositionX(dt * 10.f);
-	}
+
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_Q))
+		m_pInputInfo->turnLeft = true;
+
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_E))
+		m_pInputInfo->turnRight = true;
+
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F))
+		m_pInputInfo->fire = true;
+
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_R))
+		m_pInputInfo->respawn = true;
 
 	if (-1 != m_iIndex)
 	{
 		if (m_pInputInfo->forward)
-			m_pPlayer[m_iIndex]->GetTransform()->AddPositionZ(-1.f);
+		{
+			vec3 vDir = m_pPlayer[m_iIndex]->GetTransform()->GetLookVector();
+			m_pPlayer[m_iIndex]->GetTransform()->AddPosition(-vDir * dt * 10.f);
+		}
 		if (m_pInputInfo->left)
-			m_pPlayer[m_iIndex]->GetTransform()->AddPositionX(-1.f);
+		{
+			vec3 vDir = m_pPlayer[m_iIndex]->GetTransform()->GetRightVector();
+			m_pPlayer[m_iIndex]->GetTransform()->AddPosition(-vDir * dt * 10.f);
+		}
 		if (m_pInputInfo->backward)
-			m_pPlayer[m_iIndex]->GetTransform()->AddPositionZ(1.f);
+		{
+			vec3 vDir = m_pPlayer[m_iIndex]->GetTransform()->GetLookVector();
+			m_pPlayer[m_iIndex]->GetTransform()->AddPosition(vDir * dt * 10.f);
+		}
 		if (m_pInputInfo->right)
-			m_pPlayer[m_iIndex]->GetTransform()->AddPositionX(1.f);
+		{
+			vec3 vDir = m_pPlayer[m_iIndex]->GetTransform()->GetRightVector();
+			m_pPlayer[m_iIndex]->GetTransform()->AddPosition(vDir * dt * 10.f);
+		}
+		if (m_pInputInfo->turnLeft)
+		{
+			m_pPlayer[m_iIndex]->GetTransform()->AddRotationY(dt * 50.f);
+		}
+		if (m_pInputInfo->turnRight)
+		{
+			m_pPlayer[m_iIndex]->GetTransform()->AddRotationY(-dt * 50.f);
+		}
 	}
 }
 
 void Scene3D::ResetInput()
 {
 	m_pInputInfo->Reset();
-	//m_pPlayerInput->W = false;
-	//m_pPlayerInput->S = false;
-	//m_pPlayerInput->A = false;
-	//m_pPlayerInput->D = false;
 }
 
 void Scene3D::SetGameState(GameState& packet)
@@ -217,10 +146,16 @@ void Scene3D::SetGameState(GameState& packet)
 		vec3 vPos = vec3(obj->posx()
 			, obj->posy()
 			, obj->posz());
+		_float fY = obj->roty();
+		_int state = obj->state();
 
 		//if (i == m_iIndex)
 		//{
-		//	std::cout << m_pNetworkManager->GetTickNumber() << ":" << obj->tick_number() << std::endl;
+		//	if (0 == state)
+		//		m_pPlayer[i]->SetEnable(false);
+		//	else
+		//		m_pPlayer[i]->SetEnable(true);
+
 		//	if (m_pNetworkManager->GetTickNumber() > obj->tick_number())
 		//		continue;
 
@@ -235,9 +170,33 @@ void Scene3D::SetGameState(GameState& packet)
 		//		std::cout<< "passed .";
 		//}
 		//else
-			m_pPlayer[i]->SetPosition(vPos);
+		//{
+			if (0 == state)
+				m_pPlayer[i]->SetEnable(false);
+			else
+			{
+				m_pPlayer[i]->SetEnable(true);
+				m_pPlayer[i]->SetPosition(vPos);
+				m_pPlayer[i]->SetRotationY(fY);
+			}
+		//}
+
+		Object* bullet = packet.mutable_bullets(i);
+		vPos = vec3(bullet->posx()
+			, bullet->posy()
+			, bullet->posz());
+		fY = bullet->roty();
+		state = bullet->state();
+
+		if (0 == state)
+			m_pBullet[i]->SetEnable(false);
+		else
+		{
+			m_pBullet[i]->SetEnable(true);
+			m_pBullet[i]->SetPosition(vPos);
+			m_pBullet[i]->SetRotationY(fY);
+		}
 	}
-	//std::cout << "m_iIndex:" << m_iIndex << ". ";
 }
 
 void Scene3D::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
@@ -273,17 +232,6 @@ void Scene3D::Update(const _float& dt)
 	CLightMaster::GetInstance()->SetLightInfo();
 
 	KeyCheck(dt);
-
-	//if (nullptr != m_pPlayerState)
-	//{
-	//	for (int i = 0; i < 4; ++i)
-	//	{
-	//		vec3 vPos = vec3(m_pPlayerState->player[i].x * 10.f
-	//			, m_pPlayerState->player[i].y * 10.f
-	//			, m_pPlayerState->player[i].z * 10.f);
-	//		m_pPlayer[i]->SetPosition(vPos);
-	//	}
-	//}
 
 	CScene::Update(dt);
 }
@@ -345,7 +293,6 @@ RESULT Scene3D::Ready()
 	}
 
 	m_pInputInfo = m_pNetworkManager->GetUserInput();
-	m_pPlayerState = m_pNetworkManager->GetUserState();
 
 	return PK_NOERROR;
 }
@@ -421,11 +368,21 @@ void Scene3D::LoadBackgroundObjects()
 		for (int i = 0; i < 4; ++i)
 		{
 			pGameObject = Player::Create((_uint)SCENE_3D, m_pObjLayer->GetTag(), (_uint)OBJ_PLAYER, m_pObjLayer
-				, "Sphere", vec3(0.f), vec3(0.f), vec3(0.2f));
+				, "Sphere", vec3(0.f), vec3(0.f), vec3(0.5f));
 			if (nullptr != pGameObject)
 			{
 				AddGameObjectToLayer(m_pObjLayer->GetTag(), pGameObject);
 				m_pPlayer[i] = dynamic_cast<Player*>(pGameObject);
+				m_pPlayer[i]->SetEnable(false);
+			}
+
+			pGameObject = Player::Create((_uint)SCENE_3D, m_pObjLayer->GetTag(), (_uint)OBJ_PLAYER, m_pObjLayer
+				, "Sphere", vec3(0.f), vec3(0.f), vec3(0.1f));
+			if (nullptr != pGameObject)
+			{
+				AddGameObjectToLayer(m_pObjLayer->GetTag(), pGameObject);
+				m_pBullet[i] = dynamic_cast<Player*>(pGameObject);
+				m_pBullet[i]->SetEnable(false);
 			}
 		}
 	}

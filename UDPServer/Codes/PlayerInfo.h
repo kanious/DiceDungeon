@@ -5,6 +5,7 @@
 #include "glm\vec3.hpp"
 #include "Transform.h"
 
+class BulletInfo;
 class PlayerInfo
 {
 public:
@@ -21,13 +22,14 @@ public:
 	_float GetRotationY() { return m_pTransform->GetRotationY(); }
 
 public:
+	void UpdateTransform();
 	void Forward(const _float& dt);
 	void Backward(const _float& dt);
 	void Left(const _float& dt);
 	void Right(const _float& dt);
 	void TurnLeft(const _float& dt);
 	void TurnRight(const _float& dt);
-	void Fire();
+	void Fire(BulletInfo* myBullet);
 	void Respawn();
 };
 

@@ -138,6 +138,7 @@
     <ClCompile Include="..\OpenGL\include\proto\GameState.pb.cc" />
     <ClCompile Include="..\OpenGL\include\proto\UserInput.pb.cc" />
     <ClCompile Include="Codes\Buffer.cpp" />
+    <ClCompile Include="Codes\BulletInfo.cpp" />
     <ClCompile Include="Codes\PlayerInfo.cpp" />
     <ClCompile Include="Codes\Server.cpp" />
     <ClCompile Include="Codes\serverMain.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="..\OpenGL\include\proto\GameState.pb.h" />
     <ClInclude Include="..\OpenGL\include\proto\UserInput.pb.h" />
     <ClInclude Include="Codes\Buffer.h" />
+    <ClInclude Include="Codes\BulletInfo.h" />
     <ClInclude Include="Codes\ClientInfo.h" />
     <ClInclude Include="Codes\Define.h" />
     <ClInclude Include="Codes\InputInfo.h" />
