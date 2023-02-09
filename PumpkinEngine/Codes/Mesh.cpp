@@ -10,6 +10,7 @@
 #include "../Headers/BoundingBox.h"
 #include "../Headers/QuadTree.h"
 #include "../Headers/Octree.h"
+#include "../Headers/AnimController.h"
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
@@ -40,6 +41,7 @@ CMesh::CMesh()
     , m_pTriangles(nullptr)
     , m_pQuadTree(nullptr)
     , m_pOctree(nullptr)
+    , m_pAnimController(nullptr)
 {
     m_pOpenGLDevice->AddRefCnt();
 }
@@ -58,6 +60,7 @@ CMesh::CMesh(const CMesh& rhs)
     , m_iTriNum(rhs.m_iTriNum)
     , m_pQuadTree(rhs.m_pQuadTree)
     , m_pOctree(rhs.m_pOctree)
+    , m_pAnimController(nullptr)
 {
     m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
@@ -90,7 +93,12 @@ void CMesh::Render()
     const mat4x4 matProj = m_pOpenGLDevice->GetProjMatrix();
 
     if (!m_bBiilboard)
+    {
+        if (nullptr != m_pAnimController)
+            matWorld = matWorld * m_pAnimController->GetMatrix();
+
         m_pShader->SetMatrixInfo(matWorld, matView, matProj);
+    }
     else
     {
         mat4x4 newView = mat4x4(matView);
@@ -109,6 +117,7 @@ void CMesh::Render()
     m_pShader->SetLightEnableInfo(!m_bWireFrame);
     m_pShader->SetSelected(m_bSelected);
     m_pShader->SetTransparency(m_bTransparency);
+    m_pShader->SetEaseType(m_iEaseType);
 
     if (nullptr != m_pDiffTexture)
     {
@@ -135,9 +144,7 @@ void CMesh::Render()
         m_pOctree->Render();
 
     if (m_bDebug && nullptr != m_pBoundingBox)
-    {
         m_pBoundingBox->Render();
-    }
 }
 
 void CMesh::Destroy()

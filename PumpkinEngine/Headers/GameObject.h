@@ -66,6 +66,7 @@ public:
 	glm::vec3 GetRotation();
 	_float GetRotationY();
 	glm::vec3 GetScale();
+	glm::vec3 GetLookVector();
 	const glm::mat4x4* GetWorldMatrix();
 	void SetMeshName(std::string name);
 	void SetObjectName(std::string name);

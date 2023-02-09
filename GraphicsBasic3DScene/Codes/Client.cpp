@@ -36,12 +36,12 @@ Client::Client()
 	std::string str = W2A(path);
 	str = str.substr(0, str.find_last_of("\\/"));
 	stringstream ss;
-	ss << str << "\\..\\";
+	ss << str << "\\..\\Assets\\";
 	m_DataPath = ss.str();
-	m_SoundDataFileName = "UDPGame_sound.xml";
-	m_ShaderDataFileName = "UDPGame_shader.xml";
-	m_TextureDataFileName = "UDPGame_texture.xml";
-	m_MeshDataFileName = "UDPGame_mesh.xml";
+	m_SoundDataFileName = "sound.xml";
+	m_ShaderDataFileName = "shader.xml";
+	m_TextureDataFileName = "texture.xml";
+	m_MeshDataFileName = "mesh.xml";
 }
 
 Client::~Client()

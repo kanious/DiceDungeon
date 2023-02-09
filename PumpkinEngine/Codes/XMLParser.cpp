@@ -17,7 +17,7 @@ SINGLETON_FUNCTION(CXMLParser)
 
 CXMLParser::CXMLParser()
 {
-	m_xmlDataPath = "Assets\\xmlData\\";
+	m_xmlDataPath = "xmlData\\";
 }
 
 CXMLParser::~CXMLParser()

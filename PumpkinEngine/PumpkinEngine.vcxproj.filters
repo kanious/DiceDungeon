@@ -52,6 +52,9 @@
     <Filter Include="98.SingletonClasses\Light">
       <UniqueIdentifier>{ec738422-2065-408d-9af3-784613c6a254}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.SingletonClasses\Animation">
+      <UniqueIdentifier>{09247bed-a28c-45b2-a38c-192aa9feab84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Base.h">
@@ -165,6 +168,18 @@
     <ClInclude Include="Headers\SkyBox.h">
       <Filter>03.GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Animation.h">
+      <Filter>98.SingletonClasses\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AnimController.h">
+      <Filter>98.SingletonClasses\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\AnimationData.h">
+      <Filter>98.SingletonClasses\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\JsonParser.h">
+      <Filter>98.SingletonClasses</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -265,6 +280,18 @@
     </ClCompile>
     <ClCompile Include="Codes\SkyBox.cpp">
       <Filter>03.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Animation.cpp">
+      <Filter>98.SingletonClasses\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\AnimController.cpp">
+      <Filter>98.SingletonClasses\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\AnimationData.cpp">
+      <Filter>98.SingletonClasses\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\JsonParser.cpp">
+      <Filter>98.SingletonClasses</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

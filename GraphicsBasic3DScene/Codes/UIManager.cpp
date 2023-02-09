@@ -83,42 +83,42 @@ RESULT UIManager::Ready(CScene* pScene)
 	ImFontConfig config;
 	config.MergeMode = true;
 
-	static const ImWchar greek_ranges[] =
-	{
-		0x0020, 0x00FF, // Basic Latin + Latin Supplement
-		0x0370, 0x03FF, // Greek and Coptic
-		0,
-	};
+	//static const ImWchar greek_ranges[] =
+	//{
+	//	0x0020, 0x00FF, // Basic Latin + Latin Supplement
+	//	0x0370, 0x03FF, // Greek and Coptic
+	//	0,
+	//};
 
-	wchar_t path[MAX_PATH] = { 0 };
-	GetModuleFileName(NULL, path, MAX_PATH);
-	USES_CONVERSION;
-	std::string str = W2A(path);
-	str = str.substr(0, str.find_last_of("\\/"));
-	stringstream ss;
-	ss << str << "\\..\\";
+	//wchar_t path[MAX_PATH] = { 0 };
+	//GetModuleFileName(NULL, path, MAX_PATH);
+	//USES_CONVERSION;
+	//std::string str = W2A(path);
+	//str = str.substr(0, str.find_last_of("\\/"));
+	//stringstream ss;
+	//ss << str << "\\..\\";
 
-	stringstream filePath;
-	filePath << ss.str() << "Assets\\Fonts\\Korean\\PoorStory-Regular.ttf";
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 16.f, &config, io.Fonts->GetGlyphRangesKorean());
+	//stringstream filePath;
+	//filePath << ss.str() << "Assets\\Fonts\\Korean\\PoorStory-Regular.ttf";
+	//io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 16.f, &config, io.Fonts->GetGlyphRangesKorean());
 
-	filePath.str("");
-	filePath << ss.str() << "Assets\\Fonts\\Japanese\\MPLUS1p-Regular.ttf";
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesJapanese());
+	//filePath.str("");
+	//filePath << ss.str() << "Assets\\Fonts\\Japanese\\MPLUS1p-Regular.ttf";
+	//io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesJapanese());
 
-	filePath.str("");
-	filePath << ss.str() << "Assets\\Fonts\\Thai\\Sarabun-Regular.ttf";
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesThai());
+	//filePath.str("");
+	//filePath << ss.str() << "Assets\\Fonts\\Thai\\Sarabun-Regular.ttf";
+	//io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesThai());
 
-	filePath.str("");
-	filePath << ss.str() << "Assets\\Fonts\\Greek\\OpenSans-VariableFont_wdth,wght.ttf";
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, greek_ranges);
+	//filePath.str("");
+	//filePath << ss.str() << "Assets\\Fonts\\Greek\\OpenSans-VariableFont_wdth,wght.ttf";
+	//io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, greek_ranges);
 
-	filePath.str("");
-	filePath << ss.str() << "Assets\\Fonts\\Noto_Sans\\NotoSans-Regular.ttf";
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesCyrillic());
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesVietnamese());
-	io.Fonts->Build();
+	//filePath.str("");
+	//filePath << ss.str() << "Assets\\Fonts\\Noto_Sans\\NotoSans-Regular.ttf";
+	//io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesCyrillic());
+	//io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 18.f, &config, io.Fonts->GetGlyphRangesVietnamese());
+	//io.Fonts->Build();
 
 	if (!ImGui_ImplGlfw_InitForOpenGL(COpenGLDevice::GetInstance()->GetWindow(), true) ||
 		!ImGui_ImplOpenGL3_Init("#version 460"))

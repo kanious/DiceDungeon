@@ -19,7 +19,7 @@ PumpkinString::PumpkinString()
 	std::string str = W2A(path);
 	str = str.substr(0, str.find_last_of("\\/"));
 	stringstream ss;
-	ss << str << "\\..\\";
+	ss << str << "\\..\\Assets\\";
 
 	m_DataPath = ss.str();
 	m_FileName[lang_en] = "lang_en.xml";

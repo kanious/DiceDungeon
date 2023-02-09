@@ -162,6 +162,9 @@
   <ItemGroup>
     <ClInclude Include="Codes\framework.h" />
     <ClInclude Include="Codes\pch.h" />
+    <ClInclude Include="Headers\AnimationData.h" />
+    <ClInclude Include="Headers\AnimController.h" />
+    <ClInclude Include="Headers\Animation.h" />
     <ClInclude Include="Headers\Base.h" />
     <ClInclude Include="Headers\BoundingBox.h" />
     <ClInclude Include="Headers\Camera.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="Headers\ComponentMaster.h" />
     <ClInclude Include="Headers\DSPInfo.h" />
     <ClInclude Include="Headers\EngineStruct.h" />
+    <ClInclude Include="Headers\JsonParser.h" />
     <ClInclude Include="Headers\Light.h" />
     <ClInclude Include="Headers\LightMaster.h" />
     <ClInclude Include="Headers\SkyBox.h" />
@@ -199,6 +203,9 @@
     <ClInclude Include="Headers\XMLParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Codes\AnimationData.cpp" />
+    <ClCompile Include="Codes\AnimController.cpp" />
+    <ClCompile Include="Codes\Animation.cpp" />
     <ClCompile Include="Codes\Base.cpp" />
     <ClCompile Include="Codes\BoindingBox.cpp" />
     <ClCompile Include="Codes\Camera.cpp" />
@@ -207,6 +214,7 @@
     <ClCompile Include="Codes\Component.cpp" />
     <ClCompile Include="Codes\ComponentMaster.cpp" />
     <ClCompile Include="Codes\DSPInfo.cpp" />
+    <ClCompile Include="Codes\JsonParser.cpp" />
     <ClCompile Include="Codes\Light.cpp" />
     <ClCompile Include="Codes\LightMaster.cpp" />
     <ClCompile Include="Codes\SkyBox.cpp" />

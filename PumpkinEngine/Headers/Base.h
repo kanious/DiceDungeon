@@ -22,21 +22,6 @@ protected:
 	virtual void Destroy() = 0;
 };
 
-
-//_uint SafeDestroy(CBase* pInstance)
-//{
-//	_uint iRefCnt = 0;
-//
-//	if (nullptr != pInstance)
-//	{
-//		iRefCnt = pInstance->Release();
-//		if (0 == iRefCnt)
-//			pInstance = nullptr;
-//	}
-//
-//	return iRefCnt;
-//}
-
 NAMESPACE_END
 
 #endif //_BASE_H_

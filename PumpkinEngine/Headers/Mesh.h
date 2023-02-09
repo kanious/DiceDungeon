@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "EngineStruct.h"
+#include "glm\mat4x4.hpp"
 
 NAMESPACE_BEGIN(Engine)
 
@@ -14,6 +15,7 @@ class CTransform;
 class COpenGLDevice;
 class CQuadTree;
 class COctree;
+class CAnimController;
 
 class ENGINE_API CMesh : public CComponent
 {
@@ -34,6 +36,9 @@ private:
 	CQuadTree*					m_pQuadTree;
 	COctree*					m_pOctree;
 
+	CAnimController*			m_pAnimController;
+	_uint						m_iEaseType;
+
 private:
 	explicit CMesh();
 	explicit CMesh(const CMesh& rhs);
@@ -45,18 +50,20 @@ private:
 	virtual void Destroy();
 
 public:
-	CBoundingBox* GetBoundingBox()					{ return m_pBoundingBox; }
-	TRIANGLE* GetTriangleArray()					{ return m_pTriangles; }
-	CQuadTree* GetQuadTree()						{ return m_pQuadTree; }
-	COctree* GetOctree()							{ return m_pOctree; }
-	_uint GetTriangleNumber()						{ return m_iTriNum; }
-	CShader* GetShader()							{ return m_pShader; }
-	void SetTransform(CTransform* transform)		{ m_pParentTransform = transform; }
-	void SetWireFrame(_bool wire)					{ m_bWireFrame = wire; }
-	void SetSelcted(_bool select)					{ m_bSelected = select; }
-	void SetTransparency(_bool value)				{ m_bTransparency = value; }
-	void SetDebugBox(_bool value)					{ m_bDebug = value; }
-	void SetBillboard(_bool value)					{ m_bBiilboard = value; }
+	CBoundingBox* GetBoundingBox()							{ return m_pBoundingBox; }
+	TRIANGLE* GetTriangleArray()							{ return m_pTriangles; }
+	CQuadTree* GetQuadTree()								{ return m_pQuadTree; }
+	COctree* GetOctree()									{ return m_pOctree; }
+	_uint GetTriangleNumber()								{ return m_iTriNum; }
+	CShader* GetShader()									{ return m_pShader; }
+	void SetTransform(CTransform* transform)				{ m_pParentTransform = transform; }
+	void SetWireFrame(_bool wire)							{ m_bWireFrame = wire; }
+	void SetSelcted(_bool select)							{ m_bSelected = select; }
+	void SetTransparency(_bool value)						{ m_bTransparency = value; }
+	void SetDebugBox(_bool value)							{ m_bDebug = value; }
+	void SetBillboard(_bool value)							{ m_bBiilboard = value; }
+	void SetAnimController(CAnimController* pController)	{ m_pAnimController = pController; }
+	void SetAnimEaseType(_uint value)						{ m_iEaseType = value; }
 	void SetTexture(std::string texID_diff);
 
 private:

@@ -127,6 +127,14 @@ vec3 CGameObject::GetScale()
 	return m_pTransform->GetScale();
 }
 
+glm::vec3 CGameObject::GetLookVector()
+{
+	if (nullptr == m_pTransform)
+		return vec3(0.f);
+
+	return m_pTransform->GetLookVector();
+}
+
 const mat4x4* CGameObject::GetWorldMatrix()
 {
 	if (nullptr == m_pTransform)
