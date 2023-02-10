@@ -36,9 +36,6 @@ void BGObject::Update(const _float& dt)
 	{
 		CGameObject::Update(dt);
 
-		if (nullptr != m_pMesh)
-			m_pMesh->SetAnimEaseType(99);
-
 		if (nullptr != m_pRenderer)
 			m_pRenderer->AddRenderObj(this, m_bTransparent);
 	}

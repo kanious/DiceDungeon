@@ -193,6 +193,11 @@ RESULT MapEditorUI::Ready(CScene* pScene)
 		m_vecMeshInfo.push_back(info);
 	}
 
+	sort(m_vecMeshInfo.begin(), m_vecMeshInfo.end(), [](const MeshInfo& lhs, const MeshInfo& rhs)
+		{
+			return lhs.meshId < rhs.meshId;
+		});
+
 	return PK_NOERROR;
 }
 

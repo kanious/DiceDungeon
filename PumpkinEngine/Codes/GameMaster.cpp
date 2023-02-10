@@ -7,6 +7,7 @@
 #include "..\Headers\Renderer.h"
 #include "..\Headers\Timer.h"
 #include "..\Headers\XMLParser.h"
+#include "..\Headers\JsonParser.h"
 #include "..\Headers\SoundMaster.h"
 #include "..\Headers\CollisionMaster.h"
 #include "..\Headers\LightMaster.h"
@@ -49,6 +50,8 @@ void CGameMaster::Destroy()
 {
 	SafeDestroy(m_pCurrentScene);
 
+	SafeDestroy(CXMLParser::GetInstance());
+	SafeDestroy(CJsonParser::GetInstance());
 	SafeDestroy(CComponentMaster::GetInstance());
 	SafeDestroy(CInputDevice::GetInstance());
 	SafeDestroy(CObjectPooler::GetInstance());
@@ -56,7 +59,6 @@ void CGameMaster::Destroy()
 	SafeDestroy(CRenderer::GetInstance());
 	SafeDestroy(CTimer::GetInstance());
 	SafeDestroy(CSoundMaster::GetInstance());
-	SafeDestroy(CXMLParser::GetInstance());
 	SafeDestroy(CCollisionMaster::GetInstance());
 	SafeDestroy(CLightMaster::GetInstance());
 	SafeDestroy(CAnimationData::GetInstance());

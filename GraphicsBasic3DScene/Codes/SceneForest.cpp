@@ -3,6 +3,7 @@
 #include "Enums.h"
 
 #include "XMLParser.h"
+#include "JsonParser.h"
 #include "Layer.h"
 #include "GameObject.h"
 #include "InputDevice.h"
@@ -301,24 +302,28 @@ void SceneForest::SaveBackgroundObjects()
 	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND);
 	if (nullptr != pLayer)
 	{
-		vector<CXMLParser::sObjectData> vecObjects;
+		//vector<CXMLParser::sObjectData> vecObjects;
+		vector<CJsonParser::sObjectData> vecObjects;
 
 		list<CGameObject*>* pObjList = pLayer->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
 		{
 			BGObject* pObj = dynamic_cast<BGObject*>(*iter);
-			CXMLParser::sObjectData data;
+			//CXMLParser::sObjectData data;
+			CJsonParser::sObjectData data;
 			data.ID = pObj->GetMeshID();
 			data.POSITION = pObj->GetPosition();
 			data.ROTATION = pObj->GetRotation();
 			data.SCALE = pObj->GetScale();
-			data.SOUNDTAG = pObj->GetSoundTag();
+			//data.SOUNDTAG = pObj->GetSoundTag();
 			data.LOCK = pObj->GetLock();
+			data.TEXNAME = pObj->GetTexName();
 			vecObjects.push_back(data);
 		}
 
-		CXMLParser::sObjectData cameraData;
+		//CXMLParser::sObjectData cameraData;
+		CJsonParser::sObjectData cameraData;
 		if (nullptr != m_pDefaultCamera)
 		{
 			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
@@ -327,7 +332,8 @@ void SceneForest::SaveBackgroundObjects()
 			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
 		}
 
-		CXMLParser::GetInstance()->SaveMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+		CJsonParser::GetInstance()->SaveObjectList(m_DataPath, "mapObjects.json", vecObjects, cameraData);
+		//CXMLParser::GetInstance()->SaveMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 	}
 }
 

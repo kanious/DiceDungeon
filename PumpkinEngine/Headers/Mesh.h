@@ -31,13 +31,13 @@ private:
 	_bool						m_bDebug;
 	_bool						m_bTransparency;
 	_bool						m_bBiilboard;
+	std::string					m_textureFileName;
 	_uint						m_iTriNum;
 	TRIANGLE*					m_pTriangles;
 	CQuadTree*					m_pQuadTree;
 	COctree*					m_pOctree;
 
 	CAnimController*			m_pAnimController;
-	_uint						m_iEaseType;
 
 private:
 	explicit CMesh();
@@ -56,6 +56,7 @@ public:
 	COctree* GetOctree()									{ return m_pOctree; }
 	_uint GetTriangleNumber()								{ return m_iTriNum; }
 	CShader* GetShader()									{ return m_pShader; }
+	std::string GetTexName()								{ return m_textureFileName; }
 	void SetTransform(CTransform* transform)				{ m_pParentTransform = transform; }
 	void SetWireFrame(_bool wire)							{ m_bWireFrame = wire; }
 	void SetSelcted(_bool select)							{ m_bSelected = select; }
@@ -63,7 +64,6 @@ public:
 	void SetDebugBox(_bool value)							{ m_bDebug = value; }
 	void SetBillboard(_bool value)							{ m_bBiilboard = value; }
 	void SetAnimController(CAnimController* pController)	{ m_pAnimController = pController; }
-	void SetAnimEaseType(_uint value)						{ m_iEaseType = value; }
 	void SetTexture(std::string texID_diff);
 
 private:

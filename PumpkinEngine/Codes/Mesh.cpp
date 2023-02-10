@@ -37,6 +37,7 @@ CMesh::CMesh()
     , m_bDebug(false)
     , m_bTransparency(false)
     , m_bBiilboard(false)
+    , m_textureFileName("")
     , m_iTriNum(0)
     , m_pTriangles(nullptr)
     , m_pQuadTree(nullptr)
@@ -57,6 +58,7 @@ CMesh::CMesh(const CMesh& rhs)
     , m_bDebug(rhs.m_bDebug)
     , m_bBiilboard(rhs.m_bBiilboard)
     , m_bTransparency(rhs.m_bTransparency)
+    , m_textureFileName(rhs.m_textureFileName)
     , m_iTriNum(rhs.m_iTriNum)
     , m_pQuadTree(rhs.m_pQuadTree)
     , m_pOctree(rhs.m_pOctree)
@@ -117,7 +119,6 @@ void CMesh::Render()
     m_pShader->SetLightEnableInfo(!m_bWireFrame);
     m_pShader->SetSelected(m_bSelected);
     m_pShader->SetTransparency(m_bTransparency);
-    m_pShader->SetEaseType(m_iEaseType);
 
     if (nullptr != m_pDiffTexture)
     {
@@ -221,6 +222,9 @@ RESULT CMesh::Ready_VIBuffer(ModelType type, string filePath, string fileName, V
 
         if (next == "face")
             file >> triangleNum;
+
+        if (next == "TextureFile")
+            file >> m_textureFileName;
     }
 
     vec3 vMin = vec3(FLT_MAX);

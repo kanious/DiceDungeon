@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Transform.h"
 #include "XMLParser.h"
+#include "JSONParser.h"
 #include <sstream>
 #include <atlconv.h>
 
@@ -40,8 +41,12 @@ Client::Client()
 	m_DataPath = ss.str();
 	m_SoundDataFileName = "sound.xml";
 	m_ShaderDataFileName = "shader.xml";
-	m_TextureDataFileName = "texture.xml";
-	m_MeshDataFileName = "mesh.xml";
+
+	//m_TextureDataFileName = "texture.xml";
+	//m_MeshDataFileName = "mesh.xml";
+
+	m_TextureDataFileName = "texture.json";
+	m_MeshDataFileName = "mesh.json";
 }
 
 Client::~Client()
@@ -180,6 +185,10 @@ void Client::Ready_Basic_Data()
 {
 	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
-	CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
-	CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
+	//CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
+	//CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
+
+
+	CJsonParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
+	CJsonParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
 }

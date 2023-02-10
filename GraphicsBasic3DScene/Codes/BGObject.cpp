@@ -36,6 +36,14 @@ string BGObject::GetMeshID()
 	return id;
 }
 
+std::string BGObject::GetTexName()
+{
+	if (nullptr != m_pMesh)
+		return m_pMesh->GetTexName();
+
+	return "";
+}
+
 void BGObject::SetSelected(_bool select)
 {
 	if (nullptr != m_pMesh)

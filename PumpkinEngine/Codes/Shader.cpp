@@ -21,7 +21,6 @@ CShader::CShader()
 	, m_colorLocation(0)
 	, m_transparencyLocation(0)
 	, m_frameLocation(0)
-	, m_animEaseLocation(0)
 {
 }
 
@@ -36,7 +35,6 @@ CShader::CShader(const CShader& rhs)
 	, m_colorLocation(rhs.m_colorLocation)
 	, m_transparencyLocation(rhs.m_transparencyLocation)
 	, m_frameLocation(rhs.m_frameLocation)
-	, m_animEaseLocation(rhs.m_animEaseLocation)
 {
 	m_tag = rhs.m_tag;
 }

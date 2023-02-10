@@ -57,10 +57,7 @@ void Player::Update(const _float& dt)
 	if (m_bEnable)
 	{
 		CGameObject::Update(dt);
-
-		if (nullptr != m_pMesh)
-			m_pMesh->SetAnimEaseType((_uint)m_eEaseType);
-
+		
 		if (nullptr != m_pRenderer)
 			m_pRenderer->AddRenderObj(this);
 	}

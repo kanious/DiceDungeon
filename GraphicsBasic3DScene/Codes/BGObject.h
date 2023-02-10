@@ -22,6 +22,7 @@ private:
 public:
 	std::string GetMeshID();
 	std::string GetSoundTag()				{ return m_soundTag; }
+	std::string GetTexName();
 	void SetSelected(_bool select);
 	void SetSoundTag(std::string tag)		{ m_soundTag = tag; }
 public:

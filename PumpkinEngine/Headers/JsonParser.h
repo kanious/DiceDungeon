@@ -4,10 +4,12 @@
 #include "Base.h"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
+#include "rapidjson/document.h"
+#include "fmod/fmod.h"
 
 NAMESPACE_BEGIN(Engine)
 
-class CComponent;
+class CComponentMaster;
 class ENGINE_API CJsonParser : public CBase
 {
 	SINGLETON(CJsonParser)
@@ -23,8 +25,37 @@ class ENGINE_API CJsonParser : public CBase
 		_bool ANIMRANDOM;
 	};
 
+	struct sTexturedata
+	{
+		std::string ID;
+		std::string PATH;
+		std::string FILENAME;
+	};
+
+	struct sMeshData
+	{
+		std::string ID;
+		std::string PATH;
+		std::string FILENAME;
+		_uint TYPE;
+		std::string SHADER_ID;
+		std::string INITSIZE;
+		std::string TEXTURE_ID_DIFF;
+	};
+
+	struct sObjectData
+	{
+		std::string ID;
+		std::string TEXNAME;
+		glm::vec3 POSITION;
+		glm::vec3 ROTATION;
+		glm::vec3 SCALE;
+		_bool LOCK;
+	};
+
 private:
 	std::string				m_jsonDataPath;
+	CComponentMaster*		m_pCompMaster;
 
 private:
 	explicit CJsonParser();
@@ -34,6 +65,12 @@ private:
 
 public:
 	void LoadCharacterList(std::string assetFolderPath, std::string fileName, std::vector<sCharacterData>& vec);
+	void LoadTextureData(std::string assetFolderPath, std::string fileName);
+	void LoadMeshData(std::string assetFolderPath, std::string fileName);
+	void SaveObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
+
+private:
+	void LoadDataFromFile(rapidjson::Document& doc, FILE*& file, std::string assetFolderPath, std::string fileName);
 };
 
 NAMESPACE_END
