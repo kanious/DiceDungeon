@@ -8,8 +8,6 @@
 #include "../Headers/Shader.h"
 #include "../Headers/Transform.h"
 #include "../Headers/BoundingBox.h"
-#include "../Headers/QuadTree.h"
-#include "../Headers/Octree.h"
 #include "../Headers/AnimController.h"
 #include <fstream>
 #include <sstream>
@@ -30,6 +28,7 @@ CMesh::CMesh()
     , m_pVIBuffer(nullptr)
     , m_pBoundingBox(nullptr)
     , m_pDiffTexture(nullptr)
+    , m_pNormalTexture(nullptr)
     , m_pShader(nullptr)
     , m_pParentTransform(nullptr)
     , m_bWireFrame(false)
@@ -40,9 +39,8 @@ CMesh::CMesh()
     , m_textureFileName("")
     , m_iTriNum(0)
     , m_pTriangles(nullptr)
-    , m_pQuadTree(nullptr)
-    , m_pOctree(nullptr)
     , m_pAnimController(nullptr)
+    , m_meshType("")
 {
     m_pOpenGLDevice->AddRefCnt();
 }
@@ -51,6 +49,7 @@ CMesh::CMesh(const CMesh& rhs)
     : m_pOpenGLDevice(rhs.m_pOpenGLDevice)
     , m_pVIBuffer(rhs.m_pVIBuffer)
     , m_pDiffTexture(rhs.m_pDiffTexture)
+    , m_pNormalTexture(rhs.m_pNormalTexture)
     , m_pShader(rhs.m_pShader)
     , m_pParentTransform(nullptr)
     , m_bWireFrame(rhs.m_bWireFrame)
@@ -60,17 +59,15 @@ CMesh::CMesh(const CMesh& rhs)
     , m_bTransparency(rhs.m_bTransparency)
     , m_textureFileName(rhs.m_textureFileName)
     , m_iTriNum(rhs.m_iTriNum)
-    , m_pQuadTree(rhs.m_pQuadTree)
-    , m_pOctree(rhs.m_pOctree)
     , m_pAnimController(nullptr)
+    , m_meshType(rhs.m_meshType)
 {
     m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
     if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
     if (nullptr != m_pDiffTexture) m_pDiffTexture->AddRefCnt();
+    if (nullptr != m_pNormalTexture) m_pNormalTexture->AddRefCnt();
     if (nullptr != m_pShader) m_pShader->AddRefCnt();
-    if (nullptr != m_pQuadTree) m_pQuadTree->AddRefCnt();
-    if (nullptr != m_pOctree) m_pOctree->AddRefCnt();
 
     m_pBoundingBox = CBoundingBox::Create(
         rhs.m_pBoundingBox->m_vMin
@@ -122,8 +119,16 @@ void CMesh::Render()
 
     if (nullptr != m_pDiffTexture)
     {
+        m_pShader->SetTextureInfo();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_pDiffTexture->GetTextureID());
+    }
+
+    if (nullptr != m_pNormalTexture)
+    {
+        m_pShader->SetNormalTextureInfo();
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_pNormalTexture->GetTextureID());
     }
 
 	if (nullptr != m_pVIBuffer)
@@ -138,12 +143,6 @@ void CMesh::Render()
         glDepthMask(GL_TRUE);
     }
 
-    if (nullptr != m_pQuadTree)
-        m_pQuadTree->Render();
-
-    if (nullptr != m_pOctree)
-        m_pOctree->Render();
-
     if (m_bDebug && nullptr != m_pBoundingBox)
         m_pBoundingBox->Render();
 }
@@ -154,9 +153,8 @@ void CMesh::Destroy()
     SafeDestroy(m_pVIBuffer);
     SafeDestroy(m_pBoundingBox);
     SafeDestroy(m_pDiffTexture);
+    SafeDestroy(m_pNormalTexture);
     SafeDestroy(m_pShader);
-    SafeDestroy(m_pQuadTree);
-    SafeDestroy(m_pOctree);
     m_pParentTransform = nullptr;
     if (nullptr != m_pTriangles)
         delete m_pTriangles;
@@ -173,9 +171,11 @@ void CMesh::SetTexture(std::string texID_diff)
         m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
-RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type, string shaderID, string texID_Diff)
+RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type,
+    string shaderID, string meshType, string texID_Diff, string texID_Normal)
 {
     m_tag = ID;
+    m_meshType = meshType;
 
     VTX* pVertices = nullptr;
     _uint* pIndices = nullptr;
@@ -190,6 +190,7 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type,
     delete[] pIndices;
 
     Ready_Texture_Diff(texID_Diff);
+    Ready_Texture_Normal(texID_Normal);
     Ready_Shader(shaderID);
 
     if (nullptr != m_pShader)
@@ -198,7 +199,7 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, ModelType type,
 	return PK_NOERROR;
 }
 
-RESULT CMesh::Ready_VIBuffer(ModelType type, string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
 {
     stringstream ss;
     ss << filePath << fileName;
@@ -347,6 +348,13 @@ void CMesh::Ready_Texture_Diff(string texID)
         m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
+void CMesh::Ready_Texture_Normal(std::string texID)
+{
+    CComponent* pComponent = CloneComponent<CTexture*>(texID);
+    if (nullptr != pComponent)
+        m_pNormalTexture = dynamic_cast<CTexture*>(pComponent);
+}
+
 void CMesh::Ready_Shader(string shaderID)
 {
     CComponent* pComponent = CloneComponent<CShader*>(shaderID);
@@ -354,53 +362,55 @@ void CMesh::Ready_Shader(string shaderID)
         m_pShader = dynamic_cast<CShader*>(pComponent);
 }
 
-void CMesh::Ready_QuadTree(_uint depth)
-{
-    if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
-        return;
+//void CMesh::Ready_QuadTree(_uint depth)
+//{
+    //if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
+    //    return;
 
-    m_pQuadTree = CQuadTree::Create(m_pBoundingBox->m_vMax, m_pBoundingBox->m_vMin, depth);
-    if (nullptr == m_pQuadTree)
-        return;
+    //m_pQuadTree = CQuadTree::Create(m_pBoundingBox->m_vMax, m_pBoundingBox->m_vMin, depth);
+    //if (nullptr == m_pQuadTree)
+    //    return;
 
-    for (_uint i = 0; i < m_iTriNum; ++i)
-    {
-        _int hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p0.x, m_pTriangles[i].p0.z);
-        m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
+    //for (_uint i = 0; i < m_iTriNum; ++i)
+    //{
+    //    _int hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p0.x, m_pTriangles[i].p0.z);
+    //    m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
 
-        hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p1.x, m_pTriangles[i].p1.z);
-        m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
+    //    hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p1.x, m_pTriangles[i].p1.z);
+    //    m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
 
-        hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p2.x, m_pTriangles[i].p2.z);
-        m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
-    }
-}
+    //    hashKey = m_pQuadTree->GetHashValue(m_pTriangles[i].p2.x, m_pTriangles[i].p2.z);
+    //    m_pQuadTree->AddTriangleToTreeNode(hashKey, m_pTriangles[i]);
+    //}
+//}
 
-void CMesh::Ready_Qctree(_uint depth)
-{
-    if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
-        return;
-
-    m_pOctree = COctree::Create(m_pBoundingBox->m_vMax, m_pBoundingBox->m_vMin, depth);
-    if (nullptr == m_pOctree)
-        return;
-
-    _uint missed = 0;
-    for (_uint i = 0; i < m_iTriNum; ++i)
-    {
-        m_pOctree->AddTriangle(m_pTriangles[i], missed);
-    }
-}
+//void CMesh::Ready_Qctree(_uint depth)
+//{
+//    if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
+//        return;
+//
+//    m_pOctree = COctree::Create(m_pBoundingBox->m_vMax, m_pBoundingBox->m_vMin, depth);
+//    if (nullptr == m_pOctree)
+//        return;
+//
+//    _uint missed = 0;
+//    for (_uint i = 0; i < m_iTriNum; ++i)
+//    {
+//        m_pOctree->AddTriangle(m_pTriangles[i], missed);
+//    }
+//}
 
 CComponent* CMesh::Clone()
 {
     return new CMesh(*this);
 }
 
-CMesh* CMesh::Create(string ID, string filePath, string fileName, ModelType type, string shaderID, string texID_Diff)
+CMesh* CMesh::Create(string ID, string filePath, string fileName, eModelType type,
+    string shaderID, string meshType, string texID_Diff, string texID_Normal)
 {
 	CMesh* pInstance = new CMesh();
-	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type, shaderID, texID_Diff))
+	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type, shaderID, meshType,
+        texID_Diff, texID_Normal))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

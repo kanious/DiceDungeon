@@ -16,6 +16,7 @@ CShader::CShader()
 	, m_matViewLocation(0)
 	, m_matProjLocation(0)
 	, m_diffTexLocation(0)
+	, m_normalTexLocation(0)
 	, m_lightEnableLocation(0)
 	, m_selectedLocation(0)
 	, m_colorLocation(0)
@@ -30,6 +31,7 @@ CShader::CShader(const CShader& rhs)
 	, m_matViewLocation(rhs.m_matViewLocation)
 	, m_matProjLocation(rhs.m_matProjLocation)
 	, m_diffTexLocation(rhs.m_diffTexLocation)
+	, m_normalTexLocation(rhs.m_normalTexLocation)
 	, m_lightEnableLocation(rhs.m_lightEnableLocation)
 	, m_selectedLocation(rhs.m_selectedLocation)
 	, m_colorLocation(rhs.m_colorLocation)
@@ -126,6 +128,7 @@ void CShader::SetLocation()
 	m_matViewLocation = glGetUniformLocation(m_ShaderProgram, "matView");
 	m_matProjLocation = glGetUniformLocation(m_ShaderProgram, "matProj");
 	m_diffTexLocation = glGetUniformLocation(m_ShaderProgram, "diffTexture");
+	m_normalTexLocation = glGetUniformLocation(m_ShaderProgram, "normalTexture");
 	m_lightEnableLocation = glGetUniformLocation(m_ShaderProgram, "isLightEnable");
 	m_selectedLocation = glGetUniformLocation(m_ShaderProgram, "isSelected");
 	m_colorLocation = glGetUniformLocation(m_ShaderProgram, "vColor");
@@ -145,6 +148,12 @@ void CShader::SetTextureInfo()
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_diffTexLocation, 0);
+}
+
+void CShader::SetNormalTextureInfo()
+{
+	glUseProgram(m_ShaderProgram);
+	glUniform1i(m_normalTexLocation, 1);
 }
 
 void CShader::SetLightEnableInfo(_bool lightEnable)

@@ -63,6 +63,7 @@ private:
 	_bool							m_isZeroDebug;
 	_bool							m_isPreviousZeroWire;
 	_bool							m_isZeroWire;
+	_bool m_bSnap;
 
 private:
 	explicit MapEditorUI();

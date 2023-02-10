@@ -159,8 +159,8 @@ void CXMLParser::LoadMeshData(string path, string fileName)
 
 		stringstream ss;
 		ss << path << data.PATH;
-		pComponent = CMesh::Create(data.ID, ss.str(), data.FILENAME, (ModelType)data.TYPE,
-			data.SHADER_ID, data.TEXTURE_ID_DIFF);
+		pComponent = CMesh::Create(data.ID, ss.str(), data.FILENAME, (eModelType)data.TYPE,
+			data.SHADER_ID, "", data.TEXTURE_ID_DIFF, "");
 		if (nullptr != pComponent)
 		{
 			pMaster->AddNewComponent(data.ID, pComponent);

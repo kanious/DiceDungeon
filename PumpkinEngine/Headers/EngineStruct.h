@@ -34,7 +34,7 @@ namespace Engine
 		glm::vec3 p2;
 	}TRIANGLE;
 
-	enum ModelType
+	enum eModelType
 	{
 		xyz_index,
 		xyz_normal_index,

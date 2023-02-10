@@ -63,6 +63,8 @@ MapEditorUI::MapEditorUI()
 	m_isZeroDebug = false;
 	m_isPreviousZeroWire = false;
 	m_isZeroWire = false;
+
+	m_bSnap = true;
 }
 
 MapEditorUI::~MapEditorUI()
@@ -280,6 +282,43 @@ void MapEditorUI::KeyCheck(const _float& dt)
 			{
 				vec3 vPos = m_pTargetObject->GetPosition();
 				vDest.y = vPos.y;
+
+				//if (!strcmp("floor", m_pTargetObject->GetMeshType().c_str()))
+				if (m_bSnap)
+				{
+					if (0 > vDest.x)
+						vDest.x = (_int)((vDest.x - 5) / 10) * 10;
+					else
+						vDest.x = (_int)((vDest.x + 5) / 10) * 10;
+
+					if (0 > vDest.z)
+						vDest.z = (_int)((vDest.z - 5) / 10) * 10;
+					else
+						vDest.z = (_int)((vDest.z + 5) / 10) * 10;
+
+					if (!strcmp("wall", m_pTargetObject->GetMeshType().c_str()))
+					{
+						_float fY = m_pTargetObject->GetRotationY();
+
+						if (fY == 0.f)
+						{
+							vDest.z += 5.f;
+						}
+						else if (fY == 90.f)
+						{
+							vDest.x -= 5.f;
+						}
+						else if (fY == 180.f)
+						{
+							vDest.z -= 5.f;
+						}
+						else
+						{
+							vDest.x += 5.f;
+						}
+					}
+				}
+
 				m_pTargetObject->SetPosition(vDest);
 			}
 		}
@@ -925,7 +964,7 @@ void MapEditorUI::RenderMeshList()
 				pGameObject = BGObject::Create(m_pScene->GetSceneTag(), (_uint)LAYER_BACKGROUND, (_uint)OBJ_BACKGROUND
 					, m_pScene->GetLayer((_uint)LAYER_BACKGROUND)
 					, meshId
-					, vPos, vRot, vScale, 0);
+					, vPos, vRot, vScale);
 
 				if (nullptr != pGameObject)
 					m_pScene->AddGameObjectToLayer((_uint)LAYER_BACKGROUND, pGameObject);

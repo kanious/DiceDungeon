@@ -32,7 +32,7 @@ void CVIBuffer::Destroy()
 	glDeleteBuffers(1, &m_iVB_ID);
 }
 
-RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, ModelType type)
+RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type)
 {
 	if (nullptr == pVertices || nullptr == pIndices)
 		return PK_ERROR_NULLPTR;
@@ -111,7 +111,7 @@ void CVIBuffer::Ready_xyz_normal_texUV()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VTX), (void*)offsetof(VTX, vTexUV.x));
 }
 
-CVIBuffer* CVIBuffer::Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, ModelType type)
+CVIBuffer* CVIBuffer::Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type)
 {
 	CVIBuffer* pInstance = new CVIBuffer();
 	if (PK_NOERROR != pInstance->Ready(numVTX, pVertices, numIDX, pIndices, type))

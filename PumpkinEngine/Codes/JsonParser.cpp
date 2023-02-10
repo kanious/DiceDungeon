@@ -69,7 +69,7 @@ void CJsonParser::LoadCharacterList(std::string assetFolderPath, std::string fil
 		vec.push_back(data);
 	}
 
-	fclose(file);
+	std::fclose(file);
 }
 
 void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileName)
@@ -77,14 +77,12 @@ void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileN
 	Document doc;
 	FILE* file;
 	LoadDataFromFile(doc, file, assetFolderPath, fileName);
-	const Value& dataArray = doc["array"];
-	assert(dataArray.IsArray());
 
-	for (int i = 0; i < dataArray.Size(); ++i)
+	for (unsigned int i = 0; i < doc.Size(); ++i)
 	{
 		sTexturedata data;
 
-		const Value& curData = dataArray[i];
+		const Value& curData = doc[i];
 		data.ID = curData["ID"].GetString();
 		data.PATH = curData["Path"].GetString();
 		data.FILENAME = curData["FileName"].GetString();
@@ -97,7 +95,7 @@ void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileN
 			m_pCompMaster->AddNewComponent(data.ID, pComp);
 	}
 
-	fclose(file);
+	std::fclose(file);
 }
 
 void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName)
@@ -105,26 +103,28 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 	Document doc;
 	FILE* file;
 	LoadDataFromFile(doc, file, assetFolderPath, fileName);
-	const Value& dataArray = doc["array"];
-	assert(dataArray.IsArray());
 
-	for (int i = 0; i < dataArray.Size(); ++i)
+	for (unsigned int i = 0; i < doc.Size(); ++i)
 	{
 		sMeshData data;
 
-		const Value& curData = dataArray[i];
+		const Value& curData = doc[i];
+
 		data.ID = curData["ID"].GetString();
 		data.PATH = curData["Path"].GetString();
 		data.FILENAME = curData["FileName"].GetString();
-		data.TYPE = curData["Type"].GetInt();
+		data.DATATYPE = curData["DataType"].GetInt();
 		data.SHADER_ID = curData["Shader_ID"].GetString();
 		data.INITSIZE = to_string(curData["InitSize"].GetFloat());
+		data.MESHTYPE = curData["MeshType"].GetString();
 		data.TEXTURE_ID_DIFF = curData["Texture_ID_Diff"].GetString();
+		data.TEXTURE_ID_NORMAL = curData["Texture_ID_Normal"].GetString();
 
 		stringstream ss;
 		ss << assetFolderPath << data.PATH;
-		CComponent* pComp = CMesh::Create(data.ID, ss.str(), data.FILENAME, (ModelType)data.TYPE,
-			data.SHADER_ID, data.TEXTURE_ID_DIFF);
+		CComponent* pComp = CMesh::Create(data.ID, ss.str(), data.FILENAME,
+			(eModelType)data.DATATYPE, data.SHADER_ID, data.MESHTYPE,
+			data.TEXTURE_ID_DIFF, data.TEXTURE_ID_NORMAL);
 
 		if (nullptr != pComp)
 		{
@@ -133,7 +133,41 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 		}
 	}
 
-	fclose(file);
+	std::fclose(file);
+}
+
+void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
+{
+	Document doc;
+	FILE* file;
+	LoadDataFromFile(doc, file, assetFolderPath, fileName);
+
+	for (unsigned int i = 0; i < doc.Size(); ++i)
+	{
+		sObjectData data;
+
+		const Value& curData = doc[i];
+
+		data.ID = curData["modelName"].GetString();
+		data.TEXNAME = curData["texName"].GetString();
+		data.POSITION.x = curData["posX"].GetFloat();
+		data.POSITION.y = curData["posY"].GetFloat();
+		data.POSITION.z = curData["posZ"].GetFloat();
+		data.ROTATION.x = curData["rotX"].GetFloat();
+		data.ROTATION.y = curData["rotY"].GetFloat();
+		data.ROTATION.z = curData["rotZ"].GetFloat();
+		data.SCALE.x = curData["scaleX"].GetFloat();
+		data.SCALE.y = curData["scaleY"].GetFloat();
+		data.SCALE.z = curData["scaleZ"].GetFloat();
+		data.LOCK = curData["lock"].GetBool();
+
+		if (i == 0)
+			cameraData = data;
+		else
+			vec.push_back(data);
+	}
+
+	std::fclose(file);
 }
 
 void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
@@ -155,6 +189,38 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 	Document doc;
 	doc.SetArray();
 	Document::AllocatorType& allocator = doc.GetAllocator();
+
+	// Camera
+	{
+		Value obj;
+		obj.SetObject();
+
+		Value id;
+		len = sprintf_s(buffer, "%s", "Camera");
+		id.SetString(buffer, len, allocator);
+		obj.AddMember("modelName", id, allocator);
+
+		Value texName;
+		texName.SetString(buffer, 0, allocator);
+		obj.AddMember("texName", texName, allocator);
+
+		Value posX;	posX.SetFloat(cameraData.POSITION.x); obj.AddMember("posX", posX, allocator);
+		Value posY;	posY.SetFloat(cameraData.POSITION.y); obj.AddMember("posY", posY, allocator);
+		Value posZ; posZ.SetFloat(cameraData.POSITION.z); obj.AddMember("posZ", posZ, allocator);
+
+		Value rotX;	rotX.SetFloat(cameraData.ROTATION.x); obj.AddMember("rotX", rotX, allocator);
+		Value rotY;	rotY.SetFloat(cameraData.ROTATION.y); obj.AddMember("rotY", rotY, allocator);
+		Value rotZ; rotZ.SetFloat(cameraData.ROTATION.z); obj.AddMember("rotZ", rotZ, allocator);
+
+		Value scaleX; scaleX.SetFloat(cameraData.SCALE.x); obj.AddMember("scaleX", scaleX, allocator);
+		Value scaleY; scaleY.SetFloat(cameraData.SCALE.y); obj.AddMember("scaleY", scaleY, allocator);
+		Value scaleZ; scaleZ.SetFloat(cameraData.SCALE.z); obj.AddMember("scaleZ", scaleZ, allocator);
+
+		Value lock; lock.SetBool(false); obj.AddMember("lock", lock, allocator);
+
+		doc.PushBack(obj, allocator);
+	}
+
 	for (int i = 0; i < vec.size(); ++i)
 	{
 		sObjectData curData = vec[i];
@@ -184,11 +250,13 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 		Value scaleY; scaleY.SetFloat(curData.SCALE.y); obj.AddMember("scaleY", scaleY, allocator);
 		Value scaleZ; scaleZ.SetFloat(curData.SCALE.z); obj.AddMember("scaleZ", scaleZ, allocator);
 
+		Value lock; lock.SetBool(curData.LOCK); obj.AddMember("lock", lock, allocator);
+
 		doc.PushBack(obj, allocator);
 	}
 
 	doc.Accept(writer);
-	fclose(file);
+	std::fclose(file);
 }
 
 void CJsonParser::LoadDataFromFile(Document& doc, FILE*& file, string assetFolderPath, string fileName)

@@ -2,7 +2,6 @@
 #include "Define.h"
 #include "Enums.h"
 
-#include "XMLParser.h"
 #include "JsonParser.h"
 #include "Layer.h"
 #include "GameObject.h"
@@ -45,7 +44,7 @@ SceneForest::SceneForest()
 	ss << str << "\\..\\Assets\\";
 
 	m_DataPath = ss.str();
-	m_ObjListFileName = "mapObjects.xml";
+	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
 }
 
@@ -332,8 +331,7 @@ void SceneForest::SaveBackgroundObjects()
 			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
 		}
 
-		CJsonParser::GetInstance()->SaveObjectList(m_DataPath, "mapObjects.json", vecObjects, cameraData);
-		//CXMLParser::GetInstance()->SaveMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+		CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 	}
 }
 
@@ -346,14 +344,14 @@ void SceneForest::LoadBackgroundObjects()
 	{
 		m_pBackgroundLayer = pLayer;
 		pLayer->RemoveAllGameObject();
-		vector<CXMLParser::sObjectData> vecObjects;
-		CXMLParser::sObjectData cameraData;
-		CXMLParser::GetInstance()->LoadMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
-		vector<CXMLParser::sObjectData>::iterator iter;
+		vector<CJsonParser::sObjectData> vecObjects;
+		CJsonParser::sObjectData cameraData;
+		CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+		vector<CJsonParser::sObjectData>::iterator iter;
 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 		{
-			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
-				iter->POSITION, iter->ROTATION, iter->SCALE, 0);
+			pGameObject = BGObject::Create((_uint)SCENE_FOREST, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer,
+				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
 			if (nullptr == pGameObject)
 				continue;
 			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);

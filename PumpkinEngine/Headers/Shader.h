@@ -14,6 +14,7 @@ protected:
 	_uint				m_matViewLocation;
 	_uint				m_matProjLocation;
 	_uint				m_diffTexLocation;
+	_uint				m_normalTexLocation;
 	_uint				m_lightEnableLocation;
 	_uint				m_selectedLocation;
 	_uint				m_colorLocation;
@@ -39,6 +40,7 @@ public:
 	_uint GetShaderProgram()		{ return m_ShaderProgram; }
 	void SetMatrixInfo(const glm::mat4x4 world, const glm::mat4x4 view, const glm::mat4x4 proj);
 	void SetTextureInfo();
+	void SetNormalTextureInfo();
 	void SetLightEnableInfo(_bool lightEnable);
 	void SetSelected(_bool selected);
 	void SetColor(glm::vec3 vColor);

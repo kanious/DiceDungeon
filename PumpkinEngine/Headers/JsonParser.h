@@ -37,10 +37,12 @@ class ENGINE_API CJsonParser : public CBase
 		std::string ID;
 		std::string PATH;
 		std::string FILENAME;
-		_uint TYPE;
+		_uint DATATYPE;
 		std::string SHADER_ID;
 		std::string INITSIZE;
+		std::string MESHTYPE;
 		std::string TEXTURE_ID_DIFF;
+		std::string TEXTURE_ID_NORMAL;
 	};
 
 	struct sObjectData
@@ -67,6 +69,7 @@ public:
 	void LoadCharacterList(std::string assetFolderPath, std::string fileName, std::vector<sCharacterData>& vec);
 	void LoadTextureData(std::string assetFolderPath, std::string fileName);
 	void LoadMeshData(std::string assetFolderPath, std::string fileName);
+	void LoadObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
 	void SaveObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
 
 private:

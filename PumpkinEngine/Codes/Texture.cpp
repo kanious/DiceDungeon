@@ -25,7 +25,7 @@ CTexture::~CTexture()
 
 void CTexture::Destroy()
 {
-    glDeleteTextures(2, &m_iTextureID);
+    glDeleteTextures(1, &m_iTextureID);
 
     CComponent::Destroy();
 }

@@ -23,6 +23,7 @@ public:
 	std::string GetMeshID();
 	std::string GetSoundTag()				{ return m_soundTag; }
 	std::string GetTexName();
+	std::string GetMeshType();
 	void SetSelected(_bool select);
 	void SetSoundTag(std::string tag)		{ m_soundTag = tag; }
 public:
@@ -34,10 +35,10 @@ public:
 private:
 	virtual void Destroy();
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _int dir);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 public:
 	static BGObject* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _int dir);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 };
 
 #endif //_BGOBJECT_H_

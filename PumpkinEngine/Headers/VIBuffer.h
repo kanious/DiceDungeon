@@ -32,14 +32,14 @@ public:
 	void SetWireFrame(_bool wireFrame) { m_bWireFrame = wireFrame; }
 
 private:
-	RESULT Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, ModelType type);
+	RESULT Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type);
 	void Ready_Vertex_To_Shader();
 	void Ready_xyz();
 	void Ready_xyz_normal();
 	void Ready_xyz_normal_texUV();
 
 public:
-	static CVIBuffer* Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, ModelType type);
+	static CVIBuffer* Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type);
 };
 
 NAMESPACE_END
