@@ -1,0 +1,24 @@
+ply
+format ascii 1.0
+comment VCGLIB generated
+comment TextureFile moss.tga
+element vertex 4
+property float x
+property float y
+property float z
+property float nx
+property float ny
+property float nz
+property float texture_u
+property float texture_v
+element face 4
+property list uchar int vertex_indices
+end_header
+-25 -50 -5.551115e-15 0 -1.110223e-16 1 0.5014691 0
+-25 50 5.551115e-15 0 0 0 0.5014691 0.9970617
+25 50 5.551115e-15 0 0 0 1 0.9970617
+25 -50 -5.551115e-15 0 0 0 1 0
+3 0 1 2 
+3 0 2 3 
+3 0 3 2 
+3 0 2 1 

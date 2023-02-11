@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Language_Data>
+  <string>
+    <Key>TEXT_01</Key>
+    <Content>Sistema</Content>
+  </string>
+  <string>
+    <Key>TEXT_02</Key>
+    <Content>Volver al juego</Content>
+  </string>
+  <string>
+    <Key>TEXT_03</Key>
+    <Content>Cerrar editor de mapas</Content>
+  </string>
+  <string>
+    <Key>TEXT_04</Key>
+    <Content>Abrir editor de mapas</Content>
+  </string>
+  <string>
+    <Key>TEXT_05</Key>
+    <Content>Cerrar editor de sonido</Content>
+  </string>
+  <string>
+    <Key>TEXT_06</Key>
+    <Content>Editor de sonido abierto</Content>
+  </string>
+  <string>
+    <Key>TEXT_07</Key>
+    <Content> Opciones de lenguaje :</Content>
+  </string>
+  <string>
+    <Key>TEXT_08</Key>
+    <Content>Abandonar</Content>
+  </string>
+  <string>
+    <Key>TEXT_09</Key>
+    <Content>Configuración de sonido</Content>
+  </string>
+  <string>
+    <Key>TEXT_10</Key>
+    <Content>* Archivos de sonido</Content>
+  </string>
+  <string>
+    <Key>TEXT_11</Key>
+    <Content> Nombre del archivo</Content>
+  </string>
+  <string>
+    <Key>TEXT_12</Key>
+    <Content> Escribe</Content>
+  </string>
+  <string>
+    <Key>TEXT_13</Key>
+    <Content> Formato</Content>
+  </string>
+  <string>
+    <Key>TEXT_14</Key>
+    <Content> Canales</Content>
+  </string>
+  <string>
+    <Key>TEXT_15</Key>
+    <Content> Bits</Content>
+  </string>
+  <string>
+    <Key>TEXT_16</Key>
+    <Content>Círculo</Content>
+  </string>
+  <string>
+    <Key>TEXT_17</Key>
+    <Content> Grupo de canales</Content>
+  </string>
+  <string>
+    <Key>TEXT_18</Key>
+    <Content> Estado</Content>
+  </string>
+  <string>
+    <Key>TEXT_19</Key>
+    <Content>Sí</Content>
+  </string>
+  <string>
+    <Key>TEXT_20</Key>
+    <Content>No</Content>
+  </string>
+  <string>
+    <Key>TEXT_21</Key>
+    <Content>Tocar</Content>
+  </string>
+  <string>
+    <Key>TEXT_22</Key>
+    <Content>Det?ngase</Content>
+  </string>
+  <string>
+    <Key>TEXT_23</Key>
+    <Content> Frecuencia</Content>
+  </string>
+  <string>
+    <Key>TEXT_24</Key>
+    <Content> Volumen</Content>
+  </string>
+  <string>
+    <Key>TEXT_25</Key>
+    <Content> Tono</Content>
+  </string>
+  <string>
+    <Key>TEXT_26</Key>
+    <Content> Sartén</Content>
+  </string>
+  <string>
+    <Key>TEXT_27</Key>
+    <Content>* Grupos de canales</Content>
+  </string>
+  <string>
+    <Key>TEXT_28</Key>
+    <Content> DSPs</Content>
+  </string>
+  <string>
+    <Key>TEXT_29</Key>
+    <Content>Comprobar todo</Content>
+  </string>
+  <string>
+    <Key>TEXT_30</Key>
+    <Content>Desmarcar todo</Content>
+  </string>
+  <string>
+    <Key>TEXT_31</Key>
+    <Content>Establecer valor predeterminado</Content>
+  </string>
+  <string>
+    <Key>TEXT_32</Key>
+    <Content>Editor de mapas de calabazas</Content>
+  </string>
+  <string>
+    <Key>TEXT_33</Key>
+    <Content>Objeto</Content>
+  </string>
+  <string>
+    <Key>TEXT_34</Key>
+    <Content>Luz</Content>
+  </string>
+  <string>
+    <Key>TEXT_35</Key>
+    <Content>Lista de mallas</Content>
+  </string>
+  <string>
+    <Key>TEXT_36</Key>
+    <Content>* Configuración de escena</Content>
+  </string>
+  <string>
+    <Key>TEXT_37</Key>
+    <Content>Ruta de datos:</Content>
+  </string>
+  <string>
+    <Key>TEXT_38</Key>
+    <Content>Archivo de lista de objetos:</Content>
+  </string>
+  <string>
+    <Key>TEXT_39</Key>
+    <Content>Lista de objetos Guardar</Content>
+  </string>
+  <string>
+    <Key>TEXT_40</Key>
+    <Content>Carga de lista de objetos</Content>
+  </string>
+  <string>
+    <Key>TEXT_41</Key>
+    <Content>* Configuración de objetivos de objetos</Content>
+  </string>
+  <string>
+    <Key>TEXT_42</Key>
+    <Content>No hay objetivo de objeto.</Content>
+  </string>
+  <string>
+    <Key>TEXT_43</Key>
+    <Content>Cerrar</Content>
+  </string>
+  <string>
+    <Key>TEXT_44</Key>
+    <Content>Espect?culo</Content>
+  </string>
+  <string>
+    <Key>TEXT_45</Key>
+    <Content>Caja</Content>
+  </string>
+  <string>
+    <Key>TEXT_46</Key>
+    <Content>Cable</Content>
+  </string>
+  <string>
+    <Key>TEXT_47</Key>
+    <Content>ID de malla:</Content>
+  </string>
+  <string>
+    <Key>TEXT_48</Key>
+    <Content>Posición</Content>
+  </string>
+  <string>
+    <Key>TEXT_49</Key>
+    <Content>Rotación</Content>
+  </string>
+  <string>
+    <Key>TEXT_50</Key>
+    <Content>Escala</Content>
+  </string>
+  <string>
+    <Key>TEXT_51</Key>
+    <Content>* Listas de objetos</Content>
+  </string>
+  <string>
+    <Key>TEXT_52</Key>
+    <Content>* Configuraci?n de luz</Content>
+  </string>
+  <string>
+    <Key>TEXT_53</Key>
+    <Content>Ruta de datos:</Content>
+  </string>
+  <string>
+    <Key>TEXT_54</Key>
+    <Content>Archivo de luz:</Content>
+  </string>
+  <string>
+    <Key>TEXT_55</Key>
+    <Content>Lista de luces Guardar</Content>
+  </string>
+  <string>
+    <Key>TEXT_56</Key>
+    <Content>Carga de lista de luces</Content>
+  </string>
+  <string>
+    <Key>TEXT_57</Key>
+    <Content>Agregar luces</Content>
+  </string>
+  <string>
+    <Key>TEXT_58</Key>
+    <Content>Direccional</Content>
+  </string>
+  <string>
+    <Key>TEXT_59</Key>
+    <Content>Punto</Content>
+  </string>
+  <string>
+    <Key>TEXT_60</Key>
+    <Content>Lugar</Content>
+  </string>
+  <string>
+    <Key>TEXT_61</Key>
+    <Content>Copiar luz actual</Content>
+  </string>
+  <string>
+    <Key>TEXT_62</Key>
+    <Content>* Configuración de detalle de objetivo de luz</Content>
+  </string>
+  <string>
+    <Key>TEXT_63</Key>
+    <Content>No hay un objetivo de luz.</Content>
+  </string>
+  <string>
+    <Key>TEXT_64</Key>
+    <Content>Nombre</Content>
+  </string>
+  <string>
+    <Key>TEXT_65</Key>
+    <Content>Dirección</Content>
+  </string>
+  <string>
+    <Key>TEXT_66</Key>
+    <Content>Difuso</Content>
+  </string>
+  <string>
+    <Key>TEXT_67</Key>
+    <Content>De espejo</Content>
+  </string>
+  <string>
+    <Key>TEXT_68</Key>
+    <Content>Ambiente</Content>
+  </string>
+  <string>
+    <Key>TEXT_69</Key>
+    <Content>Atención</Content>
+  </string>
+  <string>
+    <Key>TEXT_70</Key>
+    <Content>Param1</Content>
+  </string>
+  <string>
+    <Key>TEXT_71</Key>
+    <Content>Param2</Content>
+  </string>
+  <string>
+    <Key>TEXT_72</Key>
+    <Content>* Listas de luces</Content>
+  </string>
+  <string>
+    <Key>TEXT_73</Key>
+    <Content>Borrar</Content>
+  </string>
+  <string>
+    <Key>TEXT_74</Key>
+    <Content>A?adir objeto</Content>
+  </string>
+  <string>
+    <Key>TEXT_75</Key>
+    <Content>Tamaño</Content>
+  </string>
+  <string>
+    <Key>TEXT_76</Key>
+    <Content>* Versión de sonido actual:</Content>
+  </string>
+  <string>
+    <Key>TEXT_77</Key>
+    <Content>Comprimido</Content>
+  </string>
+  <string>
+    <Key>TEXT_78</Key>
+    <Content>sin comprimir</Content>
+  </string>
+  <string>
+    <Key>TEXT_79</Key>
+    <Content>Etiqueta de sonido</Content>
+  </string>
+</Language_Data>

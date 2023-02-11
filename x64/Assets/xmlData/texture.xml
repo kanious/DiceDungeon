@@ -1,0 +1,10 @@
+<Texture_List>
+	<Texture>
+		<ID>barrel_A_Tex</ID>
+		<Path>Texture\barrel_A_d.png</Path>
+	</Texture>
+	<Texture>
+		<ID>beam_A</ID>
+		<Path>Texture\barrel_A_d.png</Path>
+	</Texture>
+</Texture_List>

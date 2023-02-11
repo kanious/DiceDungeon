@@ -1,0 +1,232 @@
+[
+ {
+   "ID": "barrel_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "barrel_A_d.png"
+ },
+ {
+   "ID": "beam_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "beam_A_d.png"
+ },
+ {
+   "ID": "ceiling_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "ceiling_A_d.png"
+ },
+ {
+   "ID": "chest_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "chest_A_d.png"
+ },
+ {
+   "ID": "chest_B_Tex",
+   "Path": "Texture\\",
+   "FileName": "chest_B_d.png"
+ },
+ {
+   "ID": "door_A3_Tex",
+   "Path": "Texture\\",
+   "FileName": "door_A_d.png"
+ },
+ {
+   "ID": "floor_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "floor_A_d.png"
+ },
+ {
+   "ID": "lantern_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "lantern_A_d.png"
+ },
+ {
+   "ID": "moss_Tex",
+   "Path": "Texture\\",
+   "FileName": "moss.png"
+ },
+ {
+   "ID": "mud_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "mud_A_d.png"
+ },
+ {
+   "ID": "mushroom_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "mushroom_A_d.png"
+ },
+ {
+   "ID": "pillar_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "pillar_A_d.png"
+ },
+ {
+   "ID": "pot_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "pot_A_d.png"
+ },
+ {
+   "ID": "pot_B_Tex",
+   "Path": "Texture\\",
+   "FileName": "pot_B_d.png"
+ },
+ {
+   "ID": "rock_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "rock_A_d.png"
+ },
+ {
+   "ID": "skull_Tex",
+   "Path": "Texture\\",
+   "FileName": "skull_d.png"
+ },
+ {
+   "ID": "table_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "table_A_d.png"
+ },
+ {
+   "ID": "torch_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "torch_A_d.png"
+ },
+ {
+   "ID": "wall_A_Tex",
+   "Path": "Texture\\",
+   "FileName": "wall_A_d.png"
+ },
+ {
+   "ID": "barrel_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "barrel_A_n.png"
+ },
+ {
+   "ID": "beam_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "beam_A_n.png"
+ },
+ {
+   "ID": "ceiling_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "ceiling_A_n.png"
+ },
+ {
+   "ID": "chest_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "chest_A_n.png"
+ },
+ {
+   "ID": "chest_B_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "chest_B_n.png"
+ },
+ {
+   "ID": "door_A3_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "door_A_n.png"
+ },
+ {
+   "ID": "floor_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "floor_A_n.png"
+ },
+ {
+   "ID": "lantern_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "lantern_A_n.png"
+ },
+ {
+   "ID": "moss_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "moss_n.png"
+ },
+ {
+   "ID": "mud_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "mud_A_n.png"
+ },
+ {
+   "ID": "mushroom_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "mushroom_A_n.png"
+ },
+ {
+   "ID": "pillar_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "pillar_A_n.png"
+ },
+ {
+   "ID": "pot_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "pot_A_n.png"
+ },
+ {
+   "ID": "pot_B_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "pot_B_n.png"
+ },
+ {
+   "ID": "rock_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "rock_A_n.png"
+ },
+ {
+   "ID": "skull_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "skull_n.png"
+ },
+ {
+   "ID": "table_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "table_A_n.png"
+ },
+ {
+   "ID": "torch_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "torch_A_n.png"
+ },
+ {
+   "ID": "wall_A_Tex_N",
+   "Path": "Texture\\",
+   "FileName": "wall_A_n.png"
+ },
+ {
+   "ID": "key_Tex",
+   "Path": "Texture\\",
+   "FileName": "key.png"
+ },
+ {
+   "ID": "flast_Tex",
+   "Path": "Texture\\",
+   "FileName": "flask_a_BaseColor.png"
+ },
+ {
+   "ID": "axe_Tex",
+   "Path": "Texture\\",
+   "FileName": "axe_a_BaseColor.png"
+ },
+ {
+   "ID": "sword_Tex",
+   "Path": "Texture\\",
+   "FileName": "sword_a_BaseColor.png"
+ },
+ {
+   "ID": "cemetery_halloween_Tex",
+   "Path": "Texture\\",
+   "FileName": "cemetery_halloween_atlas.tga"
+ },
+ {
+   "ID": "book_Tex",
+   "Path": "Texture\\",
+   "FileName": "mf_book_01.png"
+ },
+ {
+   "ID": "dagger_Tex",
+   "Path": "Texture\\",
+   "FileName": "mf_dagger_01.png"
+ },
+ {
+   "ID": "potion_Tex",
+   "Path": "Texture\\",
+   "FileName": "mf_potion_01.png"
+ }
+]

@@ -1,0 +1,34 @@
+ply
+format ascii 1.0
+comment VCGLIB generated
+comment TextureFile pillar_A_d.png
+element vertex 10
+property float x
+property float y
+property float z
+property float nx
+property float ny
+property float nz
+property float texture_u
+property float texture_v
+element face 8
+property list uchar int vertex_indices
+end_header
+-15 200 -15 -0.7071068 0 -0.7071068 0.6020454 0.9999904
+15 200 -15 0.7071068 0 -0.7071068 0.4520256 0.9999841
+15 0 -15 0.7071068 0 -0.7071068 0.4520225 1.096725e-05
+-15 0 -15 -0.7071068 0 -0.7071068 0.6020454 2.655387e-05
+15 200 15 0.7071068 0 0.7071068 0.3020042 0.9999945
+15 0 15 0.7071068 0 0.7071068 0.3019993 3.635883e-06
+-15 200 15 -0.7071068 0 0.7071068 0.151982 1
+-15 0 15 -0.7071068 0 0.7071068 0.1519762 6.079674e-06
+-15 200 -15 -0.7071068 0 -0.7071068 0.001960887 0.9999932
+-15 0 -15 -0.7071068 0 -0.7071068 0.001954599 0
+3 0 1 2 
+3 0 2 3 
+3 1 4 5 
+3 1 5 2 
+3 4 6 7 
+3 4 7 5 
+3 6 8 9 
+3 6 9 7 
