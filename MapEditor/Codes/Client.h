@@ -34,7 +34,7 @@ public:
 	void Loop();
 	RESULT Ready();
 private:
-	RESULT Ready_Basic_Component();
+	RESULT Ready_BasicComponent();
 };
 
 #endif //_CLIENT_H_

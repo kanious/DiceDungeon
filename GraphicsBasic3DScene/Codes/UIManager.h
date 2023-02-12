@@ -3,14 +3,10 @@
 
 #include "Base.h"
 
-namespace Engine
-{
-	class CScene;
-}
-
 class SystemUI;
 class MapEditorUI;
 class SoundUI;
+class SceneForest;
 
 class UIManager : public Engine::CBase
 {
@@ -39,7 +35,7 @@ public:
 	void Destroy();
 	void Update(const _float& dt);
 	void RenderUI();
-	RESULT Ready(Engine::CScene* pScene);
+	RESULT Ready(SceneForest* pScene);
 
 public:
 	_bool GetCursorIsOnTheUI();

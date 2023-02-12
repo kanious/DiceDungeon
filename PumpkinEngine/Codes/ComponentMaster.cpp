@@ -10,7 +10,7 @@ SINGLETON_FUNCTION(CComponentMaster)
 CComponentMaster::CComponentMaster()
 {
 	m_mapComponent.clear();
-	m_mapMesh.clear();
+	m_vecMesh.clear();
 }
 
 CComponentMaster::~CComponentMaster()
@@ -24,7 +24,7 @@ void CComponentMaster::Destroy()
 		SafeDestroy(iter->second);
 
 	m_mapComponent.clear();
-	m_mapMesh.clear();
+	m_vecMesh.clear();
 }
 
 RESULT CComponentMaster::AddNewComponent(string tag, CComponent* pComponent)
@@ -38,15 +38,9 @@ RESULT CComponentMaster::AddNewComponent(string tag, CComponent* pComponent)
 	return PK_NOERROR;
 }
 
-RESULT CComponentMaster::AddNewMeshInfo(string tag, string initSize)
+void CComponentMaster::AddNewMeshInfo(string tag)
 {
-	MESH_MAP::iterator iter = m_mapMesh.find(tag);
-	if (iter == m_mapMesh.end())
-		m_mapMesh.insert(MESH_MAP::value_type(tag, initSize));
-	else
-		return PK_COMPONENT_EXIST;
-
-	return PK_NOERROR;
+	m_vecMesh.push_back(tag);
 }
 
 CComponent* CComponentMaster::FindComponent(std::string tag)

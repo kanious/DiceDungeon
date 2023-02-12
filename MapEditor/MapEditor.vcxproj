@@ -139,7 +139,7 @@
     <ClCompile Include="Codes\Animator.cpp" />
     <ClCompile Include="Codes\BGObject.cpp" />
     <ClCompile Include="Codes\Client.cpp" />
-    <ClCompile Include="Codes\CutScene.cpp" />
+    <ClCompile Include="Codes\MapEditorUI.cpp" />
     <ClCompile Include="Codes\DefaultCamera.cpp" />
     <ClCompile Include="Codes\glad.c" />
     <ClCompile Include="Codes\main.cpp" />
@@ -159,7 +159,7 @@
     <ClInclude Include="Codes\Animator.h" />
     <ClInclude Include="Codes\BGObject.h" />
     <ClInclude Include="Codes\Client.h" />
-    <ClInclude Include="Codes\CutScene.h" />
+    <ClInclude Include="Codes\MapEditorUI.h" />
     <ClInclude Include="Codes\DefaultCamera.h" />
     <ClInclude Include="Codes\Define.h" />
     <ClInclude Include="Codes\Enums.h" />

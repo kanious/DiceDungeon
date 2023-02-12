@@ -93,12 +93,14 @@ void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileN
 
 		if (nullptr != pComp)
 			m_pCompMaster->AddNewComponent(data.ID, pComp);
+
+		cout << "Texture Loading... " << data.ID << " Loaded" << endl;
 	}
 
 	std::fclose(file);
 }
 
-void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName)
+void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName, _bool saveMeshList)
 {
 	Document doc;
 	FILE* file;
@@ -123,14 +125,17 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 		stringstream ss;
 		ss << assetFolderPath << data.PATH;
 		CComponent* pComp = CMesh::Create(data.ID, ss.str(), data.FILENAME,
-			(eModelType)data.DATATYPE, data.SHADER_ID, data.MESHTYPE,
+			(eModelType)data.DATATYPE, data.SHADER_ID, data.INITSIZE, data.MESHTYPE,
 			data.TEXTURE_ID_DIFF, data.TEXTURE_ID_NORMAL);
 
 		if (nullptr != pComp)
 		{
 			m_pCompMaster->AddNewComponent(data.ID, pComp);
-			m_pCompMaster->AddNewMeshInfo(data.ID, data.INITSIZE);
+			if (saveMeshList)
+				m_pCompMaster->AddNewMeshInfo(data.ID);
 		}
+
+		cout << "Mesh Loading... " << data.ID << " Loaded" << endl;
 	}
 
 	std::fclose(file);

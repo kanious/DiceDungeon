@@ -17,7 +17,6 @@
 
 #include "Scene.h"
 #include "SceneForest.h"
-#include "SceneArena.h"
 
 USING(Engine)
 USING(std)

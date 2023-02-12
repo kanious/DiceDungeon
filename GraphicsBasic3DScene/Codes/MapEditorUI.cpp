@@ -7,7 +7,6 @@
 #include "CollisionMaster.h"
 #include "ComponentMaster.h"
 #include "Component.h"
-#include "Scene.h"
 #include "SceneForest.h"
 #include "Layer.h"
 #include "GameObject.h"
@@ -173,7 +172,7 @@ void MapEditorUI::RenderUI()
 	End();
 }
 
-RESULT MapEditorUI::Ready(CScene* pScene)
+RESULT MapEditorUI::Ready(SceneForest* pScene)
 {
 	if (nullptr != pScene)
 	{
@@ -182,18 +181,18 @@ RESULT MapEditorUI::Ready(CScene* pScene)
 		m_pDefaultCamera = dynamic_cast<SceneForest*>(pScene)->GetDefaultCamera();
 	}
 
-	unordered_map<string, string>* pMeshMap = CComponentMaster::GetInstance()->GetMeshMap();
-	unordered_map<string, string>::iterator iter;
-	for (iter = pMeshMap->begin(); iter != pMeshMap->end(); ++iter)
-	{
-		MeshInfo info;
-		info.meshId = iter->first;
-		char* inputText = new char[128];
-		memset(inputText, 0, sizeof(*inputText));
-		strcpy_s(inputText, iter->second.length() + 1, iter->second.c_str());
-		info.inputSize = inputText;
-		m_vecMeshInfo.push_back(info);
-	}
+	//unordered_map<string, string>* pMeshMap = CComponentMaster::GetInstance()->GetMeshVector();
+	//unordered_map<string, string>::iterator iter;
+	//for (iter = pMeshMap->begin(); iter != pMeshMap->end(); ++iter)
+	//{
+	//	MeshInfo info;
+	//	info.meshId = iter->first;
+	//	char* inputText = new char[128];
+	//	memset(inputText, 0, sizeof(*inputText));
+	//	strcpy_s(inputText, iter->second.length() + 1, iter->second.c_str());
+	//	info.inputSize = inputText;
+	//	m_vecMeshInfo.push_back(info);
+	//}
 
 	sort(m_vecMeshInfo.begin(), m_vecMeshInfo.end(), [](const MeshInfo& lhs, const MeshInfo& rhs)
 		{
@@ -1030,7 +1029,7 @@ void MapEditorUI::LightListLoad()
 	CLightMaster::GetInstance()->LoadLights(m_pScene->GetDataPath(), m_pScene->GetLightListFileName());
 }
 
-MapEditorUI* MapEditorUI::Create(CScene* pScene)
+MapEditorUI* MapEditorUI::Create(SceneForest* pScene)
 {
 	MapEditorUI* pInstance = new MapEditorUI();
 	if (PK_NOERROR != pInstance->Ready(pScene))

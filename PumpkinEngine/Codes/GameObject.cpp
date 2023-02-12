@@ -25,6 +25,7 @@ CGameObject::CGameObject()
 	m_bLock = false;
 	m_bDebug = true;
 	m_bWireFrame = false;
+	m_bSelected = false;
 	m_mapComponent.clear();
 	m_pRenderer = CRenderer::GetInstance(); m_pRenderer->AddRefCnt();
 	m_pLayer = nullptr;

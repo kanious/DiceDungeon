@@ -17,7 +17,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "",
+   "MeshType": "wall",
    "Texture_ID_Diff": "beam_A_Tex",
    "Texture_ID_Normal": "beam_A_Tex_N"
  },
@@ -28,7 +28,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "ceiling",
+   "MeshType": "ceil",
    "Texture_ID_Diff": "ceiling_A_Tex",
    "Texture_ID_Normal": "ceiling_A_Tex_N"
  },
@@ -39,7 +39,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "chest",
+   "MeshType": "",
    "Texture_ID_Diff": "chest_A_Tex",
    "Texture_ID_Normal": "chest_A_Tex_N"
  },
@@ -50,7 +50,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "chest",
+   "MeshType": "",
    "Texture_ID_Diff": "chest_A_Tex",
    "Texture_ID_Normal": "chest_A_Tex_N"
  },
@@ -61,7 +61,7 @@
    "DataType": 3,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "chest",
+   "MeshType": "",
    "Texture_ID_Diff": "chest_B_Tex",
    "Texture_ID_Normal": "chest_B_Tex_N"
  },
@@ -72,7 +72,7 @@
    "DataType": 3,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "chest",
+   "MeshType": "",
    "Texture_ID_Diff": "chest_B_Tex",
    "Texture_ID_Normal": "chest_B_Tex_N"
  },
@@ -105,7 +105,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "light",
+   "MeshType": "",
    "Texture_ID_Diff": "lantern_A_Tex",
    "Texture_ID_Normal": "lantern_A_Tex_N"
  },
@@ -160,7 +160,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "",
+   "MeshType": "pillar",
    "Texture_ID_Diff": "pillar_A_Tex",
    "Texture_ID_Normal": "pillar_A_Tex_N"
  },
@@ -215,7 +215,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "skull_Tex",
    "Texture_ID_Normal": "skull_Tex_N"
  },
@@ -248,7 +248,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "light",
+   "MeshType": "",
    "Texture_ID_Diff": "torch_A_Tex",
    "Texture_ID_Normal": "torch_A_Tex_N"
  },
@@ -259,7 +259,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.05,
-   "MeshType": "light",
+   "MeshType": "",
    "Texture_ID_Diff": "torch_A_Tex",
    "Texture_ID_Normal": "torch_A_Tex_N"
  },
@@ -347,7 +347,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.04,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -358,7 +358,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -369,7 +369,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -380,7 +380,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -391,7 +391,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -402,7 +402,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -413,7 +413,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -424,7 +424,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -435,7 +435,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -446,7 +446,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "graveyard",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -457,7 +457,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -468,7 +468,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -479,7 +479,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -490,7 +490,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -501,7 +501,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -512,7 +512,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "skull",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -567,7 +567,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -578,7 +578,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -589,7 +589,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -600,7 +600,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -611,7 +611,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -622,7 +622,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -633,7 +633,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -644,7 +644,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -655,7 +655,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -666,7 +666,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -677,7 +677,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -688,7 +688,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -699,7 +699,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -710,7 +710,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -721,7 +721,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },
@@ -732,7 +732,7 @@
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 0.025,
-   "MeshType": "",
+   "MeshType": "pumpkin",
    "Texture_ID_Diff": "cemetery_halloween_Tex",
    "Texture_ID_Normal": ""
  },

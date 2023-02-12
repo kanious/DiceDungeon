@@ -15,9 +15,8 @@ private:
 	typedef std::unordered_map<std::string, CComponent*> COMPONENT_MAP;
 	COMPONENT_MAP				m_mapComponent;
 
-	typedef std::unordered_map<std::string, std::string> MESH_MAP;
-	MESH_MAP					m_mapMesh;
-
+	typedef std::vector<std::string> MESH_VECTOR;
+	MESH_VECTOR					m_vecMesh;
 
 private:
 	explicit CComponentMaster();
@@ -27,10 +26,10 @@ private:
 
 public:
 	RESULT AddNewComponent(std::string tag, CComponent* pComponent);
-	RESULT AddNewMeshInfo(std::string tag, std::string initSize);
+	void AddNewMeshInfo(std::string tag);
 	CComponent* FindComponent(std::string tag);
 	COMPONENT_MAP* GetComponentMap()			{ return &m_mapComponent; }
-	MESH_MAP* GetMeshMap()						{ return &m_mapMesh; }
+	MESH_VECTOR* GetMeshVector()				{ return &m_vecMesh; }
 };
 
 template <class T>

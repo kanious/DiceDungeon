@@ -17,7 +17,7 @@ CInputDevice::CInputDevice()
 	m_vecMousePos = vec2(0.f);
 	m_vecMousePosPrevious = vec2(0.f);
 	m_vecScroll = vec2(0.f);
-	m_fMouseSensitivity = 0.15f;
+	m_fMouseSensitivity = 0.05f;
 	m_bEntered = true;
 	m_bPosFixed = false;
 }

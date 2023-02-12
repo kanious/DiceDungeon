@@ -80,6 +80,7 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
+	m_objName = meshID;
 	m_meshName = meshID;
 	m_eEaseType = easeType;
 

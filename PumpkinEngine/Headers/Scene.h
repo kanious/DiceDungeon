@@ -34,6 +34,7 @@ public:
 	std::string GetDataPath()						{ return m_DataPath; }
 	std::string GetObjListFileName()				{ return m_ObjListFileName; }
 	std::string GetLightListFileName()				{ return m_LightListFileName; }
+	std::vector<CLayer*>& GetLayers()				{ return m_vecLayer; }
 
 	void SetSceneTag(_uint sceneTag);
 	void SetDataPath(std::string path)				{ m_DataPath = path; }
@@ -42,9 +43,8 @@ public:
 
 	RESULT ToggleLayer(_uint layerTag, _bool turn);
 	CLayer* GetLayer(_uint layerTag);
+	RESULT AddLayer(_uint layerTag);
 	RESULT AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance);
-	virtual void SaveBackgroundObjects();
-	virtual void LoadBackgroundObjects();
 };
 
 NAMESPACE_END

@@ -68,7 +68,7 @@ private:
 public:
 	void LoadCharacterList(std::string assetFolderPath, std::string fileName, std::vector<sCharacterData>& vec);
 	void LoadTextureData(std::string assetFolderPath, std::string fileName);
-	void LoadMeshData(std::string assetFolderPath, std::string fileName);
+	void LoadMeshData(std::string assetFolderPath, std::string fileName, _bool saveMeshList = false);
 	void LoadObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
 	void SaveObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
 

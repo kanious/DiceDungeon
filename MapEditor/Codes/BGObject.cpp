@@ -30,15 +30,23 @@ BGObject::~BGObject()
 {
 }
 
+void BGObject::Destroy()
+{
+	CGameObject::Destroy();
+}
+
 void BGObject::Update(const _float& dt)
 {
-	if (m_bEnable)
-	{
-		CGameObject::Update(dt);
+	if (!m_bEnable)
+		return;
 
-		if (nullptr != m_pRenderer)
-			m_pRenderer->AddRenderObj(this, m_bTransparent);
-	}
+	if (nullptr != m_pMesh)
+		m_pMesh->SetSelcted(m_bSelected);
+
+	CGameObject::Update(dt);
+
+	if (nullptr != m_pRenderer)
+		m_pRenderer->AddRenderObj(this, m_bTransparent);
 }
 
 void BGObject::Render()
@@ -46,17 +54,30 @@ void BGObject::Render()
 	CGameObject::Render();
 }
 
-void BGObject::Destroy()
+string BGObject::GetMeshID()
 {
-	CGameObject::Destroy();
+	if (nullptr != m_pMesh)
+		return m_pMesh->GetTag();
+
+	return "";
 }
 
-RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale, int dir)
+string BGObject::GetTexName()
+{
+	if (nullptr != m_pMesh)
+		return m_pMesh->GetTexName();
+
+	return "";
+}
+
+RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
+	vec3 vPos, vec3 vRot, vec3 vScale, _bool transparent)
 {
 	SetupGameObject(sTag, lTag, oTag);
+	m_objName = meshID;
 	m_pLayer = pLayer;
 	m_meshName = meshID;
-	m_bTransparent = false;
+	m_bTransparent = transparent;
 
 	//Clone.Mesh
  	m_pMesh = CloneComponent<CMesh*>(meshID);
@@ -81,10 +102,11 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	return PK_NOERROR;
 }
 
-BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale, int dir)
+BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
+	vec3 vPos, vec3 vRot, vec3 vScale, _bool transparent)
 {
 	BGObject* pInstance = new BGObject();
-	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, dir))
+	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, transparent))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

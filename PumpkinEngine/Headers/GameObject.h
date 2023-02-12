@@ -27,6 +27,7 @@ protected:
 	_bool								m_bLock;
 	_bool								m_bDebug;
 	_bool								m_bWireFrame;
+	_bool								m_bSelected;
 
 	typedef std::unordered_map<std::string, CComponent*> COMPONENT_MAP;
 	COMPONENT_MAP						m_mapComponent;
@@ -60,6 +61,7 @@ public:
 	const _bool GetLock()					{ return m_bLock; }
 	const _bool GetDebug()					{ return m_bDebug; }
 	const _bool GetWireFrame()				{ return m_bWireFrame; }
+	const _bool GetSelected()				{ return m_bSelected; }
 	CBoundingBox* GetBoundingBox()			{ return m_pBoundingBox; }
 	CTransform* GetTransform()				{ return m_pTransform; }
 	glm::vec3 GetPosition();
@@ -79,6 +81,7 @@ public:
 	void SetLock(_bool lock)				{ m_bLock = lock; }
 	void SetDebug(_bool debug)				{ m_bDebug = debug; }
 	void SetWireFrame(_bool wire)			{ m_bWireFrame = wire; }
+	void SetSelected(_bool value)			{ m_bSelected = value; }
 	void SetPosition(glm::vec3 vPos);
 	void SetRotation(glm::vec3 vRot);
 	void SetRotationX(_float fAngle);

@@ -33,7 +33,6 @@ private:
 private:
 	void KeyCheck(const _float& dt);
 
-
 public:
 	virtual void Update(const _float& dt);
 	virtual void Render();
@@ -50,8 +49,8 @@ private:
 	RESULT ReadyLayerAndGameObject();
 public:
 	static SceneForest* Create();
-	virtual void SaveBackgroundObjects();
-	virtual void LoadBackgroundObjects();
+	void SaveBackgroundObjects();
+	void LoadBackgroundObjects();
 };
 
 #endif //_SCENEFOREST_H_

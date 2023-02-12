@@ -11,53 +11,50 @@ namespace Engine
 	class CSkyBox;
 }
 
-class UIManager;
 class DefaultCamera;
-class BGObject;
+
+class UIManager;
 class AnimationManager;
 
 class Scene3D : public Engine::CScene
 {
 private:
 	Engine::CInputDevice*		m_pInputDevice;
-	Engine::CLayer*				m_pObjLayer;
 	Engine::CSkyBox*			m_pSkyBox;
+
 	UIManager*					m_pUIManager;
-	DefaultCamera*				m_pDefaultCamera;
 	AnimationManager*			m_pAnimationManager;
 
+	DefaultCamera*				m_pDefaultCamera;
 	glm::vec3					m_vCameraSavedPos;
 	glm::vec3					m_vCameraSavedRot;
 	glm::vec3					m_vCameraSavedTarget;
 
-	_bool						m_bFollowingMode;
+	Engine::CLayer*				m_pObjLayer;
 
 private:
 	explicit Scene3D();
 	virtual ~Scene3D();
-	
-private:
-	void KeyCheck();
-public:
-	void AddBGObject(std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, int dir = 0);
-
-private:
-	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
-	void ResetDefaultCameraPos();
-
+	virtual void Destroy();
 public:
 	virtual void Update(const _float& dt);
 	virtual void Render();
+	
+public:
+	glm::vec3 GetCameraPos();
 private:
-	virtual void Destroy();
+	void KeyCheck();
+	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
+	void ResetDefaultCameraPos();
 
 private:
-	RESULT Ready();
+	RESULT Ready(std::string dataPath);
 	RESULT ReadyLayerAndGameObject();
+	void SaveBackgroundObjects();
+	void LoadBackgroundObjects();
 	void AddCharacters();
 public:
-	static Scene3D* Create();
-	virtual void LoadBackgroundObjects();
+	static Scene3D* Create(std::string dataPath);
 };
 
 #endif //_SCENE3D_H_

@@ -28,6 +28,9 @@
     <Filter Include="03.Animator">
       <UniqueIdentifier>{5615dbdc-53fa-4d73-9b05-1d81f5ca1189}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.UI">
+      <UniqueIdentifier>{3c614712-9cce-4026-80ac-5af75d66acb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\glad.c">
@@ -47,9 +50,6 @@
     </ClCompile>
     <ClCompile Include="Codes\Client.cpp">
       <Filter>00.Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\UIManager.cpp">
-      <Filter>98.Manager</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
       <Filter>Default\imgui</Filter>
@@ -75,14 +75,17 @@
     <ClCompile Include="Codes\Player.cpp">
       <Filter>02.GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\CutScene.cpp">
-      <Filter>98.Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Codes\Animator.cpp">
       <Filter>03.Animator</Filter>
     </ClCompile>
     <ClCompile Include="Codes\AnimationManager.cpp">
       <Filter>98.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\MapEditorUI.cpp">
+      <Filter>97.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\UIManager.cpp">
+      <Filter>97.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,9 +100,6 @@
     </ClInclude>
     <ClInclude Include="Codes\Client.h">
       <Filter>00.Client</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\UIManager.h">
-      <Filter>98.Manager</Filter>
     </ClInclude>
     <ClInclude Include="Codes\Define.h">
       <Filter>99.Headers</Filter>
@@ -140,14 +140,17 @@
     <ClInclude Include="Codes\Player.h">
       <Filter>02.GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Codes\CutScene.h">
-      <Filter>98.Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Codes\Animator.h">
       <Filter>03.Animator</Filter>
     </ClInclude>
     <ClInclude Include="Codes\AnimationManager.h">
       <Filter>98.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\MapEditorUI.h">
+      <Filter>97.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\UIManager.h">
+      <Filter>97.UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

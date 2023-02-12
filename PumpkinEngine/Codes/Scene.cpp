@@ -81,6 +81,21 @@ CLayer* CScene::GetLayer(_uint layerTag)
 	return pLayer;
 }
 
+RESULT CScene::AddLayer(_uint layerTag)
+{
+	vector<CLayer*>::iterator iter;
+	for (iter = m_vecLayer.begin(); iter != m_vecLayer.end(); ++iter)
+	{
+		if (nullptr != *iter && (*iter)->GetTag() == layerTag)
+			return PK_LAYER_EXIST;
+	}
+
+	CLayer* pLayer = CLayer::Create(layerTag);
+	m_vecLayer.push_back(pLayer);
+
+	return PK_NOERROR;
+}
+
 RESULT CScene::AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance)
 {
 	vector<CLayer*>::iterator iter;
@@ -93,12 +108,4 @@ RESULT CScene::AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance)
 		}
 	}
 	return PK_LAYER_CANNOT_FIND;
-}
-
-void CScene::SaveBackgroundObjects()
-{
-}
-
-void CScene::LoadBackgroundObjects()
-{
 }

@@ -34,6 +34,7 @@ public:
 	const _bool GetEnable()						{ return m_bEnable; }
 	std::list<CGameObject*>* GetObjectList()	{ return &m_listGameObjects; }
 	void SetTag(_uint layerTag);
+	void SetEnable(_bool value)					{ m_bEnable = value; }
 	RESULT AddGameObject(CGameObject* obj);
 	RESULT RemoveGameObject(CGameObject* obj);
 	void RemoveAllGameObject();

@@ -37,6 +37,7 @@ private:
 	_bool						m_bBiilboard;
 
 	CAnimController*			m_pAnimController;
+	std::string					m_initSize;
 	std::string					m_meshType;
 
 private:
@@ -55,6 +56,7 @@ public:
 	_uint GetTriangleNumber()								{ return m_iTriNum; }
 	CShader* GetShader()									{ return m_pShader; }
 	std::string GetTexName()								{ return m_textureFileName; }
+	std::string GetInitSize()								{ return m_initSize; }
 	std::string GetMeshType()								{ return m_meshType; }
 	void SetTransform(CTransform* transform)				{ m_pParentTransform = transform; }
 	void SetWireFrame(_bool wire)							{ m_bWireFrame = wire; }
@@ -66,7 +68,7 @@ public:
 	void SetTexture(std::string texID_diff);
 
 private:
-	RESULT Ready(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string meshType, std::string texID_Diff, std::string texID_Normal);
+	RESULT Ready(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal);
 	RESULT Ready_VIBuffer(eModelType type, std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	void Ready_Texture_Diff(std::string texID);
 	void Ready_Texture_Normal(std::string texID);
@@ -74,7 +76,7 @@ private:
 
 public:
 	virtual CComponent* Clone();
-	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string meshType, std::string texID_Diff, std::string texID_Normal);
+	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal);
 };
 
 NAMESPACE_END

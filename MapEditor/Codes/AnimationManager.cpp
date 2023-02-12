@@ -36,7 +36,7 @@ RESULT AnimationManager::Ready()
 
 void AnimationManager::Update(const _float& dt)
 {
-	KeyCheck();
+	//KeyCheck();
 
 	for (int i = 0; i < m_vecAnimators.size(); ++i)
 		m_vecAnimators[i]->FrameMove(dt);

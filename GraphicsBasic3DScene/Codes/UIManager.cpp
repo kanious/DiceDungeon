@@ -5,7 +5,7 @@
 #include "SystemUI.h"
 #include "MapEditorUI.h"
 #include "SoundUI.h"
-#include "Scene.h"
+#include "SceneForest.h"
 #include <sstream>
 #include <atlconv.h>
 
@@ -73,7 +73,7 @@ void UIManager::RenderUI()
 	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
 }
 
-RESULT UIManager::Ready(CScene* pScene)
+RESULT UIManager::Ready(SceneForest* pScene)
 {
 	IMGUI_CHECKVERSION();
 	CreateContext();

@@ -21,6 +21,9 @@ CLayer::~CLayer()
 
 void CLayer::Update(const _float& dt)
 {
+	if (!m_bEnable)
+		return;
+
 	m_listGameObjects.erase(
 		std::remove_if(m_listGameObjects.begin(), m_listGameObjects.end(), DeadFinder),
 		m_listGameObjects.end());

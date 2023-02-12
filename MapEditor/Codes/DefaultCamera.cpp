@@ -220,7 +220,7 @@ void DefaultCamera::FollowPlayer()
 
 void DefaultCamera::Update(const _float& dt)
 {
-	//KeyCheck(dt);
+	KeyCheck(dt);
 	//FollowPlayer();
 
 	CGameObject::Update(dt);
@@ -241,6 +241,7 @@ void DefaultCamera::Destroy()
 RESULT DefaultCamera::Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, vec3 vPos, vec3 vRot, vec3 vScale, _float fov, _float fNear, _float fFar)
 {
 	SetupGameObject(sTag, lTag, oTag);
+	m_objName = "DefaultCamera";
 	m_pLayer = pLayer;
 
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();

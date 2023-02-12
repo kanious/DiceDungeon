@@ -9,6 +9,7 @@
 #include "ComponentMaster.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "JsonParser.h"
 #include "XMLParser.h"
 #include <sstream>
 #include <atlconv.h>
@@ -16,7 +17,6 @@
 #include "Scene.h"
 #include "Scene3D.h"
 #include "UIManager.h"
-#include "CutScene.h"
 #include "AnimationManager.h"
 
 USING(Engine)
@@ -41,8 +41,8 @@ Client::Client()
 	m_DataPath = ss.str();
 	m_SoundDataFileName = "sound.xml";
 	m_ShaderDataFileName = "shader.xml";
-	m_TextureDataFileName = "texture.xml";
-	m_MeshDataFileName = "mesh.xml";
+	m_TextureDataFileName = "texture.json";
+	m_MeshDataFileName = "mesh.json";
 }
 
 Client::~Client()
@@ -57,7 +57,6 @@ void Client::Destroy()
 	SafeDestroy(m_pGameMaster);
 
 	SafeDestroy(UIManager::GetInstance());
-	SafeDestroy(CutScene::GetInstance());
 	SafeDestroy(AnimationManager::GetInstance());
 
 	delete this;
@@ -73,8 +72,7 @@ void Client::Loop()
 		if (nullptr == m_pGameMaster || nullptr == m_pTimer)
 			break;
 
-		if (glfwWindowShouldClose(COpenGLDevice::GetInstance()->GetWindow()) ||
-			m_pInputDevice->IsKeyDown(GLFW_KEY_ESCAPE))
+		if (glfwWindowShouldClose(COpenGLDevice::GetInstance()->GetWindow()))
 			break;
 
 		if (m_pGameMaster->GetGameClose())
@@ -120,6 +118,7 @@ RESULT Client::Ready()
 
 	srand((unsigned int)time(NULL));
 
+	// OpenGL Graphic Device
 	if (nullptr != m_pGraphicDevice)
 	{
 		result = m_pGraphicDevice->CreateOpenGLWindow(1920, 1080, "OpenGL Window", false, false);
@@ -127,11 +126,13 @@ RESULT Client::Ready()
 			return result;
 	}
 
+	// Timer
 	if (nullptr != m_pTimer)
 	{
 		m_pTimer->SetFrameRate(m_iFPS);
 	}
 
+	// Input Device
 	if (nullptr != m_pInputDevice)
 	{
 		result = m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
@@ -139,21 +140,21 @@ RESULT Client::Ready()
 			return result;
 	}
 
-	result = Ready_Basic_Component();
-	if (PK_NOERROR != result)
-		return result;
+	// Load Components
+	result = Ready_BasicComponent();
+	if (PK_NOERROR != result) return result;
 
+	// Load Scene
 	if (nullptr != m_pGameMaster)
 	{
-		CScene* pScene = Scene3D::Create();
-		pScene->SetDataPath(m_DataPath);
+		CScene* pScene = Scene3D::Create(m_DataPath);
 		m_pGameMaster->SetCurrentScene(pScene);
 	}
 
 	return PK_NOERROR;
 }
 
-RESULT Client::Ready_Basic_Component()
+RESULT Client::Ready_BasicComponent()
 {
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();
 	CComponent* pComponent = nullptr;
@@ -174,8 +175,8 @@ RESULT Client::Ready_Basic_Component()
 
 	//CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
-	CXMLParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
-	CXMLParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName);
+	CJsonParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
+	CJsonParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName, true);
 
 	return PK_NOERROR;
 }

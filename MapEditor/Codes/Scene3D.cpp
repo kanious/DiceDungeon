@@ -3,7 +3,6 @@
 #include "glm\vec3.hpp"
 #include "InputDevice.h"
 #include "DefaultCamera.h"
-#include "XMLParser.h"
 #include "JsonParser.h"
 #include "Layer.h"
 #include "CollisionMaster.h"
@@ -30,30 +29,71 @@ USING(glm)
 USING(std)
 
 Scene3D::Scene3D()
-	: m_pDefaultCamera(nullptr), m_pObjLayer(nullptr), m_pSkyBox(nullptr)
-	, m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
-	, m_bFollowingMode(false)
+	: m_pSkyBox(nullptr)
+	, m_pDefaultCamera(nullptr), m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
+	, m_pObjLayer(nullptr)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
-	m_pInputDevice->SetMouseSensitivity(0.05f);
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
 	m_pAnimationManager = AnimationManager::GetInstance(); m_pAnimationManager->AddRefCnt();
 
-	wchar_t path[MAX_PATH] = { 0 };
-	GetModuleFileName(NULL, path, MAX_PATH);
-	USES_CONVERSION;
-	std::string str = W2A(path);
-	str = str.substr(0, str.find_last_of("\\/"));//
-	stringstream ss;
-	ss << str << "\\..\\Assets\\";
+	//wchar_t path[MAX_PATH] = { 0 };
+	//GetModuleFileName(NULL, path, MAX_PATH);
+	//USES_CONVERSION;
+	//std::string str = W2A(path);
+	//str = str.substr(0, str.find_last_of("\\/"));//
+	//stringstream ss;
+	//ss << str << "\\..\\Assets\\";
 
-	m_DataPath = ss.str();
-	m_ObjListFileName = "mapObjects.xml";
+	//m_DataPath = ss.str();
+	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
 }
 
 Scene3D::~Scene3D()
 {
+}
+
+void Scene3D::Destroy()
+{
+	SafeDestroy(m_pInputDevice);
+	SafeDestroy(m_pSkyBox);
+
+	SafeDestroy(m_pUIManager);
+	SafeDestroy(m_pAnimationManager);
+
+	CScene::Destroy();
+}
+
+void Scene3D::Update(const _float& dt)
+{
+	//if (nullptr != m_pSkyBox)
+	//	CRenderer::GetInstance()->AddRenderObj(m_pSkyBox);
+
+	if (m_pUIManager)
+		m_pUIManager->Update(dt);
+
+	KeyCheck();
+
+	CLightMaster::GetInstance()->SetLightInfo();
+	if (nullptr != m_pAnimationManager)
+		m_pAnimationManager->Update(dt);
+
+	CScene::Update(dt);
+}
+
+void Scene3D::Render()
+{
+	if (nullptr != m_pUIManager)
+		m_pUIManager->RenderUI();
+}
+
+glm::vec3 Scene3D::GetCameraPos()
+{
+	if (nullptr != m_pDefaultCamera)
+		return m_pDefaultCamera->GetCameraEye();
+
+	return vec3(0.f);
 }
 
 void Scene3D::KeyCheck()
@@ -70,6 +110,7 @@ void Scene3D::KeyCheck()
 	else
 		isF5Down = false;
 
+	/*
 	static _bool isMouseClicked = false;
 	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
 	{
@@ -120,18 +161,7 @@ void Scene3D::KeyCheck()
 	}
 	else
 		isMouseClicked = false;
-}
-
-void Scene3D::AddBGObject(string meshID, vec3 vPos, vec3 vRot, vec3 vScale, int dir)
-{
-	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND);
-	CGameObject* pGameObject = BGObject::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND
-		, pLayer, meshID, vPos, vRot, vScale, dir);
-
-	if (nullptr == pGameObject)
-		return;
-
-	AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
+	*/
 }
 
 void Scene3D::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
@@ -159,42 +189,14 @@ void Scene3D::ResetDefaultCameraPos()
 	}
 }
 
-void Scene3D::Update(const _float& dt)
+RESULT Scene3D::Ready(string dataPath)
 {
-	if (nullptr != m_pSkyBox)
-		CRenderer::GetInstance()->AddRenderObj(m_pSkyBox);
+	m_DataPath = dataPath;
 
-	CLightMaster::GetInstance()->SetLightInfo();
-
-	KeyCheck();
-
-	if (nullptr != m_pAnimationManager)
-		m_pAnimationManager->Update(dt);
-
-	CScene::Update(dt);
-}
-
-void Scene3D::Render()
-{
-	if (nullptr != m_pUIManager)
-		m_pUIManager->RenderUI();
-}
-
-void Scene3D::Destroy()
-{
-	SafeDestroy(m_pInputDevice);
-	SafeDestroy(m_pUIManager);
-	SafeDestroy(m_pSkyBox);
-	SafeDestroy(m_pAnimationManager);
-
-	CScene::Destroy();
-}
-
-RESULT Scene3D::Ready()
-{
 	// AnimationData
 	CAnimationData::GetInstance()->LoadAnimations(m_DataPath);
 
+	// GameObjects
 	RESULT result = PK_NOERROR;
 	result = ReadyLayerAndGameObject();
 	if (PK_NOERROR != result)
@@ -208,38 +210,48 @@ RESULT Scene3D::Ready()
 	CLightMaster::GetInstance()->SetShader(shaderID);
 	CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
 
+	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
-	{
 		m_pDefaultCamera->AddShaderLocation("DefaultShader");
-	}
 
+	// UI
 	if (nullptr != m_pUIManager)
-		m_pUIManager->Ready();
+		m_pUIManager->Ready(this);
 
-	if (nullptr == m_pSkyBox)
-	{
-		stringstream ss, ss2;
-		ss << m_DataPath << "Texture\\SkyBox\\";
+	// SkyBox
+	//if (nullptr == m_pSkyBox)
+	//{
+	//	stringstream ss, ss2;
+	//	ss << m_DataPath << "Texture\\SkyBox\\";
 
-		vector<string> faces;
-		ss2.str(""); ss2 << ss.str() << "right.jpg"; faces.push_back(ss2.str());
-		ss2.str(""); ss2 << ss.str() << "left.jpg"; faces.push_back(ss2.str());
-		ss2.str(""); ss2 << ss.str() << "top.jpg"; faces.push_back(ss2.str());
-		ss2.str(""); ss2 << ss.str() << "bottom.jpg"; faces.push_back(ss2.str());
-		ss2.str(""); ss2 << ss.str() << "front.jpg"; faces.push_back(ss2.str());
-		ss2.str(""); ss2 << ss.str() << "back.jpg"; faces.push_back(ss2.str());
+	//	vector<string> faces;
+	//	ss2.str(""); ss2 << ss.str() << "right.jpg"; faces.push_back(ss2.str());
+	//	ss2.str(""); ss2 << ss.str() << "left.jpg"; faces.push_back(ss2.str());
+	//	ss2.str(""); ss2 << ss.str() << "top.jpg"; faces.push_back(ss2.str());
+	//	ss2.str(""); ss2 << ss.str() << "bottom.jpg"; faces.push_back(ss2.str());
+	//	ss2.str(""); ss2 << ss.str() << "front.jpg"; faces.push_back(ss2.str());
+	//	ss2.str(""); ss2 << ss.str() << "back.jpg"; faces.push_back(ss2.str());
 
-		CComponent* skyboxShader = CComponentMaster::GetInstance()->FindComponent("SkyBoxShader");
-		m_pSkyBox = CSkyBox::Create(faces, dynamic_cast<CShader*>(skyboxShader));
-	}
+	//	CComponent* skyboxShader = CComponentMaster::GetInstance()->FindComponent("SkyBoxShader");
+	//	m_pSkyBox = CSkyBox::Create(faces, dynamic_cast<CShader*>(skyboxShader));
+	//}
 
 	return PK_NOERROR;
 }
 
 RESULT Scene3D::ReadyLayerAndGameObject()
 {
+	//Create.Layer
+	AddLayer((_uint)LAYER_BACKGROUND_OBJECT);
+	AddLayer((_uint)LAYER_STATIC_OBJECT);
+	AddLayer((_uint)LAYER_INTERACTIVE_OBJECT);
+	AddLayer((_uint)LAYER_CHARACTER);
+	AddLayer((_uint)LAYER_ENEMY);
+	AddLayer((_uint)LAYER_UI);
+	AddLayer((_uint)LAYER_EVENT_OBJECT);
+
 	//Create.Camera
-	CLayer* pLayer = GetLayer((_uint)LAYER_OBJECT);
+	CLayer* pLayer = GetLayer((_uint)LAYER_INTERACTIVE_OBJECT);
 	if (nullptr != pLayer)
 	{
 		vec3 vPos = vec3(0.f, 0.f, 0.f);
@@ -257,10 +269,82 @@ RESULT Scene3D::ReadyLayerAndGameObject()
 	//Create.BackgroundLayer 
 	LoadBackgroundObjects();
 
+	//LoadObjsbyLayer(LAYER_OBJECT, "character.json") //이런식으로 바꾸기
+	// 저장할 때 Layer 종류에 따라 파일 다르게 해서 저장하기
+	// Scene Objects 파일에 넣을 Layer Object 파일 이름을 저장하기
+
 	//Create.Player/AIs
-	AddCharacters();
+	//AddCharacters();
 
 	return PK_NOERROR;
+}
+
+void Scene3D::SaveBackgroundObjects()
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
+	if (nullptr != pLayer)
+	{
+		vector<CJsonParser::sObjectData> vecObjects;
+
+		list<CGameObject*>* pObjList = pLayer->GetObjectList();
+		list<CGameObject*>::iterator iter;
+		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
+		{
+			BGObject* pObj = dynamic_cast<BGObject*>(*iter);
+			CJsonParser::sObjectData data;
+			data.ID = pObj->GetMeshID();
+			data.POSITION = pObj->GetPosition();
+			data.ROTATION = pObj->GetRotation();
+			data.SCALE = pObj->GetScale();
+			data.LOCK = pObj->GetLock();
+			data.TEXNAME = pObj->GetTexName();
+			vecObjects.push_back(data);
+		}
+
+		CJsonParser::sObjectData cameraData;
+		if (nullptr != m_pDefaultCamera)
+		{
+			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
+			cameraData.POSITION = m_pDefaultCamera->GetCameraEye();
+			cameraData.ROTATION = m_pDefaultCamera->GetCameraRot();
+			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
+		}
+
+		CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+	}
+}
+
+void Scene3D::LoadBackgroundObjects()
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
+	CGameObject* pGameObject = nullptr;
+
+	if (nullptr != pLayer)
+	{
+		pLayer->RemoveAllGameObject();
+		vector<CJsonParser::sObjectData> vecObjects;
+		CJsonParser::sObjectData cameraData;
+		CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+		vector<CJsonParser::sObjectData>::iterator iter;
+		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
+		{
+			pGameObject = BGObject::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer,
+				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+			if (nullptr == pGameObject)
+				continue;
+			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
+			dynamic_cast<BGObject*>(pGameObject)->SetLock(iter->LOCK);
+		}
+		vecObjects.clear();
+
+		if (nullptr != m_pDefaultCamera)
+		{
+			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
+			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
+			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
+			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
+		}
+	}
 }
 
 void Scene3D::AddCharacters()
@@ -284,59 +368,16 @@ void Scene3D::AddCharacters()
 		if (nullptr != pGameObject)
 			AddGameObjectToLayer(m_pObjLayer->GetTag(), pGameObject);
 	}
-
-	//Create.Player
-	//pGameObject = Player::Create((_uint)SCENE_3D, m_pObjLayer->GetTag(), (_uint)OBJ_CHARACTER
-	//	, m_pObjLayer, "Robot", vec3(0.f), vec3(0.f, 90.f, 0.f), vec3(5.f), ANIM_SCALING, EASE_NONE
-	//	, true);
-	//if (nullptr != pGameObject)
-	//	AddGameObjectToLayer(m_pObjLayer->GetTag(), pGameObject);
-	//Player* pPlayer = dynamic_cast<Player*>(pGameObject);
-	//if (nullptr != m_pDefaultCamera)
-	//	m_pDefaultCamera->SetPlayer(pPlayer);
 }
 
-Scene3D* Scene3D::Create()
+Scene3D* Scene3D::Create(string dataPath)
 {
 	Scene3D* pInstance = new Scene3D();
-	if (PK_NOERROR != pInstance->Ready())
+	if (PK_NOERROR != pInstance->Ready(dataPath))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;
 	}
 
 	return pInstance;
-}
-
-void Scene3D::LoadBackgroundObjects()
-{
-	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND);
-	CGameObject* pGameObject = nullptr;
-
-	if (nullptr != pLayer)
-	{
-		pLayer->RemoveAllGameObject();
-		vector<CXMLParser::sObjectData> vecObjects;
-		CXMLParser::sObjectData cameraData;
-		CXMLParser::GetInstance()->LoadMapObjectData(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
-		vector<CXMLParser::sObjectData>::iterator iter;
- 		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
-		{
-			pGameObject = BGObject::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer, iter->ID,
-				iter->POSITION, iter->ROTATION, iter->SCALE);
-			if (nullptr == pGameObject)
-				continue;
-			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
-			dynamic_cast<BGObject*>(pGameObject)->SetLock(iter->LOCK);
-		}
-		vecObjects.clear();
-
-		if (nullptr != m_pDefaultCamera)
-		{
-			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
-			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
-			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
-			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
-		}
-	}
 }

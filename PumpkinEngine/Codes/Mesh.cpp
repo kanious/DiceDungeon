@@ -40,6 +40,7 @@ CMesh::CMesh()
     , m_iTriNum(0)
     , m_pTriangles(nullptr)
     , m_pAnimController(nullptr)
+    , m_initSize("")
     , m_meshType("")
 {
     m_pOpenGLDevice->AddRefCnt();
@@ -60,6 +61,7 @@ CMesh::CMesh(const CMesh& rhs)
     , m_textureFileName(rhs.m_textureFileName)
     , m_iTriNum(rhs.m_iTriNum)
     , m_pAnimController(nullptr)
+    , m_initSize(rhs.m_initSize)
     , m_meshType(rhs.m_meshType)
 {
     m_tag = rhs.m_tag;
@@ -172,9 +174,10 @@ void CMesh::SetTexture(std::string texID_diff)
 }
 
 RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type,
-    string shaderID, string meshType, string texID_Diff, string texID_Normal)
+    string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal)
 {
     m_tag = ID;
+    m_initSize = initSize;
     m_meshType = meshType;
 
     VTX* pVertices = nullptr;
@@ -406,10 +409,11 @@ CComponent* CMesh::Clone()
 }
 
 CMesh* CMesh::Create(string ID, string filePath, string fileName, eModelType type,
-    string shaderID, string meshType, string texID_Diff, string texID_Normal)
+    string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal)
 {
 	CMesh* pInstance = new CMesh();
-	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type, shaderID, meshType,
+	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type,
+        shaderID, initSize, meshType,
         texID_Diff, texID_Normal))
 	{
 		pInstance->Destroy();

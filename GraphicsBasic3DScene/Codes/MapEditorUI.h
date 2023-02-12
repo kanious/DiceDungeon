@@ -5,7 +5,6 @@
 
 namespace Engine
 {
-	class CScene;
 	class CLayer;
 	class CLight;
 	class CInputDevice;
@@ -15,6 +14,7 @@ class UIManager;
 class DefaultCamera;
 class BGObject;
 class PumpkinString;
+class SceneForest;
 
 class MapEditorUI : public Engine::CBase
 {
@@ -29,7 +29,7 @@ private:
 private:
 	UIManager*						m_pUIManager;
 	std::vector<MeshInfo>			m_vecMeshInfo;
-	Engine::CScene*					m_pScene;
+	SceneForest*					m_pScene;
 	Engine::CLayer*					m_pBGLayer;
 	DefaultCamera*					m_pDefaultCamera;
 	BGObject*						m_pTargetObject;
@@ -72,7 +72,7 @@ public:
 	void Destroy();
 	void Update(const _float& dt);
 	void RenderUI();
-	RESULT Ready(Engine::CScene* pScene);
+	RESULT Ready(SceneForest* pScene);
 
 public:
 	void KeyCheck(const _float& dt);
@@ -96,7 +96,7 @@ private:
 	void LightListLoad();
 
 public:
-	static MapEditorUI* Create(Engine::CScene* pScene);
+	static MapEditorUI* Create(SceneForest* pScene);
 };
 
 #endif //_MAPEDITORUI_H_
