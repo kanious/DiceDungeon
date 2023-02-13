@@ -11,11 +11,13 @@ CBase::~CBase()
 {
 }
 
+// Add Reference Count.
 _uint CBase::AddRefCnt()
 {
 	return ++m_iRefCnt;
 }
 
+// Delete itself if the reference count is zero.
 _uint CBase::Release()
 {
 	if (m_iRefCnt == 0)

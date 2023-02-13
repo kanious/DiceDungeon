@@ -15,6 +15,7 @@ class CTransform;
 class COpenGLDevice;
 class CAnimController;
 
+// Components with 3D mesh file information
 class ENGINE_API CMesh : public CComponent
 {
 private:

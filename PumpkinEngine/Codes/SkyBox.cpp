@@ -26,6 +26,7 @@ CSkyBox::~CSkyBox()
 
 }
 
+// Basic Render Function
 void CSkyBox::Render()
 {
     if (nullptr == m_pShader || nullptr == m_pTransform)
@@ -47,6 +48,7 @@ void CSkyBox::Render()
     glDepthMask(GL_TRUE);
 }
 
+// Call instead of destructor to manage class internal data
 void CSkyBox::Destroy()
 {
     SafeDestroy(m_pOpenGLDevice);
@@ -57,6 +59,7 @@ void CSkyBox::Destroy()
     CGameObject::Destroy();
 }
 
+// Initialize Skybox
 RESULT CSkyBox::Ready(vector<string>& faces, CShader* pShader)
 {
     m_pShader = pShader;
@@ -67,6 +70,7 @@ RESULT CSkyBox::Ready(vector<string>& faces, CShader* pShader)
     return PK_NOERROR;
 }
 
+// Load Skybox Textures
 RESULT CSkyBox::Ready_Texture(vector<string>& faces)
 {
     glGenTextures(1, &m_iTextureID);
@@ -94,6 +98,7 @@ RESULT CSkyBox::Ready_Texture(vector<string>& faces)
     return PK_NOERROR;
 }
 
+// Load Skybox Mesh (Cube)
 RESULT CSkyBox::Ready_VIBuffer()
 {
     _float skyboxVertices[] = {         
@@ -151,6 +156,7 @@ RESULT CSkyBox::Ready_VIBuffer()
 	return PK_NOERROR;
 }
 
+// Create an instance
 CSkyBox* CSkyBox::Create(vector<string>& faces, CShader* pShader)
 {
     CSkyBox* pInstance = new CSkyBox();

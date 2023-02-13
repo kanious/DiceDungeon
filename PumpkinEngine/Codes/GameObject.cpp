@@ -39,6 +39,7 @@ CGameObject::~CGameObject()
 {
 }
 
+// Basic Update Function, update all components that are stored in this Gameobject
 void CGameObject::Update(const _float& dt)
 {
 	COMPONENT_MAP::iterator iter;
@@ -52,6 +53,7 @@ void CGameObject::Update(const _float& dt)
 	}
 }
 
+// Basic Render Function, render all components that are stored in this Gameobject
 void CGameObject::Render()
 {
 	COMPONENT_MAP::iterator iter;
@@ -65,16 +67,19 @@ void CGameObject::Render()
 	}
 }
 
+// Set this object enabled
 void CGameObject::Enable()
 {
 	m_bEnable = true;
 }
 
+// Set this object disabled
 void CGameObject::Disable()
 {
 	m_bEnable = false;
 }
 
+// Call instead of destructor to manage class internal data
 void CGameObject::Destroy()
 {
 	COMPONENT_MAP::iterator iter;
@@ -89,6 +94,7 @@ void CGameObject::Destroy()
 	m_UUID = NULL;
 }
 
+// Set tag information
 void CGameObject::SetupGameObject(_uint sceneTag, _uint layerTag, _uint objTag)
 {
 	SetSceneTag(sceneTag);
@@ -96,6 +102,7 @@ void CGameObject::SetupGameObject(_uint sceneTag, _uint layerTag, _uint objTag)
 	SetObjectTag(objTag);
 }
 
+// Get position from the transform component
 vec3 CGameObject::GetPosition()
 {
 	if (nullptr == m_pTransform)
@@ -104,6 +111,7 @@ vec3 CGameObject::GetPosition()
 	return m_pTransform->GetPosition();
 }
 
+// Get rotation from the transform component
 vec3 CGameObject::GetRotation()
 {
 	if (nullptr == m_pTransform)
@@ -112,6 +120,7 @@ vec3 CGameObject::GetRotation()
 	return m_pTransform->GetRotation();
 }
 
+// Get positionY from the transform component
 _float CGameObject::GetRotationY()
 {
 	if (nullptr == m_pTransform)
@@ -120,6 +129,8 @@ _float CGameObject::GetRotationY()
 	return m_pTransform->GetRotationY();
 }
 
+
+// Get scale from the transform component
 vec3 CGameObject::GetScale()
 {
 	if (nullptr == m_pTransform)
@@ -128,6 +139,7 @@ vec3 CGameObject::GetScale()
 	return m_pTransform->GetScale();
 }
 
+// Get look vector from the transform component
 glm::vec3 CGameObject::GetLookVector()
 {
 	if (nullptr == m_pTransform)
@@ -136,6 +148,7 @@ glm::vec3 CGameObject::GetLookVector()
 	return m_pTransform->GetLookVector();
 }
 
+// Get world matrix from the transform component
 const mat4x4* CGameObject::GetWorldMatrix()
 {
 	if (nullptr == m_pTransform)
@@ -144,41 +157,49 @@ const mat4x4* CGameObject::GetWorldMatrix()
 	return m_pTransform->GetWorldMatrix();
 }
 
+// Set mesh name
 void CGameObject::SetMeshName(string name)
 {
 	m_meshName = name;
 }
 
+// Set object name
 void CGameObject::SetObjectName(std::string name)
 {
 	m_objName = name;
 }
 
+// Set object tag (enum from client)
 void CGameObject::SetObjectTag(_uint objTag)
 {
 	m_objTag = objTag;
 }
 
+// Set layer tag (enum from client)
 void CGameObject::SetLayerTag(_uint layerTag)
 {
 	m_layerTag = layerTag;
 }
 
+// Set scene tag (enum from client)
 void CGameObject::SetSceneTag(_uint sceneTag)
 {
 	m_sceneTag = sceneTag;
 }
 
+// Set parent layer where this object is stored
 void CGameObject::SetParentLayer(CLayer* pLayer)
 {
 	m_pLayer = pLayer;
 }
 
+// Set this object dead
 void CGameObject::SetDead(_bool dead)
 {
 	m_bDead = dead;
 }
 
+// Set position to the transform component
 void CGameObject::SetPosition(vec3 vPos)
 {
 	if (nullptr == m_pTransform)
@@ -187,6 +208,7 @@ void CGameObject::SetPosition(vec3 vPos)
 	m_pTransform->SetPosition(vPos);
 }
 
+// Set rotation to the transform component
 void CGameObject::SetRotation(vec3 vRot)
 {
 	if (nullptr == m_pTransform)
@@ -195,6 +217,7 @@ void CGameObject::SetRotation(vec3 vRot)
 	m_pTransform->SetRotation(vRot);
 }
 
+// Set rotationX to the transform component
 void CGameObject::SetRotationX(_float fAngle)
 {
 	if (nullptr == m_pTransform)
@@ -203,6 +226,7 @@ void CGameObject::SetRotationX(_float fAngle)
 	m_pTransform->SetRotationX(fAngle);
 }
 
+// Set rotationY to the transform component
 void CGameObject::SetRotationY(_float fAngle)
 {
 	if (nullptr == m_pTransform)
@@ -211,6 +235,7 @@ void CGameObject::SetRotationY(_float fAngle)
 	m_pTransform->SetRotationY(fAngle);
 }
 
+// Set rotationZ to the transform component
 void CGameObject::SetRotationZ(_float fAngle)
 {
 	if (nullptr == m_pTransform)
@@ -219,6 +244,7 @@ void CGameObject::SetRotationZ(_float fAngle)
 	m_pTransform->SetRotationZ(fAngle);
 }
 
+// Set scale to the transform component
 void CGameObject::SetScale(glm::vec3 vScale)
 {
 	if (nullptr == m_pTransform)
@@ -227,6 +253,7 @@ void CGameObject::SetScale(glm::vec3 vScale)
 	m_pTransform->SetScale(vScale);
 }
 
+// Set parent transform from parent object to the transform component
 void CGameObject::SetParentTransform(CTransform* pTransform)
 {
 	if (nullptr == m_pTransform)
@@ -235,6 +262,7 @@ void CGameObject::SetParentTransform(CTransform* pTransform)
 	m_pTransform->SetParent(pTransform);
 }
 
+// Attach new component
 void CGameObject::AttachComponent(std::string componentTag, CComponent* pInstance)
 {
 	if (nullptr == pInstance)
@@ -249,6 +277,7 @@ void CGameObject::AttachComponent(std::string componentTag, CComponent* pInstanc
 	m_mapComponent.insert(COMPONENT_MAP::value_type(componentTag, pInstance));
 }
 
+// Remove new component
 RESULT CGameObject::RemoveComponent(std::string componentTag)
 {
 	COMPONENT_MAP::iterator iter = m_mapComponent.find(componentTag);
@@ -263,6 +292,7 @@ RESULT CGameObject::RemoveComponent(std::string componentTag)
 	return PK_NOERROR;
 }
 
+// Find Component by tag
 CComponent* CGameObject::GetComponent(std::string componentTag)
 {
 	COMPONENT_MAP::iterator iter = m_mapComponent.find(componentTag);
@@ -272,6 +302,7 @@ CComponent* CGameObject::GetComponent(std::string componentTag)
 		return iter->second;
 }
 
+// Generate unique UUID for this object
 _wchar_t* CGameObject::UUIDGenerate()
 {
 	UUID uuid;

@@ -19,6 +19,7 @@ CScene::~CScene()
 {
 }
 
+// Basic Update Function, update all Layers that are stored in this scene
 void CScene::Update(const _float& dt)
 {
 	vector<CLayer*>::iterator iter;
@@ -29,10 +30,12 @@ void CScene::Update(const _float& dt)
 	}
 }
 
+// Basic Render Function, use this if extra instance needs to be rendered
 void CScene::Render()
 {
 }
 
+//Call instead of destructor to manage class internal data
 void CScene::Destroy()
 {
 	vector<CLayer*>::iterator iter;
@@ -42,11 +45,13 @@ void CScene::Destroy()
 	m_vecLayer.clear();
 }
 
+// Set tag
 void CScene::SetSceneTag(_uint sceneTag)
 {
 	m_tag = sceneTag;
 }
 
+// Turn on/off the layer
 RESULT CScene::ToggleLayer(_uint layerTag, _bool turn)
 {
 	vector<CLayer*>::iterator iter;
@@ -66,6 +71,7 @@ RESULT CScene::ToggleLayer(_uint layerTag, _bool turn)
 	return PK_LAYER_CANNOT_FIND;
 }
 
+// Find layer by tag
 CLayer* CScene::GetLayer(_uint layerTag)
 {
 	vector<CLayer*>::iterator iter;
@@ -81,6 +87,7 @@ CLayer* CScene::GetLayer(_uint layerTag)
 	return pLayer;
 }
 
+// Add new layer
 RESULT CScene::AddLayer(_uint layerTag)
 {
 	vector<CLayer*>::iterator iter;
@@ -96,6 +103,7 @@ RESULT CScene::AddLayer(_uint layerTag)
 	return PK_NOERROR;
 }
 
+// Add gameobject to layer
 RESULT CScene::AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance)
 {
 	vector<CLayer*>::iterator iter;

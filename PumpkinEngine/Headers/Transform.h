@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Component for position/rotation/scale data
 class ENGINE_API CTransform : public CComponent
 {
 private:

@@ -84,6 +84,7 @@ CMesh::~CMesh()
 {
 }
 
+// Basic Render Function, render 3D mesh with shader/texture information
 void CMesh::Render()
 {
     if (nullptr == m_pParentTransform || nullptr == m_pShader)
@@ -149,6 +150,7 @@ void CMesh::Render()
         m_pBoundingBox->Render();
 }
 
+// Call instead of destructor to manage class internal data
 void CMesh::Destroy()
 {
     SafeDestroy(m_pOpenGLDevice);
@@ -164,6 +166,7 @@ void CMesh::Destroy()
 	CComponent::Destroy();
 }
 
+// Set diffuse texture
 void CMesh::SetTexture(std::string texID_diff)
 {
     SafeDestroy(m_pDiffTexture);
@@ -173,6 +176,7 @@ void CMesh::SetTexture(std::string texID_diff)
         m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
+// Initialize Mesh
 RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type,
     string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal)
 {
@@ -202,6 +206,7 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type
 	return PK_NOERROR;
 }
 
+// Load mesh information from file
 RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
 {
     stringstream ss;
@@ -344,6 +349,7 @@ RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, 
     return PK_NOERROR;
 }
 
+// Initialize diffuse texture
 void CMesh::Ready_Texture_Diff(string texID)
 {
     CComponent* pComponent = CloneComponent<CTexture*>(texID);
@@ -351,6 +357,7 @@ void CMesh::Ready_Texture_Diff(string texID)
         m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
+// Initialize normal texture
 void CMesh::Ready_Texture_Normal(std::string texID)
 {
     CComponent* pComponent = CloneComponent<CTexture*>(texID);
@@ -358,6 +365,7 @@ void CMesh::Ready_Texture_Normal(std::string texID)
         m_pNormalTexture = dynamic_cast<CTexture*>(pComponent);
 }
 
+// Initialize shader
 void CMesh::Ready_Shader(string shaderID)
 {
     CComponent* pComponent = CloneComponent<CShader*>(shaderID);
@@ -403,11 +411,13 @@ void CMesh::Ready_Shader(string shaderID)
 //    }
 //}
 
+// Clone component
 CComponent* CMesh::Clone()
 {
     return new CMesh(*this);
 }
 
+// Create an instance
 CMesh* CMesh::Create(string ID, string filePath, string fileName, eModelType type,
     string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal)
 {

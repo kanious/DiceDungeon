@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Component for shader data
 class ENGINE_API CShader : public CComponent
 {
 protected:
@@ -25,8 +26,6 @@ private:
 	explicit CShader();
 	explicit CShader(const CShader& rhs);
 	virtual ~CShader();
-public:
-	virtual void Render();
 private:
 	virtual void Destroy();
 

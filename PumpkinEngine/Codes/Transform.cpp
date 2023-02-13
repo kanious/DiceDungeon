@@ -31,6 +31,7 @@ CTransform::~CTransform()
 {
 }
 
+// Basic Update Function, calculate world matrix
 void CTransform::Update(const _float& dt)
 {
  	m_matWorld = mat4x4(1.f);
@@ -54,11 +55,13 @@ void CTransform::Update(const _float& dt)
 	}
 }
 
+// Call instead of destructor to manage class internal data
 void CTransform::Destroy()
 {
 	CComponent::Destroy();
 }
 
+// Final position information calculated with all parent information
 const vec3 CTransform::GetPositionWithParent()
 {
 	vec3 vPos = m_vPos;
@@ -68,6 +71,7 @@ const vec3 CTransform::GetPositionWithParent()
 	return vPos;
 }
 
+// Final rotation information calculated with all parent information
 const vec3 CTransform::GetRotationWithParent()
 {
 	vec3 vRot = m_vRot;
@@ -77,6 +81,7 @@ const vec3 CTransform::GetRotationWithParent()
 	return vRot;
 }
 
+// Get parent world matrix information
 const mat4x4 CTransform::GetParentMatrix()
 {
 	if (nullptr != m_pParentTransform)
@@ -85,11 +90,13 @@ const mat4x4 CTransform::GetParentMatrix()
 	return mat4x4(1.f);
 }
 
+// Set world matrix directly
 void CTransform::SetWorldMatrix(mat4x4 matWorld)
 {
 	m_matWorld = matWorld;
 }
 
+// Set position/rotation/scale information
 void CTransform::SetPosRotScale(vec3 vPos, vec3 vRot, vec3 vScale)
 {
 	m_vPos = vPos;
@@ -97,126 +104,151 @@ void CTransform::SetPosRotScale(vec3 vPos, vec3 vRot, vec3 vScale)
 	m_vScale = vScale;
 }
 
+// Set position from vector
 void CTransform::SetPosition(vec3 vPos)
 {
 	m_vPos = vPos;
 }
 
+// Set position X
 void CTransform::SetPositionX(_float x)
 {
 	m_vPos.x = x;
 }
 
+// Set position Y
 void CTransform::SetPositionY(_float y)
 {
 	m_vPos.y = y;
 }
 
+// Set position Z
 void CTransform::SetPositionZ(_float z)
 {
 	m_vPos.z = z;
 }
 
+// Set rotation
 void CTransform::SetRotation(vec3 vRot)
 {
 	m_vRot = vRot;
 }
 
+// Set rotation X
 void CTransform::SetRotationX(_float x)
 {
 	m_vRot.x = x;
 }
 
+// Set rotation Y
 void CTransform::SetRotationY(_float y)
 {
 	m_vRot.y = y;
 }
 
+// Set rotation Z
 void CTransform::SetRotationZ(_float z)
 {
 	m_vRot.z = z;
 }
 
+// Set scale
 void CTransform::SetScale(vec3 vScale)
 {
 	m_vScale = vScale;
 }
 
+// Set scale X
 void CTransform::SetScaleX(_float x)
 {
 	m_vScale.x = x;
 }
 
+// Set scale Y
 void CTransform::SetScaleY(_float y)
 {
 	m_vScale.y = y;
 }
 
+// Set scale Z
 void CTransform::SetScaleZ(_float z)
 {
 	m_vScale.z = z;
 }
 
+// Set revolve information
 void CTransform::SetRevolve(vec3 vRevolve)
 {
 	m_vRevolve = vRevolve;
 }
 
+// Set parent transform
 void CTransform::SetParent(CTransform* pParent)
 {
 	m_pParentTransform = pParent;
 }
 
+// Add position
 void CTransform::AddPosition(vec3 vPos)
 {
 	m_vPos += vPos;
 }
 
+// Add position X
 void CTransform::AddPositionX(_float x)
 {
 	m_vPos.x += x;
 }
 
+// Add position Y
 void CTransform::AddPositionY(_float y)
 {
 	m_vPos.y += y;
 }
 
+// Add position Z
 void CTransform::AddPositionZ(_float z)
 {
 	m_vPos.z += z;
 }
 
+// Add rotation
 void CTransform::AddRotation(vec3 vRot)
 {
 	m_vRot += vRot;
 }
 
+// Add rotation X
 void CTransform::AddRotationX(_float x)
 {
 	m_vRot.x += x;
 }
 
+// Add rotation Y
 void CTransform::AddRotationY(_float y)
 {
 	m_vRot.y += y;
 }
 
+// Add rotation Z
 void CTransform::AddRotationZ(_float z)
 {
 	m_vRot.z += z;
 }
 
+// Add scale
 void CTransform::AddScale(vec3 vScale)
 {
 	m_vScale += vScale;
 }
 
+// Add revolve
 void CTransform::AddRevolve(vec3 vRevolve)
 {
 	m_vRevolve += vRevolve;
 }
 
+// calculate world matrix with my data
 void CTransform::ComputeWorldMatrix(glm::mat4x4& matWorld, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
 {
 	matWorld = translate(matWorld, m_vPos + vPos);
@@ -226,6 +258,7 @@ void CTransform::ComputeWorldMatrix(glm::mat4x4& matWorld, glm::vec3 vPos, glm::
 	matWorld = scale(matWorld, m_vScale + vScale);
 }
 
+// Initialize transform
 RESULT CTransform::Ready()
 {
 	m_tag = "Transform";
@@ -233,11 +266,13 @@ RESULT CTransform::Ready()
 	return PK_NOERROR;
 }
 
+// Clone component
 CComponent* CTransform::Clone()
 {
 	return new CTransform(*this);
 }
 
+// Create an instance
 CTransform* CTransform::Create()
 {
 	CTransform* pInstance = new CTransform;

@@ -33,6 +33,7 @@ CCamera::~CCamera()
 {
 }
 
+// Basic Update Function, calculate view/projection matrix
 void CCamera::Update(const _float& dt)
 {
 	CalculateViewMatrix();
@@ -43,11 +44,13 @@ void CCamera::Update(const _float& dt)
 	COpenGLDevice::GetInstance()->SetProjMatrix(m_matProj);
 }
 
+// Call instead of destructor to manage class internal data
 void CCamera::Destroy()
 {
 	CComponent::Destroy();
 }
 
+// Set Camera position
 void CCamera::SetCameraEye(vec3 vEye)
 {
 	m_vEye.x = vEye.x;
@@ -55,6 +58,7 @@ void CCamera::SetCameraEye(vec3 vEye)
 	m_vEye.z = vEye.z;
 }
 
+// Set Camera target position
 void CCamera::SetCameraTarget(vec3 vTarget)
 {
 	m_vTarget.x = vTarget.x;
@@ -62,6 +66,7 @@ void CCamera::SetCameraTarget(vec3 vTarget)
 	m_vTarget.z = vTarget.z;
 }
 
+// Set Camera Up vector
 void CCamera::SetCameraUp(vec3 vUp)
 {
 	m_vUp.x = vUp.x;
@@ -69,11 +74,13 @@ void CCamera::SetCameraUp(vec3 vUp)
 	m_vUp.z = vUp.z;
 }
 
+// Set screen FoV
 void CCamera::SetFieldOfView(_float fov)
 {
 	m_fFov = fov;
 }
 
+// Set screen ratio
 void CCamera::SetRatio()
 {
 	if (0 == COpenGLDevice::GetInstance()->GetWidthSize() || 0 == COpenGLDevice::GetInstance()->GetHeightSize())
@@ -82,26 +89,31 @@ void CCamera::SetRatio()
 		m_fRatio = COpenGLDevice::GetInstance()->GetWidthSize() / (_float)COpenGLDevice::GetInstance()->GetHeightSize();
 }
 
+// Set near value
 void CCamera::SetNear(_float fNear)
 {
 	m_fNear = fNear;
 }
 
+// Set far value
 void CCamera::SetFar(_float fFar)
 {
 	m_fFar = fFar;
 }
 
+// Calculate view matrix
 void CCamera::CalculateViewMatrix()
 {
 	m_matView = lookAt(m_vEye, m_vTarget, m_vUp);
 }
 
+// Calculate projection matrix
 void CCamera::CalculateProjMatrix()
 {
 	m_matProj = perspective(m_fFov, m_fRatio, m_fNear, m_fFar);
 }
 
+// Initialize Camera
 RESULT CCamera::Ready()
 {
 	m_tag = "Camera";
@@ -109,11 +121,13 @@ RESULT CCamera::Ready()
 	return PK_NOERROR;
 }
 
+// Clone component
 CComponent* CCamera::Clone()
 {
 	return new CCamera(*this);
 }
 
+// Create an instance
 CCamera* CCamera::Create()
 {
 	CCamera* pInstance = new CCamera;
@@ -126,6 +140,7 @@ CCamera* CCamera::Create()
 	return pInstance;
 }
 
+// Initialize Camera setup
 void CCamera::InitCameraSetting(glm::vec3 vEye, glm::vec3 vTarget, glm::vec3 vUp, _float fov, _float fNear, _float fFar)
 {
 	m_vEye = vEye;

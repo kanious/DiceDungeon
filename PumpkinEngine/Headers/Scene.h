@@ -8,6 +8,7 @@ NAMESPACE_BEGIN(Engine)
 class CLayer;
 class CGameObject;
 
+//A scene class that holds game objects.
 class ENGINE_API CScene : public CBase
 {
 protected:

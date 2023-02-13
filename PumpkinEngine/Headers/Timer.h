@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Generate delta time value and FPS management
 class ENGINE_API CTimer : public CBase
 {
 	SINGLETON(CTimer)

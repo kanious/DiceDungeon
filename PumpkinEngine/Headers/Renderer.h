@@ -7,6 +7,7 @@ NAMESPACE_BEGIN(Engine)
 
 class CGameObject;
 
+// Only game objects registered here are rendered
 class ENGINE_API CRenderer : public CBase
 {
 	SINGLETON(CRenderer)
@@ -25,6 +26,7 @@ public:
 
 public:
 	void AddRenderObj(CGameObject* pInstance, _bool isTransparent = false);
+private:
 	void ClearAllRenderObjList();
 };
 

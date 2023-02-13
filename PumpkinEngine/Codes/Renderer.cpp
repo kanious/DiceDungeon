@@ -20,7 +20,7 @@ void CRenderer::Destroy()
 	ClearAllRenderObjList();
 }
 
-
+// Basic Render Function, translucent objects are rendered later than other objects
 void CRenderer::Render()
 {
 	vector<CGameObject*>::iterator iter;
@@ -36,6 +36,8 @@ void CRenderer::Render()
 	}
 	ClearAllRenderObjList();
 }
+
+// Register objects that need to be rendered
 void CRenderer::AddRenderObj(CGameObject* pInstance, _bool isTransparent)
 {
 	if (nullptr == pInstance)
@@ -47,6 +49,7 @@ void CRenderer::AddRenderObj(CGameObject* pInstance, _bool isTransparent)
 		m_vecTRenderObj.push_back(pInstance);
 }
 
+// Empty container
 void CRenderer::ClearAllRenderObjList()
 {
 	m_vecRenderObj.clear();

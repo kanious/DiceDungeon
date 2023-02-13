@@ -29,13 +29,13 @@ void Animator::AnimationEndEvent()
     {
         int rand = GetRandNum(0, 3);
         m_eEaseType = (eEaseType)rand;
-        SetAnimationByType();
+        ChangeAnimationByType();
         if (nullptr != m_pPlayer)
             m_pPlayer->SetEaseType(m_eEaseType);
     }
 }
 
-void Animator::SetAnimationByType()
+void Animator::ChangeAnimationByType()
 {
     string tag = "";
     switch (m_eEaseType)
@@ -97,7 +97,7 @@ RESULT Animator::Ready(eAnimType animType, eEaseType easeType, Player* pPlayer, 
 
     m_fAnimSpeed = 3.f;
 
-    SetAnimationByType();
+    ChangeAnimationByType();
 
 	return PK_NOERROR;
 }

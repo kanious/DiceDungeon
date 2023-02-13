@@ -5,6 +5,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Component for texture data
 class ENGINE_API CTexture : public CComponent
 {
 private:

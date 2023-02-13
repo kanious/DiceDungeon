@@ -23,7 +23,7 @@ private:
 private:
 	virtual void Destroy();
 	virtual void AnimationEndEvent();
-	void SetAnimationByType();
+	void ChangeAnimationByType();
 
 private:
 	RESULT Ready(eAnimType animType, eEaseType easeType, Player* pPlayer, _bool isRandom);

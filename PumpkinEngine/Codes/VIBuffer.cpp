@@ -14,6 +14,7 @@ CVIBuffer::~CVIBuffer()
 {
 }
 
+// Basic Render Function, actually print the mesh
 void CVIBuffer::Render()
 {
 	glBindVertexArray(m_iVAO_ID);
@@ -26,12 +27,14 @@ void CVIBuffer::Render()
 	glBindVertexArray(0);
 }
 
+// Call instead of destructor to manage class internal data
 void CVIBuffer::Destroy()
 {
 	glDeleteVertexArrays(1, &m_iVAO_ID);
 	glDeleteBuffers(1, &m_iVB_ID);
 }
 
+// Initialize vertex/index information
 RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type)
 {
 	if (nullptr == pVertices || nullptr == pIndices)
@@ -60,6 +63,7 @@ RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndi
 	return PK_NOERROR;
 }
 
+// Set up the vertex information to shader
 void CVIBuffer::Ready_Vertex_To_Shader()
 {
 	glEnableVertexAttribArray(0);
@@ -87,12 +91,14 @@ void CVIBuffer::Ready_Vertex_To_Shader()
 	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(VTX), (void*)offsetof(VTX, vBoneWeight.x));
 }
 
+// Setup function for xyz buffer
 void CVIBuffer::Ready_xyz()
 {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VTX), (void*)offsetof(VTX, vPos.x));
 }
 
+// Setup function for xyz_normal buffer
 void CVIBuffer::Ready_xyz_normal()
 {
 	glEnableVertexAttribArray(0);
@@ -101,6 +107,7 @@ void CVIBuffer::Ready_xyz_normal()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VTX), (void*)offsetof(VTX, vNormal.x));
 }
 
+// Setup function for xyz_normal_texUV buffer
 void CVIBuffer::Ready_xyz_normal_texUV()
 {
 	glEnableVertexAttribArray(0);
@@ -111,6 +118,7 @@ void CVIBuffer::Ready_xyz_normal_texUV()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VTX), (void*)offsetof(VTX, vTexUV.x));
 }
 
+// Create an instance
 CVIBuffer* CVIBuffer::Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type)
 {
 	CVIBuffer* pInstance = new CVIBuffer();

@@ -46,14 +46,14 @@
     <Filter Include="98.SingletonClasses\Collision">
       <UniqueIdentifier>{d53ce013-5fc7-41a9-accb-5067983503d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.Component\CollisionBox">
-      <UniqueIdentifier>{915d2c3c-d4fd-44d2-a9e0-318485c77452}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98.SingletonClasses\Light">
       <UniqueIdentifier>{ec738422-2065-408d-9af3-784613c6a254}</UniqueIdentifier>
     </Filter>
     <Filter Include="98.SingletonClasses\Animation">
       <UniqueIdentifier>{09247bed-a28c-45b2-a38c-192aa9feab84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Component\BoundingBox">
+      <UniqueIdentifier>{915d2c3c-d4fd-44d2-a9e0-318485c77452}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -148,7 +148,7 @@
       <Filter>98.SingletonClasses\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Headers\BoundingBox.h">
-      <Filter>04.Component\CollisionBox</Filter>
+      <Filter>04.Component\BoundingBox</Filter>
     </ClInclude>
     <ClInclude Include="Headers\EngineStruct.h">
       <Filter>99.Headers</Filter>
@@ -264,7 +264,7 @@
       <Filter>98.SingletonClasses\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Codes\BoindingBox.cpp">
-      <Filter>04.Component\CollisionBox</Filter>
+      <Filter>04.Component\BoundingBox</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Light.cpp">
       <Filter>98.SingletonClasses\Light</Filter>

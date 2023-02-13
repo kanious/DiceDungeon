@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class for 3D vertex/index data
 class ENGINE_API CVIBuffer : public CBase
 {
 private:

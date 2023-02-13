@@ -9,6 +9,7 @@ class CGameObject;
 class CObjectManager;
 class CScene;
 
+//A container class that stores GameObjects separately in the scene.
 class ENGINE_API CLayer : public CBase
 {
 protected:
@@ -23,7 +24,6 @@ protected:
 
 public:
 	virtual void Update(const _float& dt);
-	virtual void Render();
 	void Enable();
 	void Disable();
 private:

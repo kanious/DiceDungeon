@@ -7,6 +7,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Component for camera function
 class ENGINE_API CCamera : public CComponent
 {
 protected:
@@ -49,7 +50,7 @@ public:
 	void SetRatio();
 	void SetNear(_float fNear);
 	void SetFar(_float fFar);
-public:
+private:
 	void CalculateViewMatrix();
 	void CalculateProjMatrix();
 

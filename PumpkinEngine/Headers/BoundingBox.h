@@ -13,6 +13,7 @@ class CShader;
 
 class CTransform;
 
+// Component for collision checking
 class ENGINE_API CBoundingBox : public CComponent
 {
 public:
@@ -48,7 +49,7 @@ private:
 public:
 	VTX* GetVertices()							{ return m_pVertices; }
 	void SetTransform(CTransform* transform)	{ m_pParentTransform = transform; }
-	void UpdatBoundingBox(glm::mat4x4& parentWorldMatrix);
+	void UpdateBoundingBox(glm::mat4x4& parentWorldMatrix);
 	void SetColor(glm::vec3 vColor);
 
 private:

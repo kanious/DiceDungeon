@@ -5,6 +5,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Super class for all (managing memory by using reference count)
 class ENGINE_API CBase
 {
 private:
@@ -19,7 +20,7 @@ public:
 	_uint Release();
 
 protected:
-	virtual void Destroy() = 0;
+	virtual void Destroy() = 0; //Call instead of destructor to manage class internal data
 };
 
 NAMESPACE_END

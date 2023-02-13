@@ -20,10 +20,12 @@ CTimer::~CTimer()
     
 }
 
+// Call instead of destructor to manage class internal data
 void CTimer::Destroy()
 {
 }
 
+// Basic Update Function, calculate default time every tick
 void CTimer::Update()
 {
     m_TimeLastUpdate = m_TimeCurrentUpdate;
@@ -34,11 +36,13 @@ void CTimer::Update()
     m_fCurrentTime += m_fTimeDefault;
 }
 
+// Set frame rate
 void CTimer::SetFrameRate(_int frameRate)
 {
     m_fFrameRate = 1.f / frameRate;
 }
 
+// Check the update cycle based on the frame rate
 _bool CTimer::IsUpdateAvailable()
 {
     if (m_fCurrentTime > m_fFrameRate)

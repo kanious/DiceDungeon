@@ -19,6 +19,7 @@ CLayer::~CLayer()
 {
 }
 
+// Basic Update Function, update all Gameobjects that are stored in this layer
 void CLayer::Update(const _float& dt)
 {
 	if (!m_bEnable)
@@ -40,20 +41,19 @@ void CLayer::Update(const _float& dt)
 	newVector.erase(newVector.begin());
 }
 
-void CLayer::Render()
-{
-}
-
+// Set this layer enabled
 void CLayer::Enable()
 {
 	m_bEnable = true;
 }
 
+// Set this layer disabled
 void CLayer::Disable()
 {
 	m_bEnable = false;
 }
 
+// Call instead of destructor to manage class internal data
 void CLayer::Destroy()
 {
 	list<CGameObject*>::iterator iter;
@@ -63,11 +63,13 @@ void CLayer::Destroy()
 	m_listGameObjects.clear();
 }
 
+// Set layer tag
 void CLayer::SetTag(_uint layerTag)
 {
 	m_tag = layerTag;
 }
 
+// Add Gameobject to this layer
 RESULT CLayer::AddGameObject(CGameObject* obj)
 {
 	if (nullptr == obj)
@@ -78,6 +80,7 @@ RESULT CLayer::AddGameObject(CGameObject* obj)
 	return PK_NOERROR;
 }
 
+// Remove Gameobject from this layer
 RESULT CLayer::RemoveGameObject(CGameObject* obj)
 {
 	if (nullptr == obj)
@@ -100,6 +103,7 @@ RESULT CLayer::RemoveGameObject(CGameObject* obj)
 	return PK_GAMEOBJECT_CANNOT_FIND;
 }
 
+// Remove all Gameobject from this layer
 void CLayer::RemoveAllGameObject()
 {
 	list<CGameObject*>::iterator iter;
@@ -109,6 +113,7 @@ void CLayer::RemoveAllGameObject()
 	m_listGameObjects.clear();
 }
 
+// Find a Gameobject by object name
 CGameObject* CLayer::FindGameObjectByObjName(string objName)
 {
 	list<CGameObject*>::iterator iter;
@@ -121,6 +126,7 @@ CGameObject* CLayer::FindGameObjectByObjName(string objName)
 	return nullptr;
 }
 
+// Initialize this layer
 RESULT CLayer::Ready(_uint tag)
 {
 	m_tag = tag;
@@ -128,6 +134,7 @@ RESULT CLayer::Ready(_uint tag)
 	return PK_NOERROR;
 }
 
+// Create this layer
 CLayer* CLayer::Create(_uint tag)
 {
 	CLayer* pInstance = new CLayer;
@@ -141,6 +148,7 @@ CLayer* CLayer::Create(_uint tag)
 	return pInstance;
 }
 
+// Find a dead Gameobject and safe delete it
 _bool DeadFinder(CGameObject* pObj)
 {
 	_bool isDead = pObj->GetDead();

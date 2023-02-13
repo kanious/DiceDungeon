@@ -9,6 +9,7 @@ NAMESPACE_BEGIN(Engine)
 class COpenGLDevice;
 class CShader;
 
+// The Gameobject for skybox
 class ENGINE_API CSkyBox : public CGameObject
 {
 private:

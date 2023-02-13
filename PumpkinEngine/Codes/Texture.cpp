@@ -23,6 +23,7 @@ CTexture::~CTexture()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CTexture::Destroy()
 {
     glDeleteTextures(1, &m_iTextureID);
@@ -30,6 +31,7 @@ void CTexture::Destroy()
     CComponent::Destroy();
 }
 
+// Load texture information from file
 RESULT CTexture::Ready(string ID, string filePath)
 {
     m_tag = ID;
@@ -58,11 +60,13 @@ RESULT CTexture::Ready(string ID, string filePath)
     return PK_NOERROR;
 }
 
+// Clone component
 CComponent* CTexture::Clone()
 {
     return new CTexture(*this);
 }
 
+// Create an instance
 CTexture* CTexture::Create(string ID, string filePath)
 {
     CTexture* pInstance = new CTexture();

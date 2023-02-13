@@ -43,6 +43,7 @@ CBoundingBox::~CBoundingBox()
 {
 }
 
+// Basic Render Function, render bounding box
 void CBoundingBox::Render()
 {
 	if (!m_bEnable)
@@ -60,6 +61,7 @@ void CBoundingBox::Render()
 		m_pVIBuffer->Render();
 }
 
+// Render bounding box without parent information
 void CBoundingBox::RenderWithoutParent()
 {
 	mat4x4 matWorld(1.f);
@@ -71,6 +73,7 @@ void CBoundingBox::RenderWithoutParent()
 		m_pVIBuffer->Render();
 }
 
+// Render bounding box with another parent information
 void CBoundingBox::RenderWithParent(CTransform* parent)
 {
 	if (nullptr == parent)
@@ -85,6 +88,7 @@ void CBoundingBox::RenderWithParent(CTransform* parent)
 		m_pVIBuffer->Render();
 }
 
+// Call instead of destructor to manage class internal data
 void CBoundingBox::Destroy()
 {
 	delete[] m_pVertices;
@@ -96,7 +100,8 @@ void CBoundingBox::Destroy()
 	CComponent::Destroy();
 }
 
-void CBoundingBox::UpdatBoundingBox(mat4x4& parentWorldMatrix)
+// Update bounding box information by parent information
+void CBoundingBox::UpdateBoundingBox(mat4x4& parentWorldMatrix)
 {
 	m_vMax = vec3(-100000.f);
 	m_vMin = vec3(100000.f);
@@ -132,12 +137,14 @@ void CBoundingBox::UpdatBoundingBox(mat4x4& parentWorldMatrix)
 	m_vCenter = m_vMin + m_vHalfExtents;
 }
 
+// Set bounding box color
 void CBoundingBox::SetColor(glm::vec3 vColor)
 {
 	if (nullptr != m_pShader)
 		m_pShader->SetColor(vColor);
 }
 
+// Initialize bounding box
 RESULT CBoundingBox::Ready(vec3 min, vec3 max, string shaderID)
 {
 	m_tag = "BBox";
@@ -200,11 +207,13 @@ RESULT CBoundingBox::Ready(vec3 min, vec3 max, string shaderID)
 	return PK_NOERROR;
 }
 
+// Clone component
 CComponent* CBoundingBox::Clone()
 {
 	return new CBoundingBox(*this);
 }
 
+// Create an instance
 CBoundingBox* CBoundingBox::Create(vec3 min, vec3 max, string shaderID)
 {
 	CBoundingBox* pInstance = new CBoundingBox;

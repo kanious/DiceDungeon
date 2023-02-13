@@ -5,6 +5,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+//Parent class of classes with various components
 class ENGINE_API CComponent : public CBase
 {
 protected:

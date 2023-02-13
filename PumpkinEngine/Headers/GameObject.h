@@ -13,6 +13,7 @@ class CLayer;
 class CTransform;
 class CBoundingBox;
 
+// An Object class
 class ENGINE_API CGameObject : public CBase
 {
 protected:
@@ -31,6 +32,7 @@ protected:
 
 	typedef std::unordered_map<std::string, CComponent*> COMPONENT_MAP;
 	COMPONENT_MAP						m_mapComponent;
+
 	CRenderer*							m_pRenderer;
 	CLayer*								m_pLayer;
 	CTransform*							m_pTransform;

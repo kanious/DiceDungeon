@@ -45,15 +45,13 @@ CShader::~CShader()
 {
 }
 
-void CShader::Render()
-{
-}
-
+// Call instead of destructor to manage class internal data
 void CShader::Destroy()
 {
 	CComponent::Destroy();
 }
 
+// Create shader Id
 RESULT CShader::CreateShaderProgram()
 {
 	m_ShaderProgram = glCreateProgram();
@@ -61,6 +59,7 @@ RESULT CShader::CreateShaderProgram()
 	return PK_NOERROR;
 }
 
+// Create new shader from file
 RESULT CShader::AddShader(const char* vertexPath, const char* fragPath)
 {
 	string vertex_shader_code = ReadShader(vertexPath);
@@ -84,6 +83,7 @@ RESULT CShader::AddShader(const char* vertexPath, const char* fragPath)
 	return PK_NOERROR;
 }
 
+// Read shader code from file
 string CShader::ReadShader(const char* fileName)
 {
 	string shaderCode;
@@ -104,6 +104,7 @@ string CShader::ReadShader(const char* fileName)
 	return shaderCode;
 }
 
+// Compile shader
 _uint CShader::CreateShader(_uint shaderType, string source)
 {
 	_int compile_result = 0;
@@ -122,6 +123,7 @@ _uint CShader::CreateShader(_uint shaderType, string source)
 	return shader;
 }
 
+// Set location to shader
 void CShader::SetLocation()
 {
  	m_matWorldLocation = glGetUniformLocation(m_ShaderProgram, "matWorld");
@@ -136,6 +138,7 @@ void CShader::SetLocation()
 	m_frameLocation = glGetUniformLocation(m_ShaderProgram, "iFrameIndex");
  }
 
+// Set matrix information to shader
 void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 proj)
 {
 	glUseProgram(m_ShaderProgram);
@@ -144,48 +147,56 @@ void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 
 	glUniformMatrix4fv(m_matProjLocation, 1, GL_FALSE, value_ptr(proj));
 }
 
+// Set diffuse texture information to shader
 void CShader::SetTextureInfo()
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_diffTexLocation, 0);
 }
 
+// Set normal texture information to shader
 void CShader::SetNormalTextureInfo()
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_normalTexLocation, 1);
 }
 
+// Set light enable information to shader
 void CShader::SetLightEnableInfo(_bool lightEnable)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_lightEnableLocation, lightEnable);
 }
 
+// Set selected object information to shader
 void CShader::SetSelected(_bool selected)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_selectedLocation, selected);
 }
 
+// Set mesh color information to shader
 void CShader::SetColor(vec3 vColor)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform4f(m_colorLocation, vColor.x, vColor.y, vColor.z, 1.f);
 }
 
+// Set mesh transparency information to shader
 void CShader::SetTransparency(_bool value)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_transparencyLocation, value);
 }
 
+// Set animation frame index information to shader
 void CShader::SetFrameIndex(_uint index)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_frameLocation, index);
 }
 
+// Initialize Shader
 RESULT CShader::Ready(string ID, const char* vertexPath, const char* fragPath)
 {
 	m_tag = ID;
@@ -202,11 +213,13 @@ RESULT CShader::Ready(string ID, const char* vertexPath, const char* fragPath)
 	return PK_NOERROR;
 }
 
+// Clone component
 CComponent* CShader::Clone()
 {
 	return new CShader(*this);
 }
 
+// Create an instance
 CShader* CShader::Create(string ID, const char* vertexPath, const char* fragPath)
 {
 	CShader* pInstance = new CShader;
