@@ -35,29 +35,26 @@ private:
 private:
 	explicit SceneDungeon();
 	virtual ~SceneDungeon();
-	
-private:
-	void KeyCheck();
-public:
-	void AddBGObject(std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, int dir = 0);
-
-private:
-	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
-	void ResetDefaultCameraPos();
-
+	virtual void Destroy();
 public:
 	virtual void Update(const _float& dt);
 	virtual void Render();
+
+public:
+	glm::vec3 GetCameraPos();
 private:
-	virtual void Destroy();
+	void KeyCheck();
+	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
+	void ResetDefaultCameraPos();
 
 private:
-	RESULT Ready();
+	RESULT Ready(std::string dataPath);
 	RESULT ReadyLayerAndGameObject();
+	void LoadBackgroundObjects();
 	void AddCharacters();
 public:
-	static SceneDungeon* Create();
-	virtual void LoadBackgroundObjects();
+	static SceneDungeon* Create(std::string dataPath);
+
 };
 
 #endif //_SCENEDUNGEON_H_

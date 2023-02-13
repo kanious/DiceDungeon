@@ -220,7 +220,7 @@ void DefaultCamera::FollowPlayer()
 
 void DefaultCamera::Update(const _float& dt)
 {
-	//KeyCheck(dt);
+	KeyCheck(dt);
 	//FollowPlayer();
 
 	CGameObject::Update(dt);
