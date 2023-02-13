@@ -28,4 +28,12 @@ dagger_Tex,Texture\,mf_dagger_01.png
 potion_Tex,Texture\,mf_potion_01.png
 portal_Tex,Texture\,DragonJawPortal_Diffuse.png
 character_Tex,Texture\,UniversalCharacterTexture.png
-pumpkinking_Tex,Texture\,pumpkin_king_diffuse.png
+true_pumpkinking_Tex,Texture\,pumpkin_king_diffuse.png
+true_dummy01_Tex,Texture\,dummy_diffuse1.png
+true_dummy02_Tex,Texture\,dummy_diffuse2.png
+true_dummy03_Tex,Texture\,dummy_diffuse3.png
+true_scarecrow_Tex,Texture\,true_scarecrow_diffuse.png
+true_crawler_Tex,Texture\,crawler_diffuse.png
+true_clown01_Tex,Texture\,true_clown_diffuse1.png
+true_clown02_Tex,Texture\,true_clown_diffuse2.png
+true_clown03_Tex,Texture\,true_clown_diffuse3.png

@@ -1654,9 +1654,9 @@
   {
     "modelName": "sample_female",
     "texName": "UniversalCharacterTexture.png",
-    "posX": 0.0,
+    "posX": -40.0,
     "posY": 0.0,
-    "posZ": -30.0,
+    "posZ": -20.0,
     "rotX": 0.0,
     "rotY": 0.0,
     "rotZ": 0.0,
@@ -1668,9 +1668,9 @@
   {
     "modelName": "sample_male",
     "texName": "UniversalCharacterTexture.png",
-    "posX": -5.0,
+    "posX": -50.0,
     "posY": 0.0,
-    "posZ": -30.0,
+    "posZ": -20.0,
     "rotX": 0.0,
     "rotY": 0.0,
     "rotZ": 0.0,
@@ -1680,7 +1680,7 @@
     "lock": false
   },
   {
-    "modelName": "pumpkin_king",
+    "modelName": "true_pumpkin_king",
     "texName": "pumpkin_king_diffuse.png",
     "posX": -10.0,
     "posY": 0.0,
@@ -1691,6 +1691,62 @@
     "scaleX": 1,
     "scaleY": 1,
     "scaleZ": 1,
+    "lock": false
+  },
+  {
+    "modelName": "true_dummy",
+    "texName": "",
+    "posX": -5.0,
+    "posY": 0.0,
+    "posZ": -30.0,
+    "rotX": 0.0,
+    "rotY": -90.0,
+    "rotZ": 0.0,
+    "scaleX": 1,
+    "scaleY": 1,
+    "scaleZ": 1,
+    "lock": false
+  },
+  {
+    "modelName": "true_scarecrow",
+    "texName": "",
+    "posX": 0.0,
+    "posY": 0.0,
+    "posZ": -30.0,
+    "rotX": 0.0,
+    "rotY": -90.0,
+    "rotZ": 0.0,
+    "scaleX": 1,
+    "scaleY": 1,
+    "scaleZ": 1,
+    "lock": false
+  },
+  {
+    "modelName": "true_crawler",
+    "texName": "",
+    "posX": 5.0,
+    "posY": 0.0,
+    "posZ": -30.0,
+    "rotX": 0.0,
+    "rotY": -90.0,
+    "rotZ": 0.0,
+    "scaleX": 1,
+    "scaleY": 1,
+    "scaleZ": 1,
+    "lock": false
+  },
+  {
+    "modelName": "true_clown",
+    "texName": "",
+    "posX": -15.0,
+    "posY": 0.0,
+    "posZ": -30.0,
+    "rotX": 0.0,
+    "rotY": -90.0,
+    "rotZ": 0.0,
+    "scaleX": 0.75,
+    "scaleY": 0.75,
+    "scaleZ": 0.75,
     "lock": false
   }
 ]

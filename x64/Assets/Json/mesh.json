@@ -786,7 +786,7 @@
    "FileName": "sample_female.ply",
    "DataType": 2,
    "Shader_ID": "DefaultShader",
-   "InitSize": 1,
+   "InitSize": 5,
    "MeshType": "",
    "Texture_ID_Diff": "character_Tex",
    "Texture_ID_Normal": ""
@@ -797,20 +797,64 @@
    "FileName": "sample_male.ply",
    "DataType": 2,
    "Shader_ID": "DefaultShader",
-   "InitSize": 1,
+   "InitSize": 5,
    "MeshType": "",
    "Texture_ID_Diff": "character_Tex",
    "Texture_ID_Normal": ""
  },
  {
-   "ID": "pumpkin_king",
+   "ID": "true_pumpkin_king",
    "Path": "Mesh\\",
    "FileName": "pumpkin_king.ply",
    "DataType": 2,
    "Shader_ID": "DefaultShader",
    "InitSize": 1,
    "MeshType": "",
-   "Texture_ID_Diff": "pumpkinking_Tex",
+   "Texture_ID_Diff": "true_pumpkinking_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "true_dummy",
+   "Path": "Mesh\\",
+   "FileName": "dummy.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "true_dummy03_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "true_scarecrow",
+   "Path": "Mesh\\",
+   "FileName": "scarecrow.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "true_scarecrow_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "true_crawler",
+   "Path": "Mesh\\",
+   "FileName": "crawler.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "true_crawler_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "true_clown",
+   "Path": "Mesh\\",
+   "FileName": "clown.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "true_clown02_Tex",
    "Texture_ID_Normal": ""
  }
 ]

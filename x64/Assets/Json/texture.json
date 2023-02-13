@@ -145,8 +145,48 @@
    "FileName": "UniversalCharacterTexture.png"
  },
  {
-   "ID": "pumpkinking_Tex",
+   "ID": "true_pumpkinking_Tex",
    "Path": "Texture\\",
    "FileName": "pumpkin_king_diffuse.png"
+ },
+ {
+   "ID": "true_dummy01_Tex",
+   "Path": "Texture\\",
+   "FileName": "dummy_diffuse1.png"
+ },
+ {
+   "ID": "true_dummy02_Tex",
+   "Path": "Texture\\",
+   "FileName": "dummy_diffuse2.png"
+ },
+ {
+   "ID": "true_dummy03_Tex",
+   "Path": "Texture\\",
+   "FileName": "dummy_diffuse3.png"
+ },
+ {
+   "ID": "true_scarecrow_Tex",
+   "Path": "Texture\\",
+   "FileName": "true_scarecrow_diffuse.png"
+ },
+ {
+   "ID": "true_crawler_Tex",
+   "Path": "Texture\\",
+   "FileName": "crawler_diffuse.png"
+ },
+ {
+   "ID": "true_clown01_Tex",
+   "Path": "Texture\\",
+   "FileName": "true_clown_diffuse1.png"
+ },
+ {
+   "ID": "true_clown02_Tex",
+   "Path": "Texture\\",
+   "FileName": "true_clown_diffuse2.png"
+ },
+ {
+   "ID": "true_clown03_Tex",
+   "Path": "Texture\\",
+   "FileName": "true_clown_diffuse3.png"
  }
 ]
