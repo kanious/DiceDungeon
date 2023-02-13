@@ -768,5 +768,49 @@
    "MeshType": "",
    "Texture_ID_Diff": "potion_Tex",
    "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "portal_dragon",
+   "Path": "Mesh\\",
+   "FileName": "DragonJawPortal.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 0.03,
+   "MeshType": "",
+   "Texture_ID_Diff": "portal_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "sample_female",
+   "Path": "Mesh\\",
+   "FileName": "sample_female.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "character_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "sample_male",
+   "Path": "Mesh\\",
+   "FileName": "sample_male.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "character_Tex",
+   "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "pumpkin_king",
+   "Path": "Mesh\\",
+   "FileName": "pumpkin_king.ply",
+   "DataType": 2,
+   "Shader_ID": "DefaultShader",
+   "InitSize": 1,
+   "MeshType": "",
+   "Texture_ID_Diff": "pumpkinking_Tex",
+   "Texture_ID_Normal": ""
  }
 ]

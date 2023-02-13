@@ -69,3 +69,7 @@ pumpkin_12,Mesh\,pumpkin_12.ply,2,DefaultShader,0.025,pumpkin,cemetery_halloween
 book_01,Mesh\,mf_book_01.ply,2,DefaultShader,0.025,,book_Tex,
 dagger_01,Mesh\,mf_dagger_01.ply,2,DefaultShader,0.025,,dagger_Tex,
 potion_01,Mesh\,mf_potion_01.ply,2,DefaultShader,0.025,,potion_Tex,
+portal_dragon,Mesh\,DragonJawPortal.ply,2,DefaultShader,0.03,,portal_Tex,
+sample_female,Mesh\,sample_female.ply,2,DefaultShader,5,,character_Tex,
+sample_male,Mesh\,sample_male.ply,2,DefaultShader,5,,character_Tex,
+pumpkin_king,Mesh\,pumpkin_king.ply,2,DefaultShader,1,,pumpkinking_Tex,

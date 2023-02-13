@@ -133,5 +133,20 @@
    "ID": "potion_Tex",
    "Path": "Texture\\",
    "FileName": "mf_potion_01.png"
+ },
+ {
+   "ID": "portal_Tex",
+   "Path": "Texture\\",
+   "FileName": "DragonJawPortal_Diffuse.png"
+ },
+ {
+   "ID": "character_Tex",
+   "Path": "Texture\\",
+   "FileName": "UniversalCharacterTexture.png"
+ },
+ {
+   "ID": "pumpkinking_Tex",
+   "Path": "Texture\\",
+   "FileName": "pumpkin_king_diffuse.png"
  }
 ]
