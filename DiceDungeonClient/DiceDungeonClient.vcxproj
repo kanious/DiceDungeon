@@ -142,6 +142,7 @@
     <ClCompile Include="Codes\DefaultCamera.cpp" />
     <ClCompile Include="Codes\glad.c" />
     <ClCompile Include="Codes\main.cpp" />
+    <ClCompile Include="Codes\ObjectFactory.cpp" />
     <ClCompile Include="Codes\Player.cpp" />
     <ClCompile Include="Codes\SceneDungeon.cpp" />
     <ClCompile Include="Codes\UIManager.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Codes\DefaultCamera.h" />
     <ClInclude Include="Codes\Define.h" />
     <ClInclude Include="Codes\Enums.h" />
+    <ClInclude Include="Codes\ObjectFactory.h" />
     <ClInclude Include="Codes\Function.h" />
     <ClInclude Include="Codes\Player.h" />
     <ClInclude Include="Codes\SceneDungeon.h" />

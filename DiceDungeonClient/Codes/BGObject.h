@@ -24,10 +24,10 @@ public:
 private:
 	virtual void Destroy();
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, int dir);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 public:
 	static BGObject* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, int dir = 0);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 };
 
 #endif //_BGOBJECT_H_

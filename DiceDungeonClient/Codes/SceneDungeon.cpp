@@ -19,6 +19,7 @@
 #include "Player.h"
 #include "AnimationManager.h"
 #include "AnimationData.h"
+#include "ObjectFactory.h"
 
 #include <sstream>
 #include <atlconv.h>
@@ -233,13 +234,11 @@ RESULT SceneDungeon::ReadyLayerAndGameObject()
 		vec3 vPos = vec3(0.f, 0.f, 0.f);
 		vec3 vRot = vec3(0.f, 0.f, 0.f);
 		vec3 vScale = vec3(1.f);
-		CGameObject* pGameObject = DefaultCamera::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_CAMERA, pLayer,
+
+		m_pDefaultCamera = ObjectFactory::CreateCamera(
+			(_uint)SCENE_3D, pLayer->GetTag(),
+			(_uint)OBJ_CAMERA, pLayer,
 			vPos, vRot, vScale, 0.6f, 0.1f, 1000.f);
-		if (nullptr != pGameObject)
-		{
-			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
-			m_pDefaultCamera = dynamic_cast<DefaultCamera*>(pGameObject);
-		}
 	}
 
 	//Create.BackgroundLayer 
@@ -254,33 +253,33 @@ RESULT SceneDungeon::ReadyLayerAndGameObject()
 void SceneDungeon::LoadBackgroundObjects()
 {
 	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
-	CGameObject* pGameObject = nullptr;
+	//CGameObject* pGameObject = nullptr;
 
-	if (nullptr != pLayer)
+	if (nullptr == pLayer)
+		return;
+
+	pLayer->RemoveAllGameObject();
+	vector<CJsonParser::sObjectData> vecObjects;
+	CJsonParser::sObjectData cameraData;
+	CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+	vector<CJsonParser::sObjectData>::iterator iter;
+	for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 	{
-		pLayer->RemoveAllGameObject();
-		vector<CJsonParser::sObjectData> vecObjects;
-		CJsonParser::sObjectData cameraData;
-		CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
-		vector<CJsonParser::sObjectData>::iterator iter;
-		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
-		{
-			pGameObject = BGObject::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer,
-				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
-			if (nullptr == pGameObject)
-				continue;
-			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
-			dynamic_cast<BGObject*>(pGameObject)->SetLock(iter->LOCK);
-		}
-		vecObjects.clear();
+		ObjectFactory::CreateBGObject(
+			(_uint)SCENE_3D,
+			pLayer->GetTag(),
+			(_uint)OBJ_BACKGROUND,
+			pLayer,
+			iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+	}
+	vecObjects.clear();
 
-		if (nullptr != m_pDefaultCamera)
-		{
-			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
-			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
-			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
-			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
-		}
+	if (nullptr != m_pDefaultCamera)
+	{
+		SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
+		m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
+		m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
+		m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
 	}
 }
 
@@ -299,11 +298,12 @@ void SceneDungeon::AddCharacters()
 	{
 		CJsonParser::sCharacterData data = vecCharacters[i];
 
-		pGameObject = Player::Create((_uint)SCENE_3D, m_pObjLayer->GetTag(), (_uint)OBJ_CHARACTER, m_pObjLayer
-			, data.MESHID, data.POSITION, data.ROTATION, data.SCALE, (eAnimType)data.ANIMTYPE, (eEaseType)data.EASETYPE
-			, data.ANIMRANDOM);
-		if (nullptr != pGameObject)
-			AddGameObjectToLayer(m_pObjLayer->GetTag(), pGameObject);
+		ObjectFactory::CreatePlayer(
+			(_uint)SCENE_3D,
+			m_pObjLayer->GetTag(),
+			(_uint)OBJ_CHARACTER,
+			m_pObjLayer
+			, data.MESHID, data.POSITION, data.ROTATION, data.SCALE);
 	}
 }
 

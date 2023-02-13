@@ -37,15 +37,6 @@ Scene3D::Scene3D()
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
 	m_pAnimationManager = AnimationManager::GetInstance(); m_pAnimationManager->AddRefCnt();
 
-	//wchar_t path[MAX_PATH] = { 0 };
-	//GetModuleFileName(NULL, path, MAX_PATH);
-	//USES_CONVERSION;
-	//std::string str = W2A(path);
-	//str = str.substr(0, str.find_last_of("\\/"));//
-	//stringstream ss;
-	//ss << str << "\\..\\Assets\\";
-
-	//m_DataPath = ss.str();
 	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
 }
@@ -268,10 +259,6 @@ RESULT Scene3D::ReadyLayerAndGameObject()
 
 	//Create.BackgroundLayer 
 	LoadBackgroundObjects();
-
-	//LoadObjsbyLayer(LAYER_OBJECT, "character.json") //이런식으로 바꾸기
-	// 저장할 때 Layer 종류에 따라 파일 다르게 해서 저장하기
-	// Scene Objects 파일에 넣을 Layer Object 파일 이름을 저장하기
 
 	//Create.Player/AIs
 	//AddCharacters();

@@ -116,8 +116,6 @@ RESULT Client::Ready()
 {
 	RESULT result = PK_NOERROR;
 
-	srand((unsigned int)time(NULL));
-
 	// OpenGL Graphic Device
 	if (nullptr != m_pGraphicDevice)
 	{

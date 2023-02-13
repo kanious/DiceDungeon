@@ -9,11 +9,7 @@ class Player;
 class Animator : public Engine::CAnimController
 {
 private:
-	Player*			m_pPlayer;
-	_bool			m_bIsRandom;
-
-	eAnimType		m_eAnimType;
-	eEaseType		m_eEaseType;
+	Player*		m_pPlayer;
 
 
 private:
@@ -26,9 +22,9 @@ private:
 	void SetAnimationByType();
 
 private:
-	RESULT Ready(eAnimType animType, eEaseType easeType, Player* pPlayer, _bool isRandom);
+	RESULT Ready(Player* pPlayer);
 public:
-	static Animator* Create(eAnimType animType, eEaseType easeType, Player* pPlayer, _bool isRandom);
+	static Animator* Create(Player* pPlayer);
 };
 
 #endif //_ANIMATOR_H_

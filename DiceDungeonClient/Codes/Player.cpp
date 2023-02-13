@@ -76,12 +76,11 @@ void Player::Destroy()
 }
 
 RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
-	, vec3 vRot, vec3 vScale, eAnimType animType, eEaseType easeType, _bool randomAnim)
+	, vec3 vRot, vec3 vScale)
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
 	m_meshName = meshID;
-	m_eEaseType = easeType;
 
 	//Clone.Mesh
 	m_pMesh = CloneComponent<CMesh*>(meshID);
@@ -95,7 +94,7 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
 
-		m_pAnimator = Animator::Create(animType, easeType, this, randomAnim);
+		m_pAnimator = Animator::Create(this);
 		m_pMesh->SetAnimController(m_pAnimator);
 		AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
 	}
@@ -110,10 +109,10 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 }
 
 Player* Player::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
-	, vec3 vRot, vec3 vScale, eAnimType animType, eEaseType easeType, _bool randomAnim)
+	, vec3 vRot, vec3 vScale)
 {
 	Player* pInstance = new Player();
-	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, animType, easeType, randomAnim))
+	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;
