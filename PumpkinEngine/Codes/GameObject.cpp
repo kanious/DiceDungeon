@@ -120,7 +120,7 @@ vec3 CGameObject::GetRotation()
 	return m_pTransform->GetRotation();
 }
 
-// Get positionY from the transform component
+// Get rotationY from the transform component
 _float CGameObject::GetRotationY()
 {
 	if (nullptr == m_pTransform)
@@ -128,7 +128,6 @@ _float CGameObject::GetRotationY()
 
 	return m_pTransform->GetRotationY();
 }
-
 
 // Get scale from the transform component
 vec3 CGameObject::GetScale()
@@ -139,7 +138,7 @@ vec3 CGameObject::GetScale()
 	return m_pTransform->GetScale();
 }
 
-// Get look vector from the transform component
+// Get normalized look vector from the transform component
 glm::vec3 CGameObject::GetLookVector()
 {
 	if (nullptr == m_pTransform)

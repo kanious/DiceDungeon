@@ -22,6 +22,7 @@ private:
 private:
 	explicit COpenGLDevice();
 	virtual ~COpenGLDevice();
+	// Call instead of destructor to manage class internal data
 	void Destroy();
 
 public:
@@ -35,8 +36,10 @@ public:
 	void SetViewMatrix(glm::mat4x4 matView);
 	void SetProjMatrix(glm::mat4x4 matProj);
 public:
+	// Create OpenGL Window
 	RESULT CreateOpenGLWindow(_int width, _int height, const char* title, _bool fullscreen, _bool borderedWindow);
 private:
+	// Terminate OpenGL Window
 	void TerminateOpenGLWindow();
 
 };

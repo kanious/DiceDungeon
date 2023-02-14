@@ -23,11 +23,15 @@ private:
 	explicit CComponentMaster();
 	virtual ~CComponentMaster();
 private:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
 
 public:
+	// Save new component
 	RESULT AddNewComponent(std::string tag, CComponent* pComponent);
+	// Save new mesh info (for map editor)
 	void AddNewMeshInfo(std::string tag);
+	// Find component by tag
 	CComponent* FindComponent(std::string tag);
 	COMPONENT_MAP* GetComponentMap()			{ return &m_mapComponent; }
 	MESH_VECTOR* GetMeshVector()				{ return &m_vecMesh; }

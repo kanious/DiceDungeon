@@ -16,7 +16,9 @@ protected:
 	virtual ~CBase();
 
 public:
+	// Add Reference Count
 	_uint AddRefCnt();
+	// Delete itself if the reference count is zero
 	_uint Release();
 
 protected:

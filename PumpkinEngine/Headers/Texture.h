@@ -19,6 +19,7 @@ private:
 	virtual ~CTexture();
 
 private:
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
 
 public:
@@ -27,9 +28,12 @@ public:
 	_int GetHeight()			{ return m_iHeight; }
 
 private:
+	// Load texture information from file
 	RESULT Ready(std::string ID, std::string filePath);
 public:
+	// Clone component
 	virtual CComponent* Clone();
+	// Create an instance
 	static CTexture* Create(std::string ID, std::string filePath);
 };
 

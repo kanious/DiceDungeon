@@ -22,14 +22,18 @@ private:
 private:
 	explicit CTimer();
 	virtual ~CTimer();
+	// Call instead of destructor to manage class internal data
 	void Destroy();
 public:
+	// Basic Update Function, calculate default time every tick
 	void Update();
 
 public:
 	_float GetTimeDelta() { return m_fTimeDelta > 0.1 ? 0 : m_fTimeDelta; }
 	_float GetTimeDefault() { return m_fTimeDefault; }
+	// Set frame rate
 	void SetFrameRate(_int frameRate);
+	// Check the update cycle based on the frame rate
 	_bool IsUpdateAvailable();
 
 };

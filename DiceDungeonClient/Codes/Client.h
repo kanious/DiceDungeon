@@ -33,6 +33,7 @@ public:
 	void Destroy();
 
 public:
+	// Core Loop
 	void Loop();
 	RESULT Ready();
 private:

@@ -47,8 +47,10 @@ private:
 	virtual ~CMesh();
 
 public:
+	// Basic Render Function, render 3D mesh with shader/texture information
 	virtual void Render();
 private:
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
 
 public:
@@ -66,6 +68,7 @@ public:
 	void SetDebugBox(_bool value)							{ m_bDebug = value; }
 	void SetBillboard(_bool value)							{ m_bBiilboard = value; }
 	void SetAnimController(CAnimController* pController)	{ m_pAnimController = pController; }
+	// Set diffuse texture
 	void SetTexture(std::string texID_diff);
 
 private:

@@ -23,15 +23,21 @@ private:
 	explicit CGameMaster();
 	virtual ~CGameMaster();
 public:
+	// Basic Update Function, update current scene
 	void Update(const _float& dt);
+	// Basic Render Function, render renderer (and scene if needed)
 	void Render();
 private:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
 
 public:
 	CScene* GetCurrentScene()			{ return m_pCurrentScene; }
+	// Return game close status
 	_bool GetGameClose()				{ return m_bGameClose; }
+	// Set current scene information
 	void SetCurrentScene(CScene* pScene);
+	// Set game close status
 	void SetGameClose(_bool value)		{ m_bGameClose = value; }
 };
 

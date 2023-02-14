@@ -22,11 +22,14 @@ private:
 	virtual ~CRenderer();
 	void Destroy();
 public:
+	// Basic Render Function, translucent objects are rendered later than other objects
 	void Render();
 
 public:
+	// Register objects that need to be rendered
 	void AddRenderObj(CGameObject* pInstance, _bool isTransparent = false);
 private:
+	// Empty container
 	void ClearAllRenderObjList();
 };
 
