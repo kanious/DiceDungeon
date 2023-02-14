@@ -20,6 +20,7 @@ CQuadTree::~CQuadTree()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CQuadTree::Destroy()
 {
 	m_mapNodes.clear();
@@ -36,6 +37,7 @@ void CQuadTree::Destroy()
 	m_vecNodeInfo.clear();
 }
 
+// Basic Render Function, render bounding box of node
 void CQuadTree::Render()
 {
 	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
@@ -59,6 +61,7 @@ _int CQuadTree::GetHashValue(_float x, _float z)
 	return (_int)xValue + (_int)zValue;
 }
 
+// Add triangles for collision checking
 void CQuadTree::AddTriangleToTreeNode(_int hashKey, TRIANGLE triangle)
 {
 	MAP_NODE::iterator iter = m_mapNodes.find(hashKey);
@@ -134,6 +137,7 @@ _bool Compare(CQuadTree::CQuadTreeNode* t1, CQuadTree::CQuadTreeNode* t2)
 	return t1->myIndex < t2->myIndex;
 }
 
+// Initialize
 RESULT CQuadTree::Ready(vec3 vMax, vec3 vMin, _uint depth)
 {
 	_uint nodeCount = (pow(4, depth) - 1) / 3;
@@ -144,6 +148,7 @@ RESULT CQuadTree::Ready(vec3 vMax, vec3 vMin, _uint depth)
 	return PK_NOERROR;
 }
 
+// Initialize QuadTree
 void CQuadTree::ReadyQuadTree(_uint index, glm::vec3 vMax, glm::vec3 vMin, _uint depth, _uint maxDepth)
 {
 	CQuadTreeNode* pNode = new CQuadTreeNode();
@@ -189,6 +194,7 @@ void CQuadTree::ReadyQuadTree(_uint index, glm::vec3 vMax, glm::vec3 vMin, _uint
 	m_vecNodeInfo[pNode->myIndex] = pNode;
 }
 
+// Create an instance
 CQuadTree* CQuadTree::Create(vec3 vMax, vec3 vMin, _uint depth)
 {
 	CQuadTree* pInstance = new CQuadTree();

@@ -17,6 +17,7 @@ CComponentMaster::~CComponentMaster()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CComponentMaster::Destroy()
 {
 	COMPONENT_MAP::iterator iter;
@@ -27,6 +28,7 @@ void CComponentMaster::Destroy()
 	m_vecMesh.clear();
 }
 
+// Save new component
 RESULT CComponentMaster::AddNewComponent(string tag, CComponent* pComponent)
 {
 	COMPONENT_MAP::iterator iter = m_mapComponent.find(tag);
@@ -38,11 +40,13 @@ RESULT CComponentMaster::AddNewComponent(string tag, CComponent* pComponent)
 	return PK_NOERROR;
 }
 
+// Save new mesh info (for map editor)
 void CComponentMaster::AddNewMeshInfo(string tag)
 {
 	m_vecMesh.push_back(tag);
 }
 
+// Find component by tag
 CComponent* CComponentMaster::FindComponent(std::string tag)
 {
 	CComponent* pComponent = nullptr;

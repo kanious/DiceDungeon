@@ -6,6 +6,7 @@
 
 class Player;
 
+// Child class of Animation Controller to manage animations per object
 class Animator : public Engine::CAnimController
 {
 private:

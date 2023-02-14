@@ -10,7 +10,7 @@ USING(glm)
 
 CAnimController::CAnimController()
 	: m_pCurAnimation(nullptr), m_iFrameIndex(0), m_fCurTime(0.f), m_fAnimSpeed(1.f)
-	, m_bReverse(false), m_bPause(false)
+	, m_bReverse(false), m_bPause(false), m_bIsPlaying(false)
 {
 }
 
@@ -73,4 +73,15 @@ void CAnimController::SetReverse()
 void CAnimController::SetPause()
 {
 	m_bPause = !m_bPause;
+}
+
+void CAnimController::StopAnimation()
+{
+
+}
+
+void CAnimController::ResetAnimation()
+{
+	m_fCurTime = 0;
+	m_iFrameIndex = 0;
 }

@@ -23,6 +23,7 @@ CSoundSystem::~CSoundSystem()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CSoundSystem::Destroy()
 {
 	CHANNEL_MAP::iterator iterChannel;
@@ -83,6 +84,7 @@ void CSoundSystem::Set3DSoundPosition(string tag, _float x, _float y, _float z)
 	iterSound->second->pChannel->set3DAttributes(&vSoundPos, nullptr);
 }
 
+// Load sound from file
 RESULT CSoundSystem::LoadSound(string tag, string path, string channelTag, _int mode)
 {
 	Sound* pSound;
@@ -136,6 +138,7 @@ RESULT CSoundSystem::LoadSound(string tag, string path, string channelTag, _int 
 	return PK_NOERROR;
 }
 
+// Create channel group
 RESULT CSoundSystem::CreateChannelGroup(std::string tag)
 {
 	ChannelGroup* pChannelGroup;
@@ -160,6 +163,7 @@ RESULT CSoundSystem::CreateChannelGroup(std::string tag)
 	return PK_NOERROR;
 }
 
+// Play sound
 void CSoundSystem::PlaySound(string tag)
 {
 	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
@@ -190,6 +194,7 @@ void CSoundSystem::PlaySound(string tag)
 	pInfo->pChannel = pChannel;
 }
 
+// Play 3D sound
 void CSoundSystem::Play3DSound(string tag, _float x, _float y, _float z)
 {
 	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
@@ -241,6 +246,7 @@ void CSoundSystem::Play3DSound(string tag, _float x, _float y, _float z)
 
 }
 
+// Stop sound
 void CSoundSystem::StopSound(string tag)
 {
 	SOUND_MAP::iterator iterSound = m_mapSounds.find(tag);
@@ -256,6 +262,7 @@ void CSoundSystem::StopSound(string tag)
 	}
 }
 
+// Create DSP effect
 RESULT CSoundSystem::CreateDSPEffect(string name, FMOD_DSP_TYPE type)
 {
 	DSP* pDSP;
@@ -307,6 +314,7 @@ RESULT CSoundSystem::CreateDSPEffect(string name, FMOD_DSP_TYPE type)
 	return PK_NOERROR;
 }
 
+// Add DSP effect
 RESULT CSoundSystem::AddDSPEffect(string channelTag, string dspName)
 {
 	CHANNEL_MAP::iterator iterChannel = m_mapChannels.find(channelTag);
@@ -329,6 +337,7 @@ RESULT CSoundSystem::AddDSPEffect(string channelTag, string dspName)
 	return PK_NOERROR;
 }
 
+// FMOD Error Check
 RESULT CSoundSystem::ErrorCheck(FMOD_RESULT result)
 {
 	if (result != FMOD_OK)
@@ -340,6 +349,7 @@ RESULT CSoundSystem::ErrorCheck(FMOD_RESULT result)
 	return PK_NOERROR;
 }
 
+// Initialize
 RESULT CSoundSystem::Ready(_int number, _int flag)
 {
 	FMOD_RESULT result = System_Create(&m_pSystem);
@@ -353,6 +363,7 @@ RESULT CSoundSystem::Ready(_int number, _int flag)
 	return PK_NOERROR;
 }
 
+// Create an instance
 CSoundSystem* CSoundSystem::Create(_int number, _int flag)
 {
 	CSoundSystem* pInstance = new CSoundSystem();

@@ -97,7 +97,17 @@ void CMesh::Render()
     if (!m_bBiilboard)
     {
         if (nullptr != m_pAnimController)
-            matWorld = matWorld * m_pAnimController->GetMatrix();
+        {
+            mat4x4 matAnim = m_pAnimController->GetMatrix();
+            vec3 vScale = m_pParentTransform->GetScale();
+            vScale.x = 1.f / vScale.x;
+            vScale.y = 1.f / vScale.y;
+            vScale.z = 1.f / vScale.z;
+            matAnim[3][0] *= vScale.x;
+            matAnim[3][1] *= vScale.y;
+            matAnim[3][2] *= vScale.z;
+            matWorld = matWorld * matAnim;
+        }
 
         m_pShader->SetMatrixInfo(matWorld, matView, matProj);
     }

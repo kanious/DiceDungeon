@@ -3,7 +3,7 @@
 
 #include "Base.h"
 
-
+// Manages all UI
 class UIManager : public Engine::CBase
 {
 	SINGLETON(UIManager)

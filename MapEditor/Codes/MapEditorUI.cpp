@@ -450,6 +450,7 @@ RESULT MapEditorUI::Ready(Scene3D* pScene)
 	m_vecMeshTypeCombo.push_back("graveyard");
 	m_vecMeshTypeCombo.push_back("skull");
 	m_vecMeshTypeCombo.push_back("pumpkin");
+	m_vecMeshTypeCombo.push_back("character");
 	m_vecMeshTypeCombo.push_back("etc");
 	m_curMeshTypeCombo = "All";
 

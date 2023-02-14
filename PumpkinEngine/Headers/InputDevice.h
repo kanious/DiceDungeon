@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class to manage all user input
 class ENGINE_API CInputDevice : public CBase
 {
 	SINGLETON(CInputDevice)

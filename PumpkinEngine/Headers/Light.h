@@ -7,6 +7,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Light Info class
 class ENGINE_API CLight : public CBase
 {
 public:

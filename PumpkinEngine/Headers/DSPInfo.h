@@ -8,6 +8,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class containing FMOD DSP Effects information
 class ENGINE_API CDSPInfo : public CBase
 {
 public:

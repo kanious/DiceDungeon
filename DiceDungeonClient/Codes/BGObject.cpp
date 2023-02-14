@@ -30,6 +30,7 @@ BGObject::~BGObject()
 {
 }
 
+// Basic Update Function
 void BGObject::Update(const _float& dt)
 {
 	if (m_bEnable)
@@ -41,16 +42,19 @@ void BGObject::Update(const _float& dt)
 	}
 }
 
+// Basic Render Function
 void BGObject::Render()
 {
 	CGameObject::Render();
 }
 
+// Call instead of destructor to manage class internal data
 void BGObject::Destroy()
 {
 	CGameObject::Destroy();
 }
 
+// Initialize
 RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale)
 {
 	SetupGameObject(sTag, lTag, oTag);
@@ -81,6 +85,7 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	return PK_NOERROR;
 }
 
+// Create an instance
 BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos, vec3 vRot, vec3 vScale)
 {
 	BGObject* pInstance = new BGObject();

@@ -7,6 +7,7 @@
 NAMESPACE_BEGIN(Engine)
 
 class CComponent;
+// A class that manages components. All components are cloned from here
 class ENGINE_API CComponentMaster : public CBase
 {
 	SINGLETON(CComponentMaster)
@@ -32,6 +33,7 @@ public:
 	MESH_VECTOR* GetMeshVector()				{ return &m_vecMesh; }
 };
 
+// clone component by tag
 template <class T>
 T CloneComponent(std::string tag)
 {

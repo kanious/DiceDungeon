@@ -8,6 +8,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class containing FMOD channel group information
 class ENGINE_API CChannelGroupInfo : public CBase
 {
 public:

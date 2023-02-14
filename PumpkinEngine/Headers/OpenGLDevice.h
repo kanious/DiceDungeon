@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// OpenGL Graphics device
 class ENGINE_API COpenGLDevice : public CBase
 {
 	SINGLETON(COpenGLDevice)

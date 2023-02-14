@@ -7,7 +7,8 @@
 NAMESPACE_BEGIN(Engine)
 
 class CAnimation;
-
+ 
+//A class that has data for actually playing animations. Each object that want to use animation for has each one.
 class ENGINE_API CAnimController : public CBase
 {
 protected:
@@ -18,6 +19,7 @@ protected:
 	_float					m_fAnimSpeed;
 	_bool					m_bReverse;
 	_bool					m_bPause;
+	_bool					m_bIsPlaying;
 
 
 protected:
@@ -30,6 +32,8 @@ protected:
 
 public:
 	glm::mat4x4 GetMatrix();
+	_bool GetIsPlaying()				{ return m_bIsPlaying; }
+	void SetIsPlaying(_bool value)		{ m_bIsPlaying = value; }
 
 public:
 	void FrameMove(const _float& dt);
@@ -38,6 +42,8 @@ public:
 	void SetPreviousFrame();
 	void SetReverse();
 	void SetPause();
+	void StopAnimation();
+	void ResetAnimation();
 };
 
 NAMESPACE_END

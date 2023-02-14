@@ -8,6 +8,7 @@ NAMESPACE_BEGIN(Engine)
 class CScene;
 class CRenderer;
 
+// A super manager class that updates scenes and renders the renderer.
 class ENGINE_API CGameMaster : public CBase
 {
 	SINGLETON(CGameMaster)

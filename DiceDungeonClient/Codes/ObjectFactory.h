@@ -13,6 +13,7 @@ class BGObject;
 class Player;
 class DefaultCamera;
 
+// Factory method class for object creation
 class ObjectFactory
 {
 public:

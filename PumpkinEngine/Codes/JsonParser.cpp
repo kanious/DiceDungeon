@@ -30,11 +30,13 @@ CJsonParser::~CJsonParser()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CJsonParser::Destroy()
 {
 	SafeDestroy(m_pCompMaster);
 }
 
+// Load Characters from file
 void CJsonParser::LoadCharacterList(std::string assetFolderPath, std::string fileName, std::vector<sCharacterData>& vec)
 {
 	Document doc;
@@ -72,6 +74,7 @@ void CJsonParser::LoadCharacterList(std::string assetFolderPath, std::string fil
 	std::fclose(file);
 }
 
+// Load Textures from file
 void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileName)
 {
 	Document doc;
@@ -100,6 +103,7 @@ void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileN
 	std::fclose(file);
 }
 
+// Load Meshes from file
 void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName, _bool saveMeshList)
 {
 	Document doc;
@@ -141,6 +145,7 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 	std::fclose(file);
 }
 
+// Load Objects from file
 void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	Document doc;
@@ -154,7 +159,7 @@ void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector
 		const Value& curData = doc[i];
 
 		data.ID = curData["modelName"].GetString();
-		data.TEXNAME = curData["texName"].GetString();
+		data.LAYERTYPE = curData["layerType"].GetString();
 		data.POSITION.x = curData["posX"].GetFloat();
 		data.POSITION.y = curData["posY"].GetFloat();
 		data.POSITION.z = curData["posZ"].GetFloat();
@@ -166,7 +171,7 @@ void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector
 		data.SCALE.z = curData["scaleZ"].GetFloat();
 		data.LOCK = curData["lock"].GetBool();
 
-		if (i == 0)
+		if (!strcmp("camera", data.LAYERTYPE.c_str()))
 			cameraData = data;
 		else
 			vec.push_back(data);
@@ -175,6 +180,7 @@ void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector
 	std::fclose(file);
 }
 
+// Save Objects from file
 void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	stringstream ss;
@@ -205,9 +211,10 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 		id.SetString(buffer, len, allocator);
 		obj.AddMember("modelName", id, allocator);
 
-		Value texName;
-		texName.SetString(buffer, 0, allocator);
-		obj.AddMember("texName", texName, allocator);
+		Value layerType;
+		len = sprintf_s(buffer, "%s", "Camera");
+		layerType.SetString(buffer, len, allocator);
+		obj.AddMember("layerType", layerType, allocator);
 
 		Value posX;	posX.SetFloat(cameraData.POSITION.x); obj.AddMember("posX", posX, allocator);
 		Value posY;	posY.SetFloat(cameraData.POSITION.y); obj.AddMember("posY", posY, allocator);
@@ -238,10 +245,10 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 		id.SetString(buffer, len, allocator);
 		obj.AddMember("modelName", id, allocator);
 
-		Value texName;
-		len = sprintf_s(buffer, "%s", curData.TEXNAME.c_str());
-		texName.SetString(buffer, len, allocator);
-		obj.AddMember("texName", texName, allocator);
+		Value layerType;
+		len = sprintf_s(buffer, "%s", curData.LAYERTYPE.c_str());
+		layerType.SetString(buffer, len, allocator);
+		obj.AddMember("layerType", layerType, allocator);
 
 		Value posX;	posX.SetFloat(curData.POSITION.x); obj.AddMember("posX", posX, allocator);
 		Value posY;	posY.SetFloat(curData.POSITION.y); obj.AddMember("posY", posY, allocator);
@@ -264,6 +271,7 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 	std::fclose(file);
 }
 
+// Open files for loading
 void CJsonParser::LoadDataFromFile(Document& doc, FILE*& file, string assetFolderPath, string fileName)
 {
 	stringstream ss;

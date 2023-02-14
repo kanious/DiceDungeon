@@ -29,6 +29,7 @@ void Animator::AnimationEndEvent()
 
 void Animator::SetAnimationByType()
 {
+    m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation("jump");
 }
 
 RESULT Animator::Ready(Player* pPlayer)

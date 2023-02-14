@@ -7,6 +7,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class containing animation data
 class ENGINE_API CAnimation : public CBase
 {
 private:

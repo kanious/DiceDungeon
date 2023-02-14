@@ -24,10 +24,12 @@ CXMLParser::~CXMLParser()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CXMLParser::Destroy()
 {
 }
 
+// Load Shaders from file
 void CXMLParser::LoadShaderData(string path, string fileName)
 {
 	stringstream ss;
@@ -73,6 +75,7 @@ void CXMLParser::LoadShaderData(string path, string fileName)
 	}
 }
 
+// Load Textures from file
 void CXMLParser::LoadTextureData(string path, string fileName)
 {
 	stringstream ss;
@@ -114,6 +117,7 @@ void CXMLParser::LoadTextureData(string path, string fileName)
 	}
 }
 
+// Load Meshes from file
 void CXMLParser::LoadMeshData(string path, string fileName)
 {
 	stringstream ss;
@@ -169,6 +173,7 @@ void CXMLParser::LoadMeshData(string path, string fileName)
 	}
 }
 
+// Load Sounds from file
 void CXMLParser::LoadSoundData(string path, string fileName)
 {
 	stringstream ss;
@@ -273,6 +278,7 @@ void CXMLParser::LoadSoundData(string path, string fileName)
 	}
 }
 
+// Load Objects from file
 void CXMLParser::LoadMapObjectData(string path, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	stringstream ss;
@@ -358,6 +364,7 @@ void CXMLParser::LoadMapObjectData(string path, string fileName, vector<sObjectD
 	}
 }
 
+// Save Objects from file
 void CXMLParser::SaveMapObjectData(string path, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	xml_document xmlData;
@@ -430,6 +437,7 @@ void CXMLParser::SaveMapObjectData(string path, string fileName, vector<sObjectD
 	_bool result = xmlData.save_file(ss.str().c_str());
 }
 
+// Load Lights from file
 void CXMLParser::LoadLightData(string path, string fileName, vector<sLightData>& vec)
 {
 	stringstream ss;
@@ -500,6 +508,7 @@ void CXMLParser::LoadLightData(string path, string fileName, vector<sLightData>&
 	}
 }
 
+// Save Lights from file
 void CXMLParser::SaveLightData(string path, string fileName, vector<sLightData>& vec)
 {
 	xml_document xmlData;
@@ -594,6 +603,7 @@ void CXMLParser::SaveLightData(string path, string fileName, vector<sLightData>&
 	_bool result = xmlData.save_file(ss.str().c_str());
 }
 
+// Load Language Data from file
 void CXMLParser::LoadLanguageData(string path, string fileName, unordered_map<string, string>& map)
 {
 	stringstream ss;

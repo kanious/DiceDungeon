@@ -8,6 +8,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class containing FMOD sound information
 class ENGINE_API CSoundInfo : public CBase
 {
 public:

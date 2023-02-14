@@ -20,6 +20,7 @@ COctree::~COctree()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void COctree::Destroy()
 {
 	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
@@ -35,6 +36,7 @@ void COctree::Destroy()
 	m_vecNodeInfo.clear();
 }
 
+// Basic Render Function, render bounding box of node
 void COctree::Render()
 {
 	for (int i = 0; i < m_vecNodeInfo.size(); ++i)
@@ -58,6 +60,7 @@ void COctree::Render()
 	}
 }
 
+// Add triangles for collision checking
 void COctree::AddTriangle(TRIANGLE t, _uint& count)
 {
 	_bool flag = false;
@@ -130,6 +133,7 @@ _bool Compare(COctree::COctreeNode* t1, COctree::COctreeNode* t2)
 	return t1->myIndex < t2->myIndex;
 }
 
+// Initialize
 RESULT COctree::Ready(vec3 vMax, vec3 vMin, _uint depth)
 {
 	_uint nodeCount = (pow(8, depth) - 1) / 7;
@@ -142,6 +146,7 @@ RESULT COctree::Ready(vec3 vMax, vec3 vMin, _uint depth)
 	return PK_NOERROR;
 }
 
+// Initialize Octree
 void COctree::ReadyOctree(_uint index, glm::vec3 vCenter, vec3 vHalf, _uint depth, _uint maxDepth)
 {
 	COctreeNode* pNode = new COctreeNode();
@@ -216,6 +221,7 @@ void COctree::ReadyOctree(_uint index, glm::vec3 vCenter, vec3 vHalf, _uint dept
 	m_vecNodeInfo[pNode->myIndex] = pNode;
 }
 
+// Create an instance
 COctree* COctree::Create(vec3 vMax, vec3 vMin, _uint depth)
 {
 	COctree* pInstance = new COctree();

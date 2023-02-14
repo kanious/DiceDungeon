@@ -12,6 +12,8 @@ NAMESPACE_BEGIN(Engine)
 class CSoundInfo;
 class CChannelGroupInfo;
 class CDSPInfo;
+
+// Class that contains and controls FMOD instances
 class ENGINE_API CSoundSystem : public CBase
 {
 private:

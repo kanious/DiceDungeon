@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Class containing light information
 class ENGINE_API CLightMaster : public CBase
 {
 	SINGLETON(CLightMaster)

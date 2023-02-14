@@ -2,8 +2,10 @@
 #define _FUNCTION_H_
 
 #include <cstdlib>
-#include <glm\vec3.hpp>
 #include <string>
+#include "OpenGLDefines.h"
+
+// Header for defining global functions
 
 static int GetRandNum(int min, int max)
 {
@@ -18,6 +20,23 @@ static int GetRandNum_Big(int min, int max)
 static void PrintVector(glm::vec3 vec, std::string title = "")
 {
 	std::cout << title << ": " << vec.x << ", " << vec.y << ", " << vec.z << std::endl;
+}
+
+static float safe_acos(float value)
+{
+	if (value <= -1.0f)
+		return glm::radians(180.f);
+	else if (value >= 1.0f)
+		return 0.f;
+	else
+		return glm::acos(value);
+}
+
+static float GetAngle(glm::vec3 vDir1, glm::vec3 vDir2)
+{
+	float fDot = glm::dot(vDir1, vDir2);
+	float fAngleGap = safe_acos(fDot);
+	return glm::degrees(fAngleGap);
 }
 
 #endif //_FUNCTION_H_

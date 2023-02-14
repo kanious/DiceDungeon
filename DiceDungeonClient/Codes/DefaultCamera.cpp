@@ -94,6 +94,7 @@ void DefaultCamera::SetCameraTarget(glm::vec3 target)
 	m_fAngleY = m_pTransform->GetRotationY();
 }
 
+// Save shaders to deliver camera information
 void DefaultCamera::AddShaderLocation(string shaderTag)
 {
 	CComponent* shader = CComponentMaster::GetInstance()->FindComponent(shaderTag);
@@ -105,6 +106,7 @@ void DefaultCamera::AddShaderLocation(string shaderTag)
 	}
 }
 
+// Check user input
 void DefaultCamera::KeyCheck(const _float& dt)
 {
 	if (nullptr == m_pInputDevice || nullptr == m_pTransform)
@@ -203,6 +205,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 		isLeftAltDown = false;
 }
 
+// Following Target
 void DefaultCamera::FollowPlayer()
 {
 	if (nullptr == m_pTarget)
@@ -218,6 +221,7 @@ void DefaultCamera::FollowPlayer()
 	m_pCamera->SetCameraEye(vPos);
 }
 
+// Basic Update Function
 void DefaultCamera::Update(const _float& dt)
 {
 	KeyCheck(dt);
@@ -231,6 +235,7 @@ void DefaultCamera::Update(const _float& dt)
 		glUniform4f(m_vecShaders[i], vEye.x, vEye.y, vEye.z, 1.0f);
 }
 
+// Call instead of destructor to manage class internal data
 void DefaultCamera::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
@@ -238,6 +243,7 @@ void DefaultCamera::Destroy()
 	CGameObject::Destroy();
 }
 
+// Initialize
 RESULT DefaultCamera::Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, vec3 vPos, vec3 vRot, vec3 vScale, _float fov, _float fNear, _float fFar)
 {
 	SetupGameObject(sTag, lTag, oTag);
@@ -263,6 +269,7 @@ RESULT DefaultCamera::Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* 
 	return PK_NOERROR;
 }
 
+// Create an instance
 DefaultCamera* DefaultCamera::Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, vec3 vPos, vec3 vRot, vec3 vScale, _float fov, _float fNear, _float fFar)
 {
 	DefaultCamera* pInstance = new DefaultCamera();

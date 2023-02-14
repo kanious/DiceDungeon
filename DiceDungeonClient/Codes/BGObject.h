@@ -8,6 +8,8 @@ namespace Engine
 {
 	class CMesh;
 }
+
+// Static Object class
 class BGObject : public Engine::CGameObject
 {
 private:

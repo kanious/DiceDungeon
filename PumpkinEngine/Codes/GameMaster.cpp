@@ -29,6 +29,7 @@ CGameMaster::~CGameMaster()
 {
 }
 
+// Basic Update Function, update current scene
 void CGameMaster::Update(const _float& dt)
 {
 	if (nullptr == m_pCurrentScene)
@@ -37,6 +38,7 @@ void CGameMaster::Update(const _float& dt)
 	m_pCurrentScene->Update(dt);
 }
 
+// Basic Render Function, render renderer (and scene if needed)
 void CGameMaster::Render()
 {
 	if (nullptr != m_pRenderer)
@@ -46,6 +48,7 @@ void CGameMaster::Render()
 		m_pCurrentScene->Render();
 }
 
+// Call instead of destructor to manage class internal data
 void CGameMaster::Destroy()
 {
 	SafeDestroy(m_pCurrentScene);
@@ -66,6 +69,7 @@ void CGameMaster::Destroy()
 	m_pRenderer = nullptr;
 }
 
+// Set current scene information
 void CGameMaster::SetCurrentScene(CScene* pScene)
 {
 	SafeDestroy(m_pCurrentScene);

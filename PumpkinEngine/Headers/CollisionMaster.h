@@ -6,12 +6,12 @@
 
 NAMESPACE_BEGIN(Engine)
 
-
 class CBoundingBox;
 class CTransform;
 class CQuadTree;
 class COctree;
 
+// Class that manages all collision checks
 class ENGINE_API CCollisionMaster : public CBase
 {
 	SINGLETON(CCollisionMaster)
@@ -30,7 +30,7 @@ private:
 	_bool PointInTriangle(glm::vec3 P, glm::vec3 A, glm::vec3 B, glm::vec3 C);
 	_bool PointInDotThree(glm::vec3 p1, glm::vec3 p2, glm::vec3 pA, glm::vec3 pB);
 
-public: //QuadTree
+public:
 	_bool IntersectRayToTriangles(CQuadTree* pQuadTree, glm::vec3& vMain, glm::vec3& vTarget, glm::vec3& vDest);
 	_bool IsRayBlockedByTriangles(CQuadTree* pQuadTree, glm::vec3& vMain, glm::vec3& vTarget, glm::vec3& vDest);
 	_bool IntersectCheckForProjectiles(CQuadTree* pQuadTree, glm::vec3& vMain, glm::vec3& vTarget, glm::vec3& vDest);
@@ -38,14 +38,7 @@ private:
 	void GetCenter(glm::vec3& p0, glm::vec3& p1, glm::vec3& p2, glm::vec3& center, _float& radius);
 	_bool IntersectRaySphere(glm::vec3& vOrigin, glm::vec3& vDir, glm::vec3& center, _float& radius);
 
-//public: //Physics #2 - first
-//	_bool TestTriangleAABB(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, CBoundingBox* aabb);
-//	_bool IntersectTriangleInAABB(glm::vec3 v0, glm::vec3 v1, glm::vec3 v2, CBoundingBox* aabb);
-//	_int IntersectAABBToAABB(CBoundingBox* A, CBoundingBox* B);
-//private:
-//	_bool TestAABBPlane(CBoundingBox* b, glm::vec3 vNormal, _float fDot);
-
-public: //Physics #2 - second
+public:
 	_bool IntersectTriangleToAABB(TRIANGLE* triangle, CBoundingBox* boundingBox);
 	_bool IntersectTriangleToOBB(TRIANGLE* triangle, CBoundingBox* boundingBox);
 	_bool IntersectOBBToAABB(CBoundingBox* obb, CBoundingBox* aabb);

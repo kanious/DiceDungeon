@@ -18,6 +18,7 @@ CSoundMaster::~CSoundMaster()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CSoundMaster::Destroy()
 {
 	SafeDestroy(m_pSoundSystem);
@@ -87,6 +88,7 @@ void CSoundMaster::Set3DSoundPosition(string tag, _float x, _float y, _float z)
 	m_pSoundSystem->Set3DSoundPosition(tag, x, y, z);
 }
 
+// Load sound from file
 RESULT CSoundMaster::LoadSound(string tag, string path, string channelTag)
 {
 	if (nullptr == m_pSoundSystem)
@@ -95,6 +97,7 @@ RESULT CSoundMaster::LoadSound(string tag, string path, string channelTag)
 	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_3D | FMOD_DEFAULT);
 }
 
+// Load loop sound from file
 RESULT CSoundMaster::LoadLoopSound(string tag, string path, string channelTag)
 {
 	if (nullptr == m_pSoundSystem)
@@ -103,6 +106,7 @@ RESULT CSoundMaster::LoadLoopSound(string tag, string path, string channelTag)
 	return m_pSoundSystem->LoadSound(tag, path, channelTag, FMOD_DEFAULT | FMOD_3D | FMOD_LOOP_NORMAL);
 }
 
+// Create channel group
 RESULT CSoundMaster::CreateChannelGroup(string name)
 {
 	if (nullptr == m_pSoundSystem)
@@ -111,6 +115,7 @@ RESULT CSoundMaster::CreateChannelGroup(string name)
 	return m_pSoundSystem->CreateChannelGroup(name);
 }
 
+// Play sound
 void CSoundMaster::PlaySound(string tag)
 {
 	if (nullptr == m_pSoundSystem)
@@ -119,6 +124,7 @@ void CSoundMaster::PlaySound(string tag)
 	m_pSoundSystem->PlaySound(tag);
 }
 
+// Play 3D sound
 void CSoundMaster::Play3DSound(string tag, _float x, _float y, _float z)
 {
 	if (nullptr == m_pSoundSystem)
@@ -127,12 +133,14 @@ void CSoundMaster::Play3DSound(string tag, _float x, _float y, _float z)
 	m_pSoundSystem->Play3DSound(tag, x, y, z);
 }
 
+// Stop sound
 void CSoundMaster::StopSound(string tag)
 {
 	if (nullptr != m_pSoundSystem)
 		m_pSoundSystem->StopSound(tag);
 }
 
+// Create DSP effect
 RESULT CSoundMaster::CreateDSPEffect(string name, _int type)
 {
 	if (nullptr == m_pSoundSystem)
@@ -141,6 +149,7 @@ RESULT CSoundMaster::CreateDSPEffect(string name, _int type)
 	return m_pSoundSystem->CreateDSPEffect(name, (FMOD_DSP_TYPE)type);
 }
 
+// Add DSP effect
 RESULT CSoundMaster::AddDSPEffect(string channelName, string dspName)
 {
 	if (nullptr == m_pSoundSystem)
@@ -149,11 +158,13 @@ RESULT CSoundMaster::AddDSPEffect(string channelName, string dspName)
 	return m_pSoundSystem->AddDSPEffect(channelName, dspName);
 }
 
+// Reset all sound data
 void CSoundMaster::ResetAllSoundData()
 {
 	SafeDestroy(m_pSoundSystem);
 }
 
+// Initialize
 void CSoundMaster::Ready(_int number)
 {
 	m_pSoundSystem = CSoundSystem::Create(number, FMOD_INIT_NORMAL);

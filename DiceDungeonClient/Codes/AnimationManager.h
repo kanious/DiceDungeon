@@ -10,6 +10,7 @@ namespace Engine
 class Player;
 class Animator;
 
+// A class that oversees the client's animator
 class AnimationManager : public Engine::CBase
 {
 	SINGLETON(AnimationManager)
@@ -17,8 +18,6 @@ class AnimationManager : public Engine::CBase
 private:
 	Engine::CInputDevice*			m_pInputDevice;
 	std::vector<Animator*>			m_vecAnimators;
-
-	Player*							m_pTarget;
 
 private:
 	explicit AnimationManager();
@@ -32,11 +31,6 @@ public:
 
 public:
 	void AddAnimator(Animator* pAnimator);
-	void SetTargetAnimator(Player* pPlayer);
-
-private:
-	void KeyCheck();
-	void SetAnimationSpeed(_float speed);
 };
 
 #endif //_ANIMATIONMANAGER_H_

@@ -10,6 +10,8 @@
 NAMESPACE_BEGIN(Engine)
 
 class CComponentMaster;
+
+// Save/Load Json files
 class ENGINE_API CJsonParser : public CBase
 {
 	SINGLETON(CJsonParser)
@@ -48,7 +50,7 @@ class ENGINE_API CJsonParser : public CBase
 	struct sObjectData
 	{
 		std::string ID;
-		std::string TEXNAME;
+		std::string LAYERTYPE;
 		glm::vec3 POSITION;
 		glm::vec3 ROTATION;
 		glm::vec3 SCALE;

@@ -15,16 +15,19 @@ class UIManager;
 class DefaultCamera;
 class BGObject;
 class AnimationManager;
+class TargetManager;
 
+// A game scene class that inherits from the engine's CScene class
 class SceneDungeon : public Engine::CScene
 {
 private:
 	Engine::CInputDevice*		m_pInputDevice;
-	Engine::CLayer*				m_pObjLayer;
+	Engine::CLayer*				m_pCharacterLayer;
 	Engine::CSkyBox*			m_pSkyBox;
 	UIManager*					m_pUIManager;
 	DefaultCamera*				m_pDefaultCamera;
 	AnimationManager*			m_pAnimationManager;
+	TargetManager*				m_pTargetManager;
 
 	glm::vec3					m_vCameraSavedPos;
 	glm::vec3					m_vCameraSavedRot;
@@ -50,8 +53,7 @@ private:
 private:
 	RESULT Ready(std::string dataPath);
 	RESULT ReadyLayerAndGameObject();
-	void LoadBackgroundObjects();
-	void AddCharacters();
+	void LoadObjects();
 public:
 	static SceneDungeon* Create(std::string dataPath);
 

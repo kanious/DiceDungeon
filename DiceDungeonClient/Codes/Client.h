@@ -10,6 +10,8 @@ namespace Engine
 	class COpenGLDevice;
 	class CInputDevice;
 }
+
+// A client class that runs a core loop
 class Client
 {
 private:

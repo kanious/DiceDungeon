@@ -26,11 +26,13 @@ CInputDevice::~CInputDevice()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CInputDevice::Destroy()
 {
 	ClearInputSystem();
 }
 
+// Setup openGL input system
 RESULT CInputDevice::SetupInputSystem(GLFWwindow* pWindow, _int mouseMode)
 {
 	if (nullptr == pWindow)
@@ -47,6 +49,7 @@ RESULT CInputDevice::SetupInputSystem(GLFWwindow* pWindow, _int mouseMode)
 	return PK_NOERROR;
 }
 
+// Remove openGL input system and all information
 void CInputDevice::ClearInputSystem()
 {
 	unordered_map<_int, KeyInfo*>::iterator iter;
@@ -65,6 +68,7 @@ void CInputDevice::ClearInputSystem()
 	m_mapMouseButtonInfos.clear();
 }
 
+// Change mouse cursor mode
 void CInputDevice::SetMouseCursorMode(_int mouseMode)
 {
 	glfwSetInputMode(m_pWindow, GLFW_CURSOR, mouseMode);
@@ -113,7 +117,6 @@ _bool CInputDevice::IsAnyKeyDown(_int key)
 	return false;
 }
 
-
 _bool CInputDevice::IsMousePressed(_int key)
 {
 	unordered_map<_int, KeyInfo*>::iterator iter = m_mapMouseButtonInfos.find(key);
@@ -126,6 +129,7 @@ _bool CInputDevice::IsMousePressed(_int key)
 	return false;
 }
 
+// Initializing the mouse position value when changing the mouse mode
 void CInputDevice::InitMousePos()
 {
 	int iWidth, iHeight;
@@ -137,6 +141,7 @@ void CInputDevice::InitMousePos()
 	m_bEntered = true;
 } 
 
+// Returns the distance the mouse has moved
 vec2 CInputDevice::GetMouseMovedDistance()
 {
 	if (m_bEntered)
@@ -161,6 +166,7 @@ vec2 CInputDevice::GetMouseMovedDistance()
 	return movedDistance * m_fMouseSensitivity;
 }
 
+// Returns the distance the mouse wheel has rolled
 vec2 CInputDevice::GetMouseScrollDistance()
 {
 	vec2 scrollDistance = m_vecScroll;
@@ -169,6 +175,7 @@ vec2 CInputDevice::GetMouseScrollDistance()
 	return scrollDistance;
 }
 
+// Returns the world position of the mouse
 vec3 CInputDevice::GetMouseWorldCoord()
 {
 	int width = 0;
@@ -193,6 +200,7 @@ vec3 CInputDevice::GetMouseWorldCoord()
 	return ray_dir;
 }
 
+// Returns the center of the world position of the mouse
 vec3 CInputDevice::GetCenterMouseWorldCoord()
 {
 	int width = 0;
@@ -217,17 +225,20 @@ vec3 CInputDevice::GetCenterMouseWorldCoord()
 	return ray_dir;
 }
 
+// Set custom crosshair
 void CInputDevice::SetCustomCrosshair()
 {
  	GLFWcursor* pCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
 	glfwSetCursor(m_pWindow, pCursor);
 }
 
+// Remove custom crosshair
 void CInputDevice::RemoveCustomCrosshair()
 {
 	glfwSetCursor(m_pWindow, NULL);
 }
 
+// Initialize keyboard keys
 void CInputDevice::SetInputKey(_int key, _int scancode, _int action, _int mods)
 {
 	unordered_map<_int, KeyInfo*>::iterator iter = m_mapKeyInfos.find(key);
@@ -250,6 +261,7 @@ void CInputDevice::SetInputKey(_int key, _int scancode, _int action, _int mods)
 	}
 }
 
+// Initialize mouse buttons
 void CInputDevice::SetInputMouseButton(_int button, _int action, _int mods)
 {
 	unordered_map<_int, KeyInfo*>::iterator iter = m_mapMouseButtonInfos.find(button);
@@ -271,11 +283,13 @@ void CInputDevice::SetInputMouseButton(_int button, _int action, _int mods)
 	}
 }
 
+// Setting mouse position
 void CInputDevice::SetMousePos(vec2 vPos)
 {
 	m_vecMousePos = vPos;
 }
 
+// Setting mouse scroll position
 void CInputDevice::SetMouseScroll(vec2 vPos)
 {
 	m_vecScroll += vPos;

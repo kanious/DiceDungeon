@@ -1,13 +1,2 @@
-moving
-moving_easein
-moving_easeout
-moving_easeinout
-rotating
-rotating_easein
-rotating_easeout
-rotating_easeinout
-scaling
-scaling_easein
-scaling_easeout
-scaling_easeinout
+jump
 EOF

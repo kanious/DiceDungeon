@@ -5,7 +5,6 @@
 #include "DefaultCamera.h"
 #include "JsonParser.h"
 #include "Layer.h"
-#include "CollisionMaster.h"
 #include "ComponentMaster.h"
 #include "Component.h"
 #include "Shader.h"
@@ -20,10 +19,11 @@
 #include "AnimationManager.h"
 #include "AnimationData.h"
 #include "ObjectFactory.h"
+#include "TargetManager.h"
 
 #include <sstream>
 #include <atlconv.h>
-
+ 
 
 USING(Engine)
 USING(glm)
@@ -32,11 +32,12 @@ USING(std)
 SceneDungeon::SceneDungeon()
 	: m_pSkyBox(nullptr)
 	, m_pDefaultCamera(nullptr), m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
-	, m_pObjLayer(nullptr)	, m_bFollowingMode(false)
+	, m_pCharacterLayer(nullptr)	, m_bFollowingMode(false)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
 	m_pAnimationManager = AnimationManager::GetInstance(); m_pAnimationManager->AddRefCnt();
+	m_pTargetManager = TargetManager::GetInstance(); m_pTargetManager->AddRefCnt();
 
 	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
@@ -46,6 +47,7 @@ SceneDungeon::~SceneDungeon()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void SceneDungeon::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
@@ -53,10 +55,12 @@ void SceneDungeon::Destroy()
 
 	SafeDestroy(m_pSkyBox);
 	SafeDestroy(m_pAnimationManager);
+	SafeDestroy(m_pTargetManager);
 
 	CScene::Destroy();
 }
 
+// Basic Update Function
 void SceneDungeon::Update(const _float& dt)
 {
 	//if (nullptr != m_pSkyBox)
@@ -65,18 +69,24 @@ void SceneDungeon::Update(const _float& dt)
 	KeyCheck();
 
 	CLightMaster::GetInstance()->SetLightInfo();
+
 	if (nullptr != m_pAnimationManager)
 		m_pAnimationManager->Update(dt);
+
+	if (nullptr != m_pTargetManager)
+		m_pTargetManager->Update(dt);
 
 	CScene::Update(dt);
 }
 
+// Basic Render Function
 void SceneDungeon::Render()
 {
 	if (nullptr != m_pUIManager)
 		m_pUIManager->RenderUI();
 }
 
+// Return current camera position
 vec3 SceneDungeon::GetCameraPos()
 {
 	if (nullptr != m_pDefaultCamera)
@@ -85,6 +95,7 @@ vec3 SceneDungeon::GetCameraPos()
 	return vec3(0.f);
 }
 
+// Check User input
 void SceneDungeon::KeyCheck()
 {
 	static _bool isF5Down = false;
@@ -98,59 +109,9 @@ void SceneDungeon::KeyCheck()
 	}
 	else
 		isF5Down = false;
-
-	static _bool isMouseClicked = false;
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
-	{
-		if (!isMouseClicked)
-		{
-			isMouseClicked = true;
-
-			if (nullptr != m_pObjLayer)
-			{
-				vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
-				vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
-
-				vector<CGameObject*> vecPicking;
-				list<CGameObject*>* listObj = m_pObjLayer->GetObjectList();
-				list<CGameObject*>::iterator iter;
-				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
-				{
-					if ((*iter)->GetLock())
-						continue;
-
-					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
-						(*iter)->GetBoundingBox(),
-						(*iter)->GetTransform(), vCameraPos, vDir))
-					{
-						vecPicking.push_back(*iter);
-					}
-				}
-
-				if (vecPicking.size() > 0)
-				{
-					_float distanceMin = FLT_MAX; _int index = 0;
-					for (int i = 0; i < vecPicking.size(); ++i)
-					{
-						_float dis = distance(vCameraPos, vecPicking[i]->GetPosition());
-						if (dis < distanceMin)
-						{
-							distanceMin = dis;
-							index = i;
-						}
-					}
-
-					dynamic_cast<Player*>(vecPicking[index])->SetTarget();
-				}
-				else
-					AnimationManager::GetInstance()->SetTargetAnimator(nullptr);
-			}
-		}
-	}
-	else
-		isMouseClicked = false;
 }
 
+// Saves camera position
 void SceneDungeon::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
 {
 	m_vCameraSavedPos.x = vPos.x;
@@ -166,6 +127,7 @@ void SceneDungeon::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 targ
 	m_vCameraSavedTarget.z = target.z;
 }
 
+// Reset camera position
 void SceneDungeon::ResetDefaultCameraPos()
 {
 	if (nullptr != m_pDefaultCamera)
@@ -176,6 +138,7 @@ void SceneDungeon::ResetDefaultCameraPos()
 	}
 }
 
+// Initialize
 RESULT SceneDungeon::Ready(string dataPath)
 {
 	m_DataPath = dataPath;
@@ -205,6 +168,10 @@ RESULT SceneDungeon::Ready(string dataPath)
 	if (nullptr != m_pUIManager)
 		m_pUIManager->Ready();
 
+	// TargetManager
+	if (nullptr != m_pTargetManager)
+		m_pTargetManager->Ready(this);
+
 	//if (nullptr == m_pSkyBox)
 	//{
 	//	stringstream ss, ss2;
@@ -225,6 +192,7 @@ RESULT SceneDungeon::Ready(string dataPath)
 	return PK_NOERROR;
 }
 
+// Initialize GameObjects
 RESULT SceneDungeon::ReadyLayerAndGameObject()
 {
 	//Create.Camera
@@ -242,7 +210,7 @@ RESULT SceneDungeon::ReadyLayerAndGameObject()
 	}
 
 	//Create.BackgroundLayer 
-	LoadBackgroundObjects();
+	LoadObjects();
 
 	//Create.Player/AIs
 	//AddCharacters();
@@ -250,27 +218,41 @@ RESULT SceneDungeon::ReadyLayerAndGameObject()
 	return PK_NOERROR;
 }
 
-void SceneDungeon::LoadBackgroundObjects()
+// Load Objects from json file
+void SceneDungeon::LoadObjects()
 {
-	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
+	CLayer* bgLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
 	//CGameObject* pGameObject = nullptr;
+	m_pCharacterLayer = GetLayer((_uint)LAYER_CHARACTER);
 
-	if (nullptr == pLayer)
+	if (nullptr == bgLayer)
 		return;
 
-	pLayer->RemoveAllGameObject();
+	bgLayer->RemoveAllGameObject();
 	vector<CJsonParser::sObjectData> vecObjects;
 	CJsonParser::sObjectData cameraData;
 	CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 	vector<CJsonParser::sObjectData>::iterator iter;
 	for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 	{
-		ObjectFactory::CreateBGObject(
-			(_uint)SCENE_3D,
-			pLayer->GetTag(),
-			(_uint)OBJ_BACKGROUND,
-			pLayer,
-			iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+		if (!strcmp("static_obj", iter->LAYERTYPE.c_str()) || !strcmp("interative_obj", iter->LAYERTYPE.c_str()))
+		{
+			ObjectFactory::CreateBGObject(
+				(_uint)SCENE_3D,
+				bgLayer->GetTag(),
+				(_uint)OBJ_BACKGROUND,
+				bgLayer,
+				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+		}
+		else if (!strcmp("character", iter->LAYERTYPE.c_str()))
+		{
+			ObjectFactory::CreatePlayer(
+				(_uint)SCENE_3D,
+				m_pCharacterLayer->GetTag(),
+				(_uint)OBJ_CHARACTER,
+				m_pCharacterLayer,
+				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+		}
 	}
 	vecObjects.clear();
 
@@ -283,30 +265,7 @@ void SceneDungeon::LoadBackgroundObjects()
 	}
 }
 
-void SceneDungeon::AddCharacters()
-{
-	CGameObject* pGameObject = nullptr;
-	m_pObjLayer = GetLayer((_uint)LAYER_CHARACTER);
-
-	if (nullptr == m_pObjLayer)
-		return;
-
-	//Json.Parser
-	vector<CJsonParser::sCharacterData> vecCharacters;
-	CJsonParser::GetInstance()->LoadCharacterList(m_DataPath, "PlayerList.json", vecCharacters);
-	for (int i = 0; i < vecCharacters.size(); ++i)
-	{
-		CJsonParser::sCharacterData data = vecCharacters[i];
-
-		ObjectFactory::CreatePlayer(
-			(_uint)SCENE_3D,
-			m_pObjLayer->GetTag(),
-			(_uint)OBJ_CHARACTER,
-			m_pObjLayer
-			, data.MESHID, data.POSITION, data.ROTATION, data.SCALE);
-	}
-}
-
+// Create an instance
 SceneDungeon* SceneDungeon::Create(string dataPath)
 {
 	SceneDungeon* pInstance = new SceneDungeon();

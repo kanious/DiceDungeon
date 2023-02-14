@@ -8,6 +8,7 @@ NAMESPACE_BEGIN(Engine)
 
 class CBoundingBox;
 
+// The QuadTree Class
 class ENGINE_API CQuadTree : public CBase
 {
 public:

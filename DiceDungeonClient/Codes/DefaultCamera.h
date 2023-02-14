@@ -10,6 +10,7 @@ namespace Engine
 }
 class Player;
 
+// Free Camera Class
 class DefaultCamera : public Engine::CGameObject
 {
 private:

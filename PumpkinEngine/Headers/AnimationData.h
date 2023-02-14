@@ -7,6 +7,7 @@ NAMESPACE_BEGIN(Engine)
 
 class CAnimation;
 
+//Class that oversees animation class
 class ENGINE_API CAnimationData : public CBase
 {
 	SINGLETON(CAnimationData)

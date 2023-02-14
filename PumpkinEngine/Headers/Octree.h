@@ -9,6 +9,7 @@ NAMESPACE_BEGIN(Engine)
 class CBoundingBox;
 class CTransform;
 
+// The Octree Class
 class ENGINE_API COctree : public CBase
 {
 public:

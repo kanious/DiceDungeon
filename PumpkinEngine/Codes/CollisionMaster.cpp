@@ -23,6 +23,7 @@ CCollisionMaster::~CCollisionMaster()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CCollisionMaster::Destroy()
 {
 }

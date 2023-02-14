@@ -20,6 +20,7 @@ UIManager::~UIManager()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void UIManager::Destroy()
 {
 	ImGui_ImplOpenGL3_Shutdown();
@@ -27,6 +28,7 @@ void UIManager::Destroy()
 	DestroyContext();
 }
 
+// Basic Render Function
 void UIManager::RenderUI()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -44,26 +46,7 @@ void UIManager::RenderUI()
 		ImGuiWindowFlags_NoBackground |
 		ImGuiWindowFlags_NoTitleBar))
 	{
-		PushStyleColor(ImGuiCol_Text, IM_COL32(0, 0, 0, 255));
-		Text("Mouse Click (LB) : Select Target (if click background, target will be released)");
-		Text(" ");
-		Text("Right Arrow : Next Animation Frame");
-		Text("Left Arrow : Previous Animation Frame");
-		Text("R : Reverse Animation");
-		Text("Space : Animation Play/Pause Toggle");
-		Text("1 ~ 5 : Set Animation Speed (1x ~ 5x, default is x3)");
-		Text(" ");
-		Text("ESC : Close the program");
-		Text(" ");
-		Text(" ");
-		Text(" ");
-		Text("< Color Information >");
-		Text("No Easing : White");
-		Text("Ease In : Red");
-		Text("Ease Out : Yellow");
-		Text("Ease InOut : Blue");
-		Text("Selected : Dark Grey");
-		PopStyleColor();
+		Text("UI");
 	}
 	End();
 
@@ -71,6 +54,7 @@ void UIManager::RenderUI()
 	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
 }
 
+// Initialize
 RESULT UIManager::Ready()
 {
 	IMGUI_CHECKVERSION();

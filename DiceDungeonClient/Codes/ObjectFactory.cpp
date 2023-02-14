@@ -11,6 +11,7 @@ USING(Engine)
 USING(glm)
 USING(std)
 
+// Create background object
 BGObject* ObjectFactory::CreateBGObject(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
     vec3 vPos, vec3 vRot, vec3 vScale)
 {
@@ -22,6 +23,7 @@ BGObject* ObjectFactory::CreateBGObject(_uint sTag, _uint lTag, _uint oTag, CLay
     return dynamic_cast<BGObject*>(pGameObject);
 }
 
+// Create character object
 Player* ObjectFactory::CreatePlayer(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
     vec3 vPos, vec3 vRot, vec3 vScale)
 {
@@ -33,6 +35,7 @@ Player* ObjectFactory::CreatePlayer(_uint sTag, _uint lTag, _uint oTag, CLayer* 
     return dynamic_cast<Player*>(pGameObject);
 }
 
+// Create camera
 DefaultCamera* ObjectFactory::CreateCamera(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer,
     vec3 vPos, vec3 vRot, vec3 vScale, _float fov, _float fNear, _float fFar)
 {

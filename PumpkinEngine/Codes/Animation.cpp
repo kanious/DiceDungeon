@@ -25,21 +25,6 @@ void CAnimation::Destroy()
 
 void CAnimation::FrameMove(_float& curTime, _uint& frameIdx, _bool reverse, function<void(void)> callback)
 {
-    //m_fCurTime += dt;
-
-    //if (m_iDuration > 0)
-    //{
-    //    _float fTime = fmod(m_fCurTime, m_iDuration);
-    //    m_fPercent = fTime / m_iDuration;
-    //}
-
-    //_uint iFrameIndex = (_uint)((_float)(m_vecMatrix.size() - 1) * m_fPercent);
-
-    //if (iFrameIndex >= m_vecMatrix.size() - 1)
-    //    m_fCurTime = 0.f;
-
-    //return iFrameIndex;
-
     if (curTime >= m_fTickPerSec)
     {
         curTime = 0.f;

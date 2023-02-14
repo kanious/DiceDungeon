@@ -18,6 +18,7 @@
 #include "SceneDungeon.h"
 #include "UIManager.h"
 #include "AnimationManager.h"
+#include "TargetManager.h"
 
 USING(Engine)
 USING(std)
@@ -49,6 +50,7 @@ Client::~Client()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void Client::Destroy()
 {
 	SafeDestroy(m_pTimer);
@@ -58,10 +60,12 @@ void Client::Destroy()
 
 	SafeDestroy(UIManager::GetInstance());
 	SafeDestroy(AnimationManager::GetInstance());
+	SafeDestroy(TargetManager::GetInstance());
 
 	delete this;
 }
 
+// Core Loop
 void Client::Loop()
 {
 	_uint iFPS = 0;
@@ -113,6 +117,7 @@ void Client::Loop()
 	}
 }
 
+// Initialize
 RESULT Client::Ready()
 {
 	RESULT result = PK_NOERROR;
@@ -154,6 +159,7 @@ RESULT Client::Ready()
 	return PK_NOERROR;
 }
 
+// Initialize Basic Components
 RESULT Client::Ready_BasicComponent()
 {
 	CComponentMaster* pMaster = CComponentMaster::GetInstance();

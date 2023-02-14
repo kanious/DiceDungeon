@@ -27,8 +27,8 @@ USING(glm)
 USING(std)
 
 Player::Player()
-	: m_pMesh(nullptr), m_vVelocity(vec3(0.f)), m_vOriginPosition(vec3(0.f)), m_fSpeed(5.f), m_fRotSpeed(40.f)
-	, m_pAnimator(nullptr)
+	: m_pMesh(nullptr), m_vVelocity(vec3(0.f)), m_vOriginPosition(vec3(0.f))
+	, m_fSpeed(15.f), m_fRotSpeed(10.f), m_pAnimator(nullptr), m_vTargetPos(vec3(0.f)), m_bMoving(false)
 {
 	m_bDebug = false;
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
@@ -38,24 +38,79 @@ Player::~Player()
 {
 }
 
-void Player::SetTarget()
-{
-	AnimationManager::GetInstance()->SetTargetAnimator(this);
-
-	if (nullptr != m_pMesh)
-		m_pMesh->SetSelcted(true);
-}
-
-void Player::Deselect()
+// Notify mesh instance of targeting status
+void Player::SetTarget(_bool value)
 {
 	if (nullptr != m_pMesh)
-		m_pMesh->SetSelcted(false);
+		m_pMesh->SetSelcted(value);
 }
 
+// Set the position to move
+void Player::SetTargetPos(vec3 vPos)
+{
+	m_vTargetPos = vPos;
+	m_bMoving = true;
+}
+
+// Check movement
+void Player::MovingCheck(const _float& dt)
+{
+	vec3 vMyPos = m_pTransform->GetPosition();
+	
+	_float fDist = distance(vMyPos, m_vTargetPos);
+	if (fDist < 0.1f)
+	{
+		m_pTransform->SetPosition(m_vTargetPos);
+		m_bMoving = false;
+		m_pAnimator->SetIsPlaying(false);
+		m_pAnimator->ResetAnimation();
+		return;
+	}
+
+	vec3 vDir = m_vTargetPos - vMyPos;
+	vDir = normalize(vDir);
+
+	// Check Angle first
+	vec3 vLook = m_pTransform->GetLookVector();
+	_float fAngleGap = GetAngle(vDir, vLook);
+	if (1.f < fAngleGap)
+	{
+		m_pAnimator->SetIsPlaying(false);
+		m_pAnimator->ResetAnimation();
+
+		vec3 vRight = m_pTransform->GetRightVector();
+		_float fDot = dot(vDir, vRight);
+		_float fY = m_pTransform->GetRotationY();
+		if (0.0f <= fDot)
+		{
+			fY += fAngleGap * dt * m_fRotSpeed;
+			if (fY > 360.f)
+				fY -= 360.f;
+			m_pTransform->SetRotationY(fY);
+		}
+		else
+		{ 
+			fY -= fAngleGap * dt * m_fRotSpeed;
+			if (fY < 0.f)
+				fY += 360.f;
+			m_pTransform->SetRotationY(fY);
+		}
+	}
+	else
+	{
+		m_pAnimator->SetIsPlaying(true);
+		m_pTransform->AddPosition(vDir * dt * m_fSpeed);
+	}
+}
+ 
+// Basic Update Function
 void Player::Update(const _float& dt)
 {
 	if (m_bEnable)
 	{
+		if (m_bMoving)
+			MovingCheck(dt);
+
 		CGameObject::Update(dt);
 
 		if (nullptr != m_pRenderer)
@@ -63,11 +118,13 @@ void Player::Update(const _float& dt)
 	}
 }
 
+// Basic Render Function
 void Player::Render()
 {
 	CGameObject::Render();
 }
 
+// Call instead of destructor to manage class internal data
 void Player::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
@@ -75,6 +132,7 @@ void Player::Destroy()
 	CGameObject::Destroy();
 }
 
+// Initialize
 RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
 	, vec3 vRot, vec3 vScale)
 {
@@ -108,6 +166,7 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 	return PK_NOERROR;
 }
 
+// Create an instance
 Player* Player::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
 	, vec3 vRot, vec3 vScale)
 {

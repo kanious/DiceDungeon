@@ -19,6 +19,7 @@ CLightMaster::~CLightMaster()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CLightMaster::Destroy()
 {
 	vector<CLight*>::iterator iter;
@@ -27,6 +28,7 @@ void CLightMaster::Destroy()
 	m_vecLights.clear();
 }
 
+// Add Light
 RESULT CLightMaster::AddLight(CLight::cLightInfo* pInfo)
 {
 	if (20 <= m_vecLights.size())
@@ -41,6 +43,7 @@ RESULT CLightMaster::AddLight(CLight::cLightInfo* pInfo)
 	return PK_NOERROR;
 }
 
+// Remove Light
 RESULT CLightMaster::RemoveLight(CLight* pLight)
 {
 	vector<CLight*>::iterator iter;
@@ -56,11 +59,13 @@ RESULT CLightMaster::RemoveLight(CLight* pLight)
 	return PK_NOERROR;
 }
 
+// Set Shader Program ID
 void CLightMaster::SetShader(_uint shaderID)
 {
 	m_ShaderProgram = shaderID;
 }
 
+// Set Shader Uniform Location of lights
 void CLightMaster::SetUniformLocation(_uint index)
 {
 	CLight* pLight = m_vecLights[index];
@@ -98,6 +103,7 @@ void CLightMaster::SetUniformLocation(_uint index)
 	pLight->SetLocation(7, glGetUniformLocation(m_ShaderProgram, ss.str().c_str()));
 }
 
+// Set Light Information to Shader
 void CLightMaster::SetLightInfo()
 {
 	glUseProgram(m_ShaderProgram);
@@ -154,6 +160,8 @@ void CLightMaster::SetLightInfo()
 			, (*iter)->GetLightInfo()->param2.w);
 	}
 }
+
+// Save Light informations to XML file
 void CLightMaster::SaveLights(string path, string fileName)
 {
 	vector<CXMLParser::sLightData> vecLights;
@@ -179,6 +187,7 @@ void CLightMaster::SaveLights(string path, string fileName)
 	CXMLParser::GetInstance()->SaveLightData(path, fileName, vecLights);
 }
 
+// Load Light informations to XML file
 void CLightMaster::LoadLights(string path, string fileName)
 {
 	vector<CLight*>::iterator iter;
@@ -206,6 +215,7 @@ void CLightMaster::LoadLights(string path, string fileName)
 	}
 }
 
+// Set directional light power
 void CLightMaster::SetDirectionalLightPower(_float power)
 {
 	vector<CLight*>::iterator iter;
@@ -219,6 +229,7 @@ void CLightMaster::SetDirectionalLightPower(_float power)
 	}
 }
 
+// Turn on all lights except directional light
 void CLightMaster::TurnOnAllLightsExceptDirectional()
 {
 	vector<CLight*>::iterator iter;
@@ -232,6 +243,7 @@ void CLightMaster::TurnOnAllLightsExceptDirectional()
 	}
 }
 
+// Turn off all lights except directional light
 void CLightMaster::TurnOffAllLightsExceptDirectional()
 {
 	vector<CLight*>::iterator iter;
@@ -245,6 +257,7 @@ void CLightMaster::TurnOffAllLightsExceptDirectional()
 	}
 }
 
+// Turn on light
 void CLightMaster::TurnOnLight(std::string name)
 {
 	vector<CLight*>::iterator iter;
@@ -259,6 +272,7 @@ void CLightMaster::TurnOnLight(std::string name)
 	}
 }
 
+// Turn off light
 void CLightMaster::TurnOffLight(std::string name)
 {
 	vector<CLight*>::iterator iter;
@@ -273,6 +287,7 @@ void CLightMaster::TurnOffLight(std::string name)
 	}
 }
 
+// Set light position
 void CLightMaster::SetLightPosition(std::string name, glm::vec3 vPos)
 {
 	vector<CLight*>::iterator iter;
@@ -289,6 +304,7 @@ void CLightMaster::SetLightPosition(std::string name, glm::vec3 vPos)
 	}
 }
 
+// Set light direction
 void CLightMaster::SetLightDirection(std::string name, glm::vec3 vDir)
 {
 	vector<CLight*>::iterator iter;

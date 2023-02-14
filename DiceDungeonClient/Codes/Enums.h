@@ -1,6 +1,8 @@
 #ifndef _ENUMS_H_
 #define _ENUMS_H_
 
+// Header for defining global enums
+
 enum eSCENETAG
 {
 	SCENE_3D,

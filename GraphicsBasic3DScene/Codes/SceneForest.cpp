@@ -317,7 +317,7 @@ void SceneForest::SaveBackgroundObjects()
 			data.SCALE = pObj->GetScale();
 			//data.SOUNDTAG = pObj->GetSoundTag();
 			data.LOCK = pObj->GetLock();
-			data.TEXNAME = pObj->GetTexName();
+			data.LAYERTYPE = pObj->GetTexName();
 			vecObjects.push_back(data);
 		}
 

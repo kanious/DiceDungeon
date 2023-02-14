@@ -9,6 +9,8 @@ class CSoundSystem;
 class CSoundInfo;
 class CChannelGroupInfo;
 class CDSPInfo;
+
+// Class that connects CSoundSystem class and user
 class ENGINE_API CSoundMaster : public CBase
 {
 	SINGLETON(CSoundMaster)

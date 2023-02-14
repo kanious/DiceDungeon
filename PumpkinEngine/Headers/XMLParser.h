@@ -8,6 +8,8 @@
 NAMESPACE_BEGIN(Engine)
 
 class CComponent;
+
+// Save/Load XML files
 class ENGINE_API CXMLParser : public CBase
 {
 	SINGLETON(CXMLParser)

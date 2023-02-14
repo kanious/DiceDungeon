@@ -19,6 +19,7 @@ COpenGLDevice::~COpenGLDevice()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void COpenGLDevice::Destroy()
 {
 	TerminateOpenGLWindow();
@@ -49,6 +50,7 @@ void COpenGLDevice::SetProjMatrix(mat4x4 matProj)
 	m_matProj = matProj;
 }
 
+// Create OpenGL Window
 RESULT COpenGLDevice::CreateOpenGLWindow(_int width, _int height, const char* title, _bool fullscreen, _bool borderedWindow)
 {
 	if (!glfwInit())
@@ -113,6 +115,7 @@ RESULT COpenGLDevice::CreateOpenGLWindow(_int width, _int height, const char* ti
 	return PK_NOERROR;
 }
 
+// Terminate OpenGL Window
 void COpenGLDevice::TerminateOpenGLWindow()
 {
 	glfwDestroyWindow(m_pWindow);

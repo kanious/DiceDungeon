@@ -13,6 +13,7 @@ namespace Engine
 }
 class Animator;
 
+// Character class
 class Player : public Engine::CGameObject
 {
 private:
@@ -24,6 +25,8 @@ private:
 	_float						m_fRotSpeed;
 
 	Animator*					m_pAnimator;
+	glm::vec3					m_vTargetPos;
+	_bool						m_bMoving;
 
 private:
 	explicit Player();
@@ -33,8 +36,10 @@ public:
 	glm::vec3 GetVelocity()					{ return m_vVelocity; }
 	glm::vec3 GetOriginPosition()			{ return m_vOriginPosition; }
 	Animator* GetAnimator()					{ return m_pAnimator; }
-	void SetTarget();
-	void Deselect();
+	void SetTarget(_bool value);
+	void SetTargetPos(glm::vec3 vPos);
+private:
+	void MovingCheck(const _float& dt);
 
 public:
 	virtual void Update(const _float& dt);
