@@ -20,7 +20,7 @@ Animator::~Animator()
 
 void Animator::Destroy()
 {
-    SafeDestroy(m_pCurAnimation);
+    CAnimController::Destroy();
 }
 
 void Animator::AnimationEndEvent()
