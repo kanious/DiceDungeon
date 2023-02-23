@@ -19,6 +19,8 @@ private:
 	_float										m_fTimeDefault;
 	_float										m_fFrameRate;
 
+	_float										m_fMaxDT;
+
 private:
 	explicit CTimer();
 	virtual ~CTimer();
@@ -29,7 +31,13 @@ public:
 	void Update();
 
 public:
-	_float GetTimeDelta() { return m_fTimeDelta > 0.1 ? 0 : m_fTimeDelta; }
+	_float GetTimeDelta() //{ return m_fTimeDelta > 0.1 ? 0 : m_fTimeDelta; }
+	{
+		if (m_fTimeDelta > m_fMaxDT)
+			return m_fMaxDT;
+		else
+			return m_fTimeDelta;
+	}
 	_float GetTimeDefault() { return m_fTimeDefault; }
 	// Set frame rate
 	void SetFrameRate(_int frameRate);

@@ -35,10 +35,6 @@ void CLayer::Update(const _float& dt)
 		if (nullptr != (*iter))
 			(*iter)->Update(dt);
 	}
-
-	vector<int> newVector;
-	newVector.push_back(10);
-	newVector.erase(newVector.begin());
 }
 
 // Set this layer enabled

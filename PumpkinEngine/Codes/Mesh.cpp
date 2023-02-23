@@ -96,18 +96,18 @@ void CMesh::Render()
 
     if (!m_bBiilboard)
     {
-        if (nullptr != m_pAnimController)
-        {
-            mat4x4 matAnim = m_pAnimController->GetMatrix();
-            vec3 vScale = m_pParentTransform->GetScale();
-            vScale.x = 1.f / vScale.x;
-            vScale.y = 1.f / vScale.y;
-            vScale.z = 1.f / vScale.z;
-            matAnim[3][0] *= vScale.x;
-            matAnim[3][1] *= vScale.y;
-            matAnim[3][2] *= vScale.z;
-            matWorld = matWorld * matAnim;
-        }
+        //if (nullptr != m_pAnimController)
+        //{
+        //    mat4x4 matAnim = m_pAnimController->GetMatrix();
+        //    vec3 vScale = m_pParentTransform->GetScale();
+        //    vScale.x = 1.f / vScale.x;
+        //    vScale.y = 1.f / vScale.y;
+        //    vScale.z = 1.f / vScale.z;
+        //    matAnim[3][0] *= vScale.x;
+        //    matAnim[3][1] *= vScale.y;
+        //    matAnim[3][2] *= vScale.z;
+        //    matWorld = matWorld * matAnim;
+        //}
 
         m_pShader->SetMatrixInfo(matWorld, matView, matProj);
     }
@@ -122,8 +122,10 @@ void CMesh::Render()
         {
             matViewInv[0][i] *= vScale.x;
             matViewInv[1][i] *= vScale.y;
+            matViewInv[2][i] *= vScale.z;
         }
         m_pShader->SetMatrixInfo(matViewInv, matView, matProj);
+        m_pShader->SetMatrixInfo(matWorld, matView, matProj);
     }
 
     m_pShader->SetLightEnableInfo(!m_bWireFrame);

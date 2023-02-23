@@ -40,20 +40,35 @@
     <Filter Include="04.Component\Texture">
       <UniqueIdentifier>{76569058-0f71-45a7-8e9e-64e26c6e6613}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98.SingletonClasses\Sound">
-      <UniqueIdentifier>{f349c8ba-cb67-448b-be79-373433c101fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.SingletonClasses\Collision">
-      <UniqueIdentifier>{d53ce013-5fc7-41a9-accb-5067983503d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.SingletonClasses\Light">
-      <UniqueIdentifier>{ec738422-2065-408d-9af3-784613c6a254}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.SingletonClasses\Animation">
-      <UniqueIdentifier>{09247bed-a28c-45b2-a38c-192aa9feab84}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Component\BoundingBox">
       <UniqueIdentifier>{915d2c3c-d4fd-44d2-a9e0-318485c77452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions">
+      <UniqueIdentifier>{a174ef3f-efac-4611-851b-42a420299749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Animation">
+      <UniqueIdentifier>{09247bed-a28c-45b2-a38c-192aa9feab84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Collision">
+      <UniqueIdentifier>{d53ce013-5fc7-41a9-accb-5067983503d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Light">
+      <UniqueIdentifier>{ec738422-2065-408d-9af3-784613c6a254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Sound">
+      <UniqueIdentifier>{f349c8ba-cb67-448b-be79-373433c101fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Physics">
+      <UniqueIdentifier>{ed059803-2def-42d1-95c4-bd1282eb42ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Physics\Shape">
+      <UniqueIdentifier>{38c37b03-1609-4e0f-81f8-c0efc2aea2f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Physics\RigidBody">
+      <UniqueIdentifier>{2d78dd1c-71f0-4cc2-8422-0a86bb0c19d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\Physics\Interface">
+      <UniqueIdentifier>{ff669b78-1ec3-4d74-ae46-30eb7d7bb9f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -130,22 +145,22 @@
       <Filter>98.SingletonClasses</Filter>
     </ClInclude>
     <ClInclude Include="Headers\SoundMaster.h">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClInclude>
     <ClInclude Include="Headers\SoundSystem.h">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClInclude>
     <ClInclude Include="Headers\SoundInfo.h">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClInclude>
     <ClInclude Include="Headers\ChannelGroupInfo.h">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClInclude>
     <ClInclude Include="Headers\DSPInfo.h">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClInclude>
     <ClInclude Include="Headers\CollisionMaster.h">
-      <Filter>98.SingletonClasses\Collision</Filter>
+      <Filter>05.IndependantFunctions\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Headers\BoundingBox.h">
       <Filter>04.Component\BoundingBox</Filter>
@@ -154,31 +169,70 @@
       <Filter>99.Headers</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Light.h">
-      <Filter>98.SingletonClasses\Light</Filter>
+      <Filter>05.IndependantFunctions\Light</Filter>
     </ClInclude>
     <ClInclude Include="Headers\LightMaster.h">
-      <Filter>98.SingletonClasses\Light</Filter>
+      <Filter>05.IndependantFunctions\Light</Filter>
     </ClInclude>
     <ClInclude Include="Headers\QuadTree.h">
-      <Filter>98.SingletonClasses\Collision</Filter>
+      <Filter>05.IndependantFunctions\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Octree.h">
-      <Filter>98.SingletonClasses\Collision</Filter>
+      <Filter>05.IndependantFunctions\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Headers\SkyBox.h">
       <Filter>03.GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Headers\Animation.h">
-      <Filter>98.SingletonClasses\Animation</Filter>
+      <Filter>05.IndependantFunctions\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Headers\AnimController.h">
-      <Filter>98.SingletonClasses\Animation</Filter>
+      <Filter>05.IndependantFunctions\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Headers\AnimationData.h">
-      <Filter>98.SingletonClasses\Animation</Filter>
+      <Filter>05.IndependantFunctions\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Headers\JsonParser.h">
       <Filter>98.SingletonClasses</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SphereShape.h">
+      <Filter>05.IndependantFunctions\Physics\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\PlaneShape.h">
+      <Filter>05.IndependantFunctions\Physics\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\BoxShape.h">
+      <Filter>05.IndependantFunctions\Physics\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\RigidBodyDesc.h">
+      <Filter>05.IndependantFunctions\Physics\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\iRigidBody.h">
+      <Filter>05.IndependantFunctions\Physics\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\iShape.h">
+      <Filter>05.IndependantFunctions\Physics\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\iPhysicsFactory.h">
+      <Filter>05.IndependantFunctions\Physics\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\iPhysicsWorld.h">
+      <Filter>05.IndependantFunctions\Physics\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\PhysicsWorld.h">
+      <Filter>05.IndependantFunctions\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\RigidBody.h">
+      <Filter>05.IndependantFunctions\Physics\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\PhysicsFactory.h">
+      <Filter>05.IndependantFunctions\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\PhysicsDefines.h">
+      <Filter>05.IndependantFunctions\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\CollisionHandler.h">
+      <Filter>05.IndependantFunctions\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -246,52 +300,73 @@
       <Filter>98.SingletonClasses</Filter>
     </ClCompile>
     <ClCompile Include="Codes\SoundMaster.cpp">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClCompile>
     <ClCompile Include="Codes\SoundSystem.cpp">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClCompile>
     <ClCompile Include="Codes\SoundInfo.cpp">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClCompile>
     <ClCompile Include="Codes\ChannelGroupInfo.cpp">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClCompile>
     <ClCompile Include="Codes\DSPInfo.cpp">
-      <Filter>98.SingletonClasses\Sound</Filter>
+      <Filter>05.IndependantFunctions\Sound</Filter>
     </ClCompile>
     <ClCompile Include="Codes\CollisionMaster.cpp">
-      <Filter>98.SingletonClasses\Collision</Filter>
+      <Filter>05.IndependantFunctions\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Codes\BoindingBox.cpp">
       <Filter>04.Component\BoundingBox</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Light.cpp">
-      <Filter>98.SingletonClasses\Light</Filter>
+      <Filter>05.IndependantFunctions\Light</Filter>
     </ClCompile>
     <ClCompile Include="Codes\LightMaster.cpp">
-      <Filter>98.SingletonClasses\Light</Filter>
+      <Filter>05.IndependantFunctions\Light</Filter>
     </ClCompile>
     <ClCompile Include="Codes\QuadTree.cpp">
-      <Filter>98.SingletonClasses\Collision</Filter>
+      <Filter>05.IndependantFunctions\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Octree.cpp">
-      <Filter>98.SingletonClasses\Collision</Filter>
+      <Filter>05.IndependantFunctions\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Codes\SkyBox.cpp">
       <Filter>03.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Codes\Animation.cpp">
-      <Filter>98.SingletonClasses\Animation</Filter>
+      <Filter>05.IndependantFunctions\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Codes\AnimController.cpp">
-      <Filter>98.SingletonClasses\Animation</Filter>
+      <Filter>05.IndependantFunctions\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Codes\AnimationData.cpp">
-      <Filter>98.SingletonClasses\Animation</Filter>
+      <Filter>05.IndependantFunctions\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Codes\JsonParser.cpp">
       <Filter>98.SingletonClasses</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\SphereShape.cpp">
+      <Filter>05.IndependantFunctions\Physics\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\PlaneShape.cpp">
+      <Filter>05.IndependantFunctions\Physics\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\BoxShape.cpp">
+      <Filter>05.IndependantFunctions\Physics\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\PhysicsWorld.cpp">
+      <Filter>05.IndependantFunctions\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\RigidBody.cpp">
+      <Filter>05.IndependantFunctions\Physics\RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\PhysicsFactory.cpp">
+      <Filter>05.IndependantFunctions\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\CollisionHandler.cpp">
+      <Filter>05.IndependantFunctions\Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

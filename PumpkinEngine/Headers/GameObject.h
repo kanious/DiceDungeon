@@ -82,6 +82,7 @@ public:
 	glm::vec3 GetScale();
 	// Get normalized look vector from the transform component
 	glm::vec3 GetLookVector();
+	glm::vec3 GetRightVector();
 	// Get world matrix from the transform component
 	const glm::mat4x4* GetWorldMatrix();
 	void SetMeshName(std::string name);

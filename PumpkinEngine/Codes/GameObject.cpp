@@ -147,6 +147,14 @@ glm::vec3 CGameObject::GetLookVector()
 	return m_pTransform->GetLookVector();
 }
 
+glm::vec3 CGameObject::GetRightVector()
+{
+	if (nullptr == m_pTransform)
+		return vec3(0.f);
+
+	return m_pTransform->GetRightVector();
+}
+
 // Get world matrix from the transform component
 const mat4x4* CGameObject::GetWorldMatrix()
 {

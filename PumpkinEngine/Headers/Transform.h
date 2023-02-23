@@ -15,6 +15,7 @@ private:
 	glm::vec3				m_vRot;
 	glm::vec3				m_vScale;
 	glm::vec3				m_vRevolve;
+	glm::quat				m_qRot;
 	CTransform*				m_pParentTransform;
 
 private:
@@ -89,6 +90,8 @@ public:
 	void SetRevolve(glm::vec3 vRevolve);
 	// Set parent transform
 	void SetParent(CTransform* pParent);
+	// Set Quaternion
+	void SetQuaternion(glm::quat quaternion);
 	// Add position
 	void AddPosition(glm::vec3 vPos);
 	// Add position X

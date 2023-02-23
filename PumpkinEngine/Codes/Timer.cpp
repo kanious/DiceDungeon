@@ -40,6 +40,8 @@ void CTimer::Update()
 void CTimer::SetFrameRate(_int frameRate)
 {
     m_fFrameRate = 1.f / frameRate;
+
+    m_fMaxDT = m_fFrameRate * 1.2f;
 }
 
 // Check the update cycle based on the frame rate

@@ -13,6 +13,7 @@ CTransform::CTransform()
 	, m_vScale(vec3(1.f))
 	, m_vRevolve((0.f))
 	, m_pParentTransform(nullptr)
+	, m_qRot(quat(vec3(0.f)))
 {
 }
 
@@ -23,6 +24,7 @@ CTransform::CTransform(const CTransform& rhs)
 	, m_vScale(vec3(1.f))
 	, m_vRevolve((0.f))
 	, m_pParentTransform(nullptr)
+	, m_qRot(quat(vec3(0.f)))
 {
 	m_tag = rhs.m_tag;
 }
@@ -36,11 +38,20 @@ void CTransform::Update(const _float& dt)
 {
  	m_matWorld = mat4x4(1.f);
 
-	m_matWorld = translate(m_matWorld, m_vPos);
+	/*m_matWorld = translate(m_matWorld, m_vPos);
 	m_matWorld = rotate(m_matWorld, radians(m_vRot.z), vec3(0.f, 0.f, 1.f));
 	m_matWorld = rotate(m_matWorld, radians(m_vRot.y), vec3(0.f, 1.f, 0.f));
 	m_matWorld = rotate(m_matWorld, radians(m_vRot.x), vec3(1.f, 0.f, 0.f));
-	m_matWorld = scale(m_matWorld, m_vScale);
+	m_matWorld = scale(m_matWorld, m_vScale);*/
+
+	mat4x4 matTrans = mat4x4(1.f);
+	mat4x4 matRot = mat4x4(1.f);
+	mat4x4 matScale = mat4x4(1.f);
+	matTrans = translate(matTrans, m_vPos);
+	m_qRot = quat(vec3(radians(m_vRot.x), radians(m_vRot.y), radians(m_vRot.z)));
+	matRot = mat4_cast(m_qRot);
+	matScale = scale(matScale, m_vScale);
+	m_matWorld = matTrans * matRot * matScale;
 
 	if (nullptr != m_pParentTransform)
 	{
@@ -188,6 +199,11 @@ void CTransform::SetParent(CTransform* pParent)
 	m_pParentTransform = pParent;
 }
 
+void CTransform::SetQuaternion(glm::quat quaternion)
+{
+	m_qRot = quaternion;
+}
+
 // Add position
 void CTransform::AddPosition(vec3 vPos)
 {
@@ -251,11 +267,20 @@ void CTransform::AddRevolve(vec3 vRevolve)
 // calculate world matrix with my data
 void CTransform::ComputeWorldMatrix(glm::mat4x4& matWorld, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
 {
-	matWorld = translate(matWorld, m_vPos + vPos);
-	matWorld = rotate(matWorld, radians(m_vRot.z + vRot.z), vec3(0.f, 0.f, 1.f));
-	matWorld = rotate(matWorld, radians(m_vRot.y + vRot.y), vec3(0.f, 1.f, 0.f));
-	matWorld = rotate(matWorld, radians(m_vRot.x + vRot.x), vec3(1.f, 0.f, 0.f));
-	matWorld = scale(matWorld, m_vScale + vScale);
+	//matWorld = translate(matWorld, m_vPos + vPos);
+	//matWorld = rotate(matWorld, radians(m_vRot.z + vRot.z), vec3(0.f, 0.f, 1.f));
+	//matWorld = rotate(matWorld, radians(m_vRot.y + vRot.y), vec3(0.f, 1.f, 0.f));
+	//matWorld = rotate(matWorld, radians(m_vRot.x + vRot.x), vec3(1.f, 0.f, 0.f));
+	//matWorld = scale(matWorld, m_vScale + vScale);
+
+	mat4x4 matTrans = mat4x4(1.f);
+	mat4x4 matRot = mat4x4(1.f);
+	mat4x4 matScale = mat4x4(1.f);
+	matTrans = translate(matTrans, m_vPos);
+	m_qRot = quat(vec3(radians(m_vRot.x), radians(m_vRot.y), radians(m_vRot.z)));
+	matRot = mat4_cast(m_qRot);
+	matScale = scale(matScale, m_vScale);
+	matWorld = matTrans * matRot * matScale;
 }
 
 // Initialize transform
