@@ -83,17 +83,18 @@ void Client::Loop()
 		if (m_pGameMaster->GetGameClose())
 			break;
 
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glCullFace(GL_BACK);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		m_pTimer->Update();
 		if (m_pTimer->IsUpdateAvailable())
 		{
 			m_pGraphicDevice->GetWindowSize();
 			glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glCullFace(GL_BACK);
-			glEnable(GL_CULL_FACE);
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			_float dt = m_pTimer->GetTimeDelta();
 			m_pGameMaster->Update(dt);

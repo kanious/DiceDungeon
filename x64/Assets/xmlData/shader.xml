@@ -1,6 +1,16 @@
 <Shader_List>
 	<Shader>
 		<ID>DefaultShader</ID>
+		<VertexPath>Shader\DefaultVertex.fx</VertexPath>
+		<FragmentPath>Shader\DefaultFragment.fx</FragmentPath>
+	</Shader>
+	<Shader>
+		<ID>ScreenShader</ID>
+		<VertexPath>Shader\ScreenVertex.fx</VertexPath>
+		<FragmentPath>Shader\ScreenFragment.fx</FragmentPath>
+	</Shader>
+	<Shader>
+		<ID>MeshShader</ID>
 		<VertexPath>Shader\MeshVertex.fx</VertexPath>
 		<FragmentPath>Shader\MeshFragment.fx</FragmentPath>
 	</Shader>

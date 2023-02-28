@@ -139,7 +139,7 @@ void CShader::SetLocation()
  }
 
 // Set matrix information to shader
-void CShader::SetMatrixInfo(const mat4x4 world, const mat4x4 view, const mat4x4 proj)
+void CShader::SetMatrixInfo(const mat4x4& world, const mat4x4& view, const mat4x4& proj)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniformMatrix4fv(m_matWorldLocation, 1, GL_FALSE, value_ptr(world));
@@ -194,6 +194,41 @@ void CShader::SetFrameIndex(_uint index)
 {
 	glUseProgram(m_ShaderProgram);
 	glUniform1i(m_frameLocation, index);
+}
+
+void CShader::Use()
+{
+	glUseProgram(m_ShaderProgram);
+}
+
+void CShader::SetBool(const std::string& name, _bool value)
+{
+	glUniform1i(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
+}
+
+void CShader::SetInt(const std::string& name, _int value)
+{
+	glUniform1i(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
+}
+
+void CShader::SetFloat(const std::string& name, _float value)
+{
+	glUniform1i(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
+}
+
+void CShader::SetVec4(const std::string& name, glm::vec4& value)
+{
+	SetVec4(name, value.x, value.y, value.z, value.w);
+}
+
+void CShader::SetVec4(const std::string& name, _float x, _float y, _float z, _float w)
+{
+	glUniform4f(glGetUniformLocation(m_ShaderProgram, name.c_str()), x, y, z, w);
+}
+
+void CShader::SetMat4x4(const std::string& name, glm::mat4x4& value)
+{
+	glUniformMatrix4fv(glGetUniformLocation(m_ShaderProgram, name.c_str()), 1, GL_FALSE, value_ptr(value));
 }
 
 // Initialize Shader

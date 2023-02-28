@@ -70,6 +70,9 @@
     <Filter Include="05.IndependantFunctions\Physics\Interface">
       <UniqueIdentifier>{ff669b78-1ec3-4d74-ae46-30eb7d7bb9f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Component\FrameBufferObject">
+      <UniqueIdentifier>{17829093-2905-471c-9121-e27e591d5b79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Base.h">
@@ -234,6 +237,9 @@
     <ClInclude Include="Headers\CollisionHandler.h">
       <Filter>05.IndependantFunctions\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\FrameBufferObject.h">
+      <Filter>04.Component\FrameBufferObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -367,6 +373,9 @@
     </ClCompile>
     <ClCompile Include="Codes\CollisionHandler.cpp">
       <Filter>05.IndependantFunctions\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\FrameBufferObject.cpp">
+      <Filter>04.Component\FrameBufferObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

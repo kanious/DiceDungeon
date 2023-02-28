@@ -43,7 +43,7 @@ private:
 public:
 	_uint GetShaderProgram()		{ return m_ShaderProgram; }
 	// Set matrix information to shader
-	void SetMatrixInfo(const glm::mat4x4 world, const glm::mat4x4 view, const glm::mat4x4 proj);
+	void SetMatrixInfo(const glm::mat4x4& world, const glm::mat4x4& view, const glm::mat4x4& proj);
 	// Set diffuse texture information to shader
 	void SetTextureInfo();
 	// Set normal texture information to shader
@@ -58,6 +58,20 @@ public:
 	void SetTransparency(_bool value);
 	// Set animation frame index information to shader
 	void SetFrameIndex(_uint index);
+public:
+	// Use this shader
+	void Use();
+	// Set bool value to name location
+	void SetBool(const std::string& name, _bool value);
+	// Set int value to name location
+	void SetInt(const std::string& name, _int value);
+	// Set float value to name location
+	void SetFloat(const std::string& name, _float value);
+	// Set vec4 value to name location
+	void SetVec4(const std::string& name, glm::vec4& value);
+	void SetVec4(const std::string& name, _float x, _float y, _float z, _float w);
+	// Set mat4x4 value to name location
+	void SetMat4x4(const std::string& name, glm::mat4x4& value);
 
 private:
 	// Initialize Shader

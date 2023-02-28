@@ -61,7 +61,8 @@ RESULT COpenGLDevice::CreateOpenGLWindow(_int width, _int height, const char* ti
 	// 내가 다운받은 버전으로
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	if (fullscreen)
 	{
@@ -105,11 +106,6 @@ RESULT COpenGLDevice::CreateOpenGLWindow(_int width, _int height, const char* ti
 	glewExperimental = GL_TRUE;
 	glewInit();
 	
-	glCullFace(GL_BACK);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_DEPTH_TEST | GL_BLEND);
-	//glEnable(GL_DEPTH_TEST | GL_CULL_FACE);
 	glDepthFunc(GL_LESS);
 
 	return PK_NOERROR;
