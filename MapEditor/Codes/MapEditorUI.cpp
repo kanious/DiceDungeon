@@ -24,12 +24,14 @@ USING(glm)
 
 MapEditorUI::MapEditorUI()
 	: m_pScene(nullptr)
+	, m_bAllLayerShow(true), m_bAllLayerShowPrev(true)
 	, m_curLayerNameCombo("")
 	, m_curMeshTypeCombo("")
 	, m_pTarget(nullptr)
 	, m_vPosPrev(vec3(0.f)), m_vRotPrev(vec3(0.f)), m_vScalePrev(vec3(0.f))
+	, m_targetLayerNameCombo("")
 	, m_bScrollSet(false)
-	, m_bSnap(false)
+	, m_bSnap(false), m_bObjMove(false)
 	, m_bLock(false), m_bLockPrev(false)
 	, m_bShow(false), m_bShowPrev(false)
 	, m_bBBox(false), m_bBBoxPrev(false)
@@ -69,7 +71,9 @@ void MapEditorUI::Update(const _float& dt)
 	if (m_pUIManager->GetCursorIsOnTheUI())
 		return;
 
-	MoveTarget(dt);
+	if (m_bObjMove)
+		MoveTarget(dt);
+
 	KeyCheck(dt);
 }
 
@@ -89,28 +93,37 @@ void MapEditorUI::RenderUI()
 		SetMenuBar();
 		
 		Text("- Opened File Name :"); SameLine(150.f); Text(m_pScene->GetObjListFileName().c_str());
-		Checkbox("Snap##Checkbox", &m_bSnap);
 
 		Separator();
 		Render_ObjectList(290.f, 310.f);
 		
 		Separator();
-		Render_MeshList(290.f, 300.f);
+		Render_Inspector();
 	}
 	End();
 
-	if (nullptr == m_pTarget)
-		return;
+	SetNextWindowPos(ImVec2((width * 0.5f) - 150.f, 0.f));
+	SetNextWindowSize(ImVec2(300.f, 40.f));
+	if (Begin("Function Bar", (bool*)0,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoBringToFrontOnFocus))
+	{
+		Checkbox("Snap(1)##Checkbox", &m_bSnap);
+		SameLine(100.f); Checkbox("Obj Move(2)##Checkbox", &m_bObjMove);
+	}
+	End();
 
-	SetNextWindowPos(ImVec2(width - 400.f, 0.f));
-	SetNextWindowSize(ImVec2(400.f, height));
-	if (Begin("Inspector", (bool*)0,
+	SetNextWindowPos(ImVec2(width - 300.f, 0.f));
+	SetNextWindowSize(ImVec2(300.f, height));
+	if (Begin("Mesh List", (bool*)0,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		Render_Inspector();
-		
+		Render_MeshList(290.f, height - 155.f);
 	}
 	End();
 }
@@ -135,6 +148,16 @@ void MapEditorUI::SetTarget(CGameObject* pObj)
 		m_vPosPrev = pObj->GetPosition();
 		m_vRotPrev = pObj->GetRotation();
 		m_vScalePrev = pObj->GetScale();
+
+		string layer = GetLayerNameByTag((eLAYERTAG)pObj->GetLayerTag());
+		for (_uint i = 0; i < m_vecLayerNameCombo.size(); ++i)
+		{
+			if (!strcmp(layer.c_str(), m_vecLayerNameCombo[i]))
+			{
+				m_targetLayerNameCombo = m_vecLayerNameCombo[i];
+				break;
+			}
+		}
 	}
 }
 
@@ -189,9 +212,19 @@ void MapEditorUI::Render_ObjectList(_float childX, _float childY)
 {
 	Text(" * OBJECT LIST");
 
+	vector<CLayer*>& vecLayers = m_pScene->GetLayers();
+
+	SameLine(155.f);
+	Checkbox("All Layers", &m_bAllLayerShow);
+	if (m_bAllLayerShow != m_bAllLayerShowPrev)
+	{
+		m_bAllLayerShowPrev = m_bAllLayerShow;
+		for (_uint i = 0; i < vecLayers.size(); ++i)
+			vecLayers[i]->SetEnable(m_bAllLayerShow);
+	}
+	
 	// Layer Options
 	stringstream label;
-	vector<CLayer*>& vecLayers = m_pScene->GetLayers();
 	for (_uint i = 0; i < vecLayers.size(); ++i)
 	{
 		if (0 == i % 2)
@@ -463,29 +496,40 @@ void MapEditorUI::Render_MeshList(_float childX, _float childY)
 
 void MapEditorUI::Render_Inspector()
 {
-	Text(" ");
-	SameLine(140.f);
-	_bool isLock = m_pTarget->GetLock();
-	Checkbox("##Lock_Target", &isLock);
-	m_pTarget->SetLock(isLock);
+	Text(" * Target");
+	if (nullptr == m_pTarget)
+	{
+		Text("No target");
+		return;
+	}
 
-	SameLine(200.f);
-	_bool isEnable = m_pTarget->GetEnable();
-	Checkbox("##Show_Target", &isEnable);
-	m_pTarget->SetEnable(isEnable);
+	stringstream label;
+	_bool bLock = m_pTarget->GetLock();
+	label.str(""); label << "##LockCheckbox_target";
+	SameLine(160.f); Checkbox(label.str().c_str(), &bLock);
+	m_pTarget->SetLock(bLock);
 
-	SameLine(260.f);
-	_bool isDebug = m_pTarget->GetDebug();
-	Checkbox("##BBox_Target", &isDebug);
-	m_pTarget->SetDebug(isDebug);
+	_bool bShow = m_pTarget->GetEnable();
+	label.str(""); label << "##ShowCheckbox_target";
+	SameLine(185.f); Checkbox(label.str().c_str(), &bShow);
+	m_pTarget->SetEnable(bShow);
 
-	SameLine(320.f);
-	_bool isWire = m_pTarget->GetWireFrame();
-	Checkbox("##WireTarget", &isWire);
-	m_pTarget->SetWireFrame(isWire);
+	_bool bBBox = m_pTarget->GetDebug();
+	label.str(""); label << "##BBoxCheckbox_target";
+	SameLine(210.f); Checkbox(label.str().c_str(), &bBBox);
+	m_pTarget->SetDebug(bBBox);
 
-	Text("Object Name: "); SameLine(80.f); Text(m_pTarget->GetObjName().c_str());
-	Text(" ");
+	_bool bWire = m_pTarget->GetWireFrame();
+	label.str(""); label << "##WireCheckbox_target";
+	SameLine(235.f); Checkbox(label.str().c_str(), &bWire);
+	m_pTarget->SetWireFrame(bWire);
+
+	_bool bAlpha = m_pTarget->GetTransparency();
+	label.str(""); label << "##AlphaCheckbox_target";
+	SameLine(260.f); Checkbox(label.str().c_str(), &bAlpha);
+	m_pTarget->SetTransparency(bAlpha);
+
+	Text("Object Name "); SameLine(100.f); Text(m_pTarget->GetObjName().c_str());
 
 	vec3 vPos = m_pTarget->GetPosition();
 	ConvertFloatToCharArray(m_chPos[0], vPos.x);
@@ -500,29 +544,29 @@ void MapEditorUI::Render_Inspector()
 	ConvertFloatToCharArray(m_chScale[1], vScale.y);
 	ConvertFloatToCharArray(m_chScale[2], vScale.z);
 
-	Text("Position");
-	SameLine(80.f); Text("X:"); SameLine(100.f);
-	SetNextItemWidth(70); InputText("##PosX", m_chPos[0], sizeof(m_chPos[0]));
-	SameLine(180.f); Text("Y:"); SameLine(200.f);
-	SetNextItemWidth(70); InputText("##PosY", m_chPos[1], sizeof(m_chPos[1]));
-	SameLine(280.f); Text("Z:"); SameLine(300.f);
-	SetNextItemWidth(70); InputText("##PosZ", m_chPos[2], sizeof(m_chPos[2]));
+	Text("Pos");
+	SameLine(50.f); Text("X"); SameLine(65.f);
+	SetNextItemWidth(55); InputText("##PosX", m_chPos[0], sizeof(m_chPos[0]));
+	SameLine(130.f); Text("Y"); SameLine(145.f);
+	SetNextItemWidth(55); InputText("##PosY", m_chPos[1], sizeof(m_chPos[1]));
+	SameLine(210.f); Text("Z"); SameLine(225.f);
+	SetNextItemWidth(56); InputText("##PosZ", m_chPos[2], sizeof(m_chPos[2]));
 
-	Text("Rotation");
-	SameLine(80.f); Text("X:"); SameLine(100.f);
-	SetNextItemWidth(70); InputText("##RotX", m_chRot[0], sizeof(m_chRot[0]));
-	SameLine(180.f); Text("Y:"); SameLine(200.f);
-	SetNextItemWidth(70); InputText("##RotY", m_chRot[1], sizeof(m_chRot[1]));
-	SameLine(280.f); Text("Z:"); SameLine(300.f);
-	SetNextItemWidth(70); InputText("##RotZ", m_chRot[2], sizeof(m_chRot[2]));
+	Text("Rot");
+	SameLine(50.f); Text("X"); SameLine(65.f);
+	SetNextItemWidth(55); InputText("##RotX", m_chRot[0], sizeof(m_chRot[0]));
+	SameLine(130.f); Text("Y"); SameLine(145.f);
+	SetNextItemWidth(55); InputText("##RotY", m_chRot[1], sizeof(m_chRot[1]));
+	SameLine(210.f); Text("Z"); SameLine(225.f);
+	SetNextItemWidth(56); InputText("##RotZ", m_chRot[2], sizeof(m_chRot[2]));
 
 	Text("Scale");
-	SameLine(80.f); Text("X:"); SameLine(100.f);
-	SetNextItemWidth(70); InputText("##ScaleX", m_chScale[0], sizeof(m_chScale[0]));
-	SameLine(180.f); Text("Y:"); SameLine(200.f);
-	SetNextItemWidth(70); InputText("##ScaleY", m_chScale[1], sizeof(m_chScale[1]));
-	SameLine(280.f); Text("Z:"); SameLine(300.f);
-	SetNextItemWidth(70); InputText("##ScaleZ", m_chScale[2], sizeof(m_chScale[2]));
+	SameLine(50.f); Text("X"); SameLine(65.f);
+	SetNextItemWidth(55); InputText("##ScaleX", m_chScale[0], sizeof(m_chScale[0]));
+	SameLine(130.f); Text("Y"); SameLine(145.f);
+	SetNextItemWidth(55); InputText("##ScaleY", m_chScale[1], sizeof(m_chScale[1]));
+	SameLine(210.f); Text("Z"); SameLine(225.f);
+	SetNextItemWidth(56); InputText("##ScaleZ", m_chScale[2], sizeof(m_chScale[2]));
 
 	_float fPosX = vPos.x; _float fPosY = vPos.y; _float fPosZ = vPos.z;
 	_float fRotX = vRot.x; _float fRotY = vRot.y; _float fRotZ = vRot.z;
@@ -539,6 +583,27 @@ void MapEditorUI::Render_Inspector()
 	m_pTarget->SetPosition(vec3(fPosX, fPosY, fPosZ));
 	m_pTarget->SetRotation(vec3(fRotX, fRotY, fRotZ));
 	m_pTarget->SetScale(vec3(fScaleX, fScaleY, fScaleZ));
+
+	Text("Layer");
+	SameLine(65.f); SetNextItemWidth(135.f);
+	if (BeginCombo("##LayerNameCombo", m_targetLayerNameCombo, ImGuiComboFlags_None))
+	{
+		for (_uint i = 0; i < m_vecLayerNameCombo.size(); ++i)
+		{
+			_bool isSelected = m_targetLayerNameCombo == m_vecLayerNameCombo[i];
+			if (Selectable(m_vecLayerNameCombo[i], isSelected))
+			{
+				m_targetLayerNameCombo = m_vecLayerNameCombo[i];
+			}
+		}
+
+		EndCombo();
+	}
+	SameLine(225.f);
+	if (Button("Change##TargetLayerChange", ImVec2(55.f, 0.f)))
+	{
+
+	}
 }
 
 void MapEditorUI::MoveTarget(const _float& dt)
@@ -616,6 +681,32 @@ void MapEditorUI::KeyCheck(const _float& dt)
 	}
 	else
 		isMouseLBClicked = false;
+
+	// Object Snap
+	static _bool is1Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
+	{
+		if (!is1Down)
+		{
+			is1Down = true;
+			m_bSnap = !m_bSnap;
+		}
+	}
+	else
+		is1Down = false;
+
+	// Object Moving
+	static _bool is2Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_2))
+	{
+		if (!is2Down)
+		{
+			is2Down = true;
+			m_bObjMove = !m_bObjMove;
+		}
+	}
+	else
+		is2Down = false;
 
 	// Object cancel
 	static _bool isMouseRBClicked = false;

@@ -108,7 +108,7 @@ void UIManager::SetImGuiStyle()
 	ImGuiIO& io = GetIO();
 	stringstream filePath;
 	filePath << m_pScene->GetDataPath() << "Font\\OpenSans-SemiBold.ttf";
-	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 17.f);
+	io.Fonts->AddFontFromFileTTF(filePath.str().c_str(), 15.f);
 	io.FontDefault = io.Fonts->Fonts[0];
 }
 

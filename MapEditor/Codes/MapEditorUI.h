@@ -32,6 +32,10 @@ private:
 
 	std::vector<MeshInfo>			m_vecMeshInfos;
 
+	// All Layer Enable flag
+	_bool							m_bAllLayerShow;
+	_bool							m_bAllLayerShowPrev;
+
 	// Layer Type Combo box
 	const char*						m_curLayerNameCombo;
 	std::vector<const char*>		m_vecLayerNameCombo;
@@ -49,12 +53,16 @@ private:
 	glm::vec3 m_vPosPrev;
 	glm::vec3 m_vRotPrev;
 	glm::vec3 m_vScalePrev;
+	// For Target Layer Combo box
+	const char*						m_targetLayerNameCombo;
 
 	// Scroll flag
 	_bool							m_bScrollSet;
 
 	// Snap flag
 	_bool							m_bSnap;
+	// Object move flag
+	_bool							m_bObjMove;
 
 	// All Object status flags
 	_bool							m_bLock;
@@ -67,6 +75,7 @@ private:
 	_bool							m_bWirePrev;
 	_bool							m_bAlpha;
 	_bool							m_bAlphaPrev;
+
 
 private:
 	explicit MapEditorUI();
