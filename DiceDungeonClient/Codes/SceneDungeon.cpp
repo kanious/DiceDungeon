@@ -153,7 +153,7 @@ RESULT SceneDungeon::Ready(string dataPath)
 		return result;
 
 	// Light
-	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
+	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
 	_uint shaderID = 0;
 	if (nullptr != shader)
 		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
@@ -162,7 +162,7 @@ RESULT SceneDungeon::Ready(string dataPath)
 
 	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
-		m_pDefaultCamera->AddShaderLocation("DefaultShader");
+		m_pDefaultCamera->AddShaderLocation("MeshShader");
 
 	// UI
 	if (nullptr != m_pUIManager)

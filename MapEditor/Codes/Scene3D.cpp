@@ -13,12 +13,12 @@
 #include "BGObject.h"
 #include "Define.h"
 #include "UIManager.h"
-#include "Enums.h"
 #include "SkyBox.h"
 #include "Renderer.h"
 #include "Player.h"
 #include "AnimationManager.h"
 #include "AnimationData.h"
+#include "ObjectFactory.h"
 
 #include <sstream>
 #include <atlconv.h>
@@ -31,7 +31,7 @@ USING(std)
 Scene3D::Scene3D()
 	: m_pSkyBox(nullptr)
 	, m_pDefaultCamera(nullptr), m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
-	, m_pObjLayer(nullptr)
+	, m_pCharacterLayer(nullptr)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
@@ -87,6 +87,54 @@ glm::vec3 Scene3D::GetCameraPos()
 	return vec3(0.f);
 }
 
+CGameObject* Scene3D::GetTarget()
+{
+	CGameObject* pickedObj = nullptr;
+	vector<CGameObject*> vecPicking;
+
+	vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
+	vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+	for (int i = 0; i < m_vecLayer.size(); ++i)
+	{
+		if (!m_vecLayer[i]->GetEnable())
+			continue;
+
+		list<CGameObject*>* pObjList = m_vecLayer[i]->GetObjectList();
+		list<CGameObject*>::iterator iter;
+		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
+		{
+			if ((*iter)->GetLock())
+				continue;
+
+			if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
+				(*iter)->GetBoundingBox(),
+				(*iter)->GetTransform(), vCameraPos, vDir))
+			{
+				vecPicking.push_back(*iter);
+			}
+		}
+	}
+
+	if (vecPicking.size() > 0)
+	{
+		_float distanceMin = FLT_MAX; _int index = 0;
+		for (int i = 0; i < vecPicking.size(); ++i)
+		{
+			_float dis = distance(vCameraPos, vecPicking[i]->GetPosition());
+			if (dis < distanceMin)
+			{
+				distanceMin = dis;
+				index = i;
+			}
+		}
+
+		pickedObj = vecPicking[index];
+		pickedObj->SetSelected(true);
+	}
+
+	return pickedObj;
+}
+
 void Scene3D::KeyCheck()
 {
 	static _bool isF5Down = false;
@@ -100,59 +148,6 @@ void Scene3D::KeyCheck()
 	}
 	else
 		isF5Down = false;
-
-	/*
-	static _bool isMouseClicked = false;
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
-	{
-		if (!isMouseClicked)
-		{
-			isMouseClicked = true;
-
-			if (nullptr != m_pObjLayer)
-			{
-				vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
-				vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
-
-				vector<CGameObject*> vecPicking;
-				list<CGameObject*>* listObj = m_pObjLayer->GetObjectList();
-				list<CGameObject*>::iterator iter;
-				for (iter = listObj->begin(); iter != listObj->end(); ++iter)
-				{
-					if ((*iter)->GetLock())
-						continue;
-
-					if (CCollisionMaster::GetInstance()->IntersectRayToBoundingBox(
-						(*iter)->GetBoundingBox(),
-						(*iter)->GetTransform(), vCameraPos, vDir))
-					{
-						vecPicking.push_back(*iter);
-					}
-				}
-
-				if (vecPicking.size() > 0)
-				{
-					_float distanceMin = FLT_MAX; _int index = 0;
-					for (int i = 0; i < vecPicking.size(); ++i)
-					{
-						_float dis = distance(vCameraPos, vecPicking[i]->GetPosition());
-						if (dis < distanceMin)
-						{
-							distanceMin = dis;
-							index = i;
-						}
-					}
-
-					dynamic_cast<Player*>(vecPicking[index])->SetTarget();
-				}
-				else
-					AnimationManager::GetInstance()->SetTargetAnimator(nullptr);
-			}
-		}
-	}
-	else
-		isMouseClicked = false;
-	*/
 }
 
 void Scene3D::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
@@ -180,6 +175,100 @@ void Scene3D::ResetDefaultCameraPos()
 	}
 }
 
+void Scene3D::AddGameObject(eLAYERTAG tag, string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
+{
+	CLayer* pLayer = GetLayer((_uint)tag);
+	ObjectFactory::CreateGameObject(
+		(_uint)SCENE_3D,
+		pLayer->GetTag(),
+		(_uint)OBJ_BACKGROUND,
+		pLayer,
+		meshID, vPos, vRot, vScale);
+}
+
+void Scene3D::SaveBackgroundObjects()
+{
+	vector<CJsonParser::sObjectData> vecObjects;
+	for (int i = 0; i < m_vecLayer.size(); ++i)
+	{
+		if ((_uint)LAYER_CAMERA == m_vecLayer[i]->GetTag())
+			continue;
+
+		list<CGameObject*>* pObjList = m_vecLayer[i]->GetObjectList();
+		list<CGameObject*>::iterator iter;
+		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
+		{
+			CGameObject* obj = *iter;
+			CJsonParser::sObjectData data;
+			data.ID = obj->GetMeshName();
+			data.POSITION = obj->GetPosition();
+			data.ROTATION = obj->GetRotation();
+			data.SCALE = obj->GetScale();
+			data.LOCK = obj->GetLock();
+			data.LAYERTYPE = GetLayerNameByTag((eLAYERTAG)m_vecLayer[i]->GetTag());
+			vecObjects.push_back(data);
+		}
+	}
+
+	CJsonParser::sObjectData cameraData;
+	if (nullptr != m_pDefaultCamera)
+	{
+		SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
+		cameraData.POSITION = m_pDefaultCamera->GetCameraEye();
+		cameraData.ROTATION = m_pDefaultCamera->GetCameraRot();
+		cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
+	}
+
+	CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+}
+
+void Scene3D::LoadBackgroundObjects()
+{
+	ResetAllLayers();
+
+	CLayer* pLayer = GetLayer((_uint)LAYER_STATIC_OBJECT);
+	CGameObject* pGameObject = nullptr;
+
+	vector<CJsonParser::sObjectData> vecObjects;
+	CJsonParser::sObjectData cameraData;
+	CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+	vector<CJsonParser::sObjectData>::iterator iter;
+	for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
+	{
+		eLAYERTAG tag = GetLayerTagByName(iter->LAYERTYPE);
+		pLayer = GetLayer((_uint)tag);
+		pGameObject = ObjectFactory::CreateGameObject(
+			(_uint)SCENE_3D,
+			pLayer->GetTag(),
+			(_uint)OBJ_BACKGROUND,
+			pLayer,
+			iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+
+		if (nullptr != pGameObject)
+			pGameObject->SetLock(iter->LOCK);
+	}
+	vecObjects.clear();
+
+	if (nullptr != m_pDefaultCamera)
+	{
+		SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
+		m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
+		m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
+		m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
+	}
+}
+
+void Scene3D::ResetAllLayers()
+{
+	for (_uint i = 0; i < m_vecLayer.size(); ++i)
+	{
+		if (i == (_uint)LAYER_CAMERA)
+			continue;
+
+		m_vecLayer[i]->RemoveAllGameObject();
+	}
+}
+
 RESULT Scene3D::Ready(string dataPath)
 {
 	m_DataPath = dataPath;
@@ -194,7 +283,7 @@ RESULT Scene3D::Ready(string dataPath)
 		return result;
 
 	// Light
-	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DefaultShader");
+	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
 	_uint shaderID = 0;
 	if (nullptr != shader)
 		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
@@ -203,7 +292,7 @@ RESULT Scene3D::Ready(string dataPath)
 
 	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
-		m_pDefaultCamera->AddShaderLocation("DefaultShader");
+		m_pDefaultCamera->AddShaderLocation("MeshShader");
 
 	// UI
 	if (nullptr != m_pUIManager)
@@ -233,128 +322,29 @@ RESULT Scene3D::Ready(string dataPath)
 RESULT Scene3D::ReadyLayerAndGameObject()
 {
 	//Create.Layer
-	AddLayer((_uint)LAYER_BACKGROUND_OBJECT);
+	AddLayer((_uint)LAYER_CAMERA);
 	AddLayer((_uint)LAYER_STATIC_OBJECT);
 	AddLayer((_uint)LAYER_INTERACTIVE_OBJECT);
 	AddLayer((_uint)LAYER_CHARACTER);
 	AddLayer((_uint)LAYER_ENEMY);
 	AddLayer((_uint)LAYER_UI);
 	AddLayer((_uint)LAYER_EVENT_OBJECT);
+	m_pCharacterLayer = GetLayer((_uint)LAYER_CHARACTER);
 
 	//Create.Camera
-	CLayer* pLayer = GetLayer((_uint)LAYER_INTERACTIVE_OBJECT);
+	CLayer* pLayer = GetLayer((_uint)LAYER_CAMERA);
 	if (nullptr != pLayer)
 	{
-		vec3 vPos = vec3(0.f, 0.f, 0.f);
-		vec3 vRot = vec3(0.f, 0.f, 0.f);
-		vec3 vScale = vec3(1.f);
-		CGameObject* pGameObject = DefaultCamera::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_CAMERA, pLayer,
-			vPos, vRot, vScale, 0.6f, 0.1f, 1000.f);
-		if (nullptr != pGameObject)
-		{
-			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
-			m_pDefaultCamera = dynamic_cast<DefaultCamera*>(pGameObject);
-		}
+		m_pDefaultCamera = ObjectFactory::CreateCamera(
+			(_uint)SCENE_3D, pLayer->GetTag(),
+			(_uint)OBJ_CAMERA, pLayer,
+			vec3(0.f), vec3(0.f), vec3(1.f), 0.6f, 0.1f, 1000.f);
 	}
 
 	//Create.BackgroundLayer 
 	LoadBackgroundObjects();
 
-	//Create.Player/AIs
-	//AddCharacters();
-
 	return PK_NOERROR;
-}
-
-void Scene3D::SaveBackgroundObjects()
-{
-	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
-	if (nullptr != pLayer)
-	{
-		vector<CJsonParser::sObjectData> vecObjects;
-
-		list<CGameObject*>* pObjList = pLayer->GetObjectList();
-		list<CGameObject*>::iterator iter;
-		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
-		{
-			BGObject* pObj = dynamic_cast<BGObject*>(*iter);
-			CJsonParser::sObjectData data;
-			data.ID = pObj->GetMeshID();
-			data.POSITION = pObj->GetPosition();
-			data.ROTATION = pObj->GetRotation();
-			data.SCALE = pObj->GetScale();
-			data.LOCK = pObj->GetLock();
-			data.LAYERTYPE = pObj->GetTexName();
-			vecObjects.push_back(data);
-		}
-
-		CJsonParser::sObjectData cameraData;
-		if (nullptr != m_pDefaultCamera)
-		{
-			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
-			cameraData.POSITION = m_pDefaultCamera->GetCameraEye();
-			cameraData.ROTATION = m_pDefaultCamera->GetCameraRot();
-			cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
-		}
-
-		CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
-	}
-}
-
-void Scene3D::LoadBackgroundObjects()
-{
-	CLayer* pLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
-	CGameObject* pGameObject = nullptr;
-
-	if (nullptr != pLayer)
-	{
-		pLayer->RemoveAllGameObject();
-		vector<CJsonParser::sObjectData> vecObjects;
-		CJsonParser::sObjectData cameraData;
-		CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
-		vector<CJsonParser::sObjectData>::iterator iter;
-		for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
-		{
-			pGameObject = BGObject::Create((_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer,
-				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
-			if (nullptr == pGameObject)
-				continue;
-			AddGameObjectToLayer(pLayer->GetTag(), pGameObject);
-			dynamic_cast<BGObject*>(pGameObject)->SetLock(iter->LOCK);
-		}
-		vecObjects.clear();
-
-		if (nullptr != m_pDefaultCamera)
-		{
-			SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
-			m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
-			m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
-			m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
-		}
-	}
-}
-
-void Scene3D::AddCharacters()
-{
-	CGameObject* pGameObject = nullptr;
-	m_pObjLayer = GetLayer((_uint)LAYER_CHARACTER);
-
-	if (nullptr == m_pObjLayer)
-		return;
-
-	//Json.Parser
-	vector<CJsonParser::sCharacterData> vecCharacters;
-	CJsonParser::GetInstance()->LoadCharacterList(m_DataPath, "PlayerList.json", vecCharacters);
-	for (int i = 0; i < vecCharacters.size(); ++i)
-	{
-		CJsonParser::sCharacterData data = vecCharacters[i];
-
-		pGameObject = Player::Create((_uint)SCENE_3D, m_pObjLayer->GetTag(), (_uint)OBJ_CHARACTER, m_pObjLayer
-			, data.MESHID, data.POSITION, data.ROTATION, data.SCALE, (eAnimType)data.ANIMTYPE, (eEaseType)data.EASETYPE
-			, data.ANIMRANDOM);
-		if (nullptr != pGameObject)
-			AddGameObjectToLayer(m_pObjLayer->GetTag(), pGameObject);
-	}
 }
 
 Scene3D* Scene3D::Create(string dataPath)

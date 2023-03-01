@@ -87,6 +87,9 @@
     <ClCompile Include="Codes\UIManager.cpp">
       <Filter>97.UI</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\ObjectFactory.cpp">
+      <Filter>98.Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Codes\BGObject.h">
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="Codes\UIManager.h">
       <Filter>97.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\ObjectFactory.h">
+      <Filter>98.Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

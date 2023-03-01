@@ -50,7 +50,7 @@ void AnimationManager::AddAnimator(Animator* pAnimator)
 void AnimationManager::SetTargetAnimator(Player* pPlayer)
 {
 	if (nullptr != m_pTarget)
-		m_pTarget->Deselect();
+		m_pTarget->SetSelected(false);
 
 	m_pTarget = pPlayer;
 }

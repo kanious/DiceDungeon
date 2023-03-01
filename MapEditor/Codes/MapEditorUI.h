@@ -2,7 +2,7 @@
 #define _MAPEDITORUI_H_
 
 #include "Base.h"
-#include "Enums.h"
+#include "glm/vec3.hpp"
 
 namespace Engine
 {
@@ -32,6 +32,10 @@ private:
 
 	std::vector<MeshInfo>			m_vecMeshInfos;
 
+	// Layer Type Combo box
+	const char*						m_curLayerNameCombo;
+	std::vector<const char*>		m_vecLayerNameCombo;
+
 	// Mesh Type Combo box
 	const char*						m_curMeshTypeCombo;
 	std::vector<const char*>		m_vecMeshTypeCombo;
@@ -42,6 +46,27 @@ private:
 	char							m_chPos[3][128];
 	char							m_chRot[3][128];
 	char							m_chScale[3][128];
+	glm::vec3 m_vPosPrev;
+	glm::vec3 m_vRotPrev;
+	glm::vec3 m_vScalePrev;
+
+	// Scroll flag
+	_bool							m_bScrollSet;
+
+	// Snap flag
+	_bool							m_bSnap;
+
+	// All Object status flags
+	_bool							m_bLock;
+	_bool							m_bLockPrev;
+	_bool							m_bShow;
+	_bool							m_bShowPrev;
+	_bool							m_bBBox;
+	_bool							m_bBBoxPrev;
+	_bool							m_bWire;
+	_bool							m_bWirePrev;
+	_bool							m_bAlpha;
+	_bool							m_bAlphaPrev;
 
 private:
 	explicit MapEditorUI();
@@ -52,17 +77,18 @@ public:
 	void RenderUI();
 
 public:
-	void SetTarget(Engine::CGameObject* pObj) { m_pTarget = pObj; }
+	void SetTarget(Engine::CGameObject* pObj);
+	void ResetTarget();
 
 private:
 	void SetMenuBar();
 	void Render_ObjectList(_float childX, _float childY);
 	void Render_MeshList(_float childX, _float childY);
 	void Render_Inspector();
+	void MoveTarget(const _float& dt);
 	void KeyCheck(const _float& dt);
 
 private:
-	std::string GetLayerTagByIndex(eLAYERTAG tag);
 	void ConvertFloatToCharArray(char* src, _float value);
 
 private:

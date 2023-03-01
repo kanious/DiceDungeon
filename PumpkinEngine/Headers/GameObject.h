@@ -29,6 +29,7 @@ protected:
 	_bool								m_bDebug;
 	_bool								m_bWireFrame;
 	_bool								m_bSelected;
+	_bool								m_bTransparency;
 
 	typedef std::unordered_map<std::string, CComponent*> COMPONENT_MAP;
 	COMPONENT_MAP						m_mapComponent;
@@ -70,6 +71,7 @@ public:
 	const _bool GetDebug()					{ return m_bDebug; }
 	const _bool GetWireFrame()				{ return m_bWireFrame; }
 	const _bool GetSelected()				{ return m_bSelected; }
+	const _bool GetTransparency()			{ return m_bTransparency; }
 	CBoundingBox* GetBoundingBox()			{ return m_pBoundingBox; }
 	CTransform* GetTransform()				{ return m_pTransform; }
 	// Get position from the transform component
@@ -97,6 +99,7 @@ public:
 	void SetDebug(_bool debug)				{ m_bDebug = debug; }
 	void SetWireFrame(_bool wire)			{ m_bWireFrame = wire; }
 	void SetSelected(_bool value)			{ m_bSelected = value; }
+	void SetTransparency(_bool value)		{ m_bTransparency = value; }
 	// Set position to the transform component
 	void SetPosition(glm::vec3 vPos);
 	// Set rotation to the transform component

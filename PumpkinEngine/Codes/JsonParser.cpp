@@ -171,7 +171,7 @@ void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector
 		data.SCALE.z = curData["scaleZ"].GetFloat();
 		data.LOCK = curData["lock"].GetBool();
 
-		if (!strcmp("camera", data.LAYERTYPE.c_str()))
+		if (!strcmp("Camera", data.ID.c_str()))
 			cameraData = data;
 		else
 			vec.push_back(data);

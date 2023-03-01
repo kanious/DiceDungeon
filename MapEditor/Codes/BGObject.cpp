@@ -41,7 +41,11 @@ void BGObject::Update(const _float& dt)
 		return;
 
 	if (nullptr != m_pMesh)
+	{
 		m_pMesh->SetSelcted(m_bSelected);
+		m_pMesh->SetWireFrame(m_bWireFrame);
+		m_pMesh->SetTransparency(m_bTransparency);
+	}
 
 	CGameObject::Update(dt);
 
@@ -52,22 +56,6 @@ void BGObject::Update(const _float& dt)
 void BGObject::Render()
 {
 	CGameObject::Render();
-}
-
-string BGObject::GetMeshID()
-{
-	if (nullptr != m_pMesh)
-		return m_pMesh->GetTag();
-
-	return "";
-}
-
-string BGObject::GetTexName()
-{
-	if (nullptr != m_pMesh)
-		return m_pMesh->GetTexName();
-
-	return "";
 }
 
 RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,

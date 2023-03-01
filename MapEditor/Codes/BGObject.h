@@ -22,10 +22,6 @@ public:
 	virtual void Update(const _float& dt);
 	virtual void Render();
 
-public:
-	std::string GetMeshID();
-	std::string GetTexName();
-
 private:
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _bool transparent);
