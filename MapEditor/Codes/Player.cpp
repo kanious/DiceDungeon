@@ -52,7 +52,7 @@ void Player::Update(const _float& dt)
 		CGameObject::Update(dt);
 		
 		if (nullptr != m_pRenderer)
-			m_pRenderer->AddRenderObj(this);
+			m_pRenderer->AddRenderObj(this, m_bTransparency);
 	}
 }
 

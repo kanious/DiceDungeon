@@ -55,6 +55,8 @@ class ENGINE_API CJsonParser : public CBase
 		glm::vec3 ROTATION;
 		glm::vec3 SCALE;
 		_bool LOCK;
+		_bool SHOW;
+		_bool ALPHA;
 	};
 
 private:

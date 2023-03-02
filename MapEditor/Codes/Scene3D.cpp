@@ -207,6 +207,8 @@ void Scene3D::SaveBackgroundObjects()
 			data.ROTATION = obj->GetRotation();
 			data.SCALE = obj->GetScale();
 			data.LOCK = obj->GetLock();
+			data.SHOW = obj->GetEnable();
+			data.ALPHA = obj->GetTransparency();
 			data.LAYERTYPE = GetLayerNameByTag((eLAYERTAG)m_vecLayer[i]->GetTag());
 			vecObjects.push_back(data);
 		}
@@ -247,7 +249,11 @@ void Scene3D::LoadBackgroundObjects()
 			iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
 
 		if (nullptr != pGameObject)
+		{
 			pGameObject->SetLock(iter->LOCK);
+			pGameObject->SetEnable(iter->SHOW);
+			pGameObject->SetTransparency(iter->ALPHA);
+		}
 	}
 	vecObjects.clear();
 

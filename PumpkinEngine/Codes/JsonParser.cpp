@@ -170,6 +170,8 @@ void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector
 		data.SCALE.y = curData["scaleY"].GetFloat();
 		data.SCALE.z = curData["scaleZ"].GetFloat();
 		data.LOCK = curData["lock"].GetBool();
+		data.SHOW = curData["show"].GetBool();
+		data.ALPHA = curData["alpha"].GetBool();
 
 		if (!strcmp("Camera", data.ID.c_str()))
 			cameraData = data;
@@ -229,6 +231,8 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 		Value scaleZ; scaleZ.SetFloat(cameraData.SCALE.z); obj.AddMember("scaleZ", scaleZ, allocator);
 
 		Value lock; lock.SetBool(false); obj.AddMember("lock", lock, allocator);
+		Value show; show.SetBool(false); obj.AddMember("show", show, allocator);
+		Value alpha; alpha.SetBool(false); obj.AddMember("alpha", alpha, allocator);
 
 		doc.PushBack(obj, allocator);
 	}
@@ -263,6 +267,8 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 		Value scaleZ; scaleZ.SetFloat(curData.SCALE.z); obj.AddMember("scaleZ", scaleZ, allocator);
 
 		Value lock; lock.SetBool(curData.LOCK); obj.AddMember("lock", lock, allocator);
+		Value show; show.SetBool(curData.SHOW); obj.AddMember("show", show, allocator);
+		Value alpha; alpha.SetBool(curData.ALPHA); obj.AddMember("alpha", alpha, allocator);
 
 		doc.PushBack(obj, allocator);
 	}
