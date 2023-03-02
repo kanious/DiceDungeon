@@ -114,6 +114,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;$(SolutionDir)OpenGL\lib\x64;$(SolutionDir)OpenGL\lib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>PumpkinEngine.lib;glew32d.lib;glew32sd.lib;glfw3dll.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,6 +136,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)OpenGL\lib\x64;$(SolutionDir)x64\Release;$(SolutionDir)OpenGL\lib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>PumpkinEngine.lib;glew32.lib;glew32s.lib;glfw3dll.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Codes\AnimationManager.cpp" />

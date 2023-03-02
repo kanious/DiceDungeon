@@ -99,6 +99,27 @@ RESULT CLayer::RemoveGameObject(CGameObject* obj)
 	return PK_GAMEOBJECT_CANNOT_FIND;
 }
 
+RESULT CLayer::RemoveGameObjectWithoutDelete(CGameObject* obj)
+{
+	if (nullptr == obj)
+		return PK_GAMEOBJECT_NULLPTR;
+
+	list<CGameObject*>::iterator iter;
+	for (iter = m_listGameObjects.begin(); iter != m_listGameObjects.end(); ++iter)
+	{
+		if (nullptr != (*iter))
+		{
+			if ((*iter) == obj)
+			{
+				m_listGameObjects.remove(*iter);
+				return PK_NOERROR;
+			}
+		}
+	}
+
+	return PK_GAMEOBJECT_CANNOT_FIND;
+}
+
 // Remove all Gameobject from this layer
 void CLayer::RemoveAllGameObject()
 {

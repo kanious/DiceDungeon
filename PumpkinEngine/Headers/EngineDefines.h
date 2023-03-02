@@ -1,6 +1,7 @@
 #ifndef _ENGINEDEFINE_H_
 #define _ENGINEDEFINE_H_
 #pragma warning(disable : 4251) // STL DLL Warning
+#pragma warning(disable : 4244) // _uint int lose data Warning
 
 // Default Headers
 #include <list>

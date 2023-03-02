@@ -175,15 +175,17 @@ void Scene3D::ResetDefaultCameraPos()
 	}
 }
 
-void Scene3D::AddGameObject(eLAYERTAG tag, string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
+CGameObject* Scene3D::AddGameObject(eLAYERTAG tag, string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
 {
 	CLayer* pLayer = GetLayer((_uint)tag);
-	ObjectFactory::CreateGameObject(
+	CGameObject* pGameObject = ObjectFactory::CreateGameObject(
 		(_uint)SCENE_3D,
 		pLayer->GetTag(),
 		(_uint)OBJ_BACKGROUND,
 		pLayer,
 		meshID, vPos, vRot, vScale);
+
+	return pGameObject;
 }
 
 void Scene3D::SaveBackgroundObjects()

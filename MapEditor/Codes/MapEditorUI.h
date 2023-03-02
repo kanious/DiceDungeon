@@ -76,6 +76,15 @@ private:
 	_bool							m_bAlpha;
 	_bool							m_bAlphaPrev;
 
+	// Copy object information
+	_bool							m_bIsInformation;
+	char							m_chCopiedPos[3][128];
+	char							m_chCopiedRot[3][128];
+	char							m_chCopiedScale[3][128];
+	glm::vec3						m_vCopiedPos;
+	glm::vec3						m_vCopiedRot;
+	glm::vec3						m_vCopiedScale;
+
 
 private:
 	explicit MapEditorUI();
@@ -94,6 +103,7 @@ private:
 	void Render_ObjectList(_float childX, _float childY);
 	void Render_MeshList(_float childX, _float childY);
 	void Render_Inspector();
+	void Render_CopyInformation();
 	void MoveTarget(const _float& dt);
 	void KeyCheck(const _float& dt);
 

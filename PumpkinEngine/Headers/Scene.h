@@ -53,6 +53,8 @@ public:
 	RESULT AddLayer(_uint layerTag);
 	// Add gameobject to layer
 	RESULT AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance);
+	// Move gameobject to another layer
+	RESULT MoveGameObjectLayer(_uint destLayerTag, CGameObject* pInstance);
 };
 
 NAMESPACE_END

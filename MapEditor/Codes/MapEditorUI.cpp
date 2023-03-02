@@ -37,6 +37,8 @@ MapEditorUI::MapEditorUI()
 	, m_bBBox(false), m_bBBoxPrev(false)
 	, m_bWire(false), m_bWirePrev(false)
 	, m_bAlpha(false), m_bAlphaPrev(false)
+	, m_bIsInformation(false)
+	, m_vCopiedPos(vec3(0.f)), m_vCopiedRot(vec3(0.f)), m_vCopiedScale(vec3(0.f))
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pUIManager = UIManager::GetInstance();
@@ -48,6 +50,10 @@ MapEditorUI::MapEditorUI()
 	ZeroMemory(m_chPos, sizeof(m_chPos));
 	ZeroMemory(m_chRot, sizeof(m_chRot));
 	ZeroMemory(m_chScale, sizeof(m_chScale));
+
+	ZeroMemory(m_chCopiedPos, sizeof(m_chCopiedPos));
+	ZeroMemory(m_chCopiedRot, sizeof(m_chCopiedRot));
+	ZeroMemory(m_chCopiedScale, sizeof(m_chCopiedScale));
 }
 
 MapEditorUI::~MapEditorUI()
@@ -102,6 +108,22 @@ void MapEditorUI::RenderUI()
 	}
 	End();
 
+	if (m_bIsInformation)
+	{
+		SetNextWindowPos(ImVec2(300.f, height * 0.5f + 55.f));
+		SetNextWindowSize(ImVec2(250.f, 90.f));
+		if (Begin("Copy Information Window", (bool*)0,
+			ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoCollapse |
+			ImGuiWindowFlags_NoBringToFrontOnFocus))
+		{
+			Render_CopyInformation();
+		}
+		End();
+	}
+
 	SetNextWindowPos(ImVec2((width * 0.5f) - 150.f, 0.f));
 	SetNextWindowSize(ImVec2(300.f, 40.f));
 	if (Begin("Function Bar", (bool*)0,
@@ -113,6 +135,7 @@ void MapEditorUI::RenderUI()
 	{
 		Checkbox("Snap(1)##Checkbox", &m_bSnap);
 		SameLine(100.f); Checkbox("Obj Move(2)##Checkbox", &m_bObjMove);
+		SameLine(200.f); Text("Target Copy(3)");
 	}
 	End();
 
@@ -481,7 +504,8 @@ void MapEditorUI::Render_MeshList(_float childX, _float childY)
 				vec3 vScale = vec3(fSize);
 
 				eLAYERTAG layerTag = GetLayerTagByName(m_curLayerNameCombo);
-				m_pScene->AddGameObject(layerTag, meshId, vPos, vRot, vScale);
+				CGameObject* newObj = m_pScene->AddGameObject(layerTag, meshId, vPos, vRot, vScale);
+				SetTarget(newObj);
 			}
 			SameLine(50.f); Text(info.meshId.c_str());
 			SameLine(235.f); SetNextItemWidth(35.f);
@@ -584,6 +608,34 @@ void MapEditorUI::Render_Inspector()
 	m_pTarget->SetRotation(vec3(fRotX, fRotY, fRotZ));
 	m_pTarget->SetScale(vec3(fScaleX, fScaleY, fScaleZ));
 
+	// Copy vector information
+	Text("Info"); SameLine(65.f);
+	if (Button("Copy##CopyTargetInformation", ImVec2(55.f, 0.f)))
+	{
+		m_bIsInformation = true;
+
+		m_vCopiedPos = m_pTarget->GetPosition();
+		m_vCopiedRot = m_pTarget->GetRotation();
+		m_vCopiedScale = m_pTarget->GetScale();
+	}
+	SameLine(145.f);
+	if (Button("Paste##PasteTargetInformation", ImVec2(55.f, 0.f)))
+	{
+		m_pTarget->SetPosition(m_vCopiedPos);
+		m_pTarget->SetRotation(m_vCopiedRot);
+		m_pTarget->SetScale(m_vCopiedScale);
+	}
+	SameLine(225.f);
+	if (Button("Reset##ResetTargetInformation", ImVec2(55.f, 0.f)))
+	{
+		m_bIsInformation = false;
+
+		m_vCopiedPos = vec3(0.f);
+		m_vCopiedRot = vec3(0.f);
+		m_vCopiedScale = vec3(1.f);
+	}
+
+	// Layer
 	Text("Layer");
 	SameLine(65.f); SetNextItemWidth(135.f);
 	if (BeginCombo("##LayerNameCombo", m_targetLayerNameCombo, ImGuiComboFlags_None))
@@ -602,8 +654,49 @@ void MapEditorUI::Render_Inspector()
 	SameLine(225.f);
 	if (Button("Change##TargetLayerChange", ImVec2(55.f, 0.f)))
 	{
+		_uint srcLayer = m_pTarget->GetLayerTag();
+		_uint destLayer = (_uint)GetLayerTagByName(m_targetLayerNameCombo);
 
+		if (srcLayer != destLayer)
+		{
+			if (nullptr != m_pScene)
+				m_pScene->MoveGameObjectLayer(destLayer, m_pTarget);
+		}
 	}
+}
+
+void MapEditorUI::Render_CopyInformation()
+{
+	ConvertFloatToCharArray(m_chCopiedPos[0], m_vCopiedPos.x);
+	ConvertFloatToCharArray(m_chCopiedPos[1], m_vCopiedPos.y);
+	ConvertFloatToCharArray(m_chCopiedPos[2], m_vCopiedPos.z);
+	ConvertFloatToCharArray(m_chCopiedRot[0], m_vCopiedRot.x);
+	ConvertFloatToCharArray(m_chCopiedRot[1], m_vCopiedRot.y);
+	ConvertFloatToCharArray(m_chCopiedRot[2], m_vCopiedRot.z);
+	ConvertFloatToCharArray(m_chCopiedScale[0], m_vCopiedScale.x);
+	ConvertFloatToCharArray(m_chCopiedScale[1], m_vCopiedScale.y);
+	ConvertFloatToCharArray(m_chCopiedScale[2], m_vCopiedScale.z);
+
+	Text("X"); SameLine(20.f);
+	SetNextItemWidth(55); InputText("##PosX", m_chCopiedPos[0], sizeof(m_chCopiedPos[0]));
+	SameLine(85.f); Text("Y"); SameLine(100.f);
+	SetNextItemWidth(55); InputText("##PosY", m_chCopiedPos[1], sizeof(m_chCopiedPos[1]));
+	SameLine(165.f); Text("Z"); SameLine(180.f);
+	SetNextItemWidth(56); InputText("##PosZ", m_chCopiedPos[2], sizeof(m_chCopiedPos[2]));
+
+	Text("X"); SameLine(20.f);
+	SetNextItemWidth(55); InputText("##RotX", m_chCopiedRot[0], sizeof(m_chCopiedRot[0]));
+	SameLine(85.f); Text("Y"); SameLine(100.f);
+	SetNextItemWidth(55); InputText("##RotY", m_chCopiedRot[1], sizeof(m_chCopiedRot[1]));
+	SameLine(165.f); Text("Z"); SameLine(180.f);
+	SetNextItemWidth(56); InputText("##RotZ", m_chCopiedRot[2], sizeof(m_chCopiedRot[2]));
+
+	Text("X"); SameLine(20.f);
+	SetNextItemWidth(55); InputText("##ScaleX", m_chCopiedScale[0], sizeof(m_chCopiedScale[0]));
+	SameLine(85.f); Text("Y"); SameLine(100.f);
+	SetNextItemWidth(55); InputText("##ScaleY", m_chCopiedScale[1], sizeof(m_chCopiedScale[1]));
+	SameLine(165.f); Text("Z"); SameLine(180.f);
+	SetNextItemWidth(56); InputText("##ScaleZ", m_chCopiedScale[2], sizeof(m_chCopiedScale[2]));
 }
 
 void MapEditorUI::MoveTarget(const _float& dt)
@@ -675,7 +768,11 @@ void MapEditorUI::KeyCheck(const _float& dt)
 			}
 			else
 			{
-				SetTarget(nullptr);
+				CGameObject* newTarget = m_pScene->GetTarget();
+				if (m_pTarget == newTarget)
+					SetTarget(nullptr);
+				else
+					SetTarget(newTarget);
 			}
 		}
 	}
@@ -707,6 +804,30 @@ void MapEditorUI::KeyCheck(const _float& dt)
 	}
 	else
 		is2Down = false;
+
+	// Target Copy
+	static _bool is3Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_3))
+	{
+		if (!is3Down)
+		{
+			is3Down = true;
+
+			if (nullptr != m_pTarget)
+			{
+				vec3 vPos = m_pTarget->GetPosition();
+				vec3 vRot = m_pTarget->GetRotation();
+				vec3 vScale = m_pTarget->GetScale();
+
+				eLAYERTAG layerTag = (eLAYERTAG)m_pTarget->GetLayerTag();
+				string meshID = m_pTarget->GetMeshName();
+				CGameObject* newObj = m_pScene->AddGameObject(layerTag, meshID, vPos, vRot, vScale);
+				SetTarget(newObj);
+			}
+		}
+	}
+	else
+		is3Down = false;
 
 	// Object cancel
 	static _bool isMouseRBClicked = false;

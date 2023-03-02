@@ -44,6 +44,8 @@ public:
 	RESULT AddGameObject(CGameObject* obj);
 	// Remove Gameobject from this layer
 	RESULT RemoveGameObject(CGameObject* obj);
+	// Remove Gameobject from this layer without delete
+	RESULT RemoveGameObjectWithoutDelete(CGameObject* obj);
 	// Remove all Gameobject from this layer
 	void RemoveAllGameObject();
 	// Find a Gameobject by object name

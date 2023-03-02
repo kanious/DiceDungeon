@@ -117,3 +117,21 @@ RESULT CScene::AddGameObjectToLayer(_uint layerTag, CGameObject* pInstance)
 	}
 	return PK_LAYER_CANNOT_FIND;
 }
+
+RESULT CScene::MoveGameObjectLayer(_uint destLayerTag, CGameObject* pInstance)
+{
+	if (nullptr == pInstance)
+		return PK_ERROR_NULLPTR;
+
+	_uint srcLayerTag = pInstance->GetLayerTag();
+	
+	CLayer* pLayer = GetLayer(srcLayerTag);
+	pLayer->RemoveGameObjectWithoutDelete(pInstance);
+
+	pLayer = GetLayer(destLayerTag);
+	pLayer->AddGameObject(pInstance);
+	pInstance->SetLayerTag(destLayerTag);
+	pInstance->SetParentLayer(pLayer);
+
+	return PK_NOERROR;
+}
