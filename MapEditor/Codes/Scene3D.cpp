@@ -23,6 +23,10 @@
 #include <sstream>
 #include <atlconv.h>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 
 USING(Engine)
 USING(glm)
@@ -280,6 +284,18 @@ void Scene3D::ResetAllLayers()
 RESULT Scene3D::Ready(string dataPath)
 {
 	m_DataPath = dataPath;
+
+	// Assimp test code
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile("path", 
+		aiProcess_Triangulate |
+		aiProcess_GenSmoothNormals |
+		aiProcess_FlipUVs |
+		aiProcess_CalcTangentSpace);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+	{
+		cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
+	}
 
 	// AnimationData
 	CAnimationData::GetInstance()->LoadAnimations(m_DataPath);

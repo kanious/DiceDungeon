@@ -127,14 +127,14 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)PlugIns\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGL\lib\x64\Debug;$(SolutionDir)OpenGL\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32d.lib;fmod_vc.lib;fmodL_vc.lib;glew32sd.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64\Debug;$(SolutionDir)PlugIns\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32d.lib;fmod_vc.lib;fmodL_vc.lib;glew32sd.lib;glfw3dll.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +147,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGL\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)PlugIns\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,8 +155,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)OpenGL\lib\x64\Release;$(SolutionDir)OpenGL\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32.lib;fmod_vc.lib;fmodL_vc.lib;glew32s.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64\Release;$(SolutionDir)PlugIns\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32.lib;fmod_vc.lib;fmodL_vc.lib;glew32s.lib;assimp-vc143-mt.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
