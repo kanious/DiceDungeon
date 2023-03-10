@@ -1,6 +1,10 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "Component.h"
 #include "EngineStruct.h"
 #include "glm\mat4x4.hpp"
@@ -72,15 +76,18 @@ public:
 	void SetTexture(std::string texID_diff);
 
 private:
-	RESULT Ready(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal);
+	RESULT Ready(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal, _bool assimp);
 	RESULT Ready_VIBuffer(eModelType type, std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 	void Ready_Texture_Diff(std::string texID);
 	void Ready_Texture_Normal(std::string texID);
 	void Ready_Shader(std::string shaderID);
+	RESULT Ready_Assimp(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
+	void processNode(aiNode* node, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
+	void processMesh(aiMesh* mesh, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 
 public:
 	virtual CComponent* Clone();
-	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal);
+	static CMesh* Create(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal, _bool assimp);
 };
 
 NAMESPACE_END

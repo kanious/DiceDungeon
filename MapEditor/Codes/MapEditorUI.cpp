@@ -209,7 +209,7 @@ void MapEditorUI::SetMenuBar()
 			if (MenuItem("Load"))
 			{
 				if (nullptr != m_pScene)
-					m_pScene->LoadBackgroundObjects();
+					m_pScene->LoadObjects();
 			}
 			if (MenuItem("Save"))
 			{

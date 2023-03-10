@@ -7,20 +7,16 @@
 namespace Engine
 {
 	class CLayer;
+	class CGameObject;
 };
 
-class BGObject;
-class Player;
 class DefaultCamera;
 
 // Factory method class for object creation
 class ObjectFactory
 {
 public:
-	static BGObject* CreateBGObject(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
-
-	static Player* CreatePlayer(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
+	static Engine::CGameObject* CreateGameObject(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 
 	static DefaultCamera* CreateCamera(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer,

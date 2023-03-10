@@ -123,6 +123,7 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 		data.SHADER_ID = curData["Shader_ID"].GetString();
 		data.INITSIZE = to_string(curData["InitSize"].GetFloat());
 		data.MESHTYPE = curData["MeshType"].GetString();
+		data.LOAD_ASSIMP = curData["Load_Assimp"].GetBool();
 		data.TEXTURE_ID_DIFF = curData["Texture_ID_Diff"].GetString();
 		data.TEXTURE_ID_NORMAL = curData["Texture_ID_Normal"].GetString();
 
@@ -130,7 +131,7 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 		ss << assetFolderPath << data.PATH;
 		CComponent* pComp = CMesh::Create(data.ID, ss.str(), data.FILENAME,
 			(eModelType)data.DATATYPE, data.SHADER_ID, data.INITSIZE, data.MESHTYPE,
-			data.TEXTURE_ID_DIFF, data.TEXTURE_ID_NORMAL);
+			data.TEXTURE_ID_DIFF, data.TEXTURE_ID_NORMAL, data.LOAD_ASSIMP);
 
 		if (nullptr != pComp)
 		{

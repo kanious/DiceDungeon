@@ -53,7 +53,7 @@ private:
 public:
 	Engine::CGameObject* AddGameObject(eLAYERTAG tag, std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 	void SaveBackgroundObjects();
-	void LoadBackgroundObjects();
+	void LoadObjects();
 	void ResetAllLayers();
 
 private:

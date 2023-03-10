@@ -11,28 +11,31 @@ USING(Engine)
 USING(glm)
 USING(std)
 
-// Create background object
-BGObject* ObjectFactory::CreateBGObject(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
-    vec3 vPos, vec3 vRot, vec3 vScale)
+// Create GameObject
+CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
 {
-    CGameObject* pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+    CGameObject* pGameObject = nullptr;
+
+    switch (lTag)
+    {
+    case (_uint)LAYER_CAMERA:
+    case (_uint)LAYER_STATIC_OBJECT:
+    case (_uint)LAYER_INTERACTIVE_OBJECT:
+    case (_uint)LAYER_EVENT_OBJECT:
+    case (_uint)LAYER_UI:
+        pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        break;
+
+    case (_uint)LAYER_CHARACTER:
+    case (_uint)LAYER_ENEMY:
+        pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        break;
+    }
 
     if (nullptr != pGameObject)
         pLayer->AddGameObject(pGameObject);
 
-    return dynamic_cast<BGObject*>(pGameObject);
-}
-
-// Create character object
-Player* ObjectFactory::CreatePlayer(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
-    vec3 vPos, vec3 vRot, vec3 vScale)
-{
-    CGameObject* pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
-
-    if (nullptr != pGameObject)
-        pLayer->AddGameObject(pGameObject);
-
-    return dynamic_cast<Player*>(pGameObject);
+    return pGameObject;
 }
 
 // Create camera
@@ -42,7 +45,10 @@ DefaultCamera* ObjectFactory::CreateCamera(_uint sTag, _uint lTag, _uint oTag, C
     CGameObject* pGameObject = DefaultCamera::Create(sTag, lTag, oTag, pLayer, vPos, vRot, vScale, fov, fNear, fFar);
 
     if (nullptr != pGameObject)
+    {
         pLayer->AddGameObject(pGameObject);
+        return dynamic_cast<DefaultCamera*>(pGameObject);
+    }
 
-    return dynamic_cast<DefaultCamera*>(pGameObject);
+    return nullptr;
 }

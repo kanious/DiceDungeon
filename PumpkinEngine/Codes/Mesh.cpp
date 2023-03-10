@@ -76,8 +76,8 @@ CMesh::CMesh(const CMesh& rhs)
         , rhs.m_pBoundingBox->m_vMax
         , rhs.m_pBoundingBox->m_shaderID);
 
-    m_pTriangles = new TRIANGLE[rhs.m_iTriNum];
-    memcpy(m_pTriangles, rhs.m_pTriangles, sizeof(TRIANGLE) * rhs.m_iTriNum);
+    //m_pTriangles = new TRIANGLE[rhs.m_iTriNum];
+    //memcpy(m_pTriangles, rhs.m_pTriangles, sizeof(TRIANGLE) * rhs.m_iTriNum);
 ;}
 
 CMesh::~CMesh()
@@ -213,7 +213,7 @@ void CMesh::SetTexture(std::string texID_diff)
 
 // Initialize Mesh
 RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type,
-    string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal)
+    string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal, _bool assimp)
 {
     m_tag = ID;
     m_initSize = initSize;
@@ -224,7 +224,10 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type
     _uint vertexNum = 0;
     _uint indexNum = 0;
 
-    Ready_VIBuffer(type, filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    if (assimp)
+        Ready_Assimp(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+    else
+        Ready_VIBuffer(type, filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
 
     m_pVIBuffer = CVIBuffer::Create(vertexNum, pVertices, indexNum, pIndices, type);
     
@@ -408,6 +411,113 @@ void CMesh::Ready_Shader(string shaderID)
         m_pShader = dynamic_cast<CShader*>(pComponent);
 }
 
+RESULT CMesh::Ready_Assimp(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+{
+    stringstream ss;
+    ss << filePath << fileName;
+
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(ss.str(),
+        aiProcess_Triangulate | 
+        aiProcess_GenSmoothNormals | 
+        aiProcess_FlipUVs | 
+        aiProcess_CalcTangentSpace);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+        return PK_ERROR_MESHFILE_OPEN;
+
+    processNode(scene->mRootNode, scene, pVertices, pIndices, vertexNum, indexNum);
+
+    return PK_NOERROR;
+}
+
+void CMesh::processNode(aiNode* node, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+{
+    for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        processMesh(mesh, scene, pVertices, pIndices, vertexNum, indexNum);
+    }
+
+    for (unsigned int i = 0; i < node->mNumChildren; ++i)
+    {
+        processNode(node->mChildren[i], scene, pVertices, pIndices, vertexNum, indexNum);
+    }
+}
+
+void CMesh::processMesh(aiMesh* mesh, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+{
+    vertexNum = mesh->mNumVertices;
+
+    vec3 vMin = vec3(FLT_MAX);
+    vec3 vMax = vec3(FLT_MIN);
+
+    *pVertices = new VTX[vertexNum];
+    memset(*pVertices, 0, sizeof(**pVertices));
+    for (int i = 0; i < mesh->mNumVertices; ++i)
+    {
+        (*pVertices)[i].vPos.x = mesh->mVertices[i].x;
+        (*pVertices)[i].vPos.y = mesh->mVertices[i].y;
+        (*pVertices)[i].vPos.z = mesh->mVertices[i].z;
+        (*pVertices)[i].vPos.w = 1.f;
+
+        if (mesh->HasNormals())
+        {
+            (*pVertices)[i].vNormal.x = mesh->mNormals[i].x;
+            (*pVertices)[i].vNormal.y = mesh->mNormals[i].y;
+            (*pVertices)[i].vNormal.z = mesh->mNormals[i].z;
+            (*pVertices)[i].vNormal.w = 1.f;
+        }
+
+        if (mesh->mTextureCoords[0])
+        {
+            (*pVertices)[i].vTexUV.x = mesh->mTextureCoords[0][i].x;
+            (*pVertices)[i].vTexUV.y = mesh->mTextureCoords[0][i].y;
+            (*pVertices)[i].vTangent.x = mesh->mTangents[i].x;
+            (*pVertices)[i].vTangent.y = mesh->mTangents[i].y;
+            (*pVertices)[i].vTangent.z = mesh->mTangents[i].z;
+            (*pVertices)[i].vTangent.w = 1.f;
+            (*pVertices)[i].vBinormal.x = mesh->mBitangents[i].x;
+            (*pVertices)[i].vBinormal.y = mesh->mBitangents[i].y;
+            (*pVertices)[i].vBinormal.z = mesh->mBitangents[i].z;
+            (*pVertices)[i].vBinormal.z = 1.f;
+        }
+        else
+        {
+            (*pVertices)[i].vTexUV.x = 0.f;
+            (*pVertices)[i].vTexUV.y = 0.f;
+        }
+
+        if (vMin.x > (*pVertices)[i].vPos.x)
+            vMin.x = (*pVertices)[i].vPos.x;
+        if (vMin.y > (*pVertices)[i].vPos.y)
+            vMin.y = (*pVertices)[i].vPos.y;
+        if (vMin.z > (*pVertices)[i].vPos.z)
+            vMin.z = (*pVertices)[i].vPos.z;
+        if (vMax.x < (*pVertices)[i].vPos.x)
+            vMax.x = (*pVertices)[i].vPos.x;
+        if (vMax.y < (*pVertices)[i].vPos.y)
+            vMax.y = (*pVertices)[i].vPos.y;
+        if (vMax.z < (*pVertices)[i].vPos.z)
+            vMax.z = (*pVertices)[i].vPos.z;
+    }
+    m_pBoundingBox = CBoundingBox::Create(vMin, vMax, "DebugBoxShader");
+
+    m_iTriNum = mesh->mNumFaces;
+    indexNum = m_iTriNum * 3;
+    *pIndices = new _uint[indexNum];
+    memset(*pIndices, 0, sizeof(**pIndices));
+    for (unsigned int i = 0; i < m_iTriNum; ++i)
+    {
+        aiFace face = mesh->mFaces[i];
+
+        for (unsigned int j = 0; j < face.mNumIndices; ++j)
+            (*pIndices)[(i * 3) + j] = face.mIndices[j];
+    }
+
+    return;
+}
+
 //void CMesh::Ready_QuadTree(_uint depth)
 //{
     //if (nullptr == m_pBoundingBox || nullptr == m_pTriangles)
@@ -454,12 +564,12 @@ CComponent* CMesh::Clone()
 
 // Create an instance
 CMesh* CMesh::Create(string ID, string filePath, string fileName, eModelType type,
-    string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal)
+    string shaderID, string initSize, string meshType, string texID_Diff, string texID_Normal, _bool assimp)
 {
 	CMesh* pInstance = new CMesh();
 	if (PK_NOERROR != pInstance->Ready(ID, filePath, fileName, type,
         shaderID, initSize, meshType,
-        texID_Diff, texID_Normal))
+        texID_Diff, texID_Normal, assimp))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

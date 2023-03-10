@@ -230,7 +230,7 @@ void Scene3D::SaveBackgroundObjects()
 	CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 }
 
-void Scene3D::LoadBackgroundObjects()
+void Scene3D::LoadObjects()
 {
 	ResetAllLayers();
 
@@ -366,7 +366,7 @@ RESULT Scene3D::ReadyLayerAndGameObject()
 	}
 
 	//Create.BackgroundLayer 
-	LoadBackgroundObjects();
+	LoadObjects();
 
 	return PK_NOERROR;
 }

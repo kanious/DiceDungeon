@@ -43,6 +43,7 @@ class ENGINE_API CJsonParser : public CBase
 		std::string SHADER_ID;
 		std::string INITSIZE;
 		std::string MESHTYPE;
+		_bool LOAD_ASSIMP;
 		std::string TEXTURE_ID_DIFF;
 		std::string TEXTURE_ID_NORMAL;
 	};

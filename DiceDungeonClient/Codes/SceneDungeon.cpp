@@ -221,37 +221,29 @@ RESULT SceneDungeon::ReadyLayerAndGameObject()
 // Load Objects from json file
 void SceneDungeon::LoadObjects()
 {
-	CLayer* bgLayer = GetLayer((_uint)LAYER_BACKGROUND_OBJECT);
-	//CGameObject* pGameObject = nullptr;
-	m_pCharacterLayer = GetLayer((_uint)LAYER_CHARACTER);
+	CLayer* pLayer = GetLayer((_uint)LAYER_STATIC_OBJECT);
+	CGameObject* pGameObject = nullptr;
 
-	if (nullptr == bgLayer)
-		return;
-
-	bgLayer->RemoveAllGameObject();
 	vector<CJsonParser::sObjectData> vecObjects;
 	CJsonParser::sObjectData cameraData;
 	CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 	vector<CJsonParser::sObjectData>::iterator iter;
 	for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 	{
-		if (!strcmp("static_obj", iter->LAYERTYPE.c_str()) || !strcmp("interative_obj", iter->LAYERTYPE.c_str()))
+		eLAYERTAG tag = GetLayerTagByName(iter->LAYERTYPE);
+		pLayer = GetLayer((_uint)tag);
+		pGameObject = ObjectFactory::CreateGameObject(
+			(_uint)SCENE_3D,
+			pLayer->GetTag(),
+			(_uint)OBJ_BACKGROUND,
+			pLayer,
+			iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+
+		if (nullptr != pGameObject)
 		{
-			ObjectFactory::CreateBGObject(
-				(_uint)SCENE_3D,
-				bgLayer->GetTag(),
-				(_uint)OBJ_BACKGROUND,
-				bgLayer,
-				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
-		}
-		else if (!strcmp("character", iter->LAYERTYPE.c_str()))
-		{
-			ObjectFactory::CreatePlayer(
-				(_uint)SCENE_3D,
-				m_pCharacterLayer->GetTag(),
-				(_uint)OBJ_CHARACTER,
-				m_pCharacterLayer,
-				iter->ID, iter->POSITION, iter->ROTATION, iter->SCALE);
+			pGameObject->SetLock(iter->LOCK);
+			pGameObject->SetEnable(iter->SHOW);
+			pGameObject->SetTransparency(iter->ALPHA);
 		}
 	}
 	vecObjects.clear();
