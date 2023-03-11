@@ -141,8 +141,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Codes\AnimationManager.cpp" />
-    <ClCompile Include="Codes\Animator.cpp" />
     <ClCompile Include="Codes\BGObject.cpp" />
     <ClCompile Include="Codes\Client.cpp" />
     <ClCompile Include="Codes\MapEditorUI.cpp" />
@@ -162,8 +160,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Codes\AnimationManager.h" />
-    <ClInclude Include="Codes\Animator.h" />
     <ClInclude Include="Codes\BGObject.h" />
     <ClInclude Include="Codes\Client.h" />
     <ClInclude Include="Codes\MapEditorUI.h" />

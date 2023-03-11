@@ -16,8 +16,6 @@
 #include "SkyBox.h"
 #include "Renderer.h"
 #include "Player.h"
-#include "AnimationManager.h"
-#include "AnimationData.h"
 #include "ObjectFactory.h"
 
 #include <sstream>
@@ -39,7 +37,6 @@ Scene3D::Scene3D()
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
-	m_pAnimationManager = AnimationManager::GetInstance(); m_pAnimationManager->AddRefCnt();
 
 	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
@@ -49,17 +46,18 @@ Scene3D::~Scene3D()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void Scene3D::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
 	SafeDestroy(m_pSkyBox);
 
 	SafeDestroy(m_pUIManager);
-	SafeDestroy(m_pAnimationManager);
 
 	CScene::Destroy();
 }
 
+// Basic Update Function
 void Scene3D::Update(const _float& dt)
 {
 	//if (nullptr != m_pSkyBox)
@@ -71,12 +69,11 @@ void Scene3D::Update(const _float& dt)
 	KeyCheck();
 
 	CLightMaster::GetInstance()->SetLightInfo();
-	if (nullptr != m_pAnimationManager)
-		m_pAnimationManager->Update(dt);
 
 	CScene::Update(dt);
 }
 
+// Basic Render Function
 void Scene3D::Render()
 {
 	if (nullptr != m_pUIManager)
@@ -139,6 +136,7 @@ CGameObject* Scene3D::GetTarget()
 	return pickedObj;
 }
 
+// Return current camera position
 void Scene3D::KeyCheck()
 {
 	static _bool isF5Down = false;
@@ -154,6 +152,7 @@ void Scene3D::KeyCheck()
 		isF5Down = false;
 }
 
+// Saves camera position
 void Scene3D::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
 {
 	m_vCameraSavedPos.x = vPos.x;
@@ -169,6 +168,7 @@ void Scene3D::SetDefaultCameraSavedPosition(vec3 vPos, vec3 vRot, vec3 target)
 	m_vCameraSavedTarget.z = target.z;
 }
 
+// Reset camera position
 void Scene3D::ResetDefaultCameraPos()
 {
 	if (nullptr != m_pDefaultCamera)
@@ -179,6 +179,7 @@ void Scene3D::ResetDefaultCameraPos()
 	}
 }
 
+// Add object
 CGameObject* Scene3D::AddGameObject(eLAYERTAG tag, string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
 {
 	CLayer* pLayer = GetLayer((_uint)tag);
@@ -192,6 +193,7 @@ CGameObject* Scene3D::AddGameObject(eLAYERTAG tag, string meshID, glm::vec3 vPos
 	return pGameObject;
 }
 
+// Save Objects
 void Scene3D::SaveBackgroundObjects()
 {
 	vector<CJsonParser::sObjectData> vecObjects;
@@ -230,6 +232,7 @@ void Scene3D::SaveBackgroundObjects()
 	CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
 }
 
+// Load Objects
 void Scene3D::LoadObjects()
 {
 	ResetAllLayers();
@@ -270,6 +273,7 @@ void Scene3D::LoadObjects()
 	}
 }
 
+// Empty all layers
 void Scene3D::ResetAllLayers()
 {
 	for (_uint i = 0; i < m_vecLayer.size(); ++i)
@@ -281,6 +285,7 @@ void Scene3D::ResetAllLayers()
 	}
 }
 
+// Initialize
 RESULT Scene3D::Ready(string dataPath)
 {
 	m_DataPath = dataPath;
@@ -296,9 +301,6 @@ RESULT Scene3D::Ready(string dataPath)
 	{
 		cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
 	}
-
-	// AnimationData
-	CAnimationData::GetInstance()->LoadAnimations(m_DataPath);
 
 	// GameObjects
 	RESULT result = PK_NOERROR;
@@ -343,6 +345,7 @@ RESULT Scene3D::Ready(string dataPath)
 	return PK_NOERROR;
 }
 
+// Initialize Layer and GameObjects
 RESULT Scene3D::ReadyLayerAndGameObject()
 {
 	//Create.Layer
@@ -371,6 +374,7 @@ RESULT Scene3D::ReadyLayerAndGameObject()
 	return PK_NOERROR;
 }
 
+// Create an instance
 Scene3D* Scene3D::Create(string dataPath)
 {
 	Scene3D* pInstance = new Scene3D();

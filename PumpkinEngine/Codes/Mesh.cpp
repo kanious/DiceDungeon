@@ -160,7 +160,34 @@ void CMesh::Render()
         if (m_bPriority)
             glDisable(GL_DEPTH_TEST);
 
-        m_pVIBuffer->Render();
+        if (!m_bSelected)
+        {
+            m_pVIBuffer->Render();
+        }
+        else
+        {
+            glEnable(GL_STENCIL_TEST);
+
+			glStencilFunc(GL_ALWAYS, 1, 0xFF);
+			glStencilMask(0xFF);
+			m_pShader->SetSelected(false);
+			m_pVIBuffer->Render();
+
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilMask(0x00);
+			glDisable(GL_DEPTH_TEST);
+			m_pShader->SetSelected(true);
+			matWorld = scale(matWorld, vec3(1.02f));
+			m_pShader->SetMatrixInfo(matWorld, matView, matProj);
+			m_pVIBuffer->Render();
+
+			glStencilMask(0xFF);
+			glStencilFunc(GL_ALWAYS, 0, 0xFF);
+			glEnable(GL_DEPTH_TEST);
+            glDisable(GL_STENCIL_TEST);
+        }
+
+        
 
         // Outline Effect
         //if (m_tag == "floor_A" || m_tag == "wall_A")

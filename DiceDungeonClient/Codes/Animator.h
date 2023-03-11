@@ -18,13 +18,18 @@ private:
 	virtual ~Animator();
 
 private:
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
+	// Call this function when animation has ended
 	virtual void AnimationEndEvent();
+	// Set animation by type state
 	void SetAnimationByType();
 
 private:
+	// Initialize
 	RESULT Ready(Player* pPlayer);
 public:
+	// Create an instance
 	static Animator* Create(Player* pPlayer);
 };
 

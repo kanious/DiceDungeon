@@ -5,6 +5,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Sphere shape class
 class ENGINE_API CSphereShape : public iShape
 {
 private:

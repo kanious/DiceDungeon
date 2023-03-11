@@ -16,25 +16,30 @@ CPhysicsFactory::~CPhysicsFactory()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CPhysicsFactory::Destroy()
 {
 }
 
+// Create Physics World
 iPhysicsWorld* CPhysicsFactory::CreateWorld(function<void(void)> callback)
 {
 	return CPhysicsWorld::Create(callback);
 }
 
+// Create RigidBody
 iRigidBody* CPhysicsFactory::CreateRigidBody(const CRigidBodyDesc& desc, eShapeType shape)
 {
 	return CRigidBody::Create(desc, shape);
 }
 
+// Initialize
 RESULT CPhysicsFactory::Ready()
 {
 	return PK_NOERROR;
 }
 
+// Create an instance
 CPhysicsFactory* CPhysicsFactory::Create()
 {
 	CPhysicsFactory* pInstance = new CPhysicsFactory();

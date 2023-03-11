@@ -8,6 +8,8 @@ NAMESPACE_BEGIN(Engine)
 
 class iRigidBody;
 class CComponent;
+
+// Physics World interface class
 class ENGINE_API iPhysicsWorld : public CBase
 {
 protected:

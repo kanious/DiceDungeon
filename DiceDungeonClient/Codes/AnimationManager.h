@@ -23,13 +23,17 @@ private:
 	explicit AnimationManager();
 	~AnimationManager();
 public:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
+	// Initialize
 	RESULT Ready();
 
 public:
+	// Basic Update Function, update all animators
 	void Update(const _float& dt);
 
 public:
+	// Add Animator
 	void AddAnimator(Animator* pAnimator);
 };
 

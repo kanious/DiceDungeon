@@ -14,6 +14,7 @@ enum class eShapeType
 	Sphere,
 };
 
+// Shape interface class
 class ENGINE_API iShape: public CBase
 {
 protected:

@@ -72,6 +72,7 @@ public:
 	const _bool GetWireFrame()				{ return m_bWireFrame; }
 	const _bool GetSelected()				{ return m_bSelected; }
 	const _bool GetTransparency()			{ return m_bTransparency; }
+	virtual const std::string GetMeshType() { return ""; }
 	CBoundingBox* GetBoundingBox()			{ return m_pBoundingBox; }
 	CTransform* GetTransform()				{ return m_pTransform; }
 	// Get position from the transform component

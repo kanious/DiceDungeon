@@ -41,25 +41,38 @@ private:
 private:
 	explicit SceneDungeon();
 	virtual ~SceneDungeon();
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
 public:
+	// Basic Update Function
 	virtual void Update(const _float& dt);
+	// Basic Render Function
 	virtual void Render();
 
 public:
+	// Return current camera position
 	glm::vec3 GetCameraPos();
+	// Play sound if something collide
 	void CollisionSoundCallback();
 private:
+	// Check User input
 	void KeyCheck();
+	// Saves camera position
 	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
+	// Reset camera position
 	void ResetDefaultCameraPos();
 
 private:
+	// Initialize
 	RESULT Ready(std::string dataPath);
-	RESULT ReadyLayerAndGameObject();
+	// Initialize Layer and Camera
+	RESULT ReadyLayerAndCamera();
+	// Load Objects from json file
 	void LoadObjects();
-	void AddDice();
+	// Initialize Physics World and prepare dice
+	void ReadyPhysicsAndDice();
 public:
+	// Create an instance
 	static SceneDungeon* Create(std::string dataPath);
 
 };

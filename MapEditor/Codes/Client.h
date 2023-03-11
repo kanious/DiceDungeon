@@ -10,6 +10,8 @@ namespace Engine
 	class COpenGLDevice;
 	class CInputDevice;
 }
+
+// A client class that runs a core loop
 class Client
 {
 private:
@@ -28,12 +30,16 @@ private:
 public:
 	explicit Client();
 	~Client();
+	// Call instead of destructor to manage class internal data
 	void Destroy();
 
 public:
+	// Core Loop
 	void Loop();
+	// Initialize
 	RESULT Ready();
 private:
+	// Initialize Basic Components
 	RESULT Ready_BasicComponent();
 };
 

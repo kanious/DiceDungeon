@@ -101,6 +101,7 @@ vec3 SceneDungeon::GetCameraPos()
 	return vec3(0.f);
 }
 
+// Play sound if something collide
 void SceneDungeon::CollisionSoundCallback()
 {
 	CSoundMaster::GetInstance()->PlaySound("Ball");
@@ -172,12 +173,12 @@ RESULT SceneDungeon::Ready(string dataPath)
 
 	// GameObjects
 	RESULT result = PK_NOERROR;
-	result = ReadyLayerAndGameObject();
+	result = ReadyLayerAndCamera();
 	if (PK_NOERROR != result)
 		return result;
 
 	// Physics
-	AddDice();
+	ReadyPhysicsAndDice();
 
 	// Light
 	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
@@ -219,8 +220,8 @@ RESULT SceneDungeon::Ready(string dataPath)
 	return PK_NOERROR;
 }
 
-// Initialize GameObjects
-RESULT SceneDungeon::ReadyLayerAndGameObject()
+// Initialize Layer and Camera
+RESULT SceneDungeon::ReadyLayerAndCamera()
 {
 	//Create.Camera
 	CLayer* pLayer = GetLayer((_uint)LAYER_INTERACTIVE_OBJECT);
@@ -284,7 +285,8 @@ void SceneDungeon::LoadObjects()
 	}
 }
 
-void SceneDungeon::AddDice()
+// Initialize Physics World and prepare dice
+void SceneDungeon::ReadyPhysicsAndDice()
 {
 	m_pPFactory = CPhysicsFactory::Create();
 	m_pPWorld = m_pPFactory->CreateWorld(bind(&SceneDungeon::CollisionSoundCallback, this));

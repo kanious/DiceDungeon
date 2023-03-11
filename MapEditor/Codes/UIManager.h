@@ -7,6 +7,7 @@ class SystemUI;
 class MapEditorUI;
 class Scene3D;
 
+// Manages all UI
 class UIManager : public Engine::CBase
 {
 	SINGLETON(UIManager)
@@ -29,18 +30,25 @@ private:
 	explicit UIManager();
 	~UIManager();
 public:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
+	// Update all UIs
 	void Update(const _float& dt);
+	// Basic Render Function
 	void RenderUI();
 
 public:
+	// Set ImGui Style
 	void SetImGuiStyle();
+	// Check if mouse cursor is in the UI area
 	_bool GetCursorIsOnTheUI();
 	_bool GetUIOpened(eUIType type)		{ return m_bUIOpen[type]; }
 	void SetUIToggle(eUIType type)		{ m_bUIOpen[type] = !m_bUIOpen[type]; }
+	// Close all UI
 	void SetAllUIClose();
 
 public:
+	// Initialize
 	RESULT Ready(Scene3D* pScene);
 };
 

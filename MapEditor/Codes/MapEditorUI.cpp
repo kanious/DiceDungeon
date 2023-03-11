@@ -60,6 +60,7 @@ MapEditorUI::~MapEditorUI()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void MapEditorUI::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
@@ -69,6 +70,7 @@ void MapEditorUI::Destroy()
 	m_vecMeshInfos.clear();
 }
 
+// Basic Update Function
 void MapEditorUI::Update(const _float& dt)
 {
 	if (nullptr == m_pInputDevice || nullptr == m_pUIManager || nullptr == m_pScene)
@@ -83,6 +85,7 @@ void MapEditorUI::Update(const _float& dt)
 	KeyCheck(dt);
 }
 
+// Basic Render Function
 void MapEditorUI::RenderUI()
 {
 	_float width = (_float)COpenGLDevice::GetInstance()->GetWidthSize();
@@ -151,6 +154,7 @@ void MapEditorUI::RenderUI()
 	End();
 }
 
+// Select Target
 void MapEditorUI::SetTarget(CGameObject* pObj)
 {
 	if (nullptr != m_pTarget)
@@ -184,6 +188,7 @@ void MapEditorUI::SetTarget(CGameObject* pObj)
 	}
 }
 
+// Remove Target
 void MapEditorUI::ResetTarget()
 {
 	m_pTarget->SetPosition(m_vPosPrev);
@@ -193,6 +198,7 @@ void MapEditorUI::ResetTarget()
 	SetTarget(nullptr);
 }
 
+// Draw Menu Bar
 void MapEditorUI::SetMenuBar()
 {
 	if (BeginMenuBar())
@@ -231,6 +237,7 @@ void MapEditorUI::SetMenuBar()
 	}
 }
 
+// Draw Object List UI
 void MapEditorUI::Render_ObjectList(_float childX, _float childY)
 {
 	Text(" * OBJECT LIST");
@@ -431,6 +438,7 @@ void MapEditorUI::Render_ObjectList(_float childX, _float childY)
 	EndChild();
 }
 
+// Draw Mesh List UI
 void MapEditorUI::Render_MeshList(_float childX, _float childY)
 {
 	Text(" * MESH LIST");
@@ -518,6 +526,7 @@ void MapEditorUI::Render_MeshList(_float childX, _float childY)
 	PopStyleColor();
 }
 
+// Draw Inspector
 void MapEditorUI::Render_Inspector()
 {
 	Text(" * Target");
@@ -665,6 +674,7 @@ void MapEditorUI::Render_Inspector()
 	}
 }
 
+// Draw Copy window (only draw when user copy the target information)
 void MapEditorUI::Render_CopyInformation()
 {
 	ConvertFloatToCharArray(m_chCopiedPos[0], m_vCopiedPos.x);
@@ -699,6 +709,7 @@ void MapEditorUI::Render_CopyInformation()
 	SetNextItemWidth(56); InputText("##ScaleZ", m_chCopiedScale[2], sizeof(m_chCopiedScale[2]));
 }
 
+// Move target
 void MapEditorUI::MoveTarget(const _float& dt)
 {
 	if (nullptr == m_pTarget)
@@ -712,7 +723,6 @@ void MapEditorUI::MoveTarget(const _float& dt)
 		vec3 vPos = m_pTarget->GetPosition();
 		vDest.y = vPos.y;
 
-		//if (!strcmp("floor", m_pTargetObject->GetMeshType().c_str()))
 		if (m_bSnap)
 		{
 			if (0 > vDest.x)
@@ -725,33 +735,26 @@ void MapEditorUI::MoveTarget(const _float& dt)
 			else
 				vDest.z = (_int)((vDest.z + 5) / 10) * 10;
 
-			//if (!strcmp("wall", m_pTarget->GetMeshType().c_str()))
-			//{
-			//	_float fY = m_pTarget->GetRotationY();
+			if (!strcmp("wall", m_pTarget->GetMeshType().c_str()))
+			{
+				_float fY = m_pTarget->GetRotationY();
 
-			//	if (fY == 0.f)
-			//	{
-			//		vDest.z += 5.f;
-			//	}
-			//	else if (fY == 90.f)
-			//	{
-			//		vDest.x -= 5.f;
-			//	}
-			//	else if (fY == 180.f)
-			//	{
-			//		vDest.z -= 5.f;
-			//	}
-			//	else
-			//	{
-			//		vDest.x += 5.f;
-			//	}
-			//}
+				if (fY == 0.f)
+					vDest.z += 5.f;
+				else if (fY == 90.f)
+					vDest.x -= 5.f;
+				else if (fY == 180.f)
+					vDest.z -= 5.f;
+				else
+					vDest.x += 5.f;
+			}
 		}
 
 		m_pTarget->SetPosition(vDest);
 	}
 }
 
+// Check User input
 void MapEditorUI::KeyCheck(const _float& dt)
 {
 	// Object Picking
@@ -866,6 +869,7 @@ void MapEditorUI::KeyCheck(const _float& dt)
 		isDelDown = false;
 }
 
+// Convert float to char*
 void MapEditorUI::ConvertFloatToCharArray(char* dest, _float value)
 {
 	stringstream ss;
@@ -873,6 +877,7 @@ void MapEditorUI::ConvertFloatToCharArray(char* dest, _float value)
 	strcpy_s(dest, ss.str().length() + 1, ss.str().c_str());
 }
 
+// Initialize
 RESULT MapEditorUI::Ready(Scene3D* pScene)
 {
 	m_pScene = pScene;
@@ -929,6 +934,7 @@ RESULT MapEditorUI::Ready(Scene3D* pScene)
 	return PK_NOERROR;
 }
 
+// Create an instance
 MapEditorUI* MapEditorUI::Create(Scene3D* pScene)
 {
 	MapEditorUI* pInstance = new MapEditorUI();

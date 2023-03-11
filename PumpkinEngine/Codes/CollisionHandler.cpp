@@ -17,10 +17,12 @@ CCollisionHandler::~CCollisionHandler()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CCollisionHandler::Destroy()
 {
 }
 
+// Check for collisions between RigidBody
 void CCollisionHandler::Collide(const _float& dt, std::vector<CRigidBody*>& bodies, std::vector<sColPair>& vecCols)
 {
 	//_bool IsCollided = false;
@@ -68,6 +70,7 @@ void CCollisionHandler::Collide(const _float& dt, std::vector<CRigidBody*>& bodi
 	//}// for idxA
 }
 
+// Sphere-Sphere Collision detection
 _bool CCollisionHandler::CollideSphereSphere(const _float& dt, CRigidBody* bodyA, CSphereShape* sphereA, CRigidBody* bodyB, CSphereShape* sphereB)
 {
 	//if (bodyA->IsStatic() && bodyB->IsStatic())
@@ -166,6 +169,7 @@ _bool CCollisionHandler::CollideSphereSphere(const _float& dt, CRigidBody* bodyA
 	return true;
 }
 
+// Sphere-Plane Collision detection
 _bool CCollisionHandler::CollideSpherePlane(const _float& dt, CRigidBody* sphereBody, CSphereShape* sphereShape, CRigidBody* planeBody, CPlaneShape* planeShape)
 {
 	//if (sphereBody->IsStatic() && planeBody->IsStatic())
@@ -313,17 +317,20 @@ _bool CCollisionHandler::TestMovingSpherePlane(
 	return false;
 }
 
+// Get closest point to plane
 vec3 CCollisionHandler::ClosestPtPointPlane(const vec3& pt, const vec3& planeNormal, _float planeDP)
 {
 	_float t = dot(planeNormal, pt) - planeDP;
 	return pt - (t * planeNormal);
 }
 
+// Initialize
 RESULT CCollisionHandler::Ready()
 {
 	return PK_NOERROR;
 }
 
+// Create an instance
 CCollisionHandler* CCollisionHandler::Create()
 {
 	CCollisionHandler* pInstance = new CCollisionHandler();

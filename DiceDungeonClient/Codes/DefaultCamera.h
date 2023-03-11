@@ -42,21 +42,29 @@ public:
 	void SetCameraEye(glm::vec3 eye);
 	void SetCameraRot(glm::vec3 rot);
 	void SetCameraTarget(glm::vec3 target);
-	void AddShaderLocation(std::string shaderTag);
 	void SetPlayer(Player* pPlayer)				{ m_pTarget = pPlayer; }
+public:
+	// Save shaders to deliver camera information
+	void AddShaderLocation(std::string shaderTag);
 
 private:
+	// Check user input
 	void KeyCheck(const _float& dt);
+	// Following Target
 	void FollowPlayer();
 
 public:
+	// Basic Update Function
 	virtual void Update(const _float& dt);
 
 private:
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
+	// Initialize
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _float fov, _float fNear, _float fFar);
 public:
+	// Create an instance
 	static DefaultCamera* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer,
 		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _float fov, _float fNear, _float fFar);
 };

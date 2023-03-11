@@ -19,8 +19,11 @@ private:
 	explicit UIManager();
 	~UIManager();
 public:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
+	// Basic Render Function
 	void RenderUI();
+	// Initialize
 	RESULT Ready(Engine::iPhysicsWorld* pWorld);
 };
 

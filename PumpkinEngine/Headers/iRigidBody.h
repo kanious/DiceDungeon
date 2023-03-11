@@ -8,6 +8,8 @@
 NAMESPACE_BEGIN(Engine)
 
 class CTransform;
+
+// Rigidbody interface class
 class ENGINE_API iRigidBody : public CBase
 {
 protected:
@@ -31,21 +33,6 @@ public:
 
 public:
 	virtual glm::mat4 GetMatrixWorld() = 0;
-	//virtual glm::vec3 GetPosition() = 0;
-	//virtual void SetPosition(const glm::vec3& position) = 0;
-
-	//virtual glm::quat GetRotation() = 0;
-	//virtual void SetRotation(const glm::quat& rotation) = 0;
-
-	//virtual void ApplyForce(const glm::vec3& force) = 0;
-	//virtual void ApplyForceAtPoint(const glm::vec3& force, const glm::vec3& relativePoint) = 0;
-
-	//virtual void ApplyImpulse(const glm::vec3& impulse) = 0;
-	//virtual void ApplyImpulseAtPoint(const glm::vec3& impulse, const glm::vec3& relativePoint) = 0;
-
-	//virtual void ApplyTorque(const glm::vec3& torque) = 0;
-	//virtual void ApplyTorqueImpulse(const glm::vec3& torqueImpulse) = 0;
-
 };
 
 NAMESPACE_END

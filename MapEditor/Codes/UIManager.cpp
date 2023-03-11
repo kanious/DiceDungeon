@@ -23,6 +23,7 @@ UIManager::~UIManager()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void UIManager::Destroy()
 {
 	SafeDestroy(m_pMapEditorUI);
@@ -32,12 +33,14 @@ void UIManager::Destroy()
 	DestroyContext();
 }
 
+// Update all UIs
 void UIManager::Update(const _float& dt)
 {
 	if (nullptr != m_pMapEditorUI)
 		m_pMapEditorUI->Update(dt);
 }
 
+// Basic Render Function
 void UIManager::RenderUI()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -54,6 +57,7 @@ void UIManager::RenderUI()
 	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
 }
 
+// Set ImGui Style
 void UIManager::SetImGuiStyle()
 {
 	ImGuiStyle& style = GetStyle();
@@ -112,17 +116,20 @@ void UIManager::SetImGuiStyle()
 	io.FontDefault = io.Fonts->Fonts[0];
 }
 
+// Check if mouse cursor is in the UI area
 _bool UIManager::GetCursorIsOnTheUI()
 {
 	return GetIO().WantCaptureMouse;
 }
 
+// Close all UI
 void UIManager::SetAllUIClose()
 {
 	for (int i = 0; i < UI_END; ++i)
 		m_bUIOpen[i] = false;
 }
 
+// Initialize
 RESULT UIManager::Ready(Scene3D* pScene)
 {
 	m_pScene = pScene;

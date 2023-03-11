@@ -7,59 +7,15 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Rigid Body description class
 class ENGINE_API CRigidBodyDesc
 {
 public:
 	glm::vec3 position;
 	glm::vec3 rotation;
-	/*double x;
-	double y;
-	double z;*/
-
 	glm::vec3 orientation;
 	glm::vec3 halfSize;
-
-	//double rx;
-	//double ry;
-	//double rz;
-
-	//double sx;
-	//double sy;
-	//double sz;
-
 	glm::dvec3 forceAccum;
-
-	//_bool isStatic;
-
-	//_float mass;
-	//_float restitution;
-	//_float friction;
-	//_float linearDamping;
-	//_float angularDamping;
-
-	//glm::vec3 position;
-	//glm::vec3 linearVelocity;
-	//glm::vec3 linearFactor;
-	//glm::vec3 angularFactor;
-	//glm::vec3 angularVelocity;
-
-	//glm::quat rotation;
-
-public:
-	explicit CRigidBodyDesc()
-		//: isStatic(false)
-		//, mass(1.f)
-		//, restitution(0.6f)
-		//, friction(0.4f)
-		//, position(glm::vec3(0.f))
-		//, linearVelocity(glm::vec3(0.f))
-		//, linearFactor(glm::vec3(1.f))
-		//, angularFactor(glm::vec3(1.f))
-		//, angularVelocity(glm::vec3(0.f))
-		//, rotation(1.f, 0.f, 0.f, 0.f)
-		//, linearDamping(0.01f)
-		//, angularDamping(0.05f)
-	{}
 };
 
 NAMESPACE_END

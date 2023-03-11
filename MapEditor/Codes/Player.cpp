@@ -16,8 +16,6 @@
 #include "LightMaster.h"
 #include "Light.h"
 #include "InputDevice.h"
-#include "Animator.h"
-#include "AnimationManager.h"
 
 #include <sstream>
 
@@ -28,7 +26,6 @@ USING(std)
 
 Player::Player()
 	: m_pMesh(nullptr), m_vVelocity(vec3(0.f)), m_vOriginPosition(vec3(0.f)), m_fSpeed(5.f), m_fRotSpeed(40.f)
-	, m_pAnimator(nullptr)
 {
 	m_bDebug = false;
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
@@ -38,6 +35,16 @@ Player::~Player()
 {
 }
 
+// Return Mesh type
+const string Player::GetMeshType()
+{
+	if (nullptr != m_pMesh)
+		return m_pMesh->GetMeshType();
+
+	return "";
+}
+
+// Basic Update Function
 void Player::Update(const _float& dt)
 {
 	if (m_bEnable)
@@ -56,11 +63,13 @@ void Player::Update(const _float& dt)
 	}
 }
 
+// Basic Render Function
 void Player::Render()
 {
 	CGameObject::Render();
 }
 
+// Call instead of destructor to manage class internal data
 void Player::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
@@ -68,6 +77,7 @@ void Player::Destroy()
 	CGameObject::Destroy();
 }
 
+// Initialize
 RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
 	, vec3 vRot, vec3 vScale)
 {
@@ -87,10 +97,6 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 			m_pBoundingBox->SetTransform(m_pTransform);
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
-
-		m_pAnimator = Animator::Create(this);
-		m_pMesh->SetAnimController(m_pAnimator);
-		AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
 	}
 
 	if (nullptr != m_pTransform)
@@ -102,6 +108,7 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 	return PK_NOERROR;
 }
 
+// Create an instance
 Player* Player::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
 	, vec3 vRot, vec3 vScale)
 {

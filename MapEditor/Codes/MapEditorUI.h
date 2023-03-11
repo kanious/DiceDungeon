@@ -14,6 +14,7 @@ namespace Engine
 class UIManager;
 class Scene3D;
 
+// Map editor UI class
 class MapEditorUI : public Engine::CBase
 {
 private:
@@ -90,29 +91,44 @@ private:
 	explicit MapEditorUI();
 	~MapEditorUI();
 public:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
+	// Basic Update Function
 	void Update(const _float& dt);
+	// Basic Render Function
 	void RenderUI();
 
 public:
+	// Select Target
 	void SetTarget(Engine::CGameObject* pObj);
+	// Remove Target
 	void ResetTarget();
 
 private:
+	// Draw Menu Bar
 	void SetMenuBar();
+	// Draw Object List UI
 	void Render_ObjectList(_float childX, _float childY);
+	// Draw Mesh List UI
 	void Render_MeshList(_float childX, _float childY);
+	// Draw Inspector
 	void Render_Inspector();
+	// Draw Copy window (only draw when user copy the target information)
 	void Render_CopyInformation();
+	// Move target
 	void MoveTarget(const _float& dt);
+	// Check User input
 	void KeyCheck(const _float& dt);
 
 private:
+	// Convert float to char*
 	void ConvertFloatToCharArray(char* src, _float value);
 
 private:
+	// Initialize
 	RESULT Ready(Scene3D* pScene);
 public:
+	// Create an instance
 	static MapEditorUI* Create(Scene3D* pScene);
 };
 

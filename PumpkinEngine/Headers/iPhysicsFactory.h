@@ -10,6 +10,8 @@ NAMESPACE_BEGIN(Engine)
 class iPhysicsWorld;
 class iRigidBody;
 class CRigidBodyDesc;
+
+// Physics Factory interface class
 class ENGINE_API iPhysicsFactory : public CBase
 {
 protected:

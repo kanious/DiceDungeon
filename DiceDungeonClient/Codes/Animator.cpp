@@ -18,20 +18,24 @@ Animator::~Animator()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void Animator::Destroy()
 {
     CAnimController::Destroy();
 }
 
+// Call this function when animation has ended
 void Animator::AnimationEndEvent()
 {
 }
 
+// Set animation by type state
 void Animator::SetAnimationByType()
 {
     m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation("jump");
 }
 
+// Initialize
 RESULT Animator::Ready(Player* pPlayer)
 {
     m_pPlayer = pPlayer;
@@ -43,6 +47,7 @@ RESULT Animator::Ready(Player* pPlayer)
 	return PK_NOERROR;
 }
 
+// Create an instance
 Animator* Animator::Create(Player* pPlayer)
 {
     Animator* pInstance = new Animator();

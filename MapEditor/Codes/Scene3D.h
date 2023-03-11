@@ -13,10 +13,9 @@ namespace Engine
 }
 
 class DefaultCamera;
-
 class UIManager;
-class AnimationManager;
 
+// A game scene class that inherits from the engine's CScene class
 class Scene3D : public Engine::CScene
 {
 private:
@@ -24,7 +23,6 @@ private:
 	Engine::CSkyBox*			m_pSkyBox;
 
 	UIManager*					m_pUIManager;
-	AnimationManager*			m_pAnimationManager;
 
 	DefaultCamera*				m_pDefaultCamera;
 	glm::vec3					m_vCameraSavedPos;
@@ -36,9 +34,12 @@ private:
 private:
 	explicit Scene3D();
 	virtual ~Scene3D();
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
 public:
+	// Basic Update Function
 	virtual void Update(const _float& dt);
+	// Basic Render Function
 	virtual void Render();
 	
 public:
@@ -46,20 +47,30 @@ public:
 	Engine::CGameObject * GetTarget();
 
 private:
+	// Return current camera position
 	void KeyCheck();
+	// Saves camera position
 	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
+	// Reset camera position
 	void ResetDefaultCameraPos();
 
 public:
+	// Add object
 	Engine::CGameObject* AddGameObject(eLAYERTAG tag, std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
+	// Save Objects
 	void SaveBackgroundObjects();
+	// Load Objects
 	void LoadObjects();
+	// Empty all layers
 	void ResetAllLayers();
 
 private:
+	// Initialize
 	RESULT Ready(std::string dataPath);
+	// Initialize Layer and GameObjects
 	RESULT ReadyLayerAndGameObject();
 public:
+	// Create an instance
 	static Scene3D* Create(std::string dataPath);
 };
 

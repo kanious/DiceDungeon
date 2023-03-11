@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Box shape class
 class ENGINE_API CBoxShape : public iShape
 {
 private:

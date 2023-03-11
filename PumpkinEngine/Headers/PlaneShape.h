@@ -6,6 +6,7 @@
 
 NAMESPACE_BEGIN(Engine)
 
+// Plane shape class
 class ENGINE_API CPlaneShape : public iShape
 {
 private:

@@ -27,6 +27,7 @@ CPhysicsWorld::~CPhysicsWorld()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CPhysicsWorld::Destroy()
 {
 	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
@@ -38,6 +39,7 @@ void CPhysicsWorld::Destroy()
 	SafeDestroy(m_pColHandler);
 }
 
+// Basic Update Function, update all rigid bodies
 void CPhysicsWorld::Update(const _float& dt)
 {
 	_bool allFinished = true;
@@ -104,11 +106,13 @@ void CPhysicsWorld::Update(const _float& dt)
 	}
 }
 
+// Set gravity
 void CPhysicsWorld::SetGravity(const vec3& gravity)
 {
 	m_vGravity = gravity;
 }
 
+// Add rigid body and initailize collision box
 void CPhysicsWorld::AddBody(iRigidBody* body)
 {
 	if (nullptr == body)
@@ -127,6 +131,7 @@ void CPhysicsWorld::AddBody(iRigidBody* body)
 	m_vecRigidBodies.push_back(rigidBody);
 }
 
+// Remove rigid body
 void CPhysicsWorld::RemoveBody(iRigidBody* body)
 {
 	//CRigidBody* rigidBody = dynamic_cast<CRigidBody*>(body);
@@ -143,12 +148,19 @@ void CPhysicsWorld::RemoveBody(iRigidBody* body)
 	//}
 }
 
+// Roll dice
 void CPhysicsWorld::RollDice(_uint count)
 {
 	//if (m_bRolling)
 	//	return;
 
 	m_bRolling = true;
+
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
+	{
+		CCollisionBox* box = CCollisionBox::boxData[i];
+		box->body->SetEnable(false);
+	}
 
 	if (count > 10)
 		count = 10;
@@ -204,12 +216,14 @@ void CPhysicsWorld::RollDice(_uint count)
 	}
 }
 
+// Set camera object
 void CPhysicsWorld::SetCamera(CComponent* pCamera)
 {
 	if (nullptr != pCamera)
 		m_pCamera = dynamic_cast<CCamera*>(pCamera);
 }
 
+// Initialize
 RESULT CPhysicsWorld::Ready(function<void(void)> callback)
 {
 	m_pColHandler = CCollisionHandler::Create();
@@ -223,6 +237,7 @@ RESULT CPhysicsWorld::Ready(function<void(void)> callback)
 	return PK_NOERROR;
 }
 
+// Create an instance
 CPhysicsWorld* CPhysicsWorld::Create(function<void(void)> callback)
 {
 	CPhysicsWorld* pInstance = new CPhysicsWorld();

@@ -33,14 +33,17 @@ CRigidBody::~CRigidBody()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void CRigidBody::Destroy()
 {
 }
 
+// Basic Update Function
 void CRigidBody::Update(const _float& dt)
 {
 }
 
+// Integrate all state
 void CRigidBody::Integrate(const _float& dt)
 {
 	if (isFinished)
@@ -84,17 +87,20 @@ void CRigidBody::Integrate(const _float& dt)
 	}
 }
 
+// Kill forces
 void CRigidBody::KillForces()
 {
 	forceAccum *= forceDamping;
 	torqueAccum = vec3(0.0, 0.0, 0.0);
 }
 
+// Reset rigid body state
 void CRigidBody::ResetRigidBody(const CRigidBodyDesc& desc)
 {
 	Ready(desc, eShape);
 }
 
+// Set inertia tensor for dice roll
 mat3 CRigidBody::SetBlockInertiaTensor(mat3 m, const vec3& halfSizes, _float mass)
 {
 	vec3 squares = halfSizes * halfSizes;
@@ -105,6 +111,7 @@ mat3 CRigidBody::SetBlockInertiaTensor(mat3 m, const vec3& halfSizes, _float mas
 	return m;
 }
 
+// Set inertial tensor coeffs for dice roll
 mat3 CRigidBody::SetInertialTensorCoeffs(mat3 m, _float ix, _float iy, _float iz, _float ixy, _float ixz, _float iyz)
 {
 	m[0][0] = ix;
@@ -117,12 +124,14 @@ mat3 CRigidBody::SetInertialTensorCoeffs(mat3 m, _float ix, _float iy, _float iz
 	return m;
 }
 
+// Set mass
 void CRigidBody::SetMass(const _float mass)
 {
 	assert(mass != 0.f);
 	inverseMass = 1.f / mass;
 }
 
+// Set awake
 void CRigidBody::SetAwake(const _bool awake)
 {
 	if (awake)
@@ -138,6 +147,7 @@ void CRigidBody::SetAwake(const _bool awake)
 	}
 }
 
+// Set can sleep
 void CRigidBody::SetCanSleep(const _bool canSleep)
 {
 	this->canSleep = canSleep;
@@ -146,6 +156,7 @@ void CRigidBody::SetCanSleep(const _bool canSleep)
 		SetAwake();
 }
 
+// Check dir to confirm dice value
 void CRigidBody::CheckDir()
 {
 	if (position.y > 5.f)
@@ -204,6 +215,7 @@ void CRigidBody::CheckDir()
 		CDiceMaster::GetInstance()->AddAP(m_iValue);
 }
 
+// Initialize
 RESULT CRigidBody::Ready(const CRigidBodyDesc& desc, eShapeType shape)
 {
 	eShape = shape;
@@ -252,6 +264,7 @@ RESULT CRigidBody::Ready(const CRigidBodyDesc& desc, eShapeType shape)
 	return PK_NOERROR;
 }
 
+// Create an instance
 CRigidBody* CRigidBody::Create(const CRigidBodyDesc& desc, eShapeType shape)
 {
 	CRigidBody* pInstance = new CRigidBody();

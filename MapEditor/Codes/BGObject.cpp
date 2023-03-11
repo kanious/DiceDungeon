@@ -30,11 +30,13 @@ BGObject::~BGObject()
 {
 }
 
+// Call instead of destructor to manage class internal data
 void BGObject::Destroy()
 {
 	CGameObject::Destroy();
 }
 
+// Basic Update Function
 void BGObject::Update(const _float& dt)
 {
 	if (!m_bEnable)
@@ -53,11 +55,22 @@ void BGObject::Update(const _float& dt)
 		m_pRenderer->AddRenderObj(this, m_bTransparency);
 }
 
+// Basic Render Function
 void BGObject::Render()
 {
 	CGameObject::Render();
 }
 
+// Return mesh type
+const string BGObject::GetMeshType()
+{
+	if (nullptr != m_pMesh)
+		return m_pMesh->GetMeshType();
+
+	return "";
+}
+
+// Initialize
 RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
 	vec3 vPos, vec3 vRot, vec3 vScale, _bool transparent)
 {
@@ -90,6 +103,7 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	return PK_NOERROR;
 }
 
+// Create an instance
 BGObject* BGObject::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID,
 	vec3 vPos, vec3 vRot, vec3 vScale, _bool transparent)
 {

@@ -27,16 +27,23 @@ private:
 	explicit TargetManager();
 	~TargetManager();
 public:
+	// Call instead of destructor to manage class internal data
 	void Destroy();
+	// Initialize
 	RESULT Ready(SceneDungeon* pScene);
 
 public:
+	// Basic Update Function, check user input
 	void Update(const _float& dt);
 
 private:
+	// User Input Check
 	void KeyCheck(const _float& dt);
+	// Check if the user's mouse click has selected a character
 	_bool FindTargetAndSet();
+	// Move the target
 	void MoveTarget(_bool bSnap);
+	// Release the target
 	void ReleaseTarget();
 };
 

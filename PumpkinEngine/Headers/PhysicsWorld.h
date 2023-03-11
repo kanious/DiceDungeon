@@ -14,6 +14,8 @@ class CRigidBody;
 class CCollisionHandler;
 class CCamera;
 class CComponent;
+
+// Physics World class. This class controls all physics objects
 class ENGINE_API CPhysicsWorld : public iPhysicsWorld
 {
 private:
@@ -36,21 +38,30 @@ private:
 private:
 	explicit CPhysicsWorld();
 	virtual ~CPhysicsWorld();
+	// Call instead of destructor to manage class internal data
 	virtual void Destroy();
 
 public:
+	// Basic Update Function, update all rigid bodies
 	virtual void Update(const _float& dt);
 
 public:
+	// Set gravity
 	virtual void SetGravity(const glm::vec3& gravity);
+	// Add rigid body and initailize collision box
 	virtual void AddBody(iRigidBody* body);
+	// Remove rigid body
 	virtual void RemoveBody(iRigidBody* body);
+	// Roll dice
 	virtual void RollDice(_uint count);
+	// Set camera object
 	virtual void SetCamera(CComponent* pCamera);
 
 private:
+	// Initialize
 	RESULT Ready(std::function<void(void)> callback);
 public:
+	// Create an instance
 	static CPhysicsWorld* Create(std::function<void(void)> callback);
 };
 
