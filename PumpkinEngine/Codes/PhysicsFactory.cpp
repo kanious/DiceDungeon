@@ -25,7 +25,7 @@ iPhysicsWorld* CPhysicsFactory::CreateWorld(function<void(void)> callback)
 	return CPhysicsWorld::Create(callback);
 }
 
-iRigidBody* CPhysicsFactory::CreateRigidBody(const CRigidBodyDesc& desc, iShape* shape)
+iRigidBody* CPhysicsFactory::CreateRigidBody(const CRigidBodyDesc& desc, eShapeType shape)
 {
 	return CRigidBody::Create(desc, shape);
 }

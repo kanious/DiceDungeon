@@ -5,11 +5,13 @@
 #include "DefaultCamera.h"
 #include "JsonParser.h"
 #include "Layer.h"
+#include "SoundMaster.h"
 #include "ComponentMaster.h"
 #include "Component.h"
 #include "Shader.h"
 #include "LightMaster.h"
 #include "BGObject.h"
+#include "PhysicsObject.h"
 #include "Define.h"
 #include "UIManager.h"
 #include "Enums.h"
@@ -20,6 +22,7 @@
 #include "AnimationData.h"
 #include "ObjectFactory.h"
 #include "TargetManager.h"
+#include "PhysicsDefines.h"
 
 #include <sstream>
 #include <atlconv.h>
@@ -32,7 +35,7 @@ USING(std)
 SceneDungeon::SceneDungeon()
 	: m_pSkyBox(nullptr)
 	, m_pDefaultCamera(nullptr), m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
-	, m_pCharacterLayer(nullptr)	, m_bFollowingMode(false)
+	, m_pCharacterLayer(nullptr), m_pPFactory(nullptr), m_pPWorld(nullptr)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
@@ -52,6 +55,8 @@ void SceneDungeon::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
 	SafeDestroy(m_pUIManager);
+	SafeDestroy(m_pPFactory);
+	SafeDestroy(m_pPWorld);
 
 	SafeDestroy(m_pSkyBox);
 	SafeDestroy(m_pAnimationManager);
@@ -66,9 +71,8 @@ void SceneDungeon::Update(const _float& dt)
 	//if (nullptr != m_pSkyBox)
 	//	CRenderer::GetInstance()->AddRenderObj(m_pSkyBox);
 
-	KeyCheck();
-
-	CLightMaster::GetInstance()->SetLightInfo();
+	if (nullptr != m_pPWorld)
+		m_pPWorld->Update(dt);
 
 	if (nullptr != m_pAnimationManager)
 		m_pAnimationManager->Update(dt);
@@ -76,6 +80,8 @@ void SceneDungeon::Update(const _float& dt)
 	if (nullptr != m_pTargetManager)
 		m_pTargetManager->Update(dt);
 
+	KeyCheck();
+	CLightMaster::GetInstance()->SetLightInfo();
 	CScene::Update(dt);
 }
 
@@ -95,6 +101,11 @@ vec3 SceneDungeon::GetCameraPos()
 	return vec3(0.f);
 }
 
+void SceneDungeon::CollisionSoundCallback()
+{
+	CSoundMaster::GetInstance()->PlaySound("Ball");
+}
+
 // Check User input
 void SceneDungeon::KeyCheck()
 {
@@ -109,6 +120,19 @@ void SceneDungeon::KeyCheck()
 	}
 	else
 		isF5Down = false;
+
+	static _bool isRDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_R))
+	{
+		if (!isRDown)
+		{
+			isRDown = true;
+			if (nullptr != m_pPWorld)
+				m_pPWorld->RollDice(2);
+		}
+	}
+	else
+		isRDown = false;
 }
 
 // Saves camera position
@@ -152,6 +176,9 @@ RESULT SceneDungeon::Ready(string dataPath)
 	if (PK_NOERROR != result)
 		return result;
 
+	// Physics
+	AddDice();
+
 	// Light
 	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
 	_uint shaderID = 0;
@@ -166,7 +193,7 @@ RESULT SceneDungeon::Ready(string dataPath)
 
 	// UI
 	if (nullptr != m_pUIManager)
-		m_pUIManager->Ready();
+		m_pUIManager->Ready(m_pPWorld);
 
 	// TargetManager
 	if (nullptr != m_pTargetManager)
@@ -254,6 +281,44 @@ void SceneDungeon::LoadObjects()
 		m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
 		m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
 		m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
+	}
+}
+
+void SceneDungeon::AddDice()
+{
+	m_pPFactory = CPhysicsFactory::Create();
+	m_pPWorld = m_pPFactory->CreateWorld(bind(&SceneDungeon::CollisionSoundCallback, this));
+	if (nullptr == m_pPWorld)
+		return;
+	m_pPWorld->SetGravity(vec3(0.f, -35.f/*-9.81f*/, 0.f));
+	m_pPWorld->SetCamera(m_pDefaultCamera->GetComponent("Camera"));
+
+	CLayer* pLayer = GetLayer((_uint)LAYER_EVENT_OBJECT);
+	CGameObject* pGameObject = nullptr;
+
+	// Plane
+	CRigidBodyDesc desc;
+	desc.position = vec3(0.f);
+	desc.rotation = vec3(0.f);
+	desc.halfSize = vec3(1000.f, 1.f, 1000.f);
+	desc.orientation = vec3(0.f);
+	desc.forceAccum = vec3(0.f);
+	iRigidBody* body = m_pPFactory->CreateRigidBody(desc, eShapeType::Plane);
+	m_pPWorld->AddBody(body);
+
+	for (int i = 0; i < 10; ++i)
+	{
+		pGameObject = ObjectFactory::CreateGameObject(
+			(_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer,
+			"dice", vec3(0.f), vec3(0.f), vec3(1.f));
+		desc.position = vec3(0.f);
+		desc.rotation = vec3(-8.f, -5.f, 7.f);
+		desc.halfSize = vec3(1.f);
+		desc.orientation = vec3(0.f);
+		desc.forceAccum = vec3(0.f);
+		body = m_pPFactory->CreateRigidBody(desc, eShapeType::Box);
+		dynamic_cast<PhysicsObject*>(pGameObject)->SetRigidBody(body);
+		m_pPWorld->AddBody(body);
 	}
 }
 

@@ -23,245 +23,246 @@ void CCollisionHandler::Destroy()
 
 void CCollisionHandler::Collide(const _float& dt, std::vector<CRigidBody*>& bodies, std::vector<sColPair>& vecCols)
 {
-	_bool IsCollided = false;
+	//_bool IsCollided = false;
 
-	for (int idxA = 0; idxA < bodies.size(); ++idxA)
-	{
-		CRigidBody* bodyA = bodies[idxA];
-		iShape* shapeA = bodyA->GetShape();
-		for (int idxB = idxA + 1; idxB < bodies.size(); ++idxB)
-		{
-			CRigidBody* bodyB = bodies[idxB];
-			iShape* shapeB = bodyB->GetShape();
+	//for (int idxA = 0; idxA < bodies.size(); ++idxA)
+	//{
+	//	CRigidBody* bodyA = bodies[idxA];
+	//	iShape* shapeA = bodyA->GetShape();
+	//	for (int idxB = idxA + 1; idxB < bodies.size(); ++idxB)
+	//	{
+	//		CRigidBody* bodyB = bodies[idxB];
+	//		iShape* shapeB = bodyB->GetShape();
 
-			switch (shapeA->GetShapeType())
-			{
-			case eShapeType::Sphere:
-				if (eShapeType::Sphere == shapeB->GetShapeType())
-				{
-					IsCollided = CollideSphereSphere(dt,
-						bodyA, dynamic_cast<CSphereShape*>(shapeA),
-						bodyB, dynamic_cast<CSphereShape*>(shapeB));
-				}
-				else if (eShapeType::Plane == shapeB->GetShapeType())
-				{
-					IsCollided = CollideSpherePlane(dt,
-						bodyA, dynamic_cast<CSphereShape*>(shapeA),
-						bodyB, dynamic_cast<CPlaneShape*>(shapeB));
-				}
-				break;
+	//		switch (shapeA->GetShapeType())
+	//		{
+	//		case eShapeType::Sphere:
+	//			if (eShapeType::Sphere == shapeB->GetShapeType())
+	//			{
+	//				IsCollided = CollideSphereSphere(dt,
+	//					bodyA, dynamic_cast<CSphereShape*>(shapeA),
+	//					bodyB, dynamic_cast<CSphereShape*>(shapeB));
+	//			}
+	//			else if (eShapeType::Plane == shapeB->GetShapeType())
+	//			{
+	//				IsCollided = CollideSpherePlane(dt,
+	//					bodyA, dynamic_cast<CSphereShape*>(shapeA),
+	//					bodyB, dynamic_cast<CPlaneShape*>(shapeB));
+	//			}
+	//			break;
 
-			case eShapeType::Plane:
-				if (eShapeType::Sphere == shapeB->GetShapeType())
-				{
-					IsCollided = CollideSpherePlane(dt,
-						bodyB, dynamic_cast<CSphereShape*>(shapeB),
-						bodyA, dynamic_cast<CPlaneShape*>(shapeA));
-				}
-				break;
-			}
+	//		case eShapeType::Plane:
+	//			if (eShapeType::Sphere == shapeB->GetShapeType())
+	//			{
+	//				IsCollided = CollideSpherePlane(dt,
+	//					bodyB, dynamic_cast<CSphereShape*>(shapeB),
+	//					bodyA, dynamic_cast<CPlaneShape*>(shapeA));
+	//			}
+	//			break;
+	//		}
 
-			if (IsCollided)
-				vecCols.push_back(sColPair(bodyA, bodyB));
+	//		if (IsCollided)
+	//			vecCols.push_back(sColPair(bodyA, bodyB));
 
-		}// for idxB
-	}// for idxA
+	//	}// for idxB
+	//}// for idxA
 }
 
 _bool CCollisionHandler::CollideSphereSphere(const _float& dt, CRigidBody* bodyA, CSphereShape* sphereA, CRigidBody* bodyB, CSphereShape* sphereB)
 {
-	if (bodyA->IsStatic() && bodyB->IsStatic())
-		return false;
+	//if (bodyA->IsStatic() && bodyB->IsStatic())
+	//	return false;
 
-	vec3 posA = bodyA->GetPosition();
-	vec3 posB = bodyB->GetPosition();
-	vec3 preposA = bodyA->GetPreviousPosition();
-	vec3 preposB = bodyB->GetPreviousPosition();
-	_float rA = sphereA->GetRadius();
-	_float rB = sphereB->GetRadius();
+	//vec3 posA = bodyA->GetPosition();
+	//vec3 posB = bodyB->GetPosition();
+	//vec3 preposA = bodyA->GetPreviousPosition();
+	//vec3 preposB = bodyB->GetPreviousPosition();
+	//_float rA = sphereA->GetRadius();
+	//_float rB = sphereB->GetRadius();
 
-	vec3 v0 = posA - preposA;
-	vec3 v1 = posB - preposB;
-	_float t = 0.f;
+	//vec3 v0 = posA - preposA;
+	//vec3 v1 = posB - preposB;
+	//_float t = 0.f;
 
-	if (!TestMovingSphereSphere(preposA, rA, preposB, rB, v0, v1, t))
-		return false; // No collision or future collision
+	//if (!TestMovingSphereSphere(preposA, rA, preposB, rB, v0, v1, t))
+	//	return false; // No collision or future collision
 
-	if (t > dt)
-		return false; // No collision for this time step
+	//if (t > dt)
+	//	return false; // No collision for this time step
 
-	// Collision Resolution
-	_float fractDT = t / (length(v0) + length(v1));
-	_float revDT = (1.f - fractDT) * dt;
-	bodyA->VerletStep1(-revDT);
-	bodyB->VerletStep1(-revDT);
+	//// Collision Resolution
+	//_float fractDT = t / (length(v0) + length(v1));
+	//_float revDT = (1.f - fractDT) * dt;
+	//bodyA->VerletStep1(-revDT);
+	//bodyB->VerletStep1(-revDT);
 
-	posA = bodyA->GetPosition();
-	posB = bodyB->GetPosition();
-	preposA = bodyA->GetPreviousPosition();
-	preposB = bodyB->GetPreviousPosition();
+	//posA = bodyA->GetPosition();
+	//posB = bodyB->GetPosition();
+	//preposA = bodyA->GetPreviousPosition();
+	//preposB = bodyB->GetPreviousPosition();
 
-	_float massA = bodyA->GetMass();
-	_float massB = bodyB->GetMass();
-	_float invMassA = bodyA->GetInvMass();
-	_float invMassB = bodyB->GetInvMass();
-	_float restitutionA = bodyA->GetRestitution();
-	_float restitutionB = bodyB->GetRestitution();
-	vec3 linearVelocityA = bodyA->GetLinearVelocity();
-	vec3 linearVelocityB = bodyB->GetLinearVelocity();
+	//_float massA = bodyA->GetMass();
+	//_float massB = bodyB->GetMass();
+	//_float invMassA = bodyA->GetInvMass();
+	//_float invMassB = bodyB->GetInvMass();
+	//_float restitutionA = bodyA->GetRestitution();
+	//_float restitutionB = bodyB->GetRestitution();
+	//vec3 linearVelocityA = bodyA->GetLinearVelocity();
+	//vec3 linearVelocityB = bodyB->GetLinearVelocity();
 
-	_float totalMass = massA + massB;
-	_float aFactor = massB / totalMass;
-	_float bFactor = massA / totalMass;
+	//_float totalMass = massA + massB;
+	//_float aFactor = massB / totalMass;
+	//_float bFactor = massA / totalMass;
 
-	vec3 aMomentum = linearVelocityA * massA;
-	vec3 bMomentum = linearVelocityB * massB;
-	vec3 totalMomentum = aMomentum + bMomentum;
+	//vec3 aMomentum = linearVelocityA * massA;
+	//vec3 bMomentum = linearVelocityB * massB;
+	//vec3 totalMomentum = aMomentum + bMomentum;
 
-	aMomentum = totalMomentum * aFactor;
-	bMomentum = totalMomentum * bFactor;
+	//aMomentum = totalMomentum * aFactor;
+	//bMomentum = totalMomentum * bFactor;
 
-	vec3 dir = posB - posA;
-	_float len = length(dir);
-	_float overlap = len - (rA + rB);
+	//vec3 dir = posB - posA;
+	//_float len = length(dir);
+	//_float overlap = len - (rA + rB);
 
-	if (overlap < numeric_limits<_float>::epsilon())
-	{
-		vec3 overlapDir = dir;
-		overlapDir = normalize(overlapDir);
-		overlapDir *= -overlap;
+	//if (overlap < numeric_limits<_float>::epsilon())
+	//{
+	//	vec3 overlapDir = dir;
+	//	overlapDir = normalize(overlapDir);
+	//	overlapDir *= -overlap;
 
-		if (!bodyA->IsStatic())
-		{
-			posA -= overlapDir * aFactor;
-			bodyA->SetPosition(posA);
-		}
-		if (!bodyB->IsStatic())
-		{
-			posB += overlapDir * bFactor;
-			bodyB->SetPosition(posB);
-		}
+	//	if (!bodyA->IsStatic())
+	//	{
+	//		posA -= overlapDir * aFactor;
+	//		bodyA->SetPosition(posA);
+	//	}
+	//	if (!bodyB->IsStatic())
+	//	{
+	//		posB += overlapDir * bFactor;
+	//		bodyB->SetPosition(posB);
+	//	}
 
-		dir = posB - posA;
-		len = length(dir);
-	}
-	dir /= len;
+	//	dir = posB - posA;
+	//	len = length(dir);
+	//}
+	//dir /= len;
 
-	_float elasticity = 0.4f;
+	//_float elasticity = 0.4f;
 
-	vec3 aElasticMomentum = dir * (length(aMomentum) * elasticity);
-	vec3 aInelasticMomentum = dir * length(aMomentum) * (1.f - elasticity);
+	//vec3 aElasticMomentum = dir * (length(aMomentum) * elasticity);
+	//vec3 aInelasticMomentum = dir * length(aMomentum) * (1.f - elasticity);
 
-	vec3 bElasticMomentum = dir * (length(bMomentum) * elasticity) * -1.f;
-	vec3 bInelasticMomentum = dir * length(bMomentum) * (1.f - elasticity);
+	//vec3 bElasticMomentum = dir * (length(bMomentum) * elasticity) * -1.f;
+	//vec3 bInelasticMomentum = dir * length(bMomentum) * (1.f - elasticity);
 
-	linearVelocityA -= (aElasticMomentum + aInelasticMomentum) * invMassA * restitutionA;
-	bodyA->SetLinearVelocity(linearVelocityA);
-	linearVelocityB += (bElasticMomentum + bInelasticMomentum) * invMassB * restitutionB;
-	bodyB->SetLinearVelocity(linearVelocityB);
+	//linearVelocityA -= (aElasticMomentum + aInelasticMomentum) * invMassA * restitutionA;
+	//bodyA->SetLinearVelocity(linearVelocityA);
+	//linearVelocityB += (bElasticMomentum + bInelasticMomentum) * invMassB * restitutionB;
+	//bodyB->SetLinearVelocity(linearVelocityB);
 
-	bodyA->VerletStep1(revDT);
-	bodyB->VerletStep1(revDT);
+	//bodyA->VerletStep1(revDT);
+	//bodyB->VerletStep1(revDT);
 
 	return true;
 }
 
 _bool CCollisionHandler::CollideSpherePlane(const _float& dt, CRigidBody* sphereBody, CSphereShape* sphereShape, CRigidBody* planeBody, CPlaneShape* planeShape)
 {
-	if (sphereBody->IsStatic() && planeBody->IsStatic())
-		return false;
+	//if (sphereBody->IsStatic() && planeBody->IsStatic())
+	//	return false;
 
-	vec3 vSpherePos = sphereBody->GetPosition();
-	vec3 vNormal = planeShape->GetNormal();
-	_float fRadius = sphereShape->GetRadius();
-	_float fDP = planeShape->GetDotProduct();
+	//vec3 vSpherePos = sphereBody->GetPosition();
+	//vec3 vNormal = planeShape->GetNormal();
+	//_float fRadius = sphereShape->GetRadius();
+	//_float fDP = planeShape->GetDotProduct();
 
-	if (!TestMovingSpherePlane(sphereBody->GetPreviousPosition(), vSpherePos, vNormal, fRadius, fDP))
-	{
-		return false;
-	}
+	//if (!TestMovingSpherePlane(sphereBody->GetPreviousPosition(), vSpherePos, vNormal, fRadius, fDP))
+	//{
+	//	return false;
+	//}
 
-	vec3 vLinearVelocity = sphereBody->GetLinearVelocity();
-	vec3 vAngularVelocity = sphereBody->GetAngularVelocity();
+	//vec3 vLinearVelocity = sphereBody->GetLinearVelocity();
+	//vec3 vAngularVelocity = sphereBody->GetAngularVelocity();
 
-	// Collision Resolution
-	vec3 closestPt = ClosestPtPointPlane(vSpherePos, vNormal, fDP);
-	vec3 overlapVec = closestPt - vSpherePos;
-	_float overlapLen = length(overlapVec);
-	_float linearVelocityLen = length(vLinearVelocity);
-	_float angularVelocityLen = length(vAngularVelocity);
+	//// Collision Resolution
+	//vec3 closestPt = ClosestPtPointPlane(vSpherePos, vNormal, fDP);
+	//vec3 overlapVec = closestPt - vSpherePos;
+	//_float overlapLen = length(overlapVec);
+	//_float linearVelocityLen = length(vLinearVelocity);
+	//_float angularVelocityLen = length(vAngularVelocity);
 
-	if (0.f < linearVelocityLen || 0.f < angularVelocityLen)
-	{
-		_float velocity = linearVelocityLen;
-		_float fractDt = 0.f;
-		if (0.f != velocity)
-			fractDt = fRadius * ((fRadius / overlapLen) - 1.f) / velocity;
-		_float partialDt = (1.f - fractDt) * dt;
+	//if (0.f < linearVelocityLen || 0.f < angularVelocityLen)
+	//{
+	//	_float velocity = linearVelocityLen;
+	//	_float fractDt = 0.f;
+	//	if (0.f != velocity)
+	//		fractDt = fRadius * ((fRadius / overlapLen) - 1.f) / velocity;
+	//	_float partialDt = (1.f - fractDt) * dt;
 
-		sphereBody->VerletStep1(-partialDt);
-		vSpherePos = sphereBody->GetPosition();
+	//	sphereBody->VerletStep1(-partialDt);
+	//	vSpherePos = sphereBody->GetPosition();
 
-		vec3 prevVelocity = vLinearVelocity;
-		vec3 ref = reflect(vLinearVelocity, vNormal);
-		vLinearVelocity = ref;
-		sphereBody->SetLinearVelocity(vLinearVelocity);
+	//	vec3 prevVelocity = vLinearVelocity;
+	//	vec3 ref = reflect(vLinearVelocity, vNormal);
+	//	vLinearVelocity = ref;
+	//	sphereBody->SetLinearVelocity(vLinearVelocity);
 
-		vec3 impactComponent = proj(vLinearVelocity, vNormal);
-		vec3 impactTangent = vLinearVelocity - impactComponent;
-		
-		vec3 relativePt = normalize(closestPt - vSpherePos) * fRadius;
-		_float surfaceVelocity = fRadius * angularVelocityLen;
-		vec3 rotDir = normalize(cross(relativePt - vSpherePos, vAngularVelocity));
+	//	vec3 impactComponent = proj(vLinearVelocity, vNormal);
+	//	vec3 impactTangent = vLinearVelocity - impactComponent;
+	//	
+	//	vec3 relativePt = normalize(closestPt - vSpherePos) * fRadius;
+	//	_float surfaceVelocity = fRadius * angularVelocityLen;
+	//	vec3 rotDir = normalize(cross(relativePt - vSpherePos, vAngularVelocity));
 
-		_float sphereMass = sphereBody->GetMass();
-		_float planeFriction = planeBody->GetFriction();
+	//	_float sphereMass = sphereBody->GetMass();
+	//	_float planeFriction = planeBody->GetFriction();
 
-		if (0.f < dot(impactTangent, vNormal))
-			sphereBody->ApplyImpulseAtPoint(-2.f * impactComponent * sphereMass, relativePt);
-		else
-		{
-			vec3 impactForce = impactTangent * -1.f * sphereMass * planeFriction;
-			sphereBody->ApplyForceAtPoint(impactForce, relativePt);
-		}
+	//	if (0.f < dot(impactTangent, vNormal))
+	//		sphereBody->ApplyImpulseAtPoint(-2.f * impactComponent * sphereMass, relativePt);
+	//	else
+	//	{
+	//		vec3 impactForce = impactTangent * -1.f * sphereMass * planeFriction;
+	//		sphereBody->ApplyForceAtPoint(impactForce, relativePt);
+	//	}
 
-		if (0.f == dot(vLinearVelocity, vNormal))
-		{
-			vec3 force = surfaceVelocity * rotDir * sphereMass * planeFriction;
-			sphereBody->ApplyForce(force);
-		}
+	//	if (0.f == dot(vLinearVelocity, vNormal))
+	//	{
+	//		vec3 force = surfaceVelocity * rotDir * sphereMass * planeFriction;
+	//		sphereBody->ApplyForce(force);
+	//	}
 
-		sphereBody->UpdateAcceleration();
-		sphereBody->VerletStep1(partialDt);
+	//	sphereBody->UpdateAcceleration();
+	//	sphereBody->VerletStep1(partialDt);
 
-		vSpherePos = sphereBody->GetPosition();
-		closestPt = ClosestPtPointPlane(vSpherePos, vNormal, fDP);
-		overlapVec = closestPt - vSpherePos;
-		overlapLen = length(overlapVec);
-		vLinearVelocity = sphereBody->GetLinearVelocity();
+	//	vSpherePos = sphereBody->GetPosition();
+	//	closestPt = ClosestPtPointPlane(vSpherePos, vNormal, fDP);
+	//	overlapVec = closestPt - vSpherePos;
+	//	overlapLen = length(overlapVec);
+	//	vLinearVelocity = sphereBody->GetLinearVelocity();
 
-		if (overlapLen < fRadius)
-		{
-			vSpherePos += vNormal * (fRadius - overlapLen);
-			sphereBody->SetPosition(vSpherePos);
-			_float velocityDotNormal = dot(vLinearVelocity, vNormal);
-			if (0.f > velocityDotNormal)
-			{
-				vLinearVelocity -= vNormal * velocityDotNormal;
-				sphereBody->SetLinearVelocity(vLinearVelocity);
-			}
-		}
-		else
-		{
-			vLinearVelocity *= sphereBody->GetRestitution();
-			sphereBody->SetLinearVelocity(vLinearVelocity);
-		}
+	//	if (overlapLen < fRadius)
+	//	{
+	//		vSpherePos += vNormal * (fRadius - overlapLen);
+	//		sphereBody->SetPosition(vSpherePos);
+	//		_float velocityDotNormal = dot(vLinearVelocity, vNormal);
+	//		if (0.f > velocityDotNormal)
+	//		{
+	//			vLinearVelocity -= vNormal * velocityDotNormal;
+	//			sphereBody->SetLinearVelocity(vLinearVelocity);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		vLinearVelocity *= sphereBody->GetRestitution();
+	//		sphereBody->SetLinearVelocity(vLinearVelocity);
+	//	}
 
-	}
-	else
-		return false;
+	//}
+	//else
+	//	return false;
 
-	return true;
+	//return true;
+	return false;
 }
 
 _bool CCollisionHandler::TestMovingSphereSphere(

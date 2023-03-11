@@ -3,10 +3,17 @@
 
 #include "Base.h"
 
+namespace Engine
+{
+	class iPhysicsWorld;
+}
+
 // Manages all UI
 class UIManager : public Engine::CBase
 {
 	SINGLETON(UIManager)
+private:
+	Engine::iPhysicsWorld*		m_pPWorld;
 
 private:
 	explicit UIManager();
@@ -14,7 +21,7 @@ private:
 public:
 	void Destroy();
 	void RenderUI();
-	RESULT Ready();
+	RESULT Ready(Engine::iPhysicsWorld* pWorld);
 };
 
 #endif //_UIMANAGER_H_

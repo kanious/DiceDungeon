@@ -82,12 +82,17 @@ void Client::Loop()
 
 		if (m_pGameMaster->GetGameClose())
 			break;
-
+		
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glCullFace(GL_BACK);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		//glEnable(GL_STENCIL_TEST);
+		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		m_pTimer->Update();
 		if (m_pTimer->IsUpdateAvailable())

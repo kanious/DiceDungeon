@@ -1,22 +1,11 @@
 #ifndef _FUNCTION_H_
 #define _FUNCTION_H_
 
-#include <cstdlib>
 #include <string>
 #include "OpenGLDefines.h"
 #include "Enums.h"
 
 // Header for defining global functions
-
-static int GetRandNum(int min, int max)
-{
-	return (rand() % (max - min + 1)) + min;
-}
-
-static int GetRandNum_Big(int min, int max)
-{
-	return ((int)(((double)((rand() << 15) | rand())) / ((RAND_MAX << 15 | RAND_MAX) + 1) * (max - min + 1)) + min);
-}
 
 static void PrintVector(glm::vec3 vec, std::string title = "")
 {

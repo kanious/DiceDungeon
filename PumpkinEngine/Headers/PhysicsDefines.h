@@ -12,5 +12,6 @@
 #include "BoxShape.h"
 #include "PlaneShape.h"
 #include "SphereShape.h"
+#include "CollisionBox.h"
 
 #endif //_PHYSICSDEFINES_H_

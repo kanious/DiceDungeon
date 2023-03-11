@@ -63,7 +63,7 @@ void main()
 	//	alpha = 0.f;
 
 	if (isSelected)
-		daColor = vec4(outColour.x + 0.3f, outColour.y, outColour.z + 0.3f, diffColour.a);
+		daColor = vec4(outColour.x, outColour.y + 1.f, outColour.z, diffColour.a);
 	else
 		daColor = vec4(outColour.x, outColour.y, outColour.z, diffColour.a);
 		

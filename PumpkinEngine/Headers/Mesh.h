@@ -40,6 +40,7 @@ private:
 	_bool						m_bDebug;
 	_bool						m_bTransparency;
 	_bool						m_bBiilboard;
+	_bool						m_bPriority;
 
 	CAnimController*			m_pAnimController;
 	std::string					m_initSize;
@@ -71,6 +72,7 @@ public:
 	void SetTransparency(_bool value)						{ m_bTransparency = value; }
 	void SetDebugBox(_bool value)							{ m_bDebug = value; }
 	void SetBillboard(_bool value)							{ m_bBiilboard = value; }
+	void SetPriority(_bool value)							{ m_bPriority = value; }
 	void SetAnimController(CAnimController* pController)	{ m_pAnimController = pController; }
 	// Set diffuse texture
 	void SetTexture(std::string texID_diff);

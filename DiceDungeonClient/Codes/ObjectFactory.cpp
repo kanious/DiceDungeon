@@ -4,6 +4,7 @@
 
 #include "BGObject.h"
 #include "Player.h"
+#include "PhysicsObject.h"
 #include "DefaultCamera.h"
 
 
@@ -21,7 +22,6 @@ CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag,
     case (_uint)LAYER_CAMERA:
     case (_uint)LAYER_STATIC_OBJECT:
     case (_uint)LAYER_INTERACTIVE_OBJECT:
-    case (_uint)LAYER_EVENT_OBJECT:
     case (_uint)LAYER_UI:
         pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
         break;
@@ -29,6 +29,10 @@ CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag,
     case (_uint)LAYER_CHARACTER:
     case (_uint)LAYER_ENEMY:
         pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        break;
+
+    case (_uint)LAYER_EVENT_OBJECT:
+        pGameObject = PhysicsObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
         break;
     }
 

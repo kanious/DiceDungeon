@@ -9,6 +9,8 @@ namespace Engine
 	class CInputDevice;
 	class CLayer;
 	class CSkyBox;
+	class iPhysicsFactory;
+	class iPhysicsWorld;
 }
 
 class UIManager;
@@ -33,7 +35,8 @@ private:
 	glm::vec3					m_vCameraSavedRot;
 	glm::vec3					m_vCameraSavedTarget;
 
-	_bool						m_bFollowingMode;
+	Engine::iPhysicsFactory*	m_pPFactory;
+	Engine::iPhysicsWorld*		m_pPWorld;
 
 private:
 	explicit SceneDungeon();
@@ -45,6 +48,7 @@ public:
 
 public:
 	glm::vec3 GetCameraPos();
+	void CollisionSoundCallback();
 private:
 	void KeyCheck();
 	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
@@ -54,6 +58,7 @@ private:
 	RESULT Ready(std::string dataPath);
 	RESULT ReadyLayerAndGameObject();
 	void LoadObjects();
+	void AddDice();
 public:
 	static SceneDungeon* Create(std::string dataPath);
 

@@ -3,6 +3,8 @@
 #include "..\imgui\imgui_impl_opengl3.h"
 #include "OpenGLDevice.h"
 #include "Define.h"
+#include "DiceMaster.h"
+#include "iPhysicsWorld.h"
 
 #include <sstream>
 #include <iomanip>
@@ -35,18 +37,46 @@ void UIManager::RenderUI()
 	ImGui_ImplGlfw_NewFrame();
 	NewFrame();
 
-	ImVec2 screen = ImVec2((_float)COpenGLDevice::GetInstance()->GetWidthSize(), (_float)COpenGLDevice::GetInstance()->GetHeightSize());
-	//ImVec2 screen = ImVec2(350.f, 275.f);
+	//ImVec2 screen = ImVec2((_float)COpenGLDevice::GetInstance()->GetWidthSize(), (_float)COpenGLDevice::GetInstance()->GetHeightSize());
+	ImVec2 screen = ImVec2(200.f, 100.f);
 	SetNextWindowPos(ImVec2(0.f, 0.f));
 	SetNextWindowSize(screen);
 	if (Begin("UI", (bool*)0,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoBackground |
 		ImGuiWindowFlags_NoTitleBar))
 	{
 		Text("UI");
+		Separator();
+
+		if (Button("Roll2", ImVec2(50.f, 0.f)))
+		{
+			if (nullptr != m_pPWorld)
+				m_pPWorld->RollDice(2);
+		}
+		SameLine(65.f);
+		if (Button("Roll3", ImVec2(50.f, 0.f)))
+		{
+			if (nullptr != m_pPWorld)
+				m_pPWorld->RollDice(3);
+		}
+		SameLine(120.f);
+		if (Button("Roll5", ImVec2(50.f, 0.f)))
+		{
+			if (nullptr != m_pPWorld)
+				m_pPWorld->RollDice(5);
+		}
+
+		Text("Rolled Dice:"); SameLine(115.f); 
+		stringstream ss;
+		ss << CDiceMaster::GetInstance()->GetRolledDiceCount();
+		Text(ss.str().c_str());
+
+		Text("AP:"); SameLine(115.f);
+		ss.str("");
+		ss << CDiceMaster::GetInstance()->GetAP();
+		Text(ss.str().c_str());
 	}
 	End();
 
@@ -55,7 +85,7 @@ void UIManager::RenderUI()
 }
 
 // Initialize
-RESULT UIManager::Ready()
+RESULT UIManager::Ready(iPhysicsWorld* pWorld)
 {
 	IMGUI_CHECKVERSION();
 	CreateContext();
@@ -65,6 +95,8 @@ RESULT UIManager::Ready()
 		!ImGui_ImplOpenGL3_Init("#version 460"))
 		return PK_ERROR_IMGUI;
 	StyleColorsDark();
+
+	m_pPWorld = pWorld;
 
 	return PK_NOERROR;
 }

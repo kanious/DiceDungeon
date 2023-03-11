@@ -7,6 +7,7 @@
 NAMESPACE_BEGIN(Engine)
 
 class iRigidBody;
+class CComponent;
 class ENGINE_API iPhysicsWorld : public CBase
 {
 protected:
@@ -21,6 +22,8 @@ public:
 	virtual void SetGravity(const glm::vec3& gravity) = 0;
 	virtual void AddBody(iRigidBody* body) = 0;
 	virtual void RemoveBody(iRigidBody* body) = 0;
+	virtual void RollDice(_uint count) = 0;
+	virtual void SetCamera(CComponent* pCamera) = 0;
 };
 
 NAMESPACE_END

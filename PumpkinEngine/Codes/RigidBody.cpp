@@ -1,15 +1,32 @@
 #include "pch.h"
 #include "../Headers/RigidBody.h"
 #include "../Headers/RigidBodyDesc.h"
-#include "../Headers/iShape.h"
 #include "../Headers/Transform.h"
+#include "../Headers/DiceMaster.h"
 
 USING(Engine)
 USING(std)
 USING(glm)
 
+_float safe_acos(_float value)
+{
+	if (value <= -1.0f)
+		return radians(180.f);
+	else if (value >= 1.0f)
+		return 0.f;
+	else
+		return acos(value);
+}
+_float GetAngle(vec3 vDir1, vec3 vDir2)
+{
+	_float fDot = dot(vDir1, vDir2);
+	_float fAngleGap = safe_acos(fDot);
+	return degrees(fAngleGap);
+}
+
 CRigidBody::CRigidBody()
 {
+	m_iValue = 0;
 }
 
 CRigidBody::~CRigidBody()
@@ -24,155 +41,218 @@ void CRigidBody::Update(const _float& dt)
 {
 }
 
-void CRigidBody::SetGravityAcceleration(const vec3& gravity)
+void CRigidBody::Integrate(const _float& dt)
 {
-	m_vGravity = gravity;
-}
-
-void CRigidBody::UpdateAcceleration()
-{
-	if (m_bIsStatic)
+	if (isFinished)
 		return;
 
-	m_vLinearAcceleration = m_vForce * m_fInvMass + m_vGravity;
-	m_vAngularAcceleration = m_vTorque * m_fInvMass * m_fInvMass;
-}
-
-void CRigidBody::VerletStep1(const _float& dt)
-{
-	if (m_bIsStatic)
+	if (!isAwake)
 		return;
 
-	m_vPreviousPosition = m_vPosition;
-	m_vPosition += (m_vLinearVelocity + m_vLinearAcceleration * (dt/* * 0.5f*/)) * dt;
+	lastFrameAcceleration = gravity;
+	lastFrameAcceleration += forceAccum * inverseMass;
 
-	vec3 axis = m_vAngularVelocity + m_vAngularAcceleration * dt;
-	_float angle = length(axis);
-	axis = normalize(axis);
-	if (angle != 0.f)
+	vec3 angularAcceleration = torqueAccum * inverseInertiaTensorWorld;
+
+	velocity += lastFrameAcceleration * dt;
+	rotation += angularAcceleration * dt;
+
+	velocity *= pow(linearDamping, dt);
+	rotation *= pow(angularDamping, dt);
+
+	position += velocity * dt;
+	orientation += quat(0, rotation * dt) * orientation * 0.5f;
+	orientation = normalize(orientation);
+
+	transformMatrix = (mat4)orientation;
+	transformMatrix[3] = vec4(position, 1.f);
+
+	inverseInertiaTensorWorld = mat3(transformMatrix) * inverseInertiaTensor * mat3(inverse(transformMatrix));
+
+	CheckDir();
+
+	if (canSleep)
 	{
-		quat rot = angleAxis(angle, axis);
-		m_qRotation *= rot;
+		_float currentMotion = dot(velocity, velocity) + dot(rotation, rotation);
+		_float bias = pow(0.5, dt);
+		motion = bias * motion + (1.f - bias) * currentMotion;
+
+		if (motion < 0.3f)
+			SetAwake(false);
+		else if (motion > 10.f * 0.3f)
+			motion = 10.f * 0.3f;
 	}
-}
-
-void CRigidBody::VerletStep2(const _float& dt)
-{
-	if (m_bIsStatic) 
-		return;
-
-	m_vLinearVelocity += m_vLinearAcceleration * (dt * 0.5f);
-	m_vAngularVelocity += m_vAngularAcceleration * (dt * 0.5f);
-}
-
-void CRigidBody::VerletStep3(const _float& dt)
-{
-	VerletStep2(dt);
 }
 
 void CRigidBody::KillForces()
 {
-	m_vForce = vec3(0.f);
-	m_vTorque = vec3(0.f);
+	forceAccum *= forceDamping;
+	torqueAccum = vec3(0.0, 0.0, 0.0);
 }
 
-void CRigidBody::ApplyDamping(_float dt)
+void CRigidBody::ResetRigidBody(const CRigidBodyDesc& desc)
 {
-	m_vLinearVelocity *= pow(1.f - m_fLinearDamping, dt);
-	m_vAngularVelocity *= m_fAngularDamping;// pow(1.f - m_fAngularDamping, dt);
-
-	if (0.001f > length(m_vLinearVelocity))
-		m_vLinearVelocity = vec3(0.f);
-	if (0.001f > length(m_vAngularVelocity))
-		m_vAngularVelocity = vec3(0.f);
+	Ready(desc, eShape);
 }
 
-vec3 CRigidBody::GetPosition()
+mat3 CRigidBody::SetBlockInertiaTensor(mat3 m, const vec3& halfSizes, _float mass)
 {
-	return m_vPosition;
+	vec3 squares = halfSizes * halfSizes;
+	m = SetInertialTensorCoeffs(m,
+		0.3f * mass * (squares.y + squares.z),
+		0.3f * mass * (squares.x + squares.z),
+		0.3f * mass * (squares.x + squares.y));
+	return m;
 }
 
-void CRigidBody::SetPosition(const vec3& position)
+mat3 CRigidBody::SetInertialTensorCoeffs(mat3 m, _float ix, _float iy, _float iz, _float ixy, _float ixz, _float iyz)
 {
-	m_vPosition = position;
+	m[0][0] = ix;
+	m[0][1] = m[1][0] = -ixy;
+	m[0][2] = m[2][0] = -ixz;
+	m[1][1] = iy;
+	m[1][2] = m[2][1] = -iyz;
+	m[2][2] = iz;
+
+	return m;
 }
 
-quat CRigidBody::GetRotation()
+void CRigidBody::SetMass(const _float mass)
 {
-	return m_qRotation;
+	assert(mass != 0.f);
+	inverseMass = 1.f / mass;
 }
 
-void CRigidBody::SetRotation(const quat& rotation)
+void CRigidBody::SetAwake(const _bool awake)
 {
-	m_qRotation = rotation;
-}
-
-void CRigidBody::ApplyForce(const vec3& force)
-{
-	m_vForce += force;
-}
-
-void CRigidBody::ApplyForceAtPoint(const vec3& force, const vec3& relativePoint)
-{
-	ApplyForce(force);
-	ApplyTorque(cross(relativePoint, force));
-}
-
-void CRigidBody::ApplyImpulse(const vec3& impulse)
-{
-	m_vLinearVelocity += impulse * m_fInvMass;
-}
-
-void CRigidBody::ApplyImpulseAtPoint(const vec3& impulse, const vec3& relativePoint)
-{
-	ApplyTorqueImpulse(cross(relativePoint, impulse));
-}
-
-void CRigidBody::ApplyTorque(const vec3& torque)
-{
-	m_vTorque += torque;
-}
-
-void CRigidBody::ApplyTorqueImpulse(const glm::vec3& torqueImpulse)
-{
-	m_vAngularVelocity += torqueImpulse;
-}
-
-RESULT CRigidBody::Ready(const CRigidBodyDesc& desc, iShape* shape)
-{
-	m_bIsStatic = desc.isStatic;
-
-	if (m_bIsStatic || desc.mass <= 0.f)
+	if (awake)
 	{
-		m_fMass = 0.f;
-		m_fInvMass = 0.f;
-		m_bIsStatic = true;
+		isAwake = true;
+		motion = 0.3f * 2.f;
 	}
 	else
 	{
-		m_fMass = desc.mass;
-		m_fInvMass = 1.f / m_fMass;
+		isAwake = false;
+		velocity = vec3(0.f);
+		rotation = vec3(0.f);
+	}
+}
+
+void CRigidBody::SetCanSleep(const _bool canSleep)
+{
+	this->canSleep = canSleep;
+
+	if (!canSleep && !isAwake)
+		SetAwake();
+}
+
+void CRigidBody::CheckDir()
+{
+	if (position.y > 5.f)
+		return;
+
+	vec3 yplus = vec3(0.f, 1.f, 0.f);
+
+	vec3 vUp = transformMatrix[1];
+	vUp = normalize(vUp);
+	
+	_float angleGap = GetAngle(vUp, yplus);
+	if (angleGap <= gap)
+	{
+		isFinished = true;
+		m_iValue = 3;
+	}
+	else if (angleGap > 180.f - gap)
+	{
+		isFinished = true;
+		m_iValue = 4;
+	}
+	else
+	{
+		vec3 vRight = transformMatrix[0];
+		vRight = normalize(vRight);
+		float angleGap2 = GetAngle(vRight, yplus);
+		if (angleGap2 <= gap)
+		{
+			isFinished = true;
+			m_iValue = 5;
+		}
+		else if (angleGap2 > 180.f - gap)
+		{
+			isFinished = true;
+			m_iValue = 2;
+		}
+		else
+		{
+			vec3 vLook = transformMatrix[2];
+			vLook = normalize(vLook);
+			float angleGap3 = GetAngle(vLook, yplus);
+			if (angleGap3 <= gap)
+			{
+				isFinished = true;
+				m_iValue = 1;
+			}
+			else if (angleGap3 > 180.f - gap)
+			{
+				isFinished = true;
+				m_iValue = 6;
+			}
+		}
 	}
 
-	m_fRestitution = desc.restitution;
-	m_fFriction = desc.friction;
-	m_fLinearDamping = desc.linearDamping;
-	m_fAngularDamping = desc.angularDamping;
+	if (isFinished)
+		CDiceMaster::GetInstance()->AddAP(m_iValue);
+}
 
-	m_vPosition = desc.position;
-	m_vLinearVelocity = desc.linearVelocity;
-	m_vLinearFactor = desc.linearFactor;
-	m_vAngularVelocity = desc.angularVelocity;
-	m_vAngularFactor = desc.angularFactor;
+RESULT CRigidBody::Ready(const CRigidBodyDesc& desc, eShapeType shape)
+{
+	eShape = shape;
 
-	m_qRotation = desc.rotation;
+	position = vec3(desc.position.x, desc.position.y, desc.position.z);
+	orientation = quat(desc.orientation);
+	velocity = vec3(0.f);
+	rotation = vec3(desc.rotation.x, desc.rotation.y, desc.rotation.z);
+	
+	halfSize = vec3(desc.halfSize.x, desc.halfSize.y, desc.halfSize.z);
+	_float mass = halfSize.x * halfSize.y * halfSize.z * 8.f;
+	SetMass(mass);
 
-	m_pShape = shape;
+	mat3 tensor = mat3(1.f);
+	tensor = SetBlockInertiaTensor(tensor, halfSize, mass);
+	inverseInertiaTensor = inverse(tensor);
+	linearDamping = 0.95f;
+	angularDamping = 0.8f;
+	forceDamping = 0.8f;
+	forceAccum = vec3(desc.forceAccum.x, desc.forceAccum.y, desc.forceAccum.z);
+	torqueAccum = vec3(0.f);
+	gravity = vec3(0.f);
+
+	SetCanSleep(false);
+	if (eShapeType::Plane == shape)
+		isFinished = true;
+	else
+		isFinished = false;
+	isAwake = true;
+	m_bIsEnable = true;
+	m_iValue = 0;
+
+	orientation = normalize(orientation);
+	
+	orientation += quat(0, rotation) * orientation * 0.5f;
+	orientation = normalize(orientation);
+
+	transformMatrix = (mat4)orientation;
+	transformMatrix[3] = vec4(position, 1.0);
+
+	mat3 a = mat3(transformMatrix);
+	mat3 b = mat3(inverse(transformMatrix));
+
+	inverseInertiaTensorWorld = mat3(transformMatrix) * inverseInertiaTensor * mat3(inverse(transformMatrix));
 
 	return PK_NOERROR;
 }
 
-CRigidBody* CRigidBody::Create(const CRigidBodyDesc& desc, iShape* shape)
+CRigidBody* CRigidBody::Create(const CRigidBodyDesc& desc, eShapeType shape)
 {
 	CRigidBody* pInstance = new CRigidBody();
 	if (PK_NOERROR != pInstance->Ready(desc, shape))

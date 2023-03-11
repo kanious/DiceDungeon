@@ -36,6 +36,7 @@ CMesh::CMesh()
     , m_bDebug(false)
     , m_bTransparency(false)
     , m_bBiilboard(false)
+    , m_bPriority(false)
     , m_textureFileName("")
     , m_iTriNum(0)
     , m_pTriangles(nullptr)
@@ -57,6 +58,7 @@ CMesh::CMesh(const CMesh& rhs)
     , m_bSelected(rhs.m_bSelected)
     , m_bDebug(rhs.m_bDebug)
     , m_bBiilboard(rhs.m_bBiilboard)
+    , m_bPriority(rhs.m_bPriority)
     , m_bTransparency(rhs.m_bTransparency)
     , m_textureFileName(rhs.m_textureFileName)
     , m_iTriNum(rhs.m_iTriNum)
@@ -152,7 +154,12 @@ void CMesh::Render()
             glDepthMask(GL_FALSE);
         else
             glDepthMask(GL_TRUE);
+
         m_pVIBuffer->SetWireFrame(m_bWireFrame);
+
+        if (m_bPriority)
+            glDisable(GL_DEPTH_TEST);
+
         m_pVIBuffer->Render();
 
         // Outline Effect
@@ -160,25 +167,26 @@ void CMesh::Render()
         //    m_pVIBuffer->Render();
         //else
         //{
-        //    glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        //    glStencilMask(0xFF);
-        //    m_pShader->SetSelected(false);
-        //    m_pVIBuffer->Render();
+            //glStencilFunc(GL_ALWAYS, 1, 0xFF);
+            //glStencilMask(0xFF);
+            //m_pShader->SetSelected(false);
+            //m_pVIBuffer->Render();
 
-        //    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        //    glStencilMask(0x00);
-        //    glDisable(GL_DEPTH_TEST);
-        //    m_pShader->SetSelected(true);
-        //    matWorld = scale(matWorld, vec3(1.02f));
-        //    m_pShader->SetMatrixInfo(matWorld, matView, matProj);
-        //    m_pVIBuffer->Render();
+            //glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+            //glStencilMask(0x00);
+            //glDisable(GL_DEPTH_TEST);
+            //m_pShader->SetSelected(true);
+            //matWorld = scale(matWorld, vec3(1.05f));
+            //m_pShader->SetMatrixInfo(matWorld, matView, matProj);
+            //m_pVIBuffer->Render();
 
-        //    glStencilMask(0xFF);
-        //    glStencilFunc(GL_ALWAYS, 0, 0xFF);
-        //    glEnable(GL_DEPTH_TEST);
+            //glStencilMask(0xFF);
+            //glStencilFunc(GL_ALWAYS, 0, 0xFF);
+            //glEnable(GL_DEPTH_TEST);
         //}
 
         glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
     }
 
     if (m_bDebug && nullptr != m_pBoundingBox)
@@ -454,7 +462,7 @@ void CMesh::processMesh(aiMesh* mesh, const aiScene* scene, VTX** pVertices, _ui
 
     *pVertices = new VTX[vertexNum];
     memset(*pVertices, 0, sizeof(**pVertices));
-    for (int i = 0; i < mesh->mNumVertices; ++i)
+    for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
     {
         (*pVertices)[i].vPos.x = mesh->mVertices[i].x;
         (*pVertices)[i].vPos.y = mesh->mVertices[i].y;

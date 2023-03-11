@@ -4,13 +4,21 @@
 #include "../Headers/RigidBody.h"
 #include "../Headers/CollisionHandler.h"
 #include "../Headers/iShape.h"
+#include "../Headers/CollisionBox.h"
+#include "../Headers/CollisionDetector.h"
+#include "../Headers/RigidBodyDesc.h"
+#include "../Headers/Component.h"
+#include "../Headers/Camera.h"
+#include "../Headers/DiceMaster.h"
+#include "../Headers/EngineFunction.h"
 
 USING(Engine)
 USING(std)
 USING(glm)
 
 CPhysicsWorld::CPhysicsWorld()
-	: m_vGravity(vec3(0.f)), m_collisionCallback(nullptr)
+	: m_vGravity(vec3(0.f)), m_collisionCallback(nullptr), m_iMaxContacts(0)
+	, m_fElapsedTime(0.f), m_fMaxTime(1.5f), m_bRolling(false)
 {
 	m_vecRigidBodies.clear();
 }
@@ -24,50 +32,116 @@ void CPhysicsWorld::Destroy()
 	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
 		SafeDestroy(m_vecRigidBodies[i]);
 
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
+		delete CCollisionBox::boxData[i];
+
 	SafeDestroy(m_pColHandler);
 }
 
 void CPhysicsWorld::Update(const _float& dt)
 {
-	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-		m_vecRigidBodies[i]->Update(dt);
-
-	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	_bool allFinished = true;
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
 	{
-		m_vecRigidBodies[i]->SetGravityAcceleration(m_vGravity);
-		m_vecRigidBodies[i]->UpdateAcceleration();
+		CCollisionBox* box = CCollisionBox::boxData[i];
+		if (!box->body->isFinished)
+		{
+			allFinished = false;
+			m_fElapsedTime = 0.f;
+			break;
+		}
+	}
+	if (allFinished)
+	{
+		m_fElapsedTime += dt;
+		if (m_fElapsedTime > m_fMaxTime)
+		{
+			for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
+				CCollisionBox::boxData[i]->body->SetEnable(false);
+			m_bRolling = false;
+			m_fElapsedTime = 0.f;
+		}
 	}
 
-	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
 	{
-		m_vecRigidBodies[i]->VerletStep3(dt);
-		m_vecRigidBodies[i]->ApplyDamping(dt / 2.f);
+		CCollisionBox* box = CCollisionBox::boxData[i];
+
+		box->body->SetGravity(m_vGravity);
+		box->body->Update(dt);
+		box->body->Integrate(dt);
+		box->body->KillForces();
+		box->CalculateInternals();
 	}
 
-	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-		m_vecRigidBodies[i]->VerletStep1(dt);
-
-	// Collision
-	vector<CCollisionHandler::sColPair> vecPairs;
-	m_pColHandler->Collide(dt, m_vecRigidBodies, vecPairs);
-
-	for (int i = 0; i < vecPairs.size(); ++i)
+	m_cData.Reset(m_iMaxContacts);
+	m_cData.friction = 0.9f;
+	m_cData.restitution = 0.1f;
+	m_cData.tolerance = 0.1f;
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
 	{
-		CCollisionHandler::sColPair pair = vecPairs[i];
-		if (eShapeType::Plane == pair.pBodyA->GetShape()->GetShapeType() ||
-			eShapeType::Plane == pair.pBodyB->GetShape()->GetShapeType())
-			continue;
+		for (unsigned int j = 0; j < CCollisionBox::boxCount; ++j)
+		{
+			CCollisionBox* box1 = CCollisionBox::boxData[i];
+			CCollisionBox* box2 = CCollisionBox::boxData[j];
 
-		if (nullptr != m_collisionCallback)
-			m_collisionCallback();
+			if (box1 != box2)
+			{
+				CCollisionDetector::BoxAndBox(*box1, *box2, &m_cData);
+			}
+		}
 	}
 
-	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	m_cResolver.ResolveContacts(m_cData.contactArray, m_cData.contactCount, dt);
+
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
 	{
-		m_vecRigidBodies[i]->VerletStep2(dt);
-		m_vecRigidBodies[i]->ApplyDamping(dt / 2.f);
-		m_vecRigidBodies[i]->KillForces();
+		CCollisionBox* box = CCollisionBox::boxData[i];
+		box->SetModelMatrix(scale(
+			(mat4)box->body->transformMatrix,
+			vec3(box->halfSize.x, box->halfSize.y, box->halfSize.z)
+		));
 	}
+
+	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	//	m_vecRigidBodies[i]->Update(dt);
+
+	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	//{
+	//	m_vecRigidBodies[i]->SetGravityAcceleration(m_vGravity);
+	//	m_vecRigidBodies[i]->UpdateAcceleration();
+	//}
+
+	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	//{
+	//	m_vecRigidBodies[i]->VerletStep3(dt);
+	//	m_vecRigidBodies[i]->ApplyDamping(dt / 2.f);
+	//}
+
+	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	//	m_vecRigidBodies[i]->VerletStep1(dt);
+
+	//// Collision
+	//vector<CCollisionHandler::sColPair> vecPairs;
+	//m_pColHandler->Collide(dt, m_vecRigidBodies, vecPairs);
+
+	//for (int i = 0; i < vecPairs.size(); ++i)
+	//{
+	//	CCollisionHandler::sColPair pair = vecPairs[i];
+	//	if (eShapeType::Plane == pair.pBodyA->GetShape()->GetShapeType() ||
+	//		eShapeType::Plane == pair.pBodyB->GetShape()->GetShapeType())
+	//		continue;
+
+	//	if (nullptr != m_collisionCallback)
+	//		m_collisionCallback();
+	//}
+
+	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
+	//{
+	//	m_vecRigidBodies[i]->VerletStep2(dt);
+	//	m_vecRigidBodies[i]->ApplyDamping(dt / 2.f);
+	//	m_vecRigidBodies[i]->KillForces();
+	//}
 }
 
 void CPhysicsWorld::SetGravity(const vec3& gravity)
@@ -81,30 +155,125 @@ void CPhysicsWorld::AddBody(iRigidBody* body)
 		return;
 
 	CRigidBody* rigidBody = dynamic_cast<CRigidBody*>(body);
+	CCollisionBox* box = new CCollisionBox(rigidBody);
+	box->body->isFinished = true;
+	box->body->SetEnable(false);
 
 	for (int i = 0; i < m_vecRigidBodies.size(); ++i)
 	{
 		if (rigidBody == m_vecRigidBodies[i])
 			return;
 	}
-
 	m_vecRigidBodies.push_back(rigidBody);
 }
 
 void CPhysicsWorld::RemoveBody(iRigidBody* body)
 {
-	CRigidBody* rigidBody = dynamic_cast<CRigidBody*>(body);
+	//CRigidBody* rigidBody = dynamic_cast<CRigidBody*>(body);
 
-	vector<CRigidBody*>::iterator iter;
-	for (iter = m_vecRigidBodies.begin(); iter != m_vecRigidBodies.end(); ++iter)
+	//vector<CRigidBody*>::iterator iter;
+	//for (iter = m_vecRigidBodies.begin(); iter != m_vecRigidBodies.end(); ++iter)
+	//{
+	//	if (rigidBody == (*iter))
+	//	{
+	//		SafeDestroy(*iter);
+	//		m_vecRigidBodies.erase(iter);
+	//		return;
+	//	}
+	//}
+}
+
+void CPhysicsWorld::RollDice(_uint count)
+{
+	//if (m_bRolling)
+	//	return;
+
+	m_bRolling = true;
+
+	if (count > 10)
+		count = 10;
+	if (count > CCollisionBox::boxCount - 1)
+		count = CCollisionBox::boxCount - 1;
+
+	CDiceMaster::GetInstance()->SetRolledDiceCount(count);
+	CDiceMaster::GetInstance()->SetAP(0);
+
+	vec3 vEyePos = m_pCamera->GetCameraEye();
+	vec3 vTargetPos = m_pCamera->GetCameraTarget();
+	vec3 vDir = vTargetPos - vEyePos;
+	vDir.y = 0.f;
+	vDir = normalize(vDir);
+	vEyePos += vDir * 10.f;
+	vEyePos.y = 15.f;
+
+	CRigidBodyDesc desc;
+	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
 	{
-		if (rigidBody == (*iter))
-		{
-			SafeDestroy(*iter);
-			m_vecRigidBodies.erase(iter);
-			return;
-		}
+		if (0 >= count)
+			break;
+		CCollisionBox* box = CCollisionBox::boxData[i];
+
+		if (eShapeType::Plane == box->body->eShape)
+			continue;
+
+		vec3 vPos = vEyePos;
+		_int randNum = GetRandNum(-200, 200);
+		vPos.x += randNum * 0.01f;
+		randNum = GetRandNum(-200, 200);
+		vPos.z += randNum * 0.01f;
+
+		_float force = (_float)GetRandNum(4500.f, 5500.f);
+
+		_float randRotX = GetRandNum(-100, 100);
+		_float randRotY = GetRandNum(-100, 100);
+		_float randRotZ = GetRandNum(-100, 100);
+
+		desc.position = vPos;
+		desc.rotation = vec3(randRotX * 0.01f, randRotY * 0.01f, randRotZ * 0.01f);
+		desc.halfSize = vec3(1.f);
+		desc.orientation = vec3(0.f);
+		desc.forceAccum = vDir * force;
+		
+		box->body->ResetRigidBody(desc);
+		box->SetModelMatrix(scale(
+			(mat4)box->body->transformMatrix,
+			vec3(box->halfSize.x, box->halfSize.y, box->halfSize.z)
+		));
+
+		--count;
 	}
+
+	//desc.position = vec3(0.f);
+	//desc.rotation = vec3(0.f);
+	//desc.halfSize = vec3(1000.f, 1.f, 1000.f);
+	//desc.orientation = vec3(0.f);
+	//desc.forceAccum = vec3(0.f);
+	//m_vecRigidBodies[0]->ResetRigidBody(desc);
+
+
+
+
+	desc.position = vEyePos;
+	desc.rotation = vec3(-8.f, -5.f, -7.f);
+	desc.halfSize = vec3(1.f);
+	desc.orientation = vec3(0.f);
+	desc.forceAccum = vDir * 5000.f;// vec3(0.f, 0.f, 5000.f);
+	m_vecRigidBodies[1]->ResetRigidBody(desc);
+
+
+	desc.position = vEyePos;
+	desc.rotation = vec3(-5.0, 6.0, -8.0);
+	desc.halfSize = vec3(1.f);
+	desc.orientation = vec3(0.f);
+	desc.forceAccum = vDir * 5000.f;// vec3(0.f, 0.f, 5000.f);
+	m_vecRigidBodies[2]->ResetRigidBody(desc);
+
+}
+
+void CPhysicsWorld::SetCamera(CComponent* pCamera)
+{
+	if (nullptr != pCamera)
+		m_pCamera = dynamic_cast<CCamera*>(pCamera);
 }
 
 RESULT CPhysicsWorld::Ready(function<void(void)> callback)
@@ -112,6 +281,10 @@ RESULT CPhysicsWorld::Ready(function<void(void)> callback)
 	m_pColHandler = CCollisionHandler::Create();
 
 	m_collisionCallback = callback;
+
+	m_iMaxContacts = 256;
+	m_cResolver = CContactResolver(m_iMaxContacts);
+	m_cData.contactArray = m_contacts;
 
 	return PK_NOERROR;
 }

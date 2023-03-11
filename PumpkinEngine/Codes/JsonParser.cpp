@@ -45,7 +45,7 @@ void CJsonParser::LoadCharacterList(std::string assetFolderPath, std::string fil
 	const Value& dataArray = doc["array"];
 	assert(dataArray.IsArray());
 
-	for (int i = 0; i < dataArray.Size(); ++i)
+	for (unsigned int i = 0; i < dataArray.Size(); ++i)
 	{
 		sCharacterData data;
 

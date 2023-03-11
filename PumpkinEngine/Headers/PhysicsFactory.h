@@ -14,7 +14,7 @@ private:
 
 public:
 	virtual iPhysicsWorld* CreateWorld(std::function<void(void)> callback);
-	virtual iRigidBody* CreateRigidBody(const CRigidBodyDesc& desc, iShape* shape);
+	virtual iRigidBody* CreateRigidBody(const CRigidBodyDesc& desc, eShapeType shape);
 
 private:
 	RESULT Ready();

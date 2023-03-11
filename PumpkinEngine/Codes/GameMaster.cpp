@@ -2,7 +2,7 @@
 #include "..\Headers\GameMaster.h"
 #include "..\Headers\ComponentMaster.h"
 #include "..\Headers\InputDevice.h"
-#include "..\Headers\ObjectPooler.h"
+#include "..\Headers\DiceMaster.h"
 #include "..\Headers\OpenGLDevice.h"
 #include "..\Headers\Renderer.h"
 #include "..\Headers\Timer.h"
@@ -57,7 +57,7 @@ void CGameMaster::Destroy()
 	SafeDestroy(CJsonParser::GetInstance());
 	SafeDestroy(CComponentMaster::GetInstance());
 	SafeDestroy(CInputDevice::GetInstance());
-	SafeDestroy(CObjectPooler::GetInstance());
+	SafeDestroy(CDiceMaster::GetInstance());
 	SafeDestroy(COpenGLDevice::GetInstance());
 	SafeDestroy(CRenderer::GetInstance());
 	SafeDestroy(CTimer::GetInstance());

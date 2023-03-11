@@ -3,13 +3,13 @@
 
 #include <functional>
 #include "Base.h"
+#include "iShape.h"
 
 NAMESPACE_BEGIN(Engine)
 
 class iPhysicsWorld;
 class iRigidBody;
 class CRigidBodyDesc;
-class iShape;
 class ENGINE_API iPhysicsFactory : public CBase
 {
 protected:
@@ -19,7 +19,7 @@ protected:
 
 public:
 	virtual iPhysicsWorld* CreateWorld(std::function<void(void)> callback) = 0;
-	virtual iRigidBody* CreateRigidBody(const CRigidBodyDesc& desc, iShape* shape) = 0;
+	virtual iRigidBody* CreateRigidBody(const CRigidBodyDesc& desc, eShapeType shape) = 0;
 };
 
 NAMESPACE_END
