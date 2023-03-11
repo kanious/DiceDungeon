@@ -102,46 +102,6 @@ void CPhysicsWorld::Update(const _float& dt)
 			vec3(box->halfSize.x, box->halfSize.y, box->halfSize.z)
 		));
 	}
-
-	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-	//	m_vecRigidBodies[i]->Update(dt);
-
-	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-	//{
-	//	m_vecRigidBodies[i]->SetGravityAcceleration(m_vGravity);
-	//	m_vecRigidBodies[i]->UpdateAcceleration();
-	//}
-
-	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-	//{
-	//	m_vecRigidBodies[i]->VerletStep3(dt);
-	//	m_vecRigidBodies[i]->ApplyDamping(dt / 2.f);
-	//}
-
-	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-	//	m_vecRigidBodies[i]->VerletStep1(dt);
-
-	//// Collision
-	//vector<CCollisionHandler::sColPair> vecPairs;
-	//m_pColHandler->Collide(dt, m_vecRigidBodies, vecPairs);
-
-	//for (int i = 0; i < vecPairs.size(); ++i)
-	//{
-	//	CCollisionHandler::sColPair pair = vecPairs[i];
-	//	if (eShapeType::Plane == pair.pBodyA->GetShape()->GetShapeType() ||
-	//		eShapeType::Plane == pair.pBodyB->GetShape()->GetShapeType())
-	//		continue;
-
-	//	if (nullptr != m_collisionCallback)
-	//		m_collisionCallback();
-	//}
-
-	//for (int i = 0; i < m_vecRigidBodies.size(); ++i)
-	//{
-	//	m_vecRigidBodies[i]->VerletStep2(dt);
-	//	m_vecRigidBodies[i]->ApplyDamping(dt / 2.f);
-	//	m_vecRigidBodies[i]->KillForces();
-	//}
 }
 
 void CPhysicsWorld::SetGravity(const vec3& gravity)
@@ -218,15 +178,15 @@ void CPhysicsWorld::RollDice(_uint count)
 
 		vec3 vPos = vEyePos;
 		_int randNum = GetRandNum(-200, 200);
-		vPos.x += randNum * 0.01f;
+		vPos.x += randNum * 0.01f * count;
 		randNum = GetRandNum(-200, 200);
-		vPos.z += randNum * 0.01f;
+		vPos.z += randNum * 0.01f * count;
 
-		_float force = (_float)GetRandNum(4500.f, 5500.f);
+		_float force = (_float)GetRandNum(5000.f, 6500.f);
 
-		_float randRotX = GetRandNum(-100, 100);
-		_float randRotY = GetRandNum(-100, 100);
-		_float randRotZ = GetRandNum(-100, 100);
+		_float randRotX = GetRandNum(-200, 200);
+		_float randRotY = GetRandNum(-200, 200);
+		_float randRotZ = GetRandNum(-200, 200);
 
 		desc.position = vPos;
 		desc.rotation = vec3(randRotX * 0.01f, randRotY * 0.01f, randRotZ * 0.01f);
@@ -242,32 +202,6 @@ void CPhysicsWorld::RollDice(_uint count)
 
 		--count;
 	}
-
-	//desc.position = vec3(0.f);
-	//desc.rotation = vec3(0.f);
-	//desc.halfSize = vec3(1000.f, 1.f, 1000.f);
-	//desc.orientation = vec3(0.f);
-	//desc.forceAccum = vec3(0.f);
-	//m_vecRigidBodies[0]->ResetRigidBody(desc);
-
-
-
-
-	desc.position = vEyePos;
-	desc.rotation = vec3(-8.f, -5.f, -7.f);
-	desc.halfSize = vec3(1.f);
-	desc.orientation = vec3(0.f);
-	desc.forceAccum = vDir * 5000.f;// vec3(0.f, 0.f, 5000.f);
-	m_vecRigidBodies[1]->ResetRigidBody(desc);
-
-
-	desc.position = vEyePos;
-	desc.rotation = vec3(-5.0, 6.0, -8.0);
-	desc.halfSize = vec3(1.f);
-	desc.orientation = vec3(0.f);
-	desc.forceAccum = vDir * 5000.f;// vec3(0.f, 0.f, 5000.f);
-	m_vecRigidBodies[2]->ResetRigidBody(desc);
-
 }
 
 void CPhysicsWorld::SetCamera(CComponent* pCamera)

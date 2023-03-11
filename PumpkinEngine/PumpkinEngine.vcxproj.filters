@@ -243,15 +243,6 @@
     <ClInclude Include="Headers\FrameBufferObject.h">
       <Filter>04.Component\FrameBufferObject</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\CollisionBox.h">
-      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\RigidBody.h">
-      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\RigidBodyDesc.h">
-      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\ContactResolver.h">
       <Filter>05.IndependantFunctions\Physics\For.Dice\Contact</Filter>
     </ClInclude>
@@ -266,6 +257,15 @@
     </ClInclude>
     <ClInclude Include="Headers\EngineFunction.h">
       <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\RigidBody.h">
+      <Filter>05.IndependantFunctions\Physics\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\RigidBodyDesc.h">
+      <Filter>05.IndependantFunctions\Physics\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\CollisionBox.h">
+      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -401,12 +401,6 @@
     <ClCompile Include="Codes\FrameBufferObject.cpp">
       <Filter>04.Component\FrameBufferObject</Filter>
     </ClCompile>
-    <ClCompile Include="Codes\CollisionBox.cpp">
-      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\RigidBody.cpp">
-      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
-    </ClCompile>
     <ClCompile Include="Codes\ContactResolver.cpp">
       <Filter>05.IndependantFunctions\Physics\For.Dice\Contact</Filter>
     </ClCompile>
@@ -418,6 +412,12 @@
     </ClCompile>
     <ClCompile Include="Codes\CollisionData.cpp">
       <Filter>05.IndependantFunctions\Physics\For.Dice\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\RigidBody.cpp">
+      <Filter>05.IndependantFunctions\Physics\RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\CollisionBox.cpp">
+      <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
