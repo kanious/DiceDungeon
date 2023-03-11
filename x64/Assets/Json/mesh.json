@@ -938,7 +938,7 @@
  {
    "ID": "dice",
    "Path": "Mesh\\",
-   "FileName": "die.obj",
+   "FileName": "die.ply",
    "DataType": 2,
    "Shader_ID": "MeshShader",
    "InitSize": 1,
