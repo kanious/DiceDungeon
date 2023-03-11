@@ -136,6 +136,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64\Debug;$(SolutionDir)PlugIns\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32d.lib;fmod_vc.lib;fmodL_vc.lib;glew32sd.lib;glfw3dll.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -158,6 +161,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64\Release;$(SolutionDir)PlugIns\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32.lib;fmod_vc.lib;fmodL_vc.lib;glew32s.lib;assimp-vc143-mt.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Codes\framework.h" />
