@@ -193,5 +193,10 @@
    "ID": "dice_Tex",
    "Path": "Texture\\Lossy\\",
    "FileName": "die_texture.png"
+ },
+ {
+   "ID": "tile_Tex",
+   "Path": "Texture\\",
+   "FileName": "tile.png"
  }
 ]

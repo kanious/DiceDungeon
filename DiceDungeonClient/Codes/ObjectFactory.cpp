@@ -21,6 +21,7 @@ CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag,
     {
     case (_uint)LAYER_CAMERA:
     case (_uint)LAYER_STATIC_OBJECT:
+    case (_uint)LAYER_TILE:
     case (_uint)LAYER_INTERACTIVE_OBJECT:
     case (_uint)LAYER_UI:
         pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);

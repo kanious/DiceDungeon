@@ -35,6 +35,8 @@ static eLAYERTAG GetLayerTagByName(std::string name)
 		return LAYER_CAMERA;
 	else if ("Layer_static" == name)
 		return LAYER_STATIC_OBJECT;
+	else if ("Layer_tile" == name)
+		return LAYER_TILE;
 	else if ("Layer_interactive" == name)
 		return LAYER_INTERACTIVE_OBJECT;
 	else if ("Layer_character" == name)

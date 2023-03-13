@@ -79,8 +79,8 @@ Update List
    - If click right mouse button, the selected target returns to its original position
 - Add frame buffer object
 - Add dice system with physics
-- Drawing an outline when selecting an object
 - Mesh loading with Assimp
+- Making the demo map and tiles (In progress)
 
 
 

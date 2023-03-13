@@ -946,5 +946,17 @@
    "Load_Assimp": true,
    "Texture_ID_Diff": "dice_Tex",
    "Texture_ID_Normal": ""
+ },
+ {
+   "ID": "tile",
+   "Path": "Mesh\\",
+   "FileName": "floor_A.ply",
+   "DataType": 2,
+   "Shader_ID": "MeshShader",
+   "InitSize": 0.05,
+   "MeshType": "tile",
+   "Load_Assimp": false,
+   "Texture_ID_Diff": "tile_Tex",
+   "Texture_ID_Normal": ""
  }
 ]

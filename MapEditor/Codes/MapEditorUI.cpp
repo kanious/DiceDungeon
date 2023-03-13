@@ -487,6 +487,8 @@ void MapEditorUI::Render_MeshList(_float childX, _float childY)
 			const char* meshType = info.meshType.c_str();
 			if (!strcmp("", meshType))
 				meshType = "etc";
+			else if (!strcmp("tile", meshType))
+				meshType = "floor";
 
 			if (strcmp("All", m_curMeshTypeCombo))
 			{
@@ -725,28 +727,81 @@ void MapEditorUI::MoveTarget(const _float& dt)
 
 		if (m_bSnap)
 		{
-			if (0 > vDest.x)
-				vDest.x = (_int)((vDest.x - 5) / 10) * 10;
-			else
-				vDest.x = (_int)((vDest.x + 5) / 10) * 10;
-
-			if (0 > vDest.z)
-				vDest.z = (_int)((vDest.z - 5) / 10) * 10;
-			else
-				vDest.z = (_int)((vDest.z + 5) / 10) * 10;
-
-			if (!strcmp("wall", m_pTarget->GetMeshType().c_str()))
+			if (!strcmp("tile", m_pTarget->GetMeshType().c_str()))
 			{
-				_float fY = m_pTarget->GetRotationY();
-
-				if (fY == 0.f)
-					vDest.z += 5.f;
-				else if (fY == 90.f)
-					vDest.x -= 5.f;
-				else if (fY == 180.f)
-					vDest.z -= 5.f;
+				if (0 > vDest.x)
+					vDest.x = (_int)((vDest.x) / 5) * 5 - 2.5f;
 				else
-					vDest.x += 5.f;
+					vDest.x = (_int)((vDest.x) / 5) * 5 + 2.5f;
+
+				if (0 > vDest.z)
+					vDest.z = (_int)((vDest.z) / 5) * 5 - 2.5f;
+				else
+					vDest.z = (_int)((vDest.z) / 5) * 5 + 2.5f;
+			}
+			else
+			{
+				if (0 > vDest.x)
+					vDest.x = (_int)((vDest.x - 5) / 10) * 10;
+				else
+					vDest.x = (_int)((vDest.x + 5) / 10) * 10;
+
+				if (0 > vDest.z)
+					vDest.z = (_int)((vDest.z - 5) / 10) * 10;
+				else
+					vDest.z = (_int)((vDest.z + 5) / 10) * 10;
+
+				if (!strcmp("wall", m_pTarget->GetMeshType().c_str()))
+				{
+					_float fY = m_pTarget->GetRotationY();
+					if (!strcmp("wall_A", m_pTarget->GetMeshName().c_str()))
+					{
+						if (fY == 0.f)
+							vDest.z += 4.55f;
+						else if (fY == 90.f)
+							vDest.x += 4.55f;
+						else if (fY == 180.f)
+							vDest.z -= 4.55f;
+						else
+							vDest.x -= 4.55f;
+					}
+					else
+					{
+						if (fY == 0.f)
+							vDest.z += 5.f;
+						else if (fY == 90.f)
+							vDest.x += 5.f;
+						else if (fY == 180.f)
+							vDest.z -= 5.f;
+						else
+							vDest.x -= 5.f;
+					}
+				}
+
+				if (!strcmp("door", m_pTarget->GetMeshType().c_str()))
+				{
+					_float fY = m_pTarget->GetRotationY();
+					if (fY == 0.f)
+					{
+						vDest.x += 2.4f;
+						vDest.z += 5.f;
+					}
+					else if (fY == 90.f)
+					{
+						vDest.x += 5.f;
+						vDest.z -= 2.4f;
+					}
+					else if (fY == 180.f)
+					{
+						vDest.x -= 2.4f;
+						vDest.z -= 5.f;
+					}
+					else
+					{
+						vDest.x -= 5.f;
+						vDest.z += 2.4f;
+					}
+				}
 			}
 		}
 
@@ -910,6 +965,7 @@ RESULT MapEditorUI::Ready(Scene3D* pScene)
 	// Set LayerNameComboList
 	m_vecLayerNameCombo.push_back("Layer_camera");
 	m_vecLayerNameCombo.push_back("Layer_static");
+	m_vecLayerNameCombo.push_back("Layer_tile");
 	m_vecLayerNameCombo.push_back("Layer_interactive");
 	m_vecLayerNameCombo.push_back("Layer_character");
 	m_vecLayerNameCombo.push_back("Layer_enemy");

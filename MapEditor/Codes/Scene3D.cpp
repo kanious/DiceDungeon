@@ -351,6 +351,7 @@ RESULT Scene3D::ReadyLayerAndGameObject()
 	//Create.Layer
 	AddLayer((_uint)LAYER_CAMERA);
 	AddLayer((_uint)LAYER_STATIC_OBJECT);
+	AddLayer((_uint)LAYER_TILE);
 	AddLayer((_uint)LAYER_INTERACTIVE_OBJECT);
 	AddLayer((_uint)LAYER_CHARACTER);
 	AddLayer((_uint)LAYER_ENEMY);

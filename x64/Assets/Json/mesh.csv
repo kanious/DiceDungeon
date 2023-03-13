@@ -78,3 +78,4 @@ true_scarecrow,Mesh\,scarecrow.ply,2,MeshShader,1,character,FALSE,true_scarecrow
 true_crawler,Mesh\,crawler.ply,2,MeshShader,1,character,FALSE,true_crawler_Tex,
 true_clown,Mesh\,clown.ply,2,MeshShader,1,character,FALSE,true_clown02_Tex,
 dice,Mesh\,die.ply,2,MeshShader,1,,TRUE,dice_Tex,
+tile,Mesh\,floor_A.ply,2,MeshShader,0.05,tile,FALSE,tile_Tex,
