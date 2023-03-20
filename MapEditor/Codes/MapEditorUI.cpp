@@ -127,8 +127,8 @@ void MapEditorUI::RenderUI()
 		End();
 	}
 
-	SetNextWindowPos(ImVec2((width * 0.5f) - 150.f, 0.f));
-	SetNextWindowSize(ImVec2(300.f, 40.f));
+	SetNextWindowPos(ImVec2((width * 0.5f) - 200.f, 0.f));
+	SetNextWindowSize(ImVec2(400.f, 40.f));
 	if (Begin("Function Bar", (bool*)0,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
@@ -136,9 +136,9 @@ void MapEditorUI::RenderUI()
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		Checkbox("Snap(1)##Checkbox", &m_bSnap);
-		SameLine(100.f); Checkbox("Obj Move(2)##Checkbox", &m_bObjMove);
-		SameLine(200.f); Text("Target Copy(3)");
+		Checkbox("Snap(F1)##Checkbox", &m_bSnap);
+		SameLine(100.f); Checkbox("Obj Move(F2)##Checkbox", &m_bObjMove);
+		SameLine(220.f); Text("Target Copy(F3)");
 	}
 	End();
 
@@ -727,19 +727,9 @@ void MapEditorUI::MoveTarget(const _float& dt)
 
 		if (m_bSnap)
 		{
-			if (!strcmp("tile", m_pTarget->GetMeshType().c_str()))
-			{
-				if (0 > vDest.x)
-					vDest.x = (_int)((vDest.x) / 5) * 5 - 2.5f;
-				else
-					vDest.x = (_int)((vDest.x) / 5) * 5 + 2.5f;
-
-				if (0 > vDest.z)
-					vDest.z = (_int)((vDest.z) / 5) * 5 - 2.5f;
-				else
-					vDest.z = (_int)((vDest.z) / 5) * 5 + 2.5f;
-			}
-			else
+			if (!strcmp("floor", m_pTarget->GetMeshType().c_str()) ||
+				!strcmp("wall", m_pTarget->GetMeshType().c_str()) ||
+				!strcmp("door", m_pTarget->GetMeshType().c_str()))
 			{
 				if (0 > vDest.x)
 					vDest.x = (_int)((vDest.x - 5) / 10) * 10;
@@ -803,6 +793,19 @@ void MapEditorUI::MoveTarget(const _float& dt)
 					}
 				}
 			}
+			else /*if (!strcmp("tile", m_pTarget->GetMeshType().c_str()) ||
+				!strcmp("character", m_pTarget->GetMeshType().c_str()))*/
+			{
+				if (0 > vDest.x)
+					vDest.x = (_int)((vDest.x) / 5) * 5 - 2.5f;
+				else
+					vDest.x = (_int)((vDest.x) / 5) * 5 + 2.5f;
+
+				if (0 > vDest.z)
+					vDest.z = (_int)((vDest.z) / 5) * 5 - 2.5f;
+				else
+					vDest.z = (_int)((vDest.z) / 5) * 5 + 2.5f;
+			}
 		}
 
 		m_pTarget->SetPosition(vDest);
@@ -839,7 +842,7 @@ void MapEditorUI::KeyCheck(const _float& dt)
 
 	// Object Snap
 	static _bool is1Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
 	{
 		if (!is1Down)
 		{
@@ -852,7 +855,7 @@ void MapEditorUI::KeyCheck(const _float& dt)
 
 	// Object Moving
 	static _bool is2Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_2))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F2))
 	{
 		if (!is2Down)
 		{
@@ -863,9 +866,25 @@ void MapEditorUI::KeyCheck(const _float& dt)
 	else
 		is2Down = false;
 
+	// Object Rotating Y Axis
+	if (nullptr != m_pTarget)
+	{
+		vec2 vScroll = m_pInputDevice->GetMouseScrollDistance();
+		if (0 != vScroll.y)
+		{
+			_float fAngle = m_pTarget->GetRotationY();
+			fAngle += vScroll.y * dt * 500.f;
+			if (fAngle > 360.f)
+				fAngle -= 360.f;
+			if (fAngle < 0)
+				fAngle += 360.f;
+			m_pTarget->SetRotationY(fAngle);
+		}
+	}
+
 	// Target Copy
 	static _bool is3Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_3))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F3))
 	{
 		if (!is3Down)
 		{
