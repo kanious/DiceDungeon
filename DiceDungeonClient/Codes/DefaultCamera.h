@@ -14,6 +14,15 @@ class Player;
 class DefaultCamera : public Engine::CGameObject
 {
 private:
+	enum eCameraDir
+	{
+		CD_UP,
+		CD_DOWN,
+		CD_LEFT,
+		CD_RIGHT,
+		CD_END
+	};
+private:
 	Engine::CCamera*				m_pCamera;
 	Engine::CInputDevice*			m_pInputDevice;
 
@@ -28,6 +37,16 @@ private:
 
 	Player*							m_pTarget;
 	_float							m_fDistance;
+
+	eCameraDir						m_eCurDir;
+	eCameraDir						m_ePrevDir;
+	glm::vec3						m_vDestPos;
+	_float							m_fHeight;
+	_float							m_fDist;
+
+	int								m_iZoomLevel;
+	int								m_iZoomMinLevel;
+	int								m_iZoomMaxLevel;
 
 private:
 	explicit DefaultCamera();
@@ -52,6 +71,10 @@ private:
 	void KeyCheck(const _float& dt);
 	// Following Target
 	void FollowPlayer();
+	// Move Camera to current dir
+	void MoveCameraDir(const _float& dt, eCameraDir eDir);
+	// Rotate Camera Dir
+	void RotateCameraDir(_bool clockwise);
 
 public:
 	// Basic Update Function

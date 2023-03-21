@@ -18,7 +18,9 @@ USING(std)
 
 DefaultCamera::DefaultCamera()
 	: m_pCamera(nullptr), m_bMouseEnable(true), m_fAngleY(0.f), m_fAngleX(0.f)
-	, m_fSpeed(20.f), m_fRotSpeed(20.f), m_pTarget(nullptr), m_fDistance(50.f)
+	, m_fSpeed(40.f), m_fRotSpeed(20.f), m_pTarget(nullptr), m_fDistance(50.f)
+	, m_eCurDir(CD_DOWN), m_ePrevDir(CD_DOWN), m_fHeight(20.f), m_fDist(15.f)
+	, m_iZoomLevel(5), m_iZoomMinLevel(1), m_iZoomMaxLevel(10)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 }
@@ -112,97 +114,104 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (nullptr == m_pInputDevice || nullptr == m_pTransform)
 		return;
 
-	if (!m_bMouseEnable)
+	if (m_ePrevDir != m_eCurDir)
 	{
-		vec2 vMousePos = m_pInputDevice->GetMouseMovedDistance();
-		m_fAngleX += vMousePos.y;
-		m_fAngleY -= vMousePos.x;
-
-		if (m_fAngleX > 89.f)
-			m_fAngleX = 89.f;
-		if (m_fAngleX < -89.f)
-			m_fAngleX = -89.f;
-
-		if (m_fAngleY > 360.f)
-			m_fAngleY -= 360.f;
-		if (m_fAngleY < 0)
-			m_fAngleY += 360.f;
-
-		m_pTransform->SetRotationX(m_fAngleX);
-		m_pTransform->SetRotationY(m_fAngleY);
-
-		m_pTransform->Update(0);
-		vec3 vDir = m_pTransform->GetLookVector();
-
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
+		vec3 vPos = m_pCamera->GetCameraEye();
+		_float fDist = distance(vPos, m_vDestPos);
+		if (0.5f * (_float)m_iZoomLevel > fDist)
+		{
+			m_pCamera->SetCameraEye(m_vDestPos);
+			m_ePrevDir = m_eCurDir;
+		}
+		else
+		{
+			vec3 vDir = m_vDestPos - vPos;
+			vDir = normalize(vDir);
+			vPos += vDir * dt * m_fSpeed * (_float)m_iZoomLevel;
+			m_pCamera->SetCameraEye(vPos);
+		}
+		return;
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
 	{
-		vec3 vDir = m_pTransform->GetLookVector();
-		m_pTransform->AddPosition(vDir * dt * 20.f);
-
-		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
+		MoveCameraDir(dt, CD_UP);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
 	{
-		vec3 vDir = m_pTransform->GetLookVector();
-		m_pTransform->AddPosition(vDir * dt * -20.f);
-
-		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
+		MoveCameraDir(dt, CD_DOWN);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
 	{
-		vec3 vRight = m_pTransform->GetRightVector();
-		m_pTransform->AddPosition(vRight * dt * 20.f);
-
-		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
+		MoveCameraDir(dt, CD_LEFT);
 	}
 
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
 	{
-		vec3 vRight = m_pTransform->GetRightVector();
-		m_pTransform->AddPosition(vRight * dt * -20.f);
-
-		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
+		MoveCameraDir(dt, CD_RIGHT);
 	}
 
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+	static _bool isQDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_Q))
 	{
-		vec3 vUp = vec3(0.f, 1.f, 0.f);
-		m_pTransform->AddPosition(vUp * dt * -20.f);
-
-		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
-	}
-
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_SPACE))
-	{
-		vec3 vUp = vec3(0.f, -1.f, 0.f);
-		m_pTransform->AddPosition(vUp * dt * -20.f);
-
-		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
-		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
-	}
-
-	static _bool isLeftAltDown = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_ALT))
-	{
-		if (!isLeftAltDown)
+		if (!isQDown)
 		{
-			isLeftAltDown = true;
-			
-			SetMouseEnable(!m_bMouseEnable);
+			isQDown = true;
+			RotateCameraDir(true);
 		}
 	}
 	else
-		isLeftAltDown = false;
+		isQDown = false;
+
+	static _bool isEDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_E))
+	{
+		if (!isEDown)
+		{
+			isEDown = true;
+			RotateCameraDir(false);
+		}
+	}
+	else
+		isEDown = false;
+
+	vec2 mouseScroll = m_pInputDevice->GetMouseScrollDistance();
+	if (0 != mouseScroll.y)
+	{
+		if (0 < mouseScroll.y)
+		{
+			--m_iZoomLevel;
+			if (m_iZoomLevel < m_iZoomMinLevel)
+				m_iZoomLevel = m_iZoomMinLevel;
+		}
+		else
+		{
+			++m_iZoomLevel;
+			if (m_iZoomLevel > m_iZoomMaxLevel)
+				m_iZoomLevel = m_iZoomMaxLevel;
+		}
+
+		vec3 vTarget = m_pCamera->GetCameraTarget();
+		vTarget.y += m_iZoomLevel * m_fHeight;
+		switch (m_eCurDir)
+		{
+		case CD_UP:
+			vTarget.z += m_iZoomLevel * m_fDist;
+			break;
+		case CD_DOWN:
+			vTarget.z -= m_iZoomLevel * m_fDist;
+			break;
+		case CD_LEFT:
+			vTarget.x += m_iZoomLevel * m_fDist;
+			break;
+		case CD_RIGHT:
+			vTarget.x -= m_iZoomLevel * m_fDist;
+			break;
+		}
+		m_pCamera->SetCameraEye(vTarget);
+	}
 }
 
 // Following Target
@@ -219,6 +228,185 @@ void DefaultCamera::FollowPlayer()
 	vPos.y += m_fDistance;
 
 	m_pCamera->SetCameraEye(vPos);
+}
+
+void DefaultCamera::MoveCameraDir(const _float& dt, eCameraDir eDir)
+{
+	vec3 vEye = m_pCamera->GetCameraEye();
+	vec3 vTarget = m_pCamera->GetCameraTarget();
+
+	switch (m_eCurDir)
+	{
+	case CD_UP:
+	{
+		switch (eDir)
+		{
+		case CD_UP:
+			vEye.z -= dt * m_fSpeed;
+			vTarget.z -= dt * m_fSpeed;
+			break;
+		case CD_DOWN:
+			vEye.z += dt * m_fSpeed;
+			vTarget.z += dt * m_fSpeed;
+			break;
+		case CD_LEFT:
+			vEye.x -= dt * m_fSpeed;
+			vTarget.x -= dt * m_fSpeed;
+			break;
+		case CD_RIGHT:
+			vEye.x += dt * m_fSpeed;
+			vTarget.x += dt * m_fSpeed;
+			break;
+		}
+	}
+		break;
+	case CD_DOWN:
+	{
+		switch (eDir)
+		{
+		case CD_UP:
+			vEye.z += dt * m_fSpeed;
+			vTarget.z += dt * m_fSpeed;
+			break;
+		case CD_DOWN:
+			vEye.z -= dt * m_fSpeed;
+			vTarget.z -= dt * m_fSpeed;
+			break;
+		case CD_LEFT:
+			vEye.x += dt * m_fSpeed;
+			vTarget.x += dt * m_fSpeed;
+			break;
+		case CD_RIGHT:
+			vEye.x -= dt * m_fSpeed;
+			vTarget.x -= dt * m_fSpeed;
+			break;
+		}
+	}
+		break;
+	case CD_LEFT:
+	{
+		switch (eDir)
+		{
+		case CD_UP:
+			vEye.x -= dt * m_fSpeed;
+			vTarget.x -= dt * m_fSpeed;
+			break;
+		case CD_DOWN:
+			vEye.x += dt * m_fSpeed;
+			vTarget.x += dt * m_fSpeed;
+			break;
+		case CD_LEFT:
+			vEye.z += dt * m_fSpeed;
+			vTarget.z += dt * m_fSpeed;
+			break;
+		case CD_RIGHT:
+			vEye.z -= dt * m_fSpeed;
+			vTarget.z -= dt * m_fSpeed;
+			break;
+		}
+	}
+		break;
+	case CD_RIGHT:
+	{
+		switch (eDir)
+		{
+		case CD_UP:
+			vEye.x += dt * m_fSpeed;
+			vTarget.x += dt * m_fSpeed;
+			break;
+		case CD_DOWN:
+			vEye.x -= dt * m_fSpeed;
+			vTarget.x -= dt * m_fSpeed;
+			break;
+		case CD_LEFT:
+			vEye.z -= dt * m_fSpeed;
+			vTarget.z -= dt * m_fSpeed;
+			break;
+		case CD_RIGHT:
+			vEye.z += dt * m_fSpeed;
+			vTarget.z += dt * m_fSpeed;
+			break;
+		}
+	}
+		break;
+	}
+
+	m_pCamera->SetCameraEye(vEye);
+	m_pCamera->SetCameraTarget(vTarget);
+}
+
+void DefaultCamera::RotateCameraDir(_bool clockwise)
+{
+	m_ePrevDir = m_eCurDir;
+
+	if (CD_UP == m_eCurDir)
+	{
+		if (clockwise)
+		{
+			m_eCurDir = CD_RIGHT;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.x -= m_iZoomLevel * m_fDist;
+		}
+		else
+		{
+			m_eCurDir = CD_LEFT;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.x += m_iZoomLevel * m_fDist;
+		}
+	}
+	else if (CD_RIGHT == m_eCurDir)
+	{
+		if (clockwise)
+		{
+			m_eCurDir = CD_DOWN;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.z -= m_iZoomLevel * m_fDist;;
+		}
+		else
+		{
+			m_eCurDir = CD_UP;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.z += m_iZoomLevel * m_fDist;;
+		}
+	}
+	else if (CD_DOWN == m_eCurDir)
+	{
+		if (clockwise)
+		{
+			m_eCurDir = CD_LEFT;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.x += m_iZoomLevel * m_fDist;;
+		}
+		else
+		{
+			m_eCurDir = CD_RIGHT;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.x -= m_iZoomLevel * m_fDist;;
+		}
+	}
+	else if (CD_LEFT == m_eCurDir)
+	{
+		if (clockwise)
+		{
+			m_eCurDir = CD_UP;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.z += m_iZoomLevel * m_fDist;;
+		}
+		else
+		{
+			m_eCurDir = CD_DOWN;
+			m_vDestPos = m_pCamera->GetCameraTarget();
+			m_vDestPos.y += m_iZoomLevel * m_fHeight;;
+			m_vDestPos.z -= m_iZoomLevel * m_fDist;;
+		}
+	}
 }
 
 // Basic Update Function
@@ -264,7 +452,7 @@ RESULT DefaultCamera::Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* 
 		m_pTransform->Update(0);
 
 		if (nullptr != m_pCamera)
-			m_pCamera->InitCameraSetting(m_pTransform->GetPosition(), m_pTransform->GetLookVector(), vec3(0.f, 1.f, 0.f), fov, fNear, fFar);
+			m_pCamera->InitCameraSetting(m_pTransform->GetPosition(), vec3(0.f), vec3(0.f, 1.f, 0.f), fov, fNear, fFar);
 	}
 	return PK_NOERROR;
 }

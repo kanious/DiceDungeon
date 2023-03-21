@@ -227,7 +227,7 @@ RESULT SceneDungeon::ReadyLayerAndCamera()
 	CLayer* pLayer = GetLayer((_uint)LAYER_INTERACTIVE_OBJECT);
 	if (nullptr != pLayer)
 	{
-		vec3 vPos = vec3(0.f, 0.f, 0.f);
+		vec3 vPos = vec3(0.f, 50.f, -40.f);
 		vec3 vRot = vec3(0.f, 0.f, 0.f);
 		vec3 vScale = vec3(1.f);
 
@@ -276,13 +276,13 @@ void SceneDungeon::LoadObjects()
 	}
 	vecObjects.clear();
 
-	if (nullptr != m_pDefaultCamera)
-	{
-		SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
-		m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
-		m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
-		m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
-	}
+	//if (nullptr != m_pDefaultCamera)
+	//{
+	//	SetDefaultCameraSavedPosition(cameraData.POSITION, cameraData.ROTATION, cameraData.SCALE);
+	//	m_pDefaultCamera->SetCameraEye(cameraData.POSITION);
+	//	m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
+	//	m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
+	//}
 }
 
 // Initialize Physics World and prepare dice

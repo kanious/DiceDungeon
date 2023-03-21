@@ -18,7 +18,7 @@ USING(std)
 
 DefaultCamera::DefaultCamera()
 	: m_pCamera(nullptr), m_bMouseEnable(true), m_fAngleY(0.f), m_fAngleX(0.f)
-	, m_fSpeed(20.f), m_fRotSpeed(20.f), m_pTarget(nullptr), m_fDistance(50.f)
+	, m_fSpeed(40.f), m_fRotSpeed(20.f), m_pTarget(nullptr), m_fDistance(50.f)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 }
@@ -140,7 +140,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_W))
 	{
 		vec3 vDir = m_pTransform->GetLookVector();
-		m_pTransform->AddPosition(vDir * dt * 20.f);
+		m_pTransform->AddPosition(vDir * dt * m_fSpeed);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
@@ -149,7 +149,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_S))
 	{
 		vec3 vDir = m_pTransform->GetLookVector();
-		m_pTransform->AddPosition(vDir * dt * -20.f);
+		m_pTransform->AddPosition(vDir * dt * -m_fSpeed);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + vDir * 10.f);
@@ -158,7 +158,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_A))
 	{
 		vec3 vRight = m_pTransform->GetRightVector();
-		m_pTransform->AddPosition(vRight * dt * 20.f);
+		m_pTransform->AddPosition(vRight * dt * m_fSpeed);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
@@ -167,7 +167,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_D))
 	{
 		vec3 vRight = m_pTransform->GetRightVector();
-		m_pTransform->AddPosition(vRight * dt * -20.f);
+		m_pTransform->AddPosition(vRight * dt * -m_fSpeed);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
@@ -176,7 +176,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 	{
 		vec3 vUp = vec3(0.f, 1.f, 0.f);
-		m_pTransform->AddPosition(vUp * dt * -20.f);
+		m_pTransform->AddPosition(vUp * dt * -m_fSpeed);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
@@ -185,7 +185,7 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_SPACE))
 	{
 		vec3 vUp = vec3(0.f, -1.f, 0.f);
-		m_pTransform->AddPosition(vUp * dt * -20.f);
+		m_pTransform->AddPosition(vUp * dt * -m_fSpeed);
 
 		m_pCamera->SetCameraEye(m_pTransform->GetPosition());
 		m_pCamera->SetCameraTarget(m_pTransform->GetPosition() + m_pTransform->GetLookVector() * 10.f);
