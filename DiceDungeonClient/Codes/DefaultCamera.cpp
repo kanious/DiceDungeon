@@ -20,7 +20,7 @@ DefaultCamera::DefaultCamera()
 	: m_pCamera(nullptr), m_bMouseEnable(true), m_fAngleY(0.f), m_fAngleX(0.f)
 	, m_fSpeed(40.f), m_fRotSpeed(20.f), m_pTarget(nullptr), m_fDistance(50.f)
 	, m_eCurDir(CD_DOWN), m_ePrevDir(CD_DOWN), m_fHeight(20.f), m_fDist(15.f)
-	, m_iZoomLevel(5), m_iZoomMinLevel(1), m_iZoomMaxLevel(10)
+	, m_iZoomLevel(4), m_iZoomMinLevel(1), m_iZoomMaxLevel(10)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 }
