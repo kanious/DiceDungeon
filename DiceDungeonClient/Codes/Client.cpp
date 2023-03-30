@@ -185,7 +185,7 @@ RESULT Client::Ready_BasicComponent()
 	else
 		return PK_TRANSFORM_CREATE_FAILED;
 
-	//CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
+	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
 	CJsonParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
 	CJsonParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName, true);

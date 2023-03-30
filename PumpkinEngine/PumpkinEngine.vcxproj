@@ -134,7 +134,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64\Debug;$(SolutionDir)PlugIns\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32d.lib;fmod_vc.lib;fmodL_vc.lib;glew32sd.lib;glfw3dll.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32d.lib;fmod_vc.lib;fmodL_vc.lib;glew32sd.lib;glfw3dll.lib;assimp-vc143-mtd.lib;lua5.4.4-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
@@ -159,7 +159,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64\Release;$(SolutionDir)PlugIns\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32.lib;fmod_vc.lib;fmodL_vc.lib;glew32s.lib;assimp-vc143-mt.lib;glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;pugixml.lib;glew32.lib;fmod_vc.lib;fmodL_vc.lib;glew32s.lib;assimp-vc143-mt.lib;glfw3dll.lib;lua5.4.4-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
@@ -196,6 +196,7 @@
     <ClInclude Include="Headers\JsonParser.h" />
     <ClInclude Include="Headers\Light.h" />
     <ClInclude Include="Headers\LightMaster.h" />
+    <ClInclude Include="Headers\LuaBrain.h" />
     <ClInclude Include="Headers\PhysicsDefines.h" />
     <ClInclude Include="Headers\PhysicsFactory.h" />
     <ClInclude Include="Headers\PhysicsWorld.h" />
@@ -251,6 +252,7 @@
     <ClCompile Include="Codes\JsonParser.cpp" />
     <ClCompile Include="Codes\Light.cpp" />
     <ClCompile Include="Codes\LightMaster.cpp" />
+    <ClCompile Include="Codes\LuaBrain.cpp" />
     <ClCompile Include="Codes\PhysicsFactory.cpp" />
     <ClCompile Include="Codes\PhysicsWorld.cpp" />
     <ClCompile Include="Codes\PlaneShape.cpp" />

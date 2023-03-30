@@ -9,8 +9,56 @@
 		<Tag>Effect</Tag>
 	</Sound>
 	<Sound category="SoundFile">
-		<Tag>Ball</Tag>
-		<Path>Sounds\ball-hits-ball.mp3</Path>
+		<Tag>Background</Tag>
+		<Path>Sounds\scared.mid</Path>
+		<ChannelTag>BG</ChannelTag>
+		<Loop>1</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>RollDice</Tag>
+		<Path>Sounds\dice-142528.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Hit</Tag>
+		<Path>Sounds\hit.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Walk</Tag>
+		<Path>Sounds\walkstep.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Run</Tag>
+		<Path>Sounds\runstep.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Punch</Tag>
+		<Path>Sounds\punch.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Hurt01</Tag>
+		<Path>Sounds\hurt01.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Hurt02</Tag>
+		<Path>Sounds\hurt02.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Death</Tag>
+		<Path>Sounds\knockdown.mp3</Path>
 		<ChannelTag>Effect</ChannelTag>
 		<Loop>0</Loop>
 	</Sound>

@@ -105,7 +105,7 @@ void Player::MovingCheck(const _float& dt)
 
 void Player::KeyCheck(const _float& dt)
 {
-	if (nullptr == m_pInputDevice)
+	if (nullptr == m_pInputDevice || nullptr == m_pAnimator)
 		return;
 
 	static _bool isF3Down = false;
@@ -114,8 +114,7 @@ void Player::KeyCheck(const _float& dt)
 		if (!isF3Down)
 		{
 			isF3Down = true;
-			if (nullptr != m_pAnimator)
-				m_pAnimator->SetBlendingOption(!m_pAnimator->GetBlendingOption());
+			m_pAnimator->SetBlendingOption(!m_pAnimator->GetBlendingOption());
 		}
 	}
 	else
@@ -203,7 +202,7 @@ void Player::Destroy()
 
 // Initialize
 RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
-	, vec3 vRot, vec3 vScale)
+	, vec3 vRot, vec3 vScale, _bool isPlayer)
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
@@ -221,9 +220,13 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
 
-		m_pAnimator = Animator::Create(this);
-		m_pMesh->SetAnimController(m_pAnimator);
-		AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
+		if (isPlayer)
+		{
+			m_pAnimator = Animator::Create(this);
+			m_pMesh->SetAnimController(m_pAnimator);
+			AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
+			m_pAnimator->SetIsPlaying(true);
+		}
 
 		mat4x4* pmat = new mat4x4(1.f);
 		*pmat = scale(*pmat, vec3(0.01f));
@@ -236,17 +239,15 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 		m_pTransform->Update(0);
 	}
 
-	m_pAnimator->SetIsPlaying(true);
-
 	return PK_NOERROR;
 }
 
 // Create an instance
 Player* Player::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
-	, vec3 vRot, vec3 vScale)
+	, vec3 vRot, vec3 vScale, _bool isPlayer)
 {
 	Player* pInstance = new Player();
-	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale))
+	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, isPlayer))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

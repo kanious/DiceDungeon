@@ -23,6 +23,7 @@
 #include "ObjectFactory.h"
 #include "TargetManager.h"
 #include "PhysicsDefines.h"
+#include "LuaBrain.h"
 
 #include <sstream>
 #include <atlconv.h>
@@ -110,6 +111,18 @@ void SceneDungeon::CollisionSoundCallback()
 // Check User input
 void SceneDungeon::KeyCheck()
 {
+	static _bool isF1Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
+	{
+		if (!isF1Down)
+		{
+			isF1Down = true;
+			CLuaBrain::GetInstance()->RunLuaScript("BG");
+		}
+	}
+	else
+		isF1Down = false;
+
 	static _bool isF5Down = false;
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F5))
 	{
@@ -202,6 +215,15 @@ RESULT SceneDungeon::Ready(string dataPath)
 	// TargetManager
 	if (nullptr != m_pTargetManager)
 		m_pTargetManager->Ready(this);
+
+	// Lua
+	CLuaBrain* pBrain = CLuaBrain::GetInstance();
+	if (nullptr != pBrain)
+	{
+		pBrain->Ready(m_DataPath);
+	}
+
+	//CSoundMaster::GetInstance()->PlaySound("Background");
 
 	//if (nullptr == m_pSkyBox)
 	//{

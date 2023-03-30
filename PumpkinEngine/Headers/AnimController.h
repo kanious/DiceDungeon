@@ -31,6 +31,9 @@ protected:
 	_float						m_fTotalAccumWeight;
 	_uint						m_iPrevFrameIndex;
 
+	// Sound
+	_uint						m_iPrevFrameIndexForSound;
+
 protected:
 	explicit CAnimController();
 	virtual ~CAnimController();
@@ -48,7 +51,7 @@ public:
 	void SetIsPlaying(_bool value)		{ m_bIsPlaying = value; }
 
 public:
-	void FrameMove(const _float& dt);
+	virtual void FrameMove(const _float& dt);
 	void SetAnimationSpeed(_float speed) { m_fAnimSpeed = speed; }
 	void SetNextFrame();
 	void SetPreviousFrame();

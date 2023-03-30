@@ -56,11 +56,11 @@ private:
 	virtual void Destroy();
 	// Initialize
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _bool isPlayer);
 public:
 	// Create an instance
 	static Player* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _bool isPlayer = false);
 };
 
 

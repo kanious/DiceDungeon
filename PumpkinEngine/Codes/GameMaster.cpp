@@ -12,6 +12,7 @@
 #include "..\Headers\CollisionMaster.h"
 #include "..\Headers\LightMaster.h"
 #include "..\Headers\AnimationData.h"
+#include "..\Headers\LuaBrain.h"
 
 #include "..\Headers\Scene.h"
 
@@ -65,6 +66,7 @@ void CGameMaster::Destroy()
 	SafeDestroy(CCollisionMaster::GetInstance());
 	SafeDestroy(CLightMaster::GetInstance());
 	SafeDestroy(CAnimationData::GetInstance());
+	SafeDestroy(CLuaBrain::GetInstance());
 
 	m_pRenderer = nullptr;
 }

@@ -13,6 +13,7 @@ CAnimController::CAnimController()
 	, m_fAnimSpeed(1.f), m_bReverse(false), m_bPause(false), m_bIsPlaying(false)
 	, m_bChangeAnimation(false), m_pvecPrevTransforms(nullptr), m_prevTag("")
 	, m_fWeight(0.3f), m_fLastAccumWeight(0.f), m_fTotalAccumWeight(0.f), m_iPrevFrameIndex(0)
+	, m_iPrevFrameIndexForSound(0)
 {
 }
 

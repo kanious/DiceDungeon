@@ -82,6 +82,9 @@
     <Filter Include="05.IndependantFunctions\Physics\For.Dice\Collision">
       <UniqueIdentifier>{2b8785d1-aab6-467a-8612-7c5ed6d19457}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.IndependantFunctions\LuaBrain">
+      <UniqueIdentifier>{91711b84-0d02-44f7-979e-5466dea05bfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Base.h">
@@ -267,6 +270,9 @@
     <ClInclude Include="Headers\CollisionBox.h">
       <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\LuaBrain.h">
+      <Filter>05.IndependantFunctions\LuaBrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -418,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="Codes\CollisionBox.cpp">
       <Filter>05.IndependantFunctions\Physics\For.Dice</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\LuaBrain.cpp">
+      <Filter>05.IndependantFunctions\LuaBrain</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

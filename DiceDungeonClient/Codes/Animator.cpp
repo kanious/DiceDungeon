@@ -3,6 +3,7 @@
 #include "AnimationData.h"
 #include "Player.h"
 #include "Function.h"
+#include "LuaBrain.h"
 
 
 USING(Engine)
@@ -40,6 +41,102 @@ void Animator::ChangeAnimation(string tag)
     m_currentTag = tag;
     m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation(tag);
     ResetAnimation();
+}
+
+void Animator::FrameMove(const _float& dt)
+{
+    CAnimController::FrameMove(dt);
+
+    if ("walk" == m_currentTag)
+    {
+        if (2 == m_iFrameIndex || 17 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Walk");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("run" == m_currentTag)
+    {
+        if (2 == m_iFrameIndex || 10 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Run");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("attack1" == m_currentTag)
+    {
+        if (5 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Punch");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("attack2" == m_currentTag)
+    {
+        if (5 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Punch");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("hurt" == m_currentTag)
+    {
+        if (4 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Hurt02");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("death" == m_currentTag)
+    {
+        if (5 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Death");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
 }
 
 // Initialize

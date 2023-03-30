@@ -30,6 +30,7 @@ public:
 	_bool GetBlendingOption() { return m_bBlendingOption; }
 	// Set animation by tag
 	void ChangeAnimation(std::string tag);
+	virtual void FrameMove(const _float& dt);
 
 private:
 	// Initialize

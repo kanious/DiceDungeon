@@ -11,6 +11,7 @@
 #include "../Headers/Camera.h"
 #include "../Headers/DiceMaster.h"
 #include "../Headers/EngineFunction.h"
+#include "../Headers/LuaBrain.h"
 
 USING(Engine)
 USING(std)
@@ -155,6 +156,7 @@ void CPhysicsWorld::RollDice(_uint count)
 	//	return;
 
 	m_bRolling = true;
+	CLuaBrain::GetInstance()->RunLuaScript("RollDice");
 
 	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)
 	{
