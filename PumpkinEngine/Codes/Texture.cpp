@@ -73,7 +73,8 @@ RESULT CTexture::Ready(string ID, string filePath)
 // Clone component
 CComponent* CTexture::Clone()
 {
-    return new CTexture(*this);
+    //return new CTexture(*this);
+    return this;
 }
 
 // Create an instance

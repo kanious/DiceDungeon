@@ -10,7 +10,7 @@ USING(glm)
 USING(std)
 
 Animator::Animator()
-    : m_pPlayer(nullptr)
+    : m_pPlayer(nullptr), m_currentTag(""), m_bBlendingOption(true)
 {
 }
 
@@ -30,9 +30,16 @@ void Animator::AnimationEndEvent()
 }
 
 // Set animation by type state
-void Animator::SetAnimationByType()
+void Animator::ChangeAnimation(string tag)
 {
-    m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation("jump");
+    if (m_currentTag == tag)
+        return;
+
+    if (m_bBlendingOption)
+        StartBlending();
+    m_currentTag = tag;
+    m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation(tag);
+    ResetAnimation();
 }
 
 // Initialize
@@ -40,9 +47,11 @@ RESULT Animator::Ready(Player* pPlayer)
 {
     m_pPlayer = pPlayer;
 
-    m_fAnimSpeed = 3.f;
+    m_fAnimSpeed = 1.f;
 
-    SetAnimationByType();
+    m_currentTag = "idle";
+    m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation("idle");
+    m_pvecPrevTransforms = GetMatrix();
 
 	return PK_NOERROR;
 }

@@ -9,8 +9,10 @@ USING(std)
 USING(glm)
 
 CAnimController::CAnimController()
-	: m_pCurAnimation(nullptr), m_iFrameIndex(0), m_fCurTime(0.f), m_fAnimSpeed(1.f)
-	, m_bReverse(false), m_bPause(false), m_bIsPlaying(false)
+	: m_pCurAnimation(nullptr), m_iFrameIndex(0), m_fCurTime(0.f), m_curTag("")
+	, m_fAnimSpeed(1.f), m_bReverse(false), m_bPause(false), m_bIsPlaying(false)
+	, m_bChangeAnimation(false), m_pvecPrevTransforms(nullptr), m_prevTag("")
+	, m_fWeight(0.3f), m_fLastAccumWeight(0.f), m_fTotalAccumWeight(0.f), m_iPrevFrameIndex(0)
 {
 }
 
@@ -24,12 +26,17 @@ void CAnimController::Destroy()
 	m_iFrameIndex = 0;
 }
 
-glm::mat4x4 CAnimController::GetMatrix()
+vector<mat4x4>* CAnimController::GetMatrix()
 {
 	if (nullptr != m_pCurAnimation)
 		return m_pCurAnimation->GetMatrix(m_iFrameIndex);
 
-	return mat4x4(1.f);
+	return nullptr;
+}
+
+vector<mat4x4>* CAnimController::GetPrevMatrix()
+{
+	return m_pvecPrevTransforms;
 }
 
 void CAnimController::FrameMove(const _float& dt)
@@ -84,4 +91,33 @@ void CAnimController::ResetAnimation()
 {
 	m_fCurTime = 0;
 	m_iFrameIndex = 0;
+}
+
+void CAnimController::InitBlendingVariables()
+{
+	m_bChangeAnimation = false;
+	m_fLastAccumWeight = 0.f;
+	m_fTotalAccumWeight = 0.f;
+	m_prevTag = m_curTag;
+	m_iPrevFrameIndex = 0;
+}
+
+void CAnimController::StartBlending()
+{
+	m_pvecPrevTransforms = GetMatrix();
+	InitBlendingVariables();
+	m_bChangeAnimation = true;
+}
+
+void CAnimController::BlendingMove()
+{
+	if (m_iPrevFrameIndex != m_iFrameIndex)
+	{
+		m_fLastAccumWeight = m_fWeight * (1.f - m_fTotalAccumWeight);
+		m_iPrevFrameIndex = m_iFrameIndex;
+	}
+	else
+		m_fLastAccumWeight = 0.f;
+
+	m_fTotalAccumWeight += m_fLastAccumWeight;
 }

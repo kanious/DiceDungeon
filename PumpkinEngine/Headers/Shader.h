@@ -21,6 +21,10 @@ protected:
 	_uint				m_colorLocation;
 	_uint				m_transparencyLocation;
 	_uint				m_frameLocation;
+	_uint				m_boneLocation[100];
+	_uint				m_prevBoneLocation[100];
+	_uint				m_isBlendingLocation;
+	_uint				m_fBlendFactorLocation;
 
 private:
 	explicit CShader();
@@ -58,6 +62,14 @@ public:
 	void SetTransparency(_bool value);
 	// Set animation frame index information to shader
 	void SetFrameIndex(_uint index);
+	// Set Bone matrices to shader
+	void SetBoneMatrices(_int index, const glm::mat4x4& matrix);
+	// Set Previous Bone matrices to shader
+	void SetPrevBoneMatrices(_int index, const glm::mat4x4& matrix);
+	// Set Blending bool to shader
+	void SetIsBlending(_bool value);
+	// Set Blending Factor to shader
+	void SetBlendingFactor(_float value);
 public:
 	// Use this shader
 	void Use();

@@ -2,7 +2,9 @@
 #include "..\Headers\AnimationData.h"
 #include "..\Headers\Animation.h"
 #include <fstream>
-
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 USING(Engine)
 USING(std)
@@ -40,32 +42,49 @@ CAnimation* CAnimationData::FindAnimation(string tag)
 	return nullptr;
 }
 
-void CAnimationData::LoadAnimations(string assetFolderPath)
+//void CAnimationData::LoadAnimations(string assetFolderPath)
+//{
+//	string listFilePath = assetFolderPath + "Animation\\animList.txt";
+//
+//	ifstream file(listFilePath.c_str());
+//	if (!file.is_open())
+//		return;
+//
+//	const _uint BUFFER_SIZE = 1000;
+//	char textBuffer[BUFFER_SIZE];
+//	_bool keepReading = true;
+//
+//	while (keepReading)
+//	{
+//		file.getline(textBuffer, BUFFER_SIZE);
+//
+//		if (!strcmp("EOF", textBuffer))
+//		{
+//			keepReading = false;
+//			continue;
+//		}
+//
+//		string tag(textBuffer);
+//		string animPath = assetFolderPath + "Animation\\" + tag + ".animation";
+//		CAnimation* pAnim = CAnimation::Create(tag, animPath);
+//		if (nullptr != pAnim)
+//			AddAnimation(tag, pAnim);
+//	}
+//}
+
+void CAnimationData::LoadAnimations(const aiScene* scene, map<string, _int>* pMap)
 {
-	string listFilePath = assetFolderPath + "Animation\\animList.txt";
-
-	ifstream file(listFilePath.c_str());
-	if (!file.is_open())
-		return;
-
-	const _uint BUFFER_SIZE = 1000;
-	char textBuffer[BUFFER_SIZE];
-	_bool keepReading = true;
-
-	while (keepReading)
+	for (int i = 0; i < scene->mNumAnimations; ++i)
 	{
-		file.getline(textBuffer, BUFFER_SIZE);
-
-		if (!strcmp("EOF", textBuffer))
-		{
-			keepReading = false;
+		aiAnimation* anim = scene->mAnimations[i];
+		if (nullptr == anim)
 			continue;
-		}
-
-		string tag(textBuffer);
-		string animPath = assetFolderPath + "Animation\\" + tag + ".animation";
-		CAnimation* pAnim = CAnimation::Create(tag, animPath);
+		
+		string tag(anim->mName.data);
+		CAnimation* pAnim = CAnimation::Create(tag, scene, anim, pMap);
 		if (nullptr != pAnim)
 			AddAnimation(tag, pAnim);
 	}
 }
+
+

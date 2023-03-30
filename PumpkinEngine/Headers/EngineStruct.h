@@ -34,6 +34,32 @@ namespace Engine
 		glm::vec3 p2;
 	}TRIANGLE;
 
+	typedef struct sBoneVertexData
+	{
+		sBoneVertexData()
+		{
+			ids[0] = 0; ids[1] = 0; ids[2] = 0; ids[3] = 0;
+			weights[0] = 0.f; weights[1] = 0.f; weights[2] = 0.f; weights[3] = 0.f;
+		}
+
+		unsigned int ids[4];
+		float weights[4];
+
+		void AddBoneInfo(int id, float weight)
+		{
+			int numIds = sizeof(ids) / sizeof(ids[0]);
+			for (int i = 0; i < numIds; ++i)
+			{
+				if (0.f == weights[i])
+				{
+					ids[i] = id;
+					weights[i] = weight;
+					return;
+				}
+			}
+		}
+	}BoneData;
+
 	enum eModelType
 	{
 		xyz_index,

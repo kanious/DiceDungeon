@@ -878,12 +878,12 @@
  {
    "ID": "true_pumpkin_king",
    "Path": "Mesh\\",
-   "FileName": "pumpkin_king.ply",
+   "FileName": "pumpkin_king.fbx",
    "DataType": 2,
-   "Shader_ID": "MeshShader",
+   "Shader_ID": "BoneShader",
    "InitSize": 0.7,
    "MeshType": "character",
-   "Load_Assimp": false,
+   "Load_Assimp": true,
    "Texture_ID_Diff": "true_pumpkinking_Tex",
    "Texture_ID_Normal": ""
  },

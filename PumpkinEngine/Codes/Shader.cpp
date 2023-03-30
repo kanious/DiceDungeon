@@ -3,6 +3,7 @@
 #include "../Headers/Component.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "../Headers/OpenGLDefines.h"
 
 
@@ -22,7 +23,11 @@ CShader::CShader()
 	, m_colorLocation(0)
 	, m_transparencyLocation(0)
 	, m_frameLocation(0)
+	, m_isBlendingLocation(0)
+	, m_fBlendFactorLocation(0)
 {
+	memset(m_boneLocation, 0, sizeof(m_boneLocation));
+	memset(m_prevBoneLocation, 0, sizeof(m_prevBoneLocation));
 }
 
 CShader::CShader(const CShader& rhs)
@@ -37,8 +42,12 @@ CShader::CShader(const CShader& rhs)
 	, m_colorLocation(rhs.m_colorLocation)
 	, m_transparencyLocation(rhs.m_transparencyLocation)
 	, m_frameLocation(rhs.m_frameLocation)
+	, m_isBlendingLocation(rhs.m_isBlendingLocation)
+	, m_fBlendFactorLocation(rhs.m_fBlendFactorLocation)
 {
 	m_tag = rhs.m_tag;
+	memcpy(m_boneLocation, rhs.m_boneLocation, sizeof(m_boneLocation));
+	memcpy(m_prevBoneLocation, rhs.m_prevBoneLocation, sizeof(m_prevBoneLocation));
 }
 
 CShader::~CShader()
@@ -136,12 +145,25 @@ void CShader::SetLocation()
 	m_colorLocation = glGetUniformLocation(m_ShaderProgram, "vColor");
 	m_transparencyLocation = glGetUniformLocation(m_ShaderProgram, "isTransparency");
 	m_frameLocation = glGetUniformLocation(m_ShaderProgram, "iFrameIndex");
+	m_isBlendingLocation = glGetUniformLocation(m_ShaderProgram, "isBlending");
+	m_fBlendFactorLocation = glGetUniformLocation(m_ShaderProgram, "fBlendFactor");
+
+	for (int i = 0; i < 100; ++i)
+	{
+		stringstream ss;
+		ss << "BoneMatrices[" << i << "]";
+		m_boneLocation[i] = glGetUniformLocation(m_ShaderProgram, ss.str().c_str());
+
+		ss.str("");
+		ss << "PrevBoneMatrices[" << i << "]";
+		m_prevBoneLocation[i] = glGetUniformLocation(m_ShaderProgram, ss.str().c_str());
+	}
  }
 
 // Set matrix information to shader
 void CShader::SetMatrixInfo(const mat4x4& world, const mat4x4& view, const mat4x4& proj)
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniformMatrix4fv(m_matWorldLocation, 1, GL_FALSE, value_ptr(world));
 	glUniformMatrix4fv(m_matViewLocation, 1, GL_FALSE, value_ptr(view));
 	glUniformMatrix4fv(m_matProjLocation, 1, GL_FALSE, value_ptr(proj));
@@ -150,50 +172,78 @@ void CShader::SetMatrixInfo(const mat4x4& world, const mat4x4& view, const mat4x
 // Set diffuse texture information to shader
 void CShader::SetTextureInfo()
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform1i(m_diffTexLocation, 0);
 }
 
 // Set normal texture information to shader
 void CShader::SetNormalTextureInfo()
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform1i(m_normalTexLocation, 1);
 }
 
 // Set light enable information to shader
 void CShader::SetLightEnableInfo(_bool lightEnable)
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform1i(m_lightEnableLocation, lightEnable);
 }
 
 // Set selected object information to shader
 void CShader::SetSelected(_bool selected)
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform1i(m_selectedLocation, selected);
 }
 
 // Set mesh color information to shader
 void CShader::SetColor(vec3 vColor)
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform4f(m_colorLocation, vColor.x, vColor.y, vColor.z, 1.f);
 }
 
 // Set mesh transparency information to shader
 void CShader::SetTransparency(_bool value)
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform1i(m_transparencyLocation, value);
 }
 
 // Set animation frame index information to shader
 void CShader::SetFrameIndex(_uint index)
 {
-	glUseProgram(m_ShaderProgram);
+	Use();
 	glUniform1i(m_frameLocation, index);
+}
+
+// Set Bone matrices to shader
+void CShader::SetBoneMatrices(_int index, const mat4x4& matrix)
+{
+	Use();
+	glUniformMatrix4fv(m_boneLocation[index], 1, GL_FALSE, value_ptr(matrix));
+}
+
+// Set Previous Bone matrices to shader
+void CShader::SetPrevBoneMatrices(_int index, const mat4x4& matrix)
+{
+	Use();
+	glUniformMatrix4fv(m_prevBoneLocation[index], 1, GL_FALSE, value_ptr(matrix));
+}
+
+// Set Blending bool to shader
+void CShader::SetIsBlending(_bool value)
+{
+	Use();
+	glUniform1i(m_isBlendingLocation, value);
+}
+
+// Set Blending Factor to shader
+void CShader::SetBlendingFactor(_float value)
+{
+	Use();
+	glUniform1f(m_fBlendFactorLocation, value);
 }
 
 void CShader::Use()
@@ -213,7 +263,7 @@ void CShader::SetInt(const std::string& name, _int value)
 
 void CShader::SetFloat(const std::string& name, _float value)
 {
-	glUniform1i(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
+	glUniform1f(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
 }
 
 void CShader::SetVec4(const std::string& name, glm::vec4& value)

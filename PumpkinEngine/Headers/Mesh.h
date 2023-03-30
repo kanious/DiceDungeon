@@ -4,6 +4,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <map>
 
 #include "Component.h"
 #include "EngineStruct.h"
@@ -24,12 +25,14 @@ class ENGINE_API CMesh : public CComponent
 {
 private:
 	COpenGLDevice*				m_pOpenGLDevice;
-	CVIBuffer*					m_pVIBuffer;
+	std::vector<CVIBuffer*>		m_vecVIBuffers;
+	//CVIBuffer*					m_pVIBuffer;
 	CBoundingBox*				m_pBoundingBox;
 	CTexture*					m_pDiffTexture;
 	CTexture*					m_pNormalTexture;
 	CShader*					m_pShader;
 	CTransform*					m_pParentTransform;
+	glm::mat4x4*				m_pMatrix;
 
 	std::string					m_textureFileName;
 	_uint						m_iTriNum;
@@ -45,6 +48,11 @@ private:
 	CAnimController*			m_pAnimController;
 	std::string					m_initSize;
 	std::string					m_meshType;
+
+	// For.Bone
+	std::map<std::string, _int> m_mapBoneInformation;
+	_bool						m_bHasBone;
+
 
 private:
 	explicit CMesh();
@@ -66,6 +74,7 @@ public:
 	std::string GetTexName()								{ return m_textureFileName; }
 	std::string GetInitSize()								{ return m_initSize; }
 	std::string GetMeshType()								{ return m_meshType; }
+	_bool GetSelected()										{ return m_bSelected; }
 	void SetTransform(CTransform* transform)				{ m_pParentTransform = transform; }
 	void SetWireFrame(_bool wire)							{ m_bWireFrame = wire; }
 	void SetSelcted(_bool select)							{ m_bSelected = select; }
@@ -74,18 +83,22 @@ public:
 	void SetBillboard(_bool value)							{ m_bBiilboard = value; }
 	void SetPriority(_bool value)							{ m_bPriority = value; }
 	void SetAnimController(CAnimController* pController)	{ m_pAnimController = pController; }
+	void SetMatrix(glm::mat4x4* pMat)						{ m_pMatrix = pMat; }
 	// Set diffuse texture
 	void SetTexture(std::string texID_diff);
 
 private:
 	RESULT Ready(std::string ID, std::string filePath, std::string fileName, eModelType type, std::string shaderID, std::string initSize, std::string meshType, std::string texID_Diff, std::string texID_Normal, _bool assimp);
-	RESULT Ready_VIBuffer(eModelType type, std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
+	RESULT Ready_VIBuffer(eModelType type, std::string filePath, std::string fileName);
 	void Ready_Texture_Diff(std::string texID);
 	void Ready_Texture_Normal(std::string texID);
 	void Ready_Shader(std::string shaderID);
-	RESULT Ready_Assimp(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
-	void processNode(aiNode* node, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
-	void processMesh(aiMesh* mesh, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
+	RESULT Ready_Assimp(std::string filePath, std::string fileName);
+	void processNode(aiNode* node, const aiScene* scene);
+	void processMesh(aiMesh* mesh, const aiScene* scene);
+	// Save bone id by name
+	void AddBoneInformation(std::string name, _int id);
+	void CreateVIBuffer(VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum);
 
 public:
 	virtual CComponent* Clone();

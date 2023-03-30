@@ -9,9 +9,12 @@
 #include "../Headers/Transform.h"
 #include "../Headers/BoundingBox.h"
 #include "../Headers/AnimController.h"
+#include "../Headers/AnimationData.h"
+#include "../Headers/Animation.h"
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <map>
 
 
 USING(Engine)
@@ -25,7 +28,6 @@ static int GetRandNum(int min, int max)
 
 CMesh::CMesh()
     : m_pOpenGLDevice(COpenGLDevice::GetInstance())
-    , m_pVIBuffer(nullptr)
     , m_pBoundingBox(nullptr)
     , m_pDiffTexture(nullptr)
     , m_pNormalTexture(nullptr)
@@ -43,13 +45,16 @@ CMesh::CMesh()
     , m_pAnimController(nullptr)
     , m_initSize("")
     , m_meshType("")
+    , m_pMatrix(nullptr)
+    , m_bHasBone(false)
 {
     m_pOpenGLDevice->AddRefCnt();
+    m_vecVIBuffers.clear();
+    m_mapBoneInformation.clear();
 }
 
 CMesh::CMesh(const CMesh& rhs)
     : m_pOpenGLDevice(rhs.m_pOpenGLDevice)
-    , m_pVIBuffer(rhs.m_pVIBuffer)
     , m_pDiffTexture(rhs.m_pDiffTexture)
     , m_pNormalTexture(rhs.m_pNormalTexture)
     , m_pShader(rhs.m_pShader)
@@ -65,18 +70,29 @@ CMesh::CMesh(const CMesh& rhs)
     , m_pAnimController(nullptr)
     , m_initSize(rhs.m_initSize)
     , m_meshType(rhs.m_meshType)
+    , m_pMatrix(rhs.m_pMatrix)
+    , m_bHasBone(rhs.m_bHasBone)
+    , m_mapBoneInformation(rhs.m_mapBoneInformation)
 {
     m_tag = rhs.m_tag;
     m_pOpenGLDevice->AddRefCnt();
-    if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
-    if (nullptr != m_pDiffTexture) m_pDiffTexture->AddRefCnt();
-    if (nullptr != m_pNormalTexture) m_pNormalTexture->AddRefCnt();
+    for (int i = 0; i < rhs.m_vecVIBuffers.size(); ++i)
+    {
+        m_vecVIBuffers.push_back(rhs.m_vecVIBuffers[i]);
+        m_vecVIBuffers[i]->AddRefCnt();
+    }
+    //if (nullptr != m_pVIBuffer) m_pVIBuffer->AddRefCnt();
+    //if (nullptr != m_pDiffTexture) m_pDiffTexture->AddRefCnt();
+    //if (nullptr != m_pNormalTexture) m_pNormalTexture->AddRefCnt();
     if (nullptr != m_pShader) m_pShader->AddRefCnt();
 
-    m_pBoundingBox = CBoundingBox::Create(
-        rhs.m_pBoundingBox->m_vMin
-        , rhs.m_pBoundingBox->m_vMax
-        , rhs.m_pBoundingBox->m_shaderID);
+    if (nullptr != rhs.m_pBoundingBox)
+    {
+        m_pBoundingBox = CBoundingBox::Create(
+            rhs.m_pBoundingBox->m_vMin
+            , rhs.m_pBoundingBox->m_vMax
+            , rhs.m_pBoundingBox->m_shaderID);
+    }
 
     //m_pTriangles = new TRIANGLE[rhs.m_iTriNum];
     //memcpy(m_pTriangles, rhs.m_pTriangles, sizeof(TRIANGLE) * rhs.m_iTriNum);
@@ -92,7 +108,10 @@ void CMesh::Render()
     if (nullptr == m_pParentTransform || nullptr == m_pShader)
         return;
     
-    mat4x4 matWorld = *m_pParentTransform->GetWorldMatrix();
+    mat4x4 matWorld = mat4x4(1.f);
+    if (nullptr != m_pMatrix)
+        matWorld = *m_pMatrix * matWorld;
+    matWorld = *m_pParentTransform->GetWorldMatrix() * matWorld;
     const mat4x4 matView = m_pOpenGLDevice->GetViewMatrix();
     const mat4x4 matProj = m_pOpenGLDevice->GetProjMatrix();
 
@@ -134,6 +153,39 @@ void CMesh::Render()
     m_pShader->SetSelected(m_bSelected);
     m_pShader->SetTransparency(m_bTransparency);
 
+    // Animation
+    if (m_bHasBone)
+    {
+        vector<mat4x4>* pVec = m_pAnimController->GetMatrix();
+        for (int i = 0; i < pVec->size(); ++i)
+            m_pShader->SetBoneMatrices(i, (*pVec)[i]);
+    }
+
+    // Animation Blending
+    if (nullptr != m_pAnimController)
+    {
+        if (m_pAnimController->GetBlending())
+        {
+            vector<mat4x4>* pVec = m_pAnimController->GetPrevMatrix();
+            for (int i = 0; i < pVec->size(); ++i)
+                m_pShader->SetPrevBoneMatrices(i, (*pVec)[i]);
+            m_pShader->SetIsBlending(true);
+            m_pShader->SetBlendingFactor(m_pAnimController->GetBlendingFactor());
+            m_pAnimController->BlendingMove();
+
+            if (0.95f < m_pAnimController->GetBlendingFactor())
+            {
+                m_pAnimController->InitBlendingVariables();
+            }
+        }
+        else
+        {
+            m_pShader->SetIsBlending(false);
+            m_pShader->SetBlendingFactor(1.f);
+        }
+    }
+
+
     if (nullptr != m_pDiffTexture)
     {
         m_pShader->SetTextureInfo();
@@ -148,19 +200,22 @@ void CMesh::Render()
         glBindTexture(GL_TEXTURE_2D, m_pNormalTexture->GetTextureID());
     }
 
-	if (nullptr != m_pVIBuffer)
+	//if (nullptr != m_pVIBuffer)
+    if (0 < m_vecVIBuffers.size())
     {
         if (m_bTransparency)
             glDepthMask(GL_FALSE);
         else
             glDepthMask(GL_TRUE);
 
-        m_pVIBuffer->SetWireFrame(m_bWireFrame);
-
         if (m_bPriority)
             glDisable(GL_DEPTH_TEST);
 
-        m_pVIBuffer->Render();
+        for (int i = 0; i < m_vecVIBuffers.size(); ++i)
+        {
+            m_vecVIBuffers[i]->SetWireFrame(m_bWireFrame);
+            m_vecVIBuffers[i]->Render();
+        }
 
         // Outline Effect
    //     if (!m_bSelected)
@@ -202,14 +257,17 @@ void CMesh::Render()
 void CMesh::Destroy()
 {
     SafeDestroy(m_pOpenGLDevice);
-    SafeDestroy(m_pVIBuffer);
+    for (int i = 0; i < m_vecVIBuffers.size(); ++i)
+        SafeDestroy(m_vecVIBuffers[i]);
     SafeDestroy(m_pBoundingBox);
-    SafeDestroy(m_pDiffTexture);
-    SafeDestroy(m_pNormalTexture);
+    //SafeDestroy(m_pDiffTexture);
+    //SafeDestroy(m_pNormalTexture);
     SafeDestroy(m_pShader);
     m_pParentTransform = nullptr;
     if (nullptr != m_pTriangles)
         delete m_pTriangles;
+    if (nullptr != m_pMatrix)
+        delete m_pMatrix;
 
 	CComponent::Destroy();
 }
@@ -217,11 +275,7 @@ void CMesh::Destroy()
 // Set diffuse texture
 void CMesh::SetTexture(std::string texID_diff)
 {
-    SafeDestroy(m_pDiffTexture);
-
-    CComponent* pComponent = CloneComponent<CTexture*>(texID_diff);
-    if (nullptr != pComponent)
-        m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
+    m_pDiffTexture = CloneComponent<CTexture*>(texID_diff);
 }
 
 // Initialize Mesh
@@ -238,14 +292,9 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type
     _uint indexNum = 0;
 
     if (assimp)
-        Ready_Assimp(filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
+        Ready_Assimp(filePath, fileName);
     else
-        Ready_VIBuffer(type, filePath, fileName, &pVertices, &pIndices, vertexNum, indexNum);
-
-    m_pVIBuffer = CVIBuffer::Create(vertexNum, pVertices, indexNum, pIndices, type);
-    
-    delete[] pVertices;
-    delete[] pIndices;
+        Ready_VIBuffer(type, filePath, fileName);
 
     Ready_Texture_Diff(texID_Diff);
     Ready_Texture_Normal(texID_Normal);
@@ -258,8 +307,13 @@ RESULT CMesh::Ready(string ID, string filePath, string fileName, eModelType type
 }
 
 // Load mesh information from file
-RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName)
 {
+    VTX* pVertices = nullptr;
+    _uint* pIndices = nullptr;
+    _uint vertexNum = 0;
+    _uint indexNum = 0;
+
     stringstream ss;
     ss << filePath << fileName;
     ifstream file(ss.str());
@@ -294,11 +348,11 @@ RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, 
     _int b = GetRandNum(0, 170);
     vec3 rbg = vec3(r / 255.f, g / 255.f, b / 255.f);
 
-    *pVertices = new VTX[vertexNum];
-    memset(*pVertices, 0, sizeof(**pVertices));
+    pVertices = new VTX[vertexNum];
+    memset(pVertices, 0, sizeof(*pVertices));
     for (_uint i = 0; i < vertexNum; ++i)
     {
-        vec4& vPos = (*pVertices)[i].vPos;
+        vec4& vPos = pVertices[i].vPos;
         file >> vPos.x;
         file >> vPos.y;
         file >> vPos.z;
@@ -307,41 +361,41 @@ RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, 
         switch (type)
         {
         case xyz_index:
-            (*pVertices)[i].vNormal = vec4(0.f, 1.f, 0.f, 1.f);
+            pVertices[i].vNormal = vec4(0.f, 1.f, 0.f, 1.f);
             break;
 
         case xyz_normal_index:
         case xyz_normal_color_index:
-            file >> (*pVertices)[i].vNormal.x;
-            file >> (*pVertices)[i].vNormal.y;
-            file >> (*pVertices)[i].vNormal.z;
-            (*pVertices)[i].vNormal.w = 1.f;
+            file >> pVertices[i].vNormal.x;
+            file >> pVertices[i].vNormal.y;
+            file >> pVertices[i].vNormal.z;
+            pVertices[i].vNormal.w = 1.f;
             break;
 
         case xyz_normal_texUV_index:
         case xyz_normal_texUV_index_texNum:
-            file >> (*pVertices)[i].vNormal.x;
-            file >> (*pVertices)[i].vNormal.y;
-            file >> (*pVertices)[i].vNormal.z;
-            (*pVertices)[i].vNormal.w = 1.f;
-            file >> (*pVertices)[i].vTexUV.x;
-            file >> (*pVertices)[i].vTexUV.y;
+            file >> pVertices[i].vNormal.x;
+            file >> pVertices[i].vNormal.y;
+            file >> pVertices[i].vNormal.z;
+            pVertices[i].vNormal.w = 1.f;
+            file >> pVertices[i].vTexUV.x;
+            file >> pVertices[i].vTexUV.y;
             break;
         }
 
         if (type == xyz_normal_color_index)
         {
-            file >> (*pVertices)[i].vColour.x; (*pVertices)[i].vColour.x = (*pVertices)[i].vColour.x / 255.f;
-            file >> (*pVertices)[i].vColour.y; (*pVertices)[i].vColour.y = (*pVertices)[i].vColour.y / 255.f;
-            file >> (*pVertices)[i].vColour.z; (*pVertices)[i].vColour.z = (*pVertices)[i].vColour.z / 255.f;
-            file >> (*pVertices)[i].vColour.w; (*pVertices)[i].vColour.w = (*pVertices)[i].vColour.w / 255.f;
+            file >> pVertices[i].vColour.x; pVertices[i].vColour.x = pVertices[i].vColour.x / 255.f;
+            file >> pVertices[i].vColour.y; pVertices[i].vColour.y = pVertices[i].vColour.y / 255.f;
+            file >> pVertices[i].vColour.z; pVertices[i].vColour.z = pVertices[i].vColour.z / 255.f;
+            file >> pVertices[i].vColour.w; pVertices[i].vColour.w = pVertices[i].vColour.w / 255.f;
         }
         else
         {
-            (*pVertices)[i].vColour.r = rbg.r;
-            (*pVertices)[i].vColour.g = rbg.g;
-            (*pVertices)[i].vColour.b = rbg.b;
-            (*pVertices)[i].vColour.a = 1.0f;
+            pVertices[i].vColour.r = rbg.r;
+            pVertices[i].vColour.g = rbg.g;
+            pVertices[i].vColour.b = rbg.b;
+            pVertices[i].vColour.a = 1.0f;
         }
 
         if (vMin.x > vPos.x)
@@ -376,26 +430,30 @@ RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, 
         if (type == xyz_normal_texUV_index_texNum)
             file >> discard;
 
-        m_pTriangles[i].p0 = (*pVertices)[pTriangles[i]._0].vPos;
-        m_pTriangles[i].p1 = (*pVertices)[pTriangles[i]._1].vPos;
-        m_pTriangles[i].p2 = (*pVertices)[pTriangles[i]._2].vPos;
+        m_pTriangles[i].p0 = pVertices[pTriangles[i]._0].vPos;
+        m_pTriangles[i].p1 = pVertices[pTriangles[i]._1].vPos;
+        m_pTriangles[i].p2 = pVertices[pTriangles[i]._2].vPos;
     }
     file.close();
 
     indexNum = triangleNum * 3;
-    *pIndices = new _uint[indexNum];
-    memset(*pIndices, 0, sizeof(**pIndices));
+    pIndices = new _uint[indexNum];
+    memset(pIndices, 0, sizeof(*pIndices));
     _uint indexCount = 0;
     for (_uint i = 0; i < triangleNum; ++i)
     {
-        (*pIndices)[indexCount + 0] = pTriangles[i]._0;
-        (*pIndices)[indexCount + 1] = pTriangles[i]._1;
-        (*pIndices)[indexCount + 2] = pTriangles[i]._2;
+        pIndices[indexCount + 0] = pTriangles[i]._0;
+        pIndices[indexCount + 1] = pTriangles[i]._1;
+        pIndices[indexCount + 2] = pTriangles[i]._2;
 
         indexCount += 3;
     }
 
     delete[] pTriangles;
+
+    CreateVIBuffer(&pVertices, &pIndices, vertexNum, indexNum);
+    delete[] pVertices;
+    delete[] pIndices;
 
     return PK_NOERROR;
 }
@@ -403,28 +461,22 @@ RESULT CMesh::Ready_VIBuffer(eModelType type, string filePath, string fileName, 
 // Initialize diffuse texture
 void CMesh::Ready_Texture_Diff(string texID)
 {
-    CComponent* pComponent = CloneComponent<CTexture*>(texID);
-    if (nullptr != pComponent)
-        m_pDiffTexture = dynamic_cast<CTexture*>(pComponent);
+    m_pDiffTexture = CloneComponent<CTexture*>(texID);
 }
 
 // Initialize normal texture
 void CMesh::Ready_Texture_Normal(std::string texID)
 {
-    CComponent* pComponent = CloneComponent<CTexture*>(texID);
-    if (nullptr != pComponent)
-        m_pNormalTexture = dynamic_cast<CTexture*>(pComponent);
+    m_pNormalTexture = CloneComponent<CTexture*>(texID);
 }
 
 // Initialize shader
 void CMesh::Ready_Shader(string shaderID)
 {
-    CComponent* pComponent = CloneComponent<CShader*>(shaderID);
-    if (nullptr != pComponent)
-        m_pShader = dynamic_cast<CShader*>(pComponent);
+    m_pShader = CloneComponent<CShader*>(shaderID);
 }
 
-RESULT CMesh::Ready_Assimp(std::string filePath, std::string fileName, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+RESULT CMesh::Ready_Assimp(std::string filePath, std::string fileName)
 {
     stringstream ss;
     ss << filePath << fileName;
@@ -433,102 +485,156 @@ RESULT CMesh::Ready_Assimp(std::string filePath, std::string fileName, VTX** pVe
     const aiScene* scene = importer.ReadFile(ss.str(),
         aiProcess_Triangulate | 
         aiProcess_GenSmoothNormals | 
-        aiProcess_FlipUVs | 
+        aiProcess_FlipUVs |
         aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         return PK_ERROR_MESHFILE_OPEN;
 
-    processNode(scene->mRootNode, scene, pVertices, pIndices, vertexNum, indexNum);
+    if (scene->HasMeshes())
+    {
+        processNode(scene->mRootNode, scene);
+    }
+
+    if (scene->HasAnimations())
+    {
+        CAnimationData::GetInstance()->LoadAnimations(scene, &m_mapBoneInformation);
+    }
 
     return PK_NOERROR;
 }
 
-void CMesh::processNode(aiNode* node, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+void CMesh::processNode(aiNode* node, const aiScene* scene)
 {
     for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        processMesh(mesh, scene, pVertices, pIndices, vertexNum, indexNum);
+        if (mesh->HasBones())
+            m_bHasBone = true;
+        processMesh(mesh, scene);
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; ++i)
     {
-        processNode(node->mChildren[i], scene, pVertices, pIndices, vertexNum, indexNum);
+        processNode(node->mChildren[i], scene);
     }
 }
 
-void CMesh::processMesh(aiMesh* mesh, const aiScene* scene, VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+void CMesh::processMesh(aiMesh* mesh, const aiScene* scene)
 {
+    // Bone information
+    vector<BoneData> vecBones;
+    vecBones.resize(mesh->mNumVertices);
+    _int boneCount = m_mapBoneInformation.size();
+
+    for (int i = 0; i < mesh->mNumBones; ++i)
+    {
+        aiBone* bone = mesh->mBones[i];
+        int boneIdx = 0;
+        string boneName(bone->mName.data);
+
+        map<string, _int>::iterator iter = m_mapBoneInformation.find(boneName);
+        if (iter == m_mapBoneInformation.end())
+        {
+            boneIdx = boneCount;
+            ++boneCount;
+            m_mapBoneInformation[boneName] = boneIdx;
+        }
+        else
+            boneIdx = iter->second;
+
+        for (int j = 0; j < bone->mNumWeights; ++j)
+        {
+            _float weight = bone->mWeights[j].mWeight;
+            _uint vertexId = bone->mWeights[j].mVertexId;
+            vecBones[vertexId].AddBoneInfo(boneIdx, weight);
+        }
+    }
+
+    // Vertex information
+    VTX* pVertices = nullptr;
+    _uint* pIndices = nullptr;
+    _uint vertexNum = 0;
+    _uint indexNum = 0;
+
     vertexNum = mesh->mNumVertices;
 
-    vec3 vMin = vec3(FLT_MAX);
-    vec3 vMax = vec3(FLT_MIN);
-
-    *pVertices = new VTX[vertexNum];
-    memset(*pVertices, 0, sizeof(**pVertices));
+    pVertices = new VTX[vertexNum];
+    memset(pVertices, 0, sizeof(*pVertices));
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
     {
-        (*pVertices)[i].vPos.x = mesh->mVertices[i].x;
-        (*pVertices)[i].vPos.y = mesh->mVertices[i].y;
-        (*pVertices)[i].vPos.z = mesh->mVertices[i].z;
-        (*pVertices)[i].vPos.w = 1.f;
+        pVertices[i].vPos.x = mesh->mVertices[i].x;
+        pVertices[i].vPos.y = mesh->mVertices[i].y;
+        pVertices[i].vPos.z = mesh->mVertices[i].z;
+        pVertices[i].vPos.w = 1.f;
 
         if (mesh->HasNormals())
         {
-            (*pVertices)[i].vNormal.x = mesh->mNormals[i].x;
-            (*pVertices)[i].vNormal.y = mesh->mNormals[i].y;
-            (*pVertices)[i].vNormal.z = mesh->mNormals[i].z;
-            (*pVertices)[i].vNormal.w = 1.f;
+            pVertices[i].vNormal.x = mesh->mNormals[i].x;
+            pVertices[i].vNormal.y = mesh->mNormals[i].y;
+            pVertices[i].vNormal.z = mesh->mNormals[i].z;
+            pVertices[i].vNormal.w = 1.f;
         }
 
         if (mesh->mTextureCoords[0])
         {
-            (*pVertices)[i].vTexUV.x = mesh->mTextureCoords[0][i].x;
-            (*pVertices)[i].vTexUV.y = mesh->mTextureCoords[0][i].y;
-            (*pVertices)[i].vTangent.x = mesh->mTangents[i].x;
-            (*pVertices)[i].vTangent.y = mesh->mTangents[i].y;
-            (*pVertices)[i].vTangent.z = mesh->mTangents[i].z;
-            (*pVertices)[i].vTangent.w = 1.f;
-            (*pVertices)[i].vBinormal.x = mesh->mBitangents[i].x;
-            (*pVertices)[i].vBinormal.y = mesh->mBitangents[i].y;
-            (*pVertices)[i].vBinormal.z = mesh->mBitangents[i].z;
-            (*pVertices)[i].vBinormal.z = 1.f;
+            pVertices[i].vTexUV.x = mesh->mTextureCoords[0][i].x;
+            pVertices[i].vTexUV.y = mesh->mTextureCoords[0][i].y;
+            pVertices[i].vTangent.x = mesh->mTangents[i].x;
+            pVertices[i].vTangent.y = mesh->mTangents[i].y;
+            pVertices[i].vTangent.z = mesh->mTangents[i].z;
+            pVertices[i].vTangent.w = 1.f;
+            pVertices[i].vBinormal.x = mesh->mBitangents[i].x;
+            pVertices[i].vBinormal.y = mesh->mBitangents[i].y;
+            pVertices[i].vBinormal.z = mesh->mBitangents[i].z;
+            pVertices[i].vBinormal.z = 1.f;
         }
         else
         {
-            (*pVertices)[i].vTexUV.x = 0.f;
-            (*pVertices)[i].vTexUV.y = 0.f;
+            pVertices[i].vTexUV.x = 0.f;
+            pVertices[i].vTexUV.y = 0.f;
         }
 
-        if (vMin.x > (*pVertices)[i].vPos.x)
-            vMin.x = (*pVertices)[i].vPos.x;
-        if (vMin.y > (*pVertices)[i].vPos.y)
-            vMin.y = (*pVertices)[i].vPos.y;
-        if (vMin.z > (*pVertices)[i].vPos.z)
-            vMin.z = (*pVertices)[i].vPos.z;
-        if (vMax.x < (*pVertices)[i].vPos.x)
-            vMax.x = (*pVertices)[i].vPos.x;
-        if (vMax.y < (*pVertices)[i].vPos.y)
-            vMax.y = (*pVertices)[i].vPos.y;
-        if (vMax.z < (*pVertices)[i].vPos.z)
-            vMax.z = (*pVertices)[i].vPos.z;
+        // Bone
+        BoneData bone = vecBones[i];
+        pVertices[i].vBoneID.x = (_float)bone.ids[0];
+        pVertices[i].vBoneID.y = (_float)bone.ids[1];
+        pVertices[i].vBoneID.z = (_float)bone.ids[2];
+        pVertices[i].vBoneID.w = (_float)bone.ids[3];
+        pVertices[i].vBoneWeight.x = bone.weights[0];
+        pVertices[i].vBoneWeight.y = bone.weights[1];
+        pVertices[i].vBoneWeight.z = bone.weights[2];
+        pVertices[i].vBoneWeight.w = bone.weights[3];
     }
-    m_pBoundingBox = CBoundingBox::Create(vMin, vMax, "DebugBoxShader");
 
     m_iTriNum = mesh->mNumFaces;
     indexNum = m_iTriNum * 3;
-    *pIndices = new _uint[indexNum];
-    memset(*pIndices, 0, sizeof(**pIndices));
+    pIndices = new _uint[indexNum];
+    memset(pIndices, 0, sizeof(*pIndices));
     for (unsigned int i = 0; i < m_iTriNum; ++i)
     {
         aiFace face = mesh->mFaces[i];
 
         for (unsigned int j = 0; j < face.mNumIndices; ++j)
-            (*pIndices)[(i * 3) + j] = face.mIndices[j];
+            pIndices[(i * 3) + j] = face.mIndices[j];
     }
 
+    CreateVIBuffer(&pVertices, &pIndices, vertexNum, indexNum);
+    delete[] pVertices;
+    delete[] pIndices;
+
     return;
+}
+
+void CMesh::AddBoneInformation(string name, _int id)
+{
+}
+
+void CMesh::CreateVIBuffer(VTX** pVertices, _uint** pIndices, _uint& vertexNum, _uint& indexNum)
+{
+    CVIBuffer* pBuffer = CVIBuffer::Create(vertexNum, *pVertices, indexNum, *pIndices);
+    if (nullptr != pBuffer)
+        m_vecVIBuffers.push_back(pBuffer);
 }
 
 //void CMesh::Ready_QuadTree(_uint depth)

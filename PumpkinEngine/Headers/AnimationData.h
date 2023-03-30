@@ -2,6 +2,10 @@
 #define _ANIMATIONDATA_H_
 
 #include "Base.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <map>
 
 NAMESPACE_BEGIN(Engine)
 
@@ -24,7 +28,8 @@ private:
 public:
 	void AddAnimation(std::string tag, CAnimation* pAnimation);
 	CAnimation* FindAnimation(std::string tag);
-	void LoadAnimations(std::string assetFolderPath);
+	//void LoadAnimations(std::string assetFolderPath);
+	void LoadAnimations(const aiScene* scene, std::map<std::string, _int>* pMap);
 };
 
 NAMESPACE_END

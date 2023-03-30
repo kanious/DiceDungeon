@@ -49,4 +49,9 @@
 		<VertexPath>Shader\CrystalVertex.fx</VertexPath>
 		<FragmentPath>Shader\CrystalFragment.fx</FragmentPath>
 	</Shader>
+	<Shader>
+		<ID>BoneShader</ID>
+		<VertexPath>Shader\BoneVertex.fx</VertexPath>
+		<FragmentPath>Shader\BoneFragment.fx</FragmentPath>
+	</Shader>
 </Shader_List>

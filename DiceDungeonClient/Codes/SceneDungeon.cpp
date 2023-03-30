@@ -169,7 +169,7 @@ RESULT SceneDungeon::Ready(string dataPath)
 	m_DataPath = dataPath;
 
 	// AnimationData
-	CAnimationData::GetInstance()->LoadAnimations(m_DataPath);
+	//CAnimationData::GetInstance()->LoadAnimations(m_DataPath);
 
 	// GameObjects
 	RESULT result = PK_NOERROR;
@@ -190,7 +190,10 @@ RESULT SceneDungeon::Ready(string dataPath)
 
 	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
+	{
 		m_pDefaultCamera->AddShaderLocation("MeshShader");
+		m_pDefaultCamera->AddShaderLocation("BoneShader");
+	}
 
 	// UI
 	if (nullptr != m_pUIManager)

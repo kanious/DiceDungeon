@@ -193,7 +193,7 @@ RESULT CBoundingBox::Ready(vec3 min, vec3 max, string shaderID)
 		5, 7, 6
 	};
 
-	m_pVIBuffer = CVIBuffer::Create(vertexNum, m_pVertices, indexNum, pIndices, xyz_index);
+	m_pVIBuffer = CVIBuffer::Create(vertexNum, m_pVertices, indexNum, pIndices);
 	if (nullptr != m_pVIBuffer)
 		m_pVIBuffer->SetWireFrame(true);
 

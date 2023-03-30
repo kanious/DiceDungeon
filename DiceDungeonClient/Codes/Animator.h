@@ -10,7 +10,9 @@ class Player;
 class Animator : public Engine::CAnimController
 {
 private:
-	Player*		m_pPlayer;
+	Player*			m_pPlayer;
+	std::string		m_currentTag;
+	_bool			m_bBlendingOption;
 
 
 private:
@@ -22,8 +24,12 @@ private:
 	virtual void Destroy();
 	// Call this function when animation has ended
 	virtual void AnimationEndEvent();
-	// Set animation by type state
-	void SetAnimationByType();
+
+public:
+	void SetBlendingOption(_bool value) { m_bBlendingOption = value; }
+	_bool GetBlendingOption() { return m_bBlendingOption; }
+	// Set animation by tag
+	void ChangeAnimation(std::string tag);
 
 private:
 	// Initialize

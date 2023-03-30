@@ -43,6 +43,8 @@ public:
 private:
 	// Check movement
 	void MovingCheck(const _float& dt);
+	// Check key
+	void KeyCheck(const _float& dt);
 
 public:
 	// Basic Update Function

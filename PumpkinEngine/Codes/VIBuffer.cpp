@@ -35,7 +35,7 @@ void CVIBuffer::Destroy()
 }
 
 // Initialize vertex/index information
-RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type)
+RESULT CVIBuffer::Ready(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices)
 {
 	if (nullptr == pVertices || nullptr == pIndices)
 		return PK_ERROR_NULLPTR;
@@ -119,10 +119,10 @@ void CVIBuffer::Ready_xyz_normal_texUV()
 }
 
 // Create an instance
-CVIBuffer* CVIBuffer::Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices, eModelType type)
+CVIBuffer* CVIBuffer::Create(_uint numVTX, VTX* pVertices, _uint numIDX, _uint* pIndices)
 {
 	CVIBuffer* pInstance = new CVIBuffer();
-	if (PK_NOERROR != pInstance->Ready(numVTX, pVertices, numIDX, pIndices, type))
+	if (PK_NOERROR != pInstance->Ready(numVTX, pVertices, numIDX, pIndices))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;
