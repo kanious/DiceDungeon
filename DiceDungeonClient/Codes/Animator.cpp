@@ -84,7 +84,7 @@ void Animator::FrameMove(const _float& dt)
             if (m_iPrevFrameIndexForSound != m_iFrameIndex)
             {
                 m_iPrevFrameIndexForSound = m_iFrameIndex;
-                CLuaBrain::GetInstance()->RunLuaScript("Punch");
+                CLuaBrain::GetInstance()->RunLuaScript("Attack1");
             }
         }
         else
@@ -99,7 +99,37 @@ void Animator::FrameMove(const _float& dt)
             if (m_iPrevFrameIndexForSound != m_iFrameIndex)
             {
                 m_iPrevFrameIndexForSound = m_iFrameIndex;
-                CLuaBrain::GetInstance()->RunLuaScript("Punch");
+                CLuaBrain::GetInstance()->RunLuaScript("Attack2");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("grab" == m_currentTag)
+    {
+        if (5 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Grab");
+            }
+        }
+        else
+        {
+            m_iPrevFrameIndexForSound = m_iFrameIndex;
+        }
+    }
+    else if ("pick_up" == m_currentTag)
+    {
+        if (5 == m_iFrameIndex)
+        {
+            if (m_iPrevFrameIndexForSound != m_iFrameIndex)
+            {
+                m_iPrevFrameIndexForSound = m_iFrameIndex;
+                CLuaBrain::GetInstance()->RunLuaScript("Pickup");
             }
         }
         else

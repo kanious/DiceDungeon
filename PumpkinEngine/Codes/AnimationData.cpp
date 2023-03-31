@@ -42,36 +42,6 @@ CAnimation* CAnimationData::FindAnimation(string tag)
 	return nullptr;
 }
 
-//void CAnimationData::LoadAnimations(string assetFolderPath)
-//{
-//	string listFilePath = assetFolderPath + "Animation\\animList.txt";
-//
-//	ifstream file(listFilePath.c_str());
-//	if (!file.is_open())
-//		return;
-//
-//	const _uint BUFFER_SIZE = 1000;
-//	char textBuffer[BUFFER_SIZE];
-//	_bool keepReading = true;
-//
-//	while (keepReading)
-//	{
-//		file.getline(textBuffer, BUFFER_SIZE);
-//
-//		if (!strcmp("EOF", textBuffer))
-//		{
-//			keepReading = false;
-//			continue;
-//		}
-//
-//		string tag(textBuffer);
-//		string animPath = assetFolderPath + "Animation\\" + tag + ".animation";
-//		CAnimation* pAnim = CAnimation::Create(tag, animPath);
-//		if (nullptr != pAnim)
-//			AddAnimation(tag, pAnim);
-//	}
-//}
-
 void CAnimationData::LoadAnimations(const aiScene* scene, map<string, _int>* pMap)
 {
 	for (int i = 0; i < scene->mNumAnimations; ++i)

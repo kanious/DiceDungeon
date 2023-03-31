@@ -14,8 +14,14 @@ protected:
 	virtual void Destroy() = 0;
 
 public:
-	virtual void setHighScore(_int playerId, _int score) = 0;
+	// Compare the new score and if it is higher than the last score, return true
+	virtual _bool setHighScore(_int playerId, _int score) = 0;
+	// Get the high score of the specific player id
 	virtual _int getHighScore(_int playerId) = 0;
+
+private:
+	// Initialize
+	virtual RESULT Ready(std::string filePath) = 0;
 };
 
 NAMESPACE_END

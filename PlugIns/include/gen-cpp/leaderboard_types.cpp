@@ -10,4 +10,92 @@
 
 
 
+const char* ranking_info::ascii_fingerprint = "52C6DAB6CF51AF617111F6D3964C6503";
+const uint8_t ranking_info::binary_fingerprint[16] = {0x52,0xC6,0xDA,0xB6,0xCF,0x51,0xAF,0x61,0x71,0x11,0xF6,0xD3,0x96,0x4C,0x65,0x03};
+
+uint32_t ranking_info::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->playerId);
+          this->__isset.playerId = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->name);
+          this->__isset.name = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->highScore);
+          this->__isset.highScore = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t ranking_info::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("ranking_info");
+
+  xfer += oprot->writeFieldBegin("playerId", ::apache::thrift::protocol::T_I32, 1);
+  xfer += oprot->writeI32(this->playerId);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("name", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->name);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("highScore", ::apache::thrift::protocol::T_I32, 3);
+  xfer += oprot->writeI32(this->highScore);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+void swap(ranking_info &a, ranking_info &b) {
+  using ::std::swap;
+  swap(a.playerId, b.playerId);
+  swap(a.name, b.name);
+  swap(a.highScore, b.highScore);
+  swap(a.__isset, b.__isset);
+}
+
 

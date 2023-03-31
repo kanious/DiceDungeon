@@ -33,8 +33,14 @@
 		<Loop>0</Loop>
 	</Sound>
 	<Sound category="SoundFile">
-		<Tag>Punch</Tag>
+		<Tag>Attack1</Tag>
 		<Path>Sounds\punch.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Attack2</Tag>
+		<Path>Sounds\punch2.mp3</Path>
 		<ChannelTag>Effect</ChannelTag>
 		<Loop>0</Loop>
 	</Sound>
@@ -53,6 +59,18 @@
 	<Sound category="SoundFile">
 		<Tag>Death</Tag>
 		<Path>Sounds\knockdown.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Pickup</Tag>
+		<Path>Sounds\pickup.mp3</Path>
+		<ChannelTag>Effect</ChannelTag>
+		<Loop>0</Loop>
+	</Sound>
+	<Sound category="SoundFile">
+		<Tag>Grab</Tag>
+		<Path>Sounds\grab.mp3</Path>
 		<ChannelTag>Effect</ChannelTag>
 		<Loop>0</Loop>
 	</Sound>

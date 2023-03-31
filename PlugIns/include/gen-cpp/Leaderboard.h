@@ -15,8 +15,8 @@
 class LeaderboardIf {
  public:
   virtual ~LeaderboardIf() {}
-  virtual void setHighScore(const int32_t playerId, const int32_t highScore) = 0;
-  virtual void getTop20(std::map<int32_t, int32_t> & _return) = 0;
+  virtual void setHighScore(const int32_t playerId, const std::string& name, const int32_t highScore) = 0;
+  virtual void getTop20(std::map<int32_t, ranking_info> & _return) = 0;
 };
 
 class LeaderboardIfFactory {
@@ -46,35 +46,41 @@ class LeaderboardIfSingletonFactory : virtual public LeaderboardIfFactory {
 class LeaderboardNull : virtual public LeaderboardIf {
  public:
   virtual ~LeaderboardNull() {}
-  void setHighScore(const int32_t /* playerId */, const int32_t /* highScore */) {
+  void setHighScore(const int32_t /* playerId */, const std::string& /* name */, const int32_t /* highScore */) {
     return;
   }
-  void getTop20(std::map<int32_t, int32_t> & /* _return */) {
+  void getTop20(std::map<int32_t, ranking_info> & /* _return */) {
     return;
   }
 };
 
 typedef struct _Leaderboard_setHighScore_args__isset {
-  _Leaderboard_setHighScore_args__isset() : playerId(false), highScore(false) {}
+  _Leaderboard_setHighScore_args__isset() : playerId(false), name(false), highScore(false) {}
   bool playerId;
+  bool name;
   bool highScore;
 } _Leaderboard_setHighScore_args__isset;
 
 class Leaderboard_setHighScore_args {
  public:
 
-  Leaderboard_setHighScore_args() : playerId(0), highScore(0) {
+  Leaderboard_setHighScore_args() : playerId(0), name(), highScore(0) {
   }
 
   virtual ~Leaderboard_setHighScore_args() throw() {}
 
   int32_t playerId;
+  std::string name;
   int32_t highScore;
 
   _Leaderboard_setHighScore_args__isset __isset;
 
   void __set_playerId(const int32_t val) {
     playerId = val;
+  }
+
+  void __set_name(const std::string& val) {
+    name = val;
   }
 
   void __set_highScore(const int32_t val) {
@@ -84,6 +90,8 @@ class Leaderboard_setHighScore_args {
   bool operator == (const Leaderboard_setHighScore_args & rhs) const
   {
     if (!(playerId == rhs.playerId))
+      return false;
+    if (!(name == rhs.name))
       return false;
     if (!(highScore == rhs.highScore))
       return false;
@@ -108,6 +116,7 @@ class Leaderboard_setHighScore_pargs {
   virtual ~Leaderboard_setHighScore_pargs() throw() {}
 
   const int32_t* playerId;
+  const std::string* name;
   const int32_t* highScore;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -164,11 +173,11 @@ class Leaderboard_getTop20_result {
 
   virtual ~Leaderboard_getTop20_result() throw() {}
 
-  std::map<int32_t, int32_t>  success;
+  std::map<int32_t, ranking_info>  success;
 
   _Leaderboard_getTop20_result__isset __isset;
 
-  void __set_success(const std::map<int32_t, int32_t> & val) {
+  void __set_success(const std::map<int32_t, ranking_info> & val) {
     success = val;
   }
 
@@ -200,7 +209,7 @@ class Leaderboard_getTop20_presult {
 
   virtual ~Leaderboard_getTop20_presult() throw() {}
 
-  std::map<int32_t, int32_t> * success;
+  std::map<int32_t, ranking_info> * success;
 
   _Leaderboard_getTop20_presult__isset __isset;
 
@@ -228,11 +237,11 @@ class LeaderboardClient : virtual public LeaderboardIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void setHighScore(const int32_t playerId, const int32_t highScore);
-  void send_setHighScore(const int32_t playerId, const int32_t highScore);
-  void getTop20(std::map<int32_t, int32_t> & _return);
+  void setHighScore(const int32_t playerId, const std::string& name, const int32_t highScore);
+  void send_setHighScore(const int32_t playerId, const std::string& name, const int32_t highScore);
+  void getTop20(std::map<int32_t, ranking_info> & _return);
   void send_getTop20();
-  void recv_getTop20(std::map<int32_t, int32_t> & _return);
+  void recv_getTop20(std::map<int32_t, ranking_info> & _return);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -283,16 +292,16 @@ class LeaderboardMultiface : virtual public LeaderboardIf {
     ifaces_.push_back(iface);
   }
  public:
-  void setHighScore(const int32_t playerId, const int32_t highScore) {
+  void setHighScore(const int32_t playerId, const std::string& name, const int32_t highScore) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->setHighScore(playerId, highScore);
+      ifaces_[i]->setHighScore(playerId, name, highScore);
     }
-    ifaces_[i]->setHighScore(playerId, highScore);
+    ifaces_[i]->setHighScore(playerId, name, highScore);
   }
 
-  void getTop20(std::map<int32_t, int32_t> & _return) {
+  void getTop20(std::map<int32_t, ranking_info> & _return) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {

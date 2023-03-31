@@ -138,11 +138,17 @@
     <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_constants.cpp" />
     <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_types.cpp" />
     <ClCompile Include="Codes\Leaderboard_server.cpp" />
+    <ClCompile Include="Codes\SQLiteDBHelper.cpp" />
+    <ClCompile Include="sqlite\shell.c" />
+    <ClCompile Include="sqlite\sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\PlugIns\include\gen-cpp\Leaderboard.h" />
     <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_constants.h" />
     <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_types.h" />
+    <ClInclude Include="Codes\SQLiteDBHelper.h" />
+    <ClInclude Include="sqlite\sqlite3.h" />
+    <ClInclude Include="sqlite\sqlite3ext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

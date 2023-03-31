@@ -11,7 +11,6 @@
 #include "Transform.h"
 #include "JsonParser.h"
 #include "XMLParser.h"
-#include <sstream>
 #include <atlconv.h>
 
 #include "Scene.h"
@@ -19,18 +18,12 @@
 #include "UIManager.h"
 #include "AnimationManager.h"
 #include "TargetManager.h"
+#include "ScoreManager.h"
+#include "LeaderboardManager.h"
 
-#include "Leaderboard.h"
-#include <thrift/transport/TSocket.h>
-#include <thrift/transport/TServerSocket.h>
-#include <thrift/transport/TBufferTransports.h>
-#include <thrift/protocol/TBinaryProtocol.h>
 
 USING(Engine)
 USING(std)
-USING(::apache::thrift)
-USING(::apache::thrift::protocol)
-USING(::apache::thrift::transport)
 
 Client::Client()
 {
@@ -70,6 +63,8 @@ void Client::Destroy()
 	SafeDestroy(UIManager::GetInstance());
 	SafeDestroy(AnimationManager::GetInstance());
 	SafeDestroy(TargetManager::GetInstance());
+	SafeDestroy(ScoreManager::GetInstance());
+	SafeDestroy(LeaderboardManager::GetInstance());
 
 	delete this;
 }
@@ -137,31 +132,6 @@ RESULT Client::Ready()
 {
 	RESULT result = PK_NOERROR;
 
-
-	// Connect to Leaderboard Server > 얘네를 Leaderboard Manager로 옮기고 여기서 Ready > Connect
-	// client 저장해야 함
-	boost::shared_ptr<TSocket> socket(new TSocket("localhost", 7890));
-	boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
-	boost::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
-
-	LeaderboardClient client(protocol);
-	transport->open();
-	map<int32_t, int32_t> top20;
-	client.setHighScore(20, 400);
-	client.setHighScore(25, 1700);
-	client.setHighScore(300, 2800);
-	client.getTop20(top20);
-
-	map<int32_t, int32_t>::iterator iter;
-	cout << "[PlayerID][Score]:" << endl;
-	for (iter = top20.begin(); iter != top20.end(); ++iter)
-	{
-		cout << iter->first << " " << iter->second << endl;
-	}
-	transport->close();
-	//return PK_NOERROR;
-
-
 	// OpenGL Graphic Device
 	if (nullptr != m_pGraphicDevice)
 	{
@@ -223,6 +193,8 @@ RESULT Client::Ready_BasicComponent()
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
 	CJsonParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
 	CJsonParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName, true);
+	ScoreManager::GetInstance()->Ready(m_DataPath);
+	LeaderboardManager::GetInstance()->Ready();
 
 	return PK_NOERROR;
 }

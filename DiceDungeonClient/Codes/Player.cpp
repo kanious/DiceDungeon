@@ -124,42 +124,42 @@ void Player::KeyCheck(const _float& dt)
 		return;
 
 	_bool pressed = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
 	{
 		m_pAnimator->ChangeAnimation("walk");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_2))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F2))
 	{
 		m_pAnimator->ChangeAnimation("run");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_3))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F3))
 	{
 		m_pAnimator->ChangeAnimation("attack1");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_4))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F4))
 	{
 		m_pAnimator->ChangeAnimation("attack2");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_5))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F5))
 	{
 		m_pAnimator->ChangeAnimation("grab");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_6))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F6))
 	{
 		m_pAnimator->ChangeAnimation("pick_up");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_7))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F7))
 	{
 		m_pAnimator->ChangeAnimation("hurt");
 		pressed = true;
 	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_8))
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F8))
 	{
 		m_pAnimator->ChangeAnimation("death");
 		pressed = true;

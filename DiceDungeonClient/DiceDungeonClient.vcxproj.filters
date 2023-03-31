@@ -93,6 +93,12 @@
     <ClCompile Include="Codes\PhysicsObject.cpp">
       <Filter>02.GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\LeaderboardManager.cpp">
+      <Filter>98.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\ScoreManager.cpp">
+      <Filter>98.Manager</Filter>
+    </ClCompile>
     <ClCompile Include="..\PlugIns\include\gen-cpp\Leaderboard.cpp">
       <Filter>05.Leaderboard</Filter>
     </ClCompile>
@@ -101,12 +107,6 @@
     </ClCompile>
     <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_types.cpp">
       <Filter>05.Leaderboard</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\LeaderboardManager.cpp">
-      <Filter>98.Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Codes\ScoreManager.cpp">
-      <Filter>98.Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +179,12 @@
     <ClInclude Include="Codes\PhysicsObject.h">
       <Filter>02.GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Codes\LeaderboardManager.h">
+      <Filter>98.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\ScoreManager.h">
+      <Filter>98.Manager</Filter>
+    </ClInclude>
     <ClInclude Include="..\PlugIns\include\gen-cpp\Leaderboard.h">
       <Filter>05.Leaderboard</Filter>
     </ClInclude>
@@ -187,12 +193,6 @@
     </ClInclude>
     <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_types.h">
       <Filter>05.Leaderboard</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\LeaderboardManager.h">
-      <Filter>98.Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Codes\ScoreManager.h">
-      <Filter>98.Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

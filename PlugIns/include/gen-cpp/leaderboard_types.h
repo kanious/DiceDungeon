@@ -17,6 +17,65 @@
 
 
 
+typedef struct _ranking_info__isset {
+  _ranking_info__isset() : playerId(false), name(false), highScore(false) {}
+  bool playerId;
+  bool name;
+  bool highScore;
+} _ranking_info__isset;
+
+class ranking_info {
+ public:
+
+  static const char* ascii_fingerprint; // = "52C6DAB6CF51AF617111F6D3964C6503";
+  static const uint8_t binary_fingerprint[16]; // = {0x52,0xC6,0xDA,0xB6,0xCF,0x51,0xAF,0x61,0x71,0x11,0xF6,0xD3,0x96,0x4C,0x65,0x03};
+
+  ranking_info() : playerId(0), name(), highScore(0) {
+  }
+
+  virtual ~ranking_info() throw() {}
+
+  int32_t playerId;
+  std::string name;
+  int32_t highScore;
+
+  _ranking_info__isset __isset;
+
+  void __set_playerId(const int32_t val) {
+    playerId = val;
+  }
+
+  void __set_name(const std::string& val) {
+    name = val;
+  }
+
+  void __set_highScore(const int32_t val) {
+    highScore = val;
+  }
+
+  bool operator == (const ranking_info & rhs) const
+  {
+    if (!(playerId == rhs.playerId))
+      return false;
+    if (!(name == rhs.name))
+      return false;
+    if (!(highScore == rhs.highScore))
+      return false;
+    return true;
+  }
+  bool operator != (const ranking_info &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const ranking_info & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+void swap(ranking_info &a, ranking_info &b);
+
 
 
 #endif

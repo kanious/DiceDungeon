@@ -95,7 +95,7 @@ RESULT CAnimation::Ready(string tag, string filePath)
 
 RESULT CAnimation::Ready(string tag, const aiScene* scene, const aiAnimation* animation, map<string, _int>* pMap)
 {
-    m_tag = tag; printf("%s\n", tag.c_str());
+    m_tag = tag;
 
     m_fTickPerSec = (_float)animation->mTicksPerSecond;
     m_iDuration = (_uint)animation->mDuration;

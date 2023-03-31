@@ -13,6 +13,7 @@
 #include "..\Headers\LightMaster.h"
 #include "..\Headers\AnimationData.h"
 #include "..\Headers\LuaBrain.h"
+#include "..\Headers\SQLiteDBHelper.h"
 
 #include "..\Headers\Scene.h"
 
@@ -67,6 +68,7 @@ void CGameMaster::Destroy()
 	SafeDestroy(CLightMaster::GetInstance());
 	SafeDestroy(CAnimationData::GetInstance());
 	SafeDestroy(CLuaBrain::GetInstance());
+	SafeDestroy(CSQLiteDBHelper::GetInstance());
 
 	m_pRenderer = nullptr;
 }

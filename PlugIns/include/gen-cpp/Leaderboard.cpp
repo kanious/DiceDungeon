@@ -37,6 +37,14 @@ uint32_t Leaderboard_setHighScore_args::read(::apache::thrift::protocol::TProtoc
         }
         break;
       case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->name);
+          this->__isset.name = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
         if (ftype == ::apache::thrift::protocol::T_I32) {
           xfer += iprot->readI32(this->highScore);
           this->__isset.highScore = true;
@@ -64,7 +72,11 @@ uint32_t Leaderboard_setHighScore_args::write(::apache::thrift::protocol::TProto
   xfer += oprot->writeI32(this->playerId);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("highScore", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeFieldBegin("name", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->name);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("highScore", ::apache::thrift::protocol::T_I32, 3);
   xfer += oprot->writeI32(this->highScore);
   xfer += oprot->writeFieldEnd();
 
@@ -81,7 +93,11 @@ uint32_t Leaderboard_setHighScore_pargs::write(::apache::thrift::protocol::TProt
   xfer += oprot->writeI32((*(this->playerId)));
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("highScore", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeFieldBegin("name", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->name)));
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("highScore", ::apache::thrift::protocol::T_I32, 3);
   xfer += oprot->writeI32((*(this->highScore)));
   xfer += oprot->writeFieldEnd();
 
@@ -168,8 +184,8 @@ uint32_t Leaderboard_getTop20_result::read(::apache::thrift::protocol::TProtocol
             {
               int32_t _key5;
               xfer += iprot->readI32(_key5);
-              int32_t& _val6 = this->success[_key5];
-              xfer += iprot->readI32(_val6);
+              ranking_info& _val6 = this->success[_key5];
+              xfer += _val6.read(iprot);
             }
             xfer += iprot->readMapEnd();
           }
@@ -199,12 +215,12 @@ uint32_t Leaderboard_getTop20_result::write(::apache::thrift::protocol::TProtoco
   if (this->__isset.success) {
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_MAP, 0);
     {
-      xfer += oprot->writeMapBegin(::apache::thrift::protocol::T_I32, ::apache::thrift::protocol::T_I32, static_cast<uint32_t>(this->success.size()));
-      std::map<int32_t, int32_t> ::const_iterator _iter7;
+      xfer += oprot->writeMapBegin(::apache::thrift::protocol::T_I32, ::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->success.size()));
+      std::map<int32_t, ranking_info> ::const_iterator _iter7;
       for (_iter7 = this->success.begin(); _iter7 != this->success.end(); ++_iter7)
       {
         xfer += oprot->writeI32(_iter7->first);
-        xfer += oprot->writeI32(_iter7->second);
+        xfer += _iter7->second.write(oprot);
       }
       xfer += oprot->writeMapEnd();
     }
@@ -248,8 +264,8 @@ uint32_t Leaderboard_getTop20_presult::read(::apache::thrift::protocol::TProtoco
             {
               int32_t _key13;
               xfer += iprot->readI32(_key13);
-              int32_t& _val14 = (*(this->success))[_key13];
-              xfer += iprot->readI32(_val14);
+              ranking_info& _val14 = (*(this->success))[_key13];
+              xfer += _val14.read(iprot);
             }
             xfer += iprot->readMapEnd();
           }
@@ -270,18 +286,19 @@ uint32_t Leaderboard_getTop20_presult::read(::apache::thrift::protocol::TProtoco
   return xfer;
 }
 
-void LeaderboardClient::setHighScore(const int32_t playerId, const int32_t highScore)
+void LeaderboardClient::setHighScore(const int32_t playerId, const std::string& name, const int32_t highScore)
 {
-  send_setHighScore(playerId, highScore);
+  send_setHighScore(playerId, name, highScore);
 }
 
-void LeaderboardClient::send_setHighScore(const int32_t playerId, const int32_t highScore)
+void LeaderboardClient::send_setHighScore(const int32_t playerId, const std::string& name, const int32_t highScore)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("setHighScore", ::apache::thrift::protocol::T_CALL, cseqid);
 
   Leaderboard_setHighScore_pargs args;
   args.playerId = &playerId;
+  args.name = &name;
   args.highScore = &highScore;
   args.write(oprot_);
 
@@ -290,7 +307,7 @@ void LeaderboardClient::send_setHighScore(const int32_t playerId, const int32_t 
   oprot_->getTransport()->flush();
 }
 
-void LeaderboardClient::getTop20(std::map<int32_t, int32_t> & _return)
+void LeaderboardClient::getTop20(std::map<int32_t, ranking_info> & _return)
 {
   send_getTop20();
   recv_getTop20(_return);
@@ -309,7 +326,7 @@ void LeaderboardClient::send_getTop20()
   oprot_->getTransport()->flush();
 }
 
-void LeaderboardClient::recv_getTop20(std::map<int32_t, int32_t> & _return)
+void LeaderboardClient::recv_getTop20(std::map<int32_t, ranking_info> & _return)
 {
 
   int32_t rseqid = 0;
@@ -388,7 +405,7 @@ void LeaderboardProcessor::process_setHighScore(int32_t, ::apache::thrift::proto
   }
 
   try {
-    iface_->setHighScore(args.playerId, args.highScore);
+    iface_->setHighScore(args.playerId, args.name, args.highScore);
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
       this->eventHandler_->handlerError(ctx, "Leaderboard.setHighScore");

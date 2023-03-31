@@ -111,29 +111,17 @@ void SceneDungeon::CollisionSoundCallback()
 // Check User input
 void SceneDungeon::KeyCheck()
 {
-	static _bool isF1Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
+	static _bool isPDown = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_P))
 	{
-		if (!isF1Down)
+		if (!isPDown)
 		{
-			isF1Down = true;
+			isPDown = true;
 			CLuaBrain::GetInstance()->RunLuaScript("BG");
 		}
 	}
 	else
-		isF1Down = false;
-
-	static _bool isF5Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F5))
-	{
-		if (!isF5Down)
-		{
-			isF5Down = true;
-			ResetDefaultCameraPos();
-		}
-	}
-	else
-		isF5Down = false;
+		isPDown = false;
 
 	static _bool isRDown = false;
 	if (m_pInputDevice->IsKeyDown(GLFW_KEY_R))

@@ -152,6 +152,8 @@ RESULT CSoundSystem::CreateChannelGroup(std::string tag)
 		CChannelGroupInfo* pInfo = new CChannelGroupInfo();
 		pInfo->pChannelGroup = pChannelGroup;
 		pInfo->tag = tag;
+		if ("BG" == tag)
+			pInfo->SetVolume(0.5f);
 		m_mapChannels.insert(CHANNEL_MAP::value_type(tag, pInfo));
 	}
 	else

@@ -7,6 +7,12 @@
     <Filter Include="00.Leaderboard">
       <UniqueIdentifier>{0a0f4897-911b-4683-945c-43729bef2618}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.SQLite">
+      <UniqueIdentifier>{a5b603fc-5fe5-4504-a74d-b194ddc0043a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.SQLite\Core">
+      <UniqueIdentifier>{3903844a-0659-48eb-b4e0-ab6d679e61fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Leaderboard_server.cpp">
@@ -21,6 +27,15 @@
     <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_types.cpp">
       <Filter>00.Leaderboard</Filter>
     </ClCompile>
+    <ClCompile Include="Codes\SQLiteDBHelper.cpp">
+      <Filter>01.SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\shell.c">
+      <Filter>01.SQLite\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\sqlite3.c">
+      <Filter>01.SQLite\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\PlugIns\include\gen-cpp\Leaderboard.h">
@@ -31,6 +46,15 @@
     </ClInclude>
     <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_types.h">
       <Filter>00.Leaderboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\SQLiteDBHelper.h">
+      <Filter>01.SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqlite3.h">
+      <Filter>01.SQLite\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqlite3ext.h">
+      <Filter>01.SQLite\Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
