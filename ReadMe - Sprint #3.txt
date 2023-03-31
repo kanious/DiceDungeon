@@ -4,6 +4,8 @@
 
 - Please set "DiceDungeonClient" project as a starter project and build with x64 configuration / Debug mode. Or you can execute with "DiceDungeonClient.exe" file in x64\Debug folder.
 
+- Execute "x64\Debug\LeaderboardServer.exe" first before run the client project. If you ran the client project first, use "Connect" button in the right side of UI after executing server project.
+
 - GitHub Link:
 https://github.com/kanious/DiceDungeon (milestone_3 tag)
 
