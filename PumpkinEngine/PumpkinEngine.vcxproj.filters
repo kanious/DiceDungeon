@@ -85,6 +85,12 @@
     <Filter Include="05.IndependantFunctions\LuaBrain">
       <UniqueIdentifier>{91711b84-0d02-44f7-979e-5466dea05bfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.IndependantFunctions\DAO">
+      <UniqueIdentifier>{1c101d38-0c8f-4192-a763-40e11abb7691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.IndependantFunctions\DAO\Core">
+      <UniqueIdentifier>{63ab4006-d39d-4f68-a215-2b55c68d3de1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Base.h">
@@ -273,6 +279,21 @@
     <ClInclude Include="Headers\LuaBrain.h">
       <Filter>05.IndependantFunctions\LuaBrain</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\iDAO.h">
+      <Filter>05.IndependantFunctions\DAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\DAO.h">
+      <Filter>05.IndependantFunctions\DAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SQLiteDBHelper.h">
+      <Filter>05.IndependantFunctions\DAO</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqlite3.h">
+      <Filter>05.IndependantFunctions\DAO\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite\sqlite3ext.h">
+      <Filter>05.IndependantFunctions\DAO\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -427,6 +448,18 @@
     </ClCompile>
     <ClCompile Include="Codes\LuaBrain.cpp">
       <Filter>05.IndependantFunctions\LuaBrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\DAO.cpp">
+      <Filter>05.IndependantFunctions\DAO</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\SQLiteDBHelper.cpp">
+      <Filter>05.IndependantFunctions\DAO</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\shell.c">
+      <Filter>05.IndependantFunctions\DAO\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="sqlite\sqlite3.c">
+      <Filter>05.IndependantFunctions\DAO\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

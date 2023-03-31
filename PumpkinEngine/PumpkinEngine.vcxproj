@@ -185,10 +185,12 @@
     <ClInclude Include="Headers\ComponentMaster.h" />
     <ClInclude Include="Headers\Contact.h" />
     <ClInclude Include="Headers\ContactResolver.h" />
+    <ClInclude Include="Headers\DAO.h" />
     <ClInclude Include="Headers\DSPInfo.h" />
     <ClInclude Include="Headers\EngineFunction.h" />
     <ClInclude Include="Headers\EngineStruct.h" />
     <ClInclude Include="Headers\FrameBufferObject.h" />
+    <ClInclude Include="Headers\iDAO.h" />
     <ClInclude Include="Headers\iPhysicsFactory.h" />
     <ClInclude Include="Headers\iPhysicsWorld.h" />
     <ClInclude Include="Headers\iRigidBody.h" />
@@ -222,12 +224,15 @@
     <ClInclude Include="Headers\Renderer.h" />
     <ClInclude Include="Headers\Scene.h" />
     <ClInclude Include="Headers\SphereShape.h" />
+    <ClInclude Include="Headers\SQLiteDBHelper.h" />
     <ClInclude Include="Headers\Texture.h" />
     <ClInclude Include="Headers\Timer.h" />
     <ClInclude Include="Headers\Shader.h" />
     <ClInclude Include="Headers\Transform.h" />
     <ClInclude Include="Headers\VIBuffer.h" />
     <ClInclude Include="Headers\XMLParser.h" />
+    <ClInclude Include="sqlite\sqlite3.h" />
+    <ClInclude Include="sqlite\sqlite3ext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\AnimationData.cpp" />
@@ -247,6 +252,7 @@
     <ClCompile Include="Codes\ComponentMaster.cpp" />
     <ClCompile Include="Codes\Contact.cpp" />
     <ClCompile Include="Codes\ContactResolver.cpp" />
+    <ClCompile Include="Codes\DAO.cpp" />
     <ClCompile Include="Codes\DSPInfo.cpp" />
     <ClCompile Include="Codes\FrameBufferObject.cpp" />
     <ClCompile Include="Codes\JsonParser.cpp" />
@@ -275,12 +281,15 @@
     <ClCompile Include="Codes\Renderer.cpp" />
     <ClCompile Include="Codes\Scene.cpp" />
     <ClCompile Include="Codes\SphereShape.cpp" />
+    <ClCompile Include="Codes\SQLiteDBHelper.cpp" />
     <ClCompile Include="Codes\Texture.cpp" />
     <ClCompile Include="Codes\Timer.cpp" />
     <ClCompile Include="Codes\Shader.cpp" />
     <ClCompile Include="Codes\Transform.cpp" />
     <ClCompile Include="Codes\VIBuffer.cpp" />
     <ClCompile Include="Codes\XMLParser.cpp" />
+    <ClCompile Include="sqlite\shell.c" />
+    <ClCompile Include="sqlite\sqlite3.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
