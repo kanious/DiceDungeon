@@ -28,6 +28,9 @@
     <Filter Include="Default\imgui">
       <UniqueIdentifier>{a5df48aa-8a5a-44f1-a75e-1b56d9fc6d5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Leaderboard">
+      <UniqueIdentifier>{22d6b9e4-9fb5-49af-9927-f8387df0aa89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\AnimationManager.cpp">
@@ -89,6 +92,15 @@
     </ClCompile>
     <ClCompile Include="Codes\PhysicsObject.cpp">
       <Filter>02.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PlugIns\include\gen-cpp\Leaderboard.cpp">
+      <Filter>05.Leaderboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_constants.cpp">
+      <Filter>05.Leaderboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_types.cpp">
+      <Filter>05.Leaderboard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +172,15 @@
     </ClInclude>
     <ClInclude Include="Codes\PhysicsObject.h">
       <Filter>02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PlugIns\include\gen-cpp\Leaderboard.h">
+      <Filter>05.Leaderboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_constants.h">
+      <Filter>05.Leaderboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_types.h">
+      <Filter>05.Leaderboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

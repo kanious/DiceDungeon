@@ -64,7 +64,8 @@ string CLuaBrain::DecodeLuaErrorToString(int error)
 
 void CLuaBrain::Destroy()
 {
-	lua_close(m_pLuaState);
+	if (nullptr != m_pLuaState)
+		lua_close(m_pLuaState);
 }
 
 RESULT CLuaBrain::Ready(string dataPath)

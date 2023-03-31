@@ -106,13 +106,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)PumpkinEngine\Headers;$(SolutionDir)PlugIns\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)PlugIns\include\boost_1_59_0;$(SolutionDir)PlugIns\include\gen-cpp;$(SolutionDir)PumpkinEngine\Headers;$(SolutionDir)PlugIns\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;$(SolutionDir)PlugIns\lib\x64;$(SolutionDir)PlugIns\lib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PumpkinEngine.lib;glew32d.lib;glew32sd.lib;glfw3dll.lib;freeglut.lib;assimp-vc143-mtd.lib;lua5.4.4-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PumpkinEngine.lib;glew32d.lib;glew32sd.lib;glfw3dll.lib;freeglut.lib;assimp-vc143-mtd.lib;lua5.4.4-static.lib;libboost_thread-vc140-mt-gd-1_59.lib;libthrift.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)PumpkinEngine\Headers;$(SolutionDir)PlugIns\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)PlugIns\include\boost_1_59_0;$(SolutionDir)PlugIns\include\gen-cpp;$(SolutionDir)PumpkinEngine\Headers;$(SolutionDir)PlugIns\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,13 +134,16 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)PlugIns\lib\x64;$(SolutionDir)x64\Release;$(SolutionDir)PlugIns\lib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PumpkinEngine.lib;glew32.lib;glew32s.lib;glfw3dll.lib;freeglut.lib;assimp-vc143-mt.lib;lua5.4.4-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PumpkinEngine.lib;glew32.lib;glew32s.lib;glfw3dll.lib;freeglut.lib;assimp-vc143-mt.lib;lua5.4.4-static.lib;libboost_thread-vc140-mt-1_59.lib;libthrift.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)Tools\compressing.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\PlugIns\include\gen-cpp\Leaderboard.cpp" />
+    <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_constants.cpp" />
+    <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_types.cpp" />
     <ClCompile Include="Codes\AnimationManager.cpp" />
     <ClCompile Include="Codes\Animator.cpp" />
     <ClCompile Include="Codes\BGObject.cpp" />
@@ -163,6 +166,9 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\PlugIns\include\gen-cpp\Leaderboard.h" />
+    <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_constants.h" />
+    <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_types.h" />
     <ClInclude Include="Codes\AnimationManager.h" />
     <ClInclude Include="Codes\Animator.h" />
     <ClInclude Include="Codes\BGObject.h" />

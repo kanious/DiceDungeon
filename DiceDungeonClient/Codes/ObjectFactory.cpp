@@ -32,7 +32,8 @@ CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag,
         break;
 
     case (_uint)LAYER_ENEMY:
-        pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        //pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
         break;
 
     case (_uint)LAYER_EVENT_OBJECT:

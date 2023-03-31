@@ -21,12 +21,6 @@
 		<Loop>0</Loop>
 	</Sound>
 	<Sound category="SoundFile">
-		<Tag>Hit</Tag>
-		<Path>Sounds\hit.mp3</Path>
-		<ChannelTag>Effect</ChannelTag>
-		<Loop>0</Loop>
-	</Sound>
-	<Sound category="SoundFile">
 		<Tag>Walk</Tag>
 		<Path>Sounds\walkstep.mp3</Path>
 		<ChannelTag>Effect</ChannelTag>
