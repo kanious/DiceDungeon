@@ -54,6 +54,7 @@ void Animator::ChangeAnimation(string tag)
     if (m_bBlendingOption)
         StartBlending();
 
+    m_bPause = false;
     m_currentTag = tag;
     m_pCurAnimation = CAnimationData::GetInstance()->FindAnimation(tag);
     ResetAnimation();
