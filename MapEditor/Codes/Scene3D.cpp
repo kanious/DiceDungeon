@@ -17,6 +17,7 @@
 #include "Renderer.h"
 #include "Player.h"
 #include "ObjectFactory.h"
+#include "TileMaster.h"
 
 #include <sstream>
 #include <atlconv.h>
@@ -40,6 +41,7 @@ Scene3D::Scene3D()
 
 	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
+	m_TileFileName = "tileData.json";
 }
 
 Scene3D::~Scene3D()
@@ -202,6 +204,9 @@ void Scene3D::SaveBackgroundObjects()
 		if ((_uint)LAYER_CAMERA == m_vecLayer[i]->GetTag())
 			continue;
 
+		if ((_uint)LAYER_TILE == m_vecLayer[i]->GetTag())
+			continue;
+
 		list<CGameObject*>* pObjList = m_vecLayer[i]->GetObjectList();
 		list<CGameObject*>::iterator iter;
 		for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
@@ -229,7 +234,7 @@ void Scene3D::SaveBackgroundObjects()
 		cameraData.SCALE = m_pDefaultCamera->GetCameraTarget();
 	}
 
-	CJsonParser::GetInstance()->SaveObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+	CJsonParser::GetInstance()->SaveObjectList(m_ObjListFileName, vecObjects, cameraData);
 }
 
 // Load Objects
@@ -240,9 +245,11 @@ void Scene3D::LoadObjects()
 	CLayer* pLayer = GetLayer((_uint)LAYER_STATIC_OBJECT);
 	CGameObject* pGameObject = nullptr;
 
+	_uint tileIndex = 0;
+
 	vector<CJsonParser::sObjectData> vecObjects;
 	CJsonParser::sObjectData cameraData;
-	CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+	CJsonParser::GetInstance()->LoadObjectList(m_ObjListFileName, vecObjects, cameraData);
 	vector<CJsonParser::sObjectData>::iterator iter;
 	for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 	{
@@ -261,8 +268,17 @@ void Scene3D::LoadObjects()
 			pGameObject->SetEnable(iter->SHOW);
 			pGameObject->SetTransparency(iter->ALPHA);
 		}
+
+		//if ("tile" == iter->ID)
+		//{
+		//	CTileMaster::GetInstance()->AddTileNode(tileIndex, iter->POSITION, iter->LOCK, pGameObject);
+		//	++tileIndex;
+		//}
 	}
 	vecObjects.clear();
+
+	//CTileMaster::GetInstance()->ConnectNeighbors();
+	//CTileMaster::GetInstance()->SaveTileData("tileData.json");
 
 	if (nullptr != m_pDefaultCamera)
 	{
@@ -271,6 +287,42 @@ void Scene3D::LoadObjects()
 		m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
 		m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
 	}
+}
+
+void Scene3D::LoadTiles()
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_TILE);
+	CGameObject* pGameObject = nullptr;
+	CTileMaster* pTileMaster = CTileMaster::GetInstance();
+
+	vector<CJsonParser::sTileData> vecTiles;
+	CJsonParser::GetInstance()->LoadTileData(m_TileFileName, vecTiles);
+	vector<CJsonParser::sTileData>::iterator iter;
+	for (iter = vecTiles.begin(); iter != vecTiles.end(); ++iter)
+	{
+		pGameObject = ObjectFactory::CreateGameObject(
+			(_uint)SCENE_3D,
+			pLayer->GetTag(),
+			(_uint)OBJ_BACKGROUND,
+			pLayer,
+			"tile", iter->POSITION, vec3(0.f), vec3(0.025f));
+
+		if (nullptr != pGameObject)
+		{
+			pGameObject->SetTransparency(false);
+			pGameObject->SetEnable(false);
+		}
+
+		pTileMaster->AddTileNode(iter->ID, iter->POSITION, false, pGameObject);
+	}
+	for (iter = vecTiles.begin(); iter != vecTiles.end(); ++iter)
+	{
+		_uint tileIdx = iter->ID;
+		for (int i = 0; i < 8; ++i)
+			pTileMaster->SetNeighbor(tileIdx, i, iter->NEIGHBORS[i]);
+	}
+
+	vecTiles.clear();
 }
 
 // Empty all layers
@@ -371,6 +423,9 @@ RESULT Scene3D::ReadyLayerAndGameObject()
 
 	//Create.BackgroundLayer 
 	LoadObjects();
+
+	//Create.Tile
+	LoadTiles();
 
 	return PK_NOERROR;
 }

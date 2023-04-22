@@ -78,9 +78,9 @@ void CAnimController::SetReverse()
 	m_bReverse = !m_bReverse;
 }
 
-void CAnimController::SetPause()
+void CAnimController::SetPause(_bool value)
 {
-	m_bPause = !m_bPause;
+	m_bPause = value;
 }
 
 void CAnimController::StopAnimation()

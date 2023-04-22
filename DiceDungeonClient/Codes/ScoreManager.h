@@ -20,7 +20,7 @@ private:
 
 private:
 	explicit ScoreManager();
-	~ScoreManager();
+	virtual ~ScoreManager();
 public:
 	// Call instead of destructor to manage class internal data
 	void Destroy();

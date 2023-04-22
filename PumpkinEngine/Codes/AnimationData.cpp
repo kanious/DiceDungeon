@@ -2,6 +2,7 @@
 #include "..\Headers\AnimationData.h"
 #include "..\Headers\Animation.h"
 #include <fstream>
+#include <sstream>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -42,7 +43,7 @@ CAnimation* CAnimationData::FindAnimation(string tag)
 	return nullptr;
 }
 
-void CAnimationData::LoadAnimations(const aiScene* scene, map<string, _int>* pMap)
+void CAnimationData::LoadAnimations(const aiScene* scene, map<string, _int>* pMap, string tag)
 {
 	for (int i = 0; i < scene->mNumAnimations; ++i)
 	{
@@ -50,10 +51,11 @@ void CAnimationData::LoadAnimations(const aiScene* scene, map<string, _int>* pMa
 		if (nullptr == anim)
 			continue;
 		
-		string tag(anim->mName.data);
-		CAnimation* pAnim = CAnimation::Create(tag, scene, anim, pMap);
+		stringstream ss;
+		ss << tag << "_" << anim->mName.data;
+		CAnimation* pAnim = CAnimation::Create(ss.str(), scene, anim, pMap);
 		if (nullptr != pAnim)
-			AddAnimation(tag, pAnim);
+			AddAnimation(ss.str(), pAnim);
 	}
 }
 

@@ -29,7 +29,7 @@ public:
 	void AddAnimation(std::string tag, CAnimation* pAnimation);
 	CAnimation* FindAnimation(std::string tag);
 	//void LoadAnimations(std::string assetFolderPath);
-	void LoadAnimations(const aiScene* scene, std::map<std::string, _int>* pMap);
+	void LoadAnimations(const aiScene* scene, std::map<std::string, _int>* pMap, std::string tag);
 };
 
 NAMESPACE_END

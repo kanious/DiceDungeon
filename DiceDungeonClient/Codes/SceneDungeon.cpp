@@ -2,6 +2,7 @@
 #include "Function.h"
 #include "glm\vec3.hpp"
 #include "InputDevice.h"
+#include "OpenGLDevice.h"
 #include "DefaultCamera.h"
 #include "JsonParser.h"
 #include "Layer.h"
@@ -16,14 +17,18 @@
 #include "UIManager.h"
 #include "Enums.h"
 #include "SkyBox.h"
-#include "Renderer.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "AnimationManager.h"
 #include "AnimationData.h"
 #include "ObjectFactory.h"
 #include "TargetManager.h"
 #include "PhysicsDefines.h"
 #include "LuaBrain.h"
+#include "TileMaster.h"
+#include "CollisionMaster.h"
+#include "EnemyManager.h"
+#include "StateMachine.h"
 
 #include <sstream>
 #include <atlconv.h>
@@ -37,14 +42,17 @@ SceneDungeon::SceneDungeon()
 	: m_pSkyBox(nullptr)
 	, m_pDefaultCamera(nullptr), m_vCameraSavedPos(vec3(0.f)), m_vCameraSavedRot(vec3(0.f)), m_vCameraSavedTarget(vec3(0.f))
 	, m_pCharacterLayer(nullptr), m_pPFactory(nullptr), m_pPWorld(nullptr)
+	, m_iTileIdx(0), m_bPicked(false)
 {
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
 	m_pUIManager = UIManager::GetInstance(); m_pUIManager->AddRefCnt();
 	m_pAnimationManager = AnimationManager::GetInstance(); m_pAnimationManager->AddRefCnt();
 	m_pTargetManager = TargetManager::GetInstance(); m_pTargetManager->AddRefCnt();
+	m_pEnemyManager = EnemyManager::GetInstance(); m_pEnemyManager->AddRefCnt();
 
 	m_ObjListFileName = "mapObjects.json";
 	m_LightListFileName = "lights.xml";
+	m_TileFileName = "tileData.json";
 }
 
 SceneDungeon::~SceneDungeon()
@@ -62,6 +70,7 @@ void SceneDungeon::Destroy()
 	SafeDestroy(m_pSkyBox);
 	SafeDestroy(m_pAnimationManager);
 	SafeDestroy(m_pTargetManager);
+	SafeDestroy(m_pEnemyManager);
 
 	CScene::Destroy();
 }
@@ -78,8 +87,11 @@ void SceneDungeon::Update(const _float& dt)
 	if (nullptr != m_pAnimationManager)
 		m_pAnimationManager->Update(dt);
 
-	if (nullptr != m_pTargetManager)
-		m_pTargetManager->Update(dt);
+	if (nullptr != m_pEnemyManager)
+		m_pEnemyManager->Update(dt);
+
+	//if (nullptr != m_pTargetManager)
+	//	m_pTargetManager->Update(dt);
 
 	KeyCheck();
 	CLightMaster::GetInstance()->SetLightInfo();
@@ -102,39 +114,134 @@ vec3 SceneDungeon::GetCameraPos()
 	return vec3(0.f);
 }
 
+_bool SceneDungeon::GetPlayerPos(vec3& playerPos)
+{
+	if (nullptr == m_pPlayer)
+		return false;
+
+	playerPos = m_pPlayer->GetPosition();
+
+	return true;
+}
+
+_bool SceneDungeon::GetPlayerTileIdx(_int& tileIdx)
+{
+	if (nullptr == m_pPlayer)
+		return false;
+
+	tileIdx = m_pPlayer->GetTileIdx();
+
+	return true;
+}
+
 // Play sound if something collide
 void SceneDungeon::CollisionSoundCallback()
 {
 	CSoundMaster::GetInstance()->PlaySound("Ball");
 }
 
+void SceneDungeon::ResetPicking()
+{
+	CTileMaster::GetInstance()->ClearAllLists();
+	m_bPicked = false;
+	UIManager::GetInstance()->SetPlayerMoveButtonWindow(false);
+}
+
+void SceneDungeon::MovePlayer()
+{
+	if (nullptr != m_pPlayer)
+		m_pPlayer->StartMoving();
+}
+
+void SceneDungeon::HitPlayer()
+{
+	if (nullptr != m_pPlayer)
+		m_pPlayer->Hit();
+}
+
+void SceneDungeon::StartEnemyTurn()
+{
+	m_pEnemyManager->StartEnemyTurn();
+}
+
+void SceneDungeon::StopEnemyTurn()
+{
+	m_pEnemyManager->StopEnemyTurn();
+}
+
+void SceneDungeon::GameOver()
+{
+	printf("Game Over\n");
+
+	m_pEnemyManager->StopEnemyTurn();
+}
+
+void SceneDungeon::GameReset()
+{
+	printf("Game Reset\n");
+
+	if (nullptr != m_pPlayer)
+		m_pPlayer->Reset();
+
+	CLayer* pLayer = GetLayer((_uint)LAYER_ENEMY);
+	list<CGameObject*>* pObjList = pLayer->GetObjectList();
+	list<CGameObject*>::iterator iter;
+	for (iter = pObjList->begin(); iter != pObjList->end(); ++iter)
+		dynamic_cast<Enemy*>(*iter)->Reset();
+
+	ResetDefaultCameraPos();
+}
+
 // Check User input
 void SceneDungeon::KeyCheck()
 {
-	static _bool isPDown = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_P))
-	{
-		if (!isPDown)
-		{
-			isPDown = true;
-			CLuaBrain::GetInstance()->RunLuaScript("BG");
-		}
-	}
-	else
-		isPDown = false;
+	if (m_pEnemyManager->GetEnemyTurn())
+		return;
 
-	static _bool isRDown = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_R))
+	if (m_pUIManager->GetCursorIsOnTheUI())
+		return;
+
+	if (!m_bPicked)
 	{
-		if (!isRDown)
+		if (-1 != m_iTileIdx)
+			CTileMaster::GetInstance()->TileEnable(m_iTileIdx, false);
+		m_iTileIdx = TilePicking();
+		if (-1 != m_iTileIdx)
+			CTileMaster::GetInstance()->TileEnable(m_iTileIdx, true);
+	}
+
+	static _bool isMouseLBClicked = false;
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
+	{
+		if (!isMouseLBClicked)
 		{
-			isRDown = true;
-			if (nullptr != m_pPWorld)
-				m_pPWorld->RollDice(2);
+			isMouseLBClicked = true;
+
+			if (-1 != m_iTileIdx && m_iTileIdx != m_pPlayer->GetTileIdx())
+			{
+				CTileMaster::GetInstance()->PathfindingStart(m_pPlayer->GetTileIdx(), m_iTileIdx);
+				m_bPicked = true;
+
+				vec3 tilePos = CTileMaster::GetInstance()->GetTilePos(m_iTileIdx);
+				UIManager::GetInstance()->SetPlayerMoveButtonWindow(true, tilePos);
+			}
 		}
 	}
 	else
-		isRDown = false;
+		isMouseLBClicked = false;
+
+	static _bool isMouseRBClicked = false;
+	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_2))
+	{
+		if (!isMouseRBClicked)
+		{
+			isMouseRBClicked = true;
+			ResetPicking();
+		}
+	}
+	else
+		isMouseRBClicked = false;
+
 }
 
 // Saves camera position
@@ -162,6 +269,19 @@ void SceneDungeon::ResetDefaultCameraPos()
 		m_pDefaultCamera->SetCameraRot(m_vCameraSavedRot);
 		m_pDefaultCamera->SetCameraTarget(m_vCameraSavedTarget);
 	}
+}
+
+_int SceneDungeon::TilePicking()
+{
+	vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
+	vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+	vec3 vDest = vec3(0.f);
+	if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
+	{
+		return CTileMaster::GetInstance()->FindPickedTile(vDest);
+	}
+
+	return -1;
 }
 
 // Initialize
@@ -192,13 +312,14 @@ RESULT SceneDungeon::Ready(string dataPath)
 	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
 	{
-		m_pDefaultCamera->AddShaderLocation("MeshShader");
+		m_pDefaultCamera->AddShaderLocation("MeshShader");//DeferredShader
 		m_pDefaultCamera->AddShaderLocation("BoneShader");
+		m_pDefaultCamera->AddShaderLocation("DeferredShader");
 	}
 
 	// UI
 	if (nullptr != m_pUIManager)
-		m_pUIManager->Ready(m_pPWorld);
+		m_pUIManager->Ready(m_pPWorld, this);
 
 	// TargetManager
 	if (nullptr != m_pTargetManager)
@@ -210,6 +331,9 @@ RESULT SceneDungeon::Ready(string dataPath)
 	{
 		pBrain->Ready(m_DataPath);
 	}
+
+	// Enemy Manager
+	m_pEnemyManager->Ready(this);
 
 	//CSoundMaster::GetInstance()->PlaySound("Background");
 
@@ -243,18 +367,20 @@ RESULT SceneDungeon::ReadyLayerAndCamera()
 		vec3 vPos = vec3(0.f, 80.f, -60.f);
 		vec3 vRot = vec3(0.f, 0.f, 0.f);
 		vec3 vScale = vec3(1.f);
-
+		SetDefaultCameraSavedPosition(vPos, vRot, vScale);
 		m_pDefaultCamera = ObjectFactory::CreateCamera(
 			(_uint)SCENE_3D, pLayer->GetTag(),
 			(_uint)OBJ_CAMERA, pLayer,
 			vPos, vRot, vScale, 0.6f, 0.1f, 1000.f);
 	}
 
+	//Create.Tiles
+	LoadTiles();
+
 	//Create.BackgroundLayer 
 	LoadObjects();
 
-	//Create.Player/AIs
-	//AddCharacters();
+	SortLayer();
 
 	return PK_NOERROR;
 }
@@ -267,13 +393,13 @@ void SceneDungeon::LoadObjects()
 
 	vector<CJsonParser::sObjectData> vecObjects;
 	CJsonParser::sObjectData cameraData;
-	CJsonParser::GetInstance()->LoadObjectList(m_DataPath, m_ObjListFileName, vecObjects, cameraData);
+	CJsonParser::GetInstance()->LoadObjectList(m_ObjListFileName, vecObjects, cameraData);
 	vector<CJsonParser::sObjectData>::iterator iter;
 	for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 	{
 		eLAYERTAG tag = GetLayerTagByName(iter->LAYERTYPE);
 		pLayer = GetLayer((_uint)tag);
-		pGameObject = ObjectFactory::CreateGameObject(
+		pGameObject = ObjectFactory::CreateGameObject(this,
 			(_uint)SCENE_3D,
 			pLayer->GetTag(),
 			(_uint)OBJ_BACKGROUND,
@@ -286,6 +412,14 @@ void SceneDungeon::LoadObjects()
 			pGameObject->SetEnable(iter->SHOW);
 			pGameObject->SetTransparency(iter->ALPHA);
 		}
+
+		if (LAYER_CHARACTER == tag)
+		{
+			m_pPlayer = dynamic_cast<Player*>(pGameObject);
+			StateMachine::SetPlayer(m_pPlayer);
+		}
+		else if (LAYER_ENEMY == tag)
+			m_pEnemyManager->AddEnemy(dynamic_cast<Enemy*>(pGameObject));
 	}
 	vecObjects.clear();
 
@@ -296,6 +430,42 @@ void SceneDungeon::LoadObjects()
 	//	m_pDefaultCamera->SetCameraRot(cameraData.ROTATION);
 	//	m_pDefaultCamera->SetCameraTarget(cameraData.SCALE);
 	//}
+}
+
+void SceneDungeon::LoadTiles()
+{
+	CLayer* pLayer = GetLayer((_uint)LAYER_TILE);
+	CGameObject* pGameObject = nullptr;
+	CTileMaster* pTileMaster = CTileMaster::GetInstance();
+
+	vector<CJsonParser::sTileData> vecTiles;
+	CJsonParser::GetInstance()->LoadTileData(m_TileFileName, vecTiles);
+	vector<CJsonParser::sTileData>::iterator iter;
+	for (iter = vecTiles.begin(); iter != vecTiles.end(); ++iter)
+	{
+		pGameObject = ObjectFactory::CreateGameObject(this,
+			(_uint)SCENE_3D,
+			pLayer->GetTag(),
+			(_uint)OBJ_BACKGROUND,
+			pLayer,
+			"tile", iter->POSITION, vec3(0.f), vec3(0.025f));
+
+		if (nullptr != pGameObject)
+		{
+			pGameObject->SetTransparency(false);
+			pGameObject->SetEnable(false);
+		}
+
+		pTileMaster->AddTileNode(iter->ID, iter->POSITION, false, pGameObject);
+	}
+	for (iter = vecTiles.begin(); iter != vecTiles.end(); ++iter)
+	{
+		_uint tileIdx = iter->ID;
+		for (int i = 0; i < 8; ++i)
+			pTileMaster->SetNeighbor(tileIdx, i, iter->NEIGHBORS[i]);
+	}
+
+	vecTiles.clear();
 }
 
 // Initialize Physics World and prepare dice
@@ -323,7 +493,7 @@ void SceneDungeon::ReadyPhysicsAndDice()
 
 	for (int i = 0; i < 10; ++i)
 	{
-		pGameObject = ObjectFactory::CreateGameObject(
+		pGameObject = ObjectFactory::CreateGameObject(this,
 			(_uint)SCENE_3D, pLayer->GetTag(), (_uint)OBJ_BACKGROUND, pLayer,
 			"dice", vec3(0.f), vec3(0.f), vec3(1.f));
 		desc.position = vec3(0.f);

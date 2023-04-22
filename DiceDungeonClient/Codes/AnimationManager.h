@@ -21,7 +21,7 @@ private:
 
 private:
 	explicit AnimationManager();
-	~AnimationManager();
+	virtual ~AnimationManager();
 public:
 	// Call instead of destructor to manage class internal data
 	void Destroy();

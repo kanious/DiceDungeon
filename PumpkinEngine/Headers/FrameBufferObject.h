@@ -13,8 +13,6 @@ private:
 	_uint				m_iFrameBuffer;
 	_uint				m_iColourTextureID;
 	_uint				m_iRenderBuffer;
-	//_uint				m_iVertexWorldPos_ID;
-	//_uint				m_iDepthTextureID;
 
 	_int				m_iWidth;
 	_int				m_iHeight;
@@ -35,9 +33,6 @@ private:
 
 public:
 	_uint GetFramebufferID()		{ return m_iFrameBuffer; }
-	//_uint GetColourTextureID()	{ return m_iColourTextureID; }
-	//_uint GetVertexWorldPosID()	{ return m_iVertexWorldPos_ID; }
-	//_uint GetDepthTextureID()		{ return m_iDepthTextureID; }
 	_int GetWidth()					{ return m_iWidth; }
 	_int GetHeight()				{ return m_iHeight; }
 

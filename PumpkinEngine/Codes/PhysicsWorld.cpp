@@ -178,7 +178,7 @@ void CPhysicsWorld::RollDice(_uint count)
 	vDir.y = 0.f;
 	vDir = normalize(vDir);
 	vEyePos += vDir * 10.f;
-	vEyePos.y = 15.f;
+	vEyePos.y = 25.f;
 
 	CRigidBodyDesc desc;
 	for (unsigned int i = 0; i < CCollisionBox::boxCount; ++i)

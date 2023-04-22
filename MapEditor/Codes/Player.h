@@ -10,6 +10,7 @@ namespace Engine
 	class CMesh;
 	class CInputDevice;
 }
+class Animator;
 
 // Character class
 class Player : public Engine::CGameObject
@@ -21,6 +22,8 @@ private:
 	glm::vec3					m_vVelocity;
 	_float						m_fSpeed;
 	_float						m_fRotSpeed;
+
+	Animator*					m_pAnimator;
 
 private:
 	explicit Player();

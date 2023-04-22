@@ -36,12 +36,17 @@ void CJsonParser::Destroy()
 	SafeDestroy(m_pCompMaster);
 }
 
+void CJsonParser::SetAssetDataPath(string assetFolderPath)
+{
+	m_assetDataPath = assetFolderPath;
+}
+
 // Load Characters from file
-void CJsonParser::LoadCharacterList(std::string assetFolderPath, std::string fileName, std::vector<sCharacterData>& vec)
+void CJsonParser::LoadCharacterList(string fileName, vector<sCharacterData>& vec)
 {
 	Document doc;
 	FILE* file;
-	LoadDataFromFile(doc, file, assetFolderPath, fileName);
+	LoadDataFromFile(doc, file, fileName);
 	const Value& dataArray = doc["array"];
 	assert(dataArray.IsArray());
 
@@ -71,15 +76,15 @@ void CJsonParser::LoadCharacterList(std::string assetFolderPath, std::string fil
 		vec.push_back(data);
 	}
 
-	std::fclose(file);
+	fclose(file);
 }
 
 // Load Textures from file
-void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileName)
+void CJsonParser::LoadTextureData(string fileName)
 {
 	Document doc;
 	FILE* file;
-	LoadDataFromFile(doc, file, assetFolderPath, fileName);
+	LoadDataFromFile(doc, file, fileName);
 
 	for (unsigned int i = 0; i < doc.Size(); ++i)
 	{
@@ -91,7 +96,7 @@ void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileN
 		data.FILENAME = curData["FileName"].GetString();
 
 		stringstream ss;
-		ss << assetFolderPath << data.PATH << data.FILENAME;
+		ss << m_assetDataPath << data.PATH << data.FILENAME;
 		CComponent* pComp = CTexture::Create(data.ID, ss.str());
 
 		if (nullptr != pComp)
@@ -100,15 +105,15 @@ void CJsonParser::LoadTextureData(std::string assetFolderPath, std::string fileN
 		cout << "Texture Loading... " << data.ID << " Loaded" << endl;
 	}
 
-	std::fclose(file);
+	fclose(file);
 }
 
 // Load Meshes from file
-void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName, _bool saveMeshList)
+void CJsonParser::LoadMeshData(string fileName, _bool saveMeshList)
 {
 	Document doc;
 	FILE* file;
-	LoadDataFromFile(doc, file, assetFolderPath, fileName);
+	LoadDataFromFile(doc, file, fileName);
 
 	for (unsigned int i = 0; i < doc.Size(); ++i)
 	{
@@ -128,7 +133,7 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 		data.TEXTURE_ID_NORMAL = curData["Texture_ID_Normal"].GetString();
 
 		stringstream ss;
-		ss << assetFolderPath << data.PATH;
+		ss << m_assetDataPath << data.PATH;
 		CComponent* pComp = CMesh::Create(data.ID, ss.str(), data.FILENAME,
 			(eModelType)data.DATATYPE, data.SHADER_ID, data.INITSIZE, data.MESHTYPE,
 			data.TEXTURE_ID_DIFF, data.TEXTURE_ID_NORMAL, data.LOAD_ASSIMP);
@@ -143,15 +148,15 @@ void CJsonParser::LoadMeshData(std::string assetFolderPath, std::string fileName
 		cout << "Mesh Loading... " << data.ID << " Loaded" << endl;
 	}
 
-	std::fclose(file);
+	fclose(file);
 }
 
 // Load Objects from file
-void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
+void CJsonParser::LoadObjectList(string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	Document doc;
 	FILE* file;
-	LoadDataFromFile(doc, file, assetFolderPath, fileName);
+	LoadDataFromFile(doc, file, fileName);
 
 	for (unsigned int i = 0; i < doc.Size(); ++i)
 	{
@@ -180,14 +185,14 @@ void CJsonParser::LoadObjectList(string assetFolderPath, string fileName, vector
 			vec.push_back(data);
 	}
 
-	std::fclose(file);
+	fclose(file);
 }
 
 // Save Objects from file
-void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
+void CJsonParser::SaveObjectList(string fileName, vector<sObjectData>& vec, sObjectData& cameraData)
 {
 	stringstream ss;
-	ss << assetFolderPath << m_jsonDataPath << fileName;
+	ss << m_assetDataPath << m_jsonDataPath << fileName;
 
 	FILE* file;
 	fopen_s(&file, ss.str().c_str(), "wb");
@@ -275,14 +280,94 @@ void CJsonParser::SaveObjectList(string assetFolderPath, string fileName, vector
 	}
 
 	doc.Accept(writer);
-	std::fclose(file);
+	fclose(file);
+}
+
+void CJsonParser::SaveTileData(string fileName, vector<sTileData>& vec)
+{
+	stringstream ss;
+	ss << m_assetDataPath << m_jsonDataPath << fileName;
+
+	FILE* file;
+	fopen_s(&file, ss.str().c_str(), "wb");
+	const _uint BUFFER_SIZE = 1000;
+	char writeBuffer[BUFFER_SIZE];
+	FileWriteStream output(file, writeBuffer, sizeof(writeBuffer));
+	Writer<FileWriteStream> writer(output);
+
+	char buffer[BUFFER_SIZE];
+	int len = 0;
+
+	Document doc;
+	doc.SetArray();
+	Document::AllocatorType& allocator = doc.GetAllocator();
+
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		sTileData curData = vec[i];
+
+		Value obj;
+		obj.SetObject();
+
+		Value id;
+		id.SetInt(curData.ID);
+		obj.AddMember("id", id, allocator);
+
+		Value posX;	posX.SetFloat(curData.POSITION.x); obj.AddMember("posX", posX, allocator);
+		Value posY;	posY.SetFloat(curData.POSITION.y); obj.AddMember("posY", posY, allocator);
+		Value posZ; posZ.SetFloat(curData.POSITION.z); obj.AddMember("posZ", posZ, allocator);
+
+		Value neighbor0; neighbor0.SetInt(curData.NEIGHBORS[0]); obj.AddMember("neighbor0", neighbor0, allocator);
+		Value neighbor1; neighbor1.SetInt(curData.NEIGHBORS[1]); obj.AddMember("neighbor1", neighbor1, allocator);
+		Value neighbor2; neighbor2.SetInt(curData.NEIGHBORS[2]); obj.AddMember("neighbor2", neighbor2, allocator);
+		Value neighbor3; neighbor3.SetInt(curData.NEIGHBORS[3]); obj.AddMember("neighbor3", neighbor3, allocator);
+		Value neighbor4; neighbor4.SetInt(curData.NEIGHBORS[4]); obj.AddMember("neighbor4", neighbor4, allocator);
+		Value neighbor5; neighbor5.SetInt(curData.NEIGHBORS[5]); obj.AddMember("neighbor5", neighbor5, allocator);
+		Value neighbor6; neighbor6.SetInt(curData.NEIGHBORS[6]); obj.AddMember("neighbor6", neighbor6, allocator);
+		Value neighbor7; neighbor7.SetInt(curData.NEIGHBORS[7]); obj.AddMember("neighbor7", neighbor7, allocator);
+
+		doc.PushBack(obj, allocator);
+	}
+
+	doc.Accept(writer);
+	fclose(file);
+}
+
+void CJsonParser::LoadTileData(string fileName, vector<sTileData>& vec)
+{
+	Document doc;
+	FILE* file;
+	LoadDataFromFile(doc, file, fileName);
+
+	for (unsigned int i = 0; i < doc.Size(); ++i)
+	{
+		sTileData data;
+
+		const Value& curData = doc[i];
+		data.ID = curData["id"].GetInt();
+		data.POSITION.x = curData["posX"].GetFloat();
+		data.POSITION.y = curData["posY"].GetFloat();
+		data.POSITION.z = curData["posZ"].GetFloat();
+		data.NEIGHBORS[0] = curData["neighbor0"].GetInt();
+		data.NEIGHBORS[1] = curData["neighbor1"].GetInt();
+		data.NEIGHBORS[2] = curData["neighbor2"].GetInt();
+		data.NEIGHBORS[3] = curData["neighbor3"].GetInt();
+		data.NEIGHBORS[4] = curData["neighbor4"].GetInt();
+		data.NEIGHBORS[5] = curData["neighbor5"].GetInt();
+		data.NEIGHBORS[6] = curData["neighbor6"].GetInt();
+		data.NEIGHBORS[7] = curData["neighbor7"].GetInt();
+
+		vec.push_back(data);
+	}
+
+	fclose(file);
 }
 
 // Open files for loading
-void CJsonParser::LoadDataFromFile(Document& doc, FILE*& file, string assetFolderPath, string fileName)
+void CJsonParser::LoadDataFromFile(Document& doc, FILE*& file, string fileName)
 {
 	stringstream ss;
-	ss << assetFolderPath << m_jsonDataPath << fileName;
+	ss << m_assetDataPath << m_jsonDataPath << fileName;
 
 	fopen_s(&file, ss.str().c_str(), "rb");
 	const _uint BUFFER_SIZE = 1000;

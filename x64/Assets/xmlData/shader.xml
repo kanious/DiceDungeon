@@ -54,4 +54,9 @@
 		<VertexPath>Shader\BoneVertex.fx</VertexPath>
 		<FragmentPath>Shader\BoneFragment.fx</FragmentPath>
 	</Shader>
+	<Shader>
+		<ID>DeferredShader</ID>
+		<VertexPath>Shader\DeferredVertex.fx</VertexPath>
+		<FragmentPath>Shader\DeferredFragment.fx</FragmentPath>
+	</Shader>
 </Shader_List>

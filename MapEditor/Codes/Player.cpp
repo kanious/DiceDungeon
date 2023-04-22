@@ -16,6 +16,8 @@
 #include "LightMaster.h"
 #include "Light.h"
 #include "InputDevice.h"
+#include "Animator.h"
+#include "AnimationManager.h"
 
 #include <sstream>
 
@@ -97,6 +99,15 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 			m_pBoundingBox->SetTransform(m_pTransform);
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
+
+		m_pAnimator = Animator::Create(this);
+		m_pMesh->SetAnimController(m_pAnimator);
+		AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
+		m_pAnimator->SetIsPlaying(true);
+
+		mat4x4* pmat = new mat4x4(1.f);
+		*pmat = scale(*pmat, vec3(0.01f));
+		m_pMesh->SetMatrix(pmat);
 	}
 
 	if (nullptr != m_pTransform)

@@ -18,6 +18,10 @@
 #include "InputDevice.h"
 #include "Animator.h"
 #include "AnimationManager.h"
+#include "TileMaster.h"
+#include "SceneDungeon.h"
+#include "UIHealthInfo.h"
+#include "UIManager.h"
 
 #include <sstream>
 
@@ -28,7 +32,8 @@ USING(std)
 
 Player::Player()
 	: m_pMesh(nullptr), m_vVelocity(vec3(0.f)), m_vOriginPosition(vec3(0.f))
-	, m_fSpeed(15.f), m_fRotSpeed(10.f), m_pAnimator(nullptr), m_vTargetPos(vec3(0.f)), m_bMoving(false)
+	, m_fSpeed(25.f), m_fRotSpeed(20.f), m_pAnimator(nullptr), m_vTargetPos(vec3(0.f)), m_bMoving(false)
+	, m_bMotionEnd(false), m_pHealthUI(nullptr), m_bDeath(false)
 {
 	m_bDebug = false;
 	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
@@ -45,26 +50,94 @@ void Player::SetTarget(_bool value)
 		m_pMesh->SetSelcted(value);
 }
 
-// Set the position to move
-void Player::SetTargetPos(vec3 vPos)
+void Player::StartMoving()
 {
-	m_vTargetPos = vPos;
+	if (m_bMoving)
+		return;
+
+	while(true)
+	{
+		if (0 == m_queuePos.size())
+			break;
+		m_queuePos.pop();
+	}
+
+	CTileMaster::GetInstance()->TileFill(m_iTileIdx, false);
+	CTileMaster::GetInstance()->GetBestList(m_queuePos, 9999, m_iTileIdx);
+	CTileMaster::GetInstance()->TileFill(m_iTileIdx, true);
+
+	if (0 == m_queuePos.size())
+		return;
+
+	m_vTargetPos = m_queuePos.front();
+	m_queuePos.pop();
+
 	m_bMoving = true;
+	if (nullptr != m_pAnimator)
+		m_pAnimator->ChangeAnimation("true_pumpkin_king_run");
+}
+
+void Player::Hit()
+{
+	if (nullptr != m_pAnimator)
+	{
+		m_bMotionEnd = false;
+		m_iCurHealth -= 10;
+		
+		if (0 < m_iCurHealth)
+			m_pAnimator->ChangeAnimation("true_pumpkin_king_hurt");
+		else
+		{
+			m_pAnimator->ChangeAnimation("true_pumpkin_king_death");
+			m_bDeath = true;
+			if (nullptr != m_pScene)
+				m_pScene->GameOver();
+		}
+	}
+}
+
+void Player::Reset()
+{
+	m_pTransform->SetPosition(m_vOriginPos);
+	m_pTransform->SetRotation(m_vOriginRot);
+	m_iTileIdx = CTileMaster::GetInstance()->FindNearestTile(m_vOriginPos);
+	m_iCurHealth = m_iMaxHealth;
+}
+
+void Player::ChangeAnimation(string tag)
+{
+	m_pAnimator->SetPause(false);
+	m_pAnimator->ChangeAnimation(tag);
+}
+
+void Player::SetAnimationBlending(_bool value)
+{
+	m_pAnimator->SetBlendingOption(value);
 }
 
 // Check movement
 void Player::MovingCheck(const _float& dt)
 {
 	vec3 vMyPos = m_pTransform->GetPosition();
-	
 	_float fDist = distance(vMyPos, m_vTargetPos);
 	if (fDist < 0.1f)
 	{
 		m_pTransform->SetPosition(m_vTargetPos);
-		m_bMoving = false;
-		m_pAnimator->SetIsPlaying(false);
-		m_pAnimator->ResetAnimation();
-		return;
+
+		if (0 == m_queuePos.size())
+		{
+			if (nullptr != m_pAnimator)
+				m_pAnimator->ChangeAnimation("true_pumpkin_king_idle");
+			m_bMoving = false;
+			if (nullptr != m_pScene)
+				m_pScene->ResetPicking();
+			return;
+		}
+		else
+		{
+			m_vTargetPos = m_queuePos.front();
+			m_queuePos.pop();
+		}
 	}
 
 	vec3 vDir = m_vTargetPos - vMyPos;
@@ -75,9 +148,6 @@ void Player::MovingCheck(const _float& dt)
 	_float fAngleGap = GetAngle(vDir, vLook);
 	if (1.f < fAngleGap)
 	{
-		m_pAnimator->SetIsPlaying(false);
-		m_pAnimator->ResetAnimation();
-
 		vec3 vRight = m_pTransform->GetRightVector();
 		_float fDot = dot(vDir, vRight);
 		_float fY = m_pTransform->GetRotationY();
@@ -89,18 +159,14 @@ void Player::MovingCheck(const _float& dt)
 			m_pTransform->SetRotationY(fY);
 		}
 		else
-		{ 
+		{
 			fY -= fAngleGap * dt * m_fRotSpeed;
 			if (fY < 0.f)
 				fY += 360.f;
 			m_pTransform->SetRotationY(fY);
 		}
 	}
-	else
-	{
-		m_pAnimator->SetIsPlaying(true);
-		m_pTransform->AddPosition(vDir * dt * m_fSpeed);
-	}
+	m_pTransform->AddPosition(vDir * dt * m_fSpeed);
 }
 
 void Player::KeyCheck(const _float& dt)
@@ -108,82 +174,26 @@ void Player::KeyCheck(const _float& dt)
 	if (nullptr == m_pInputDevice || nullptr == m_pAnimator)
 		return;
 
-	static _bool isF3Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F3))
-	{
-		if (!isF3Down)
-		{
-			isF3Down = true;
-			m_pAnimator->SetBlendingOption(!m_pAnimator->GetBlendingOption());
-		}
-	}
-	else
-		isF3Down = false;
-
-	if (m_bMoving)
-		return;
-
-	_bool pressed = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F1))
-	{
-		m_pAnimator->ChangeAnimation("walk");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F2))
-	{
-		m_pAnimator->ChangeAnimation("run");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F3))
-	{
-		m_pAnimator->ChangeAnimation("attack1");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F4))
-	{
-		m_pAnimator->ChangeAnimation("attack2");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F5))
-	{
-		m_pAnimator->ChangeAnimation("grab");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F6))
-	{
-		m_pAnimator->ChangeAnimation("pick_up");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F7))
-	{
-		m_pAnimator->ChangeAnimation("hurt");
-		pressed = true;
-	}
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F8))
-	{
-		m_pAnimator->ChangeAnimation("death");
-		pressed = true;
-	}
-
-	if (!pressed)
-		m_pAnimator->ChangeAnimation("idle");
 }
  
 // Basic Update Function
 void Player::Update(const _float& dt)
 {
-	if (m_bEnable)
+	if (!m_bEnable)
+		return;
+
+	if (!m_bDeath)
 	{
 		if (m_bMoving)
 			MovingCheck(dt);
 
-		KeyCheck(dt);
-
-		CGameObject::Update(dt);
-
-		if (nullptr != m_pRenderer)
-			m_pRenderer->AddRenderObj(this);
+		//KeyCheck(dt);
 	}
+
+	CGameObject::Update(dt);
+
+	if (nullptr != m_pRenderer)
+		m_pRenderer->AddRenderObj(this);
 }
 
 // Basic Render Function
@@ -196,17 +206,20 @@ void Player::Render()
 void Player::Destroy()
 {
 	SafeDestroy(m_pInputDevice);
+	SafeDestroy(m_pHealthUI);
 
 	CGameObject::Destroy();
 }
 
 // Initialize
 RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
-	, vec3 vRot, vec3 vScale, _bool isPlayer)
+	, vec3 vRot, vec3 vScale, SceneDungeon* pScene)
 {
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
 	m_meshName = meshID;
+	m_vOriginPos = vPos;
+	m_vOriginRot = vRot;
 
 	//Clone.Mesh
 	m_pMesh = CloneComponent<CMesh*>(meshID);
@@ -220,13 +233,10 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
 
-		if (isPlayer)
-		{
-			m_pAnimator = Animator::Create(this);
-			m_pMesh->SetAnimController(m_pAnimator);
-			AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
-			m_pAnimator->SetIsPlaying(true);
-		}
+		m_pAnimator = Animator::Create("true_pumpkin_king_idle", false, this, pScene);
+		m_pMesh->SetAnimController(m_pAnimator);
+		AnimationManager::GetInstance()->AddAnimator(m_pAnimator);
+		m_pAnimator->SetIsPlaying(true);
 
 		mat4x4* pmat = new mat4x4(1.f);
 		*pmat = scale(*pmat, vec3(0.01f));
@@ -239,15 +249,24 @@ RESULT Player::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string 
 		m_pTransform->Update(0);
 	}
 
+	m_iTileIdx = CTileMaster::GetInstance()->FindNearestTile(vPos);
+
+	// Health UI
+	m_iMaxHealth = 100;
+	m_iCurHealth = 100;
+	m_meshName = "Player";
+	m_pHealthUI = UIHealthInfo::Create(this);
+	UIManager::GetInstance()->AddHealthUI(m_pHealthUI);
+
 	return PK_NOERROR;
 }
 
 // Create an instance
 Player* Player::Create(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, string meshID, vec3 vPos
-	, vec3 vRot, vec3 vScale, _bool isPlayer)
+	, vec3 vRot, vec3 vScale, SceneDungeon* pScene)
 {
 	Player* pInstance = new Player();
-	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, isPlayer))
+	if (PK_NOERROR != pInstance->Ready(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, pScene))
 	{
 		pInstance->Destroy();
 		pInstance = nullptr;

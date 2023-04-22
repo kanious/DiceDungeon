@@ -31,6 +31,7 @@ CGameObject::CGameObject()
 	m_pRenderer = CRenderer::GetInstance(); m_pRenderer->AddRefCnt();
 	m_pLayer = nullptr;
 	m_pBoundingBox = nullptr;
+	m_iTileIdx = -1;
 
 	m_pTransform = CloneComponent<CTransform*>("Transform");
 	AttachComponent("Transform", m_pTransform);

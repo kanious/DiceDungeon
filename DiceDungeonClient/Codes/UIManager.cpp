@@ -2,12 +2,19 @@
 #include "..\imgui\imgui_impl_glfw.h"
 #include "..\imgui\imgui_impl_opengl3.h"
 #include "OpenGLDevice.h"
+#include "OpenGLDefines.h"
 #include "Define.h"
 #include "DiceMaster.h"
 #include "iPhysicsWorld.h"
 #include "ScoreManager.h"
+#include "Player.h"
 #include "leaderboard_types.h"
 #include "LeaderboardManager.h"
+#include "SceneDungeon.h"
+#include "UIHealthInfo.h"
+#include "Renderer.h"
+#include "LuaBrain.h"
+#include "SoundMaster.h"
 
 #include <sstream>
 #include <iomanip>
@@ -16,11 +23,15 @@ SINGLETON_FUNCTION(UIManager)
 USING(Engine)
 USING(ImGui)
 USING(std)
+USING(glm)
 
 UIManager::UIManager()
 	: m_pPWorld(nullptr), m_Message(""), m_iHighScore(0), m_bOpenRankingListPage(false)
+	, m_bOpenPlayerMoveW(false), m_vecMoveTilePos(vec3(0.f)), m_bDeferredTexture(false)
+	, m_bHPUI(true), m_bBGPlay(true), m_bBGPlayPrev(false), m_bAnimBlending(true)
 {
 	ZeroMemory(m_char, sizeof(m_char));
+	m_vecHPInfos.clear();
 }
 
 UIManager::~UIManager()
@@ -45,18 +56,53 @@ void UIManager::RenderUI()
 	_float width = (_float)COpenGLDevice::GetInstance()->GetWidthSize();
 	_float height = (_float)COpenGLDevice::GetInstance()->GetHeightSize();
 
+	RenderDiceWindow();
+	RenderScoreWindow(width, height);
+	RenderDebugUI(width, height);
+
+	if (m_bOpenPlayerMoveW)
+		RenderPlayerMoveButtonWindow(width, height);
+
+	if (m_bHPUI)
+	{
+		for (int i = 0; i < m_vecHPInfos.size(); ++i)
+			m_vecHPInfos[i]->RenderUI();
+	}
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
+}
+
+// Initialize
+RESULT UIManager::Ready(iPhysicsWorld* pWorld, SceneDungeon* pScene)
+{
+	IMGUI_CHECKVERSION();
+	CreateContext();
+	ImGuiIO& io = GetIO();
+
+	if (!ImGui_ImplGlfw_InitForOpenGL(COpenGLDevice::GetInstance()->GetWindow(), true) ||
+		!ImGui_ImplOpenGL3_Init("#version 460"))
+		return PK_ERROR_IMGUI;
+	StyleColorsDark();
+
+	m_pPWorld = pWorld;
+	m_pScene = pScene;
+	if (nullptr != pScene)
+		m_pPlayer = pScene->GetPlayer();
+
+	return PK_NOERROR;
+}
+
+void UIManager::RenderDiceWindow()
+{
 	ImVec2 screen = ImVec2(200.f, 100.f);
 	SetNextWindowPos(ImVec2(0.f, 0.f));
 	SetNextWindowSize(screen);
 	if (Begin("DiceUI", (bool*)0,
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoTitleBar))
+		ImGuiWindowFlags_NoCollapse))
 	{
-		Text("Dice UI");
-		Separator();
-
 		if (Button("Roll2", ImVec2(50.f, 0.f)))
 		{
 			if (nullptr != m_pPWorld)
@@ -75,7 +121,7 @@ void UIManager::RenderUI()
 				m_pPWorld->RollDice(5);
 		}
 
-		Text("Rolled Dice:"); SameLine(115.f); 
+		Text("Rolled Dice:"); SameLine(115.f);
 		stringstream ss;
 		ss << CDiceMaster::GetInstance()->GetRolledDiceCount();
 		Text(ss.str().c_str());
@@ -87,9 +133,11 @@ void UIManager::RenderUI()
 
 		End();
 	}
+}
 
-	screen.x = 300.f;
-	screen.y = 220.f;
+void UIManager::RenderScoreWindow(_float width, _float height)
+{
+	ImVec2 screen = ImVec2(300.f, 220.f);
 	SetNextWindowPos(ImVec2(width - screen.x, 0.f));
 	SetNextWindowSize(screen);
 	if (Begin("ScoreUI", (bool*)0,
@@ -99,7 +147,7 @@ void UIManager::RenderUI()
 		ImGuiWindowFlags_NoTitleBar))
 	{
 		Text("ScoreUI");
-		Separator();
+		ImGui::Separator();
 
 		Text("Server status: "); SameLine(150.f);
 		_bool connected = LeaderboardManager::GetInstance()->GetConnected();
@@ -118,7 +166,7 @@ void UIManager::RenderUI()
 			if (connected)
 				LeaderboardManager::GetInstance()->DisconnectWithServer();
 		}
-		Separator();
+		ImGui::Separator();
 
 		Text("* Add new score");
 		Text("Id:"); SameLine(30.f);
@@ -133,7 +181,7 @@ void UIManager::RenderUI()
 			m_Message = ScoreManager::GetInstance()->AddNewScore(playerId, score);
 		}
 		Text(m_Message.c_str());
-		Separator();
+		ImGui::Separator();
 
 		Text("* Get the score by playerId");
 		Text("Id:"); SameLine(30.f);
@@ -146,7 +194,7 @@ void UIManager::RenderUI()
 			_int playerId = atoi(m_char[2]);
 			m_iHighScore = ScoreManager::GetInstance()->GetHighScore(playerId);
 		}
-		Separator();
+		ImGui::Separator();
 
 		Text("* Get Top 20 list"); SameLine(190.f);
 		if (Button("Top 20", ImVec2(100.f, 0.f)))
@@ -157,29 +205,132 @@ void UIManager::RenderUI()
 
 		if (m_bOpenRankingListPage)
 			RenderRankingPage(width, height);
-		
+
 		End();
 	}
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
 }
 
-// Initialize
-RESULT UIManager::Ready(iPhysicsWorld* pWorld)
+void UIManager::RenderDebugUI(_float width, _float height)
 {
-	IMGUI_CHECKVERSION();
-	CreateContext();
-	ImGuiIO& io = GetIO();
+	ImVec2 screen = ImVec2(200.f, 500.f);
+	SetNextWindowPos(ImVec2(0.f, 100.f));
+	SetNextWindowSize(screen);
+	if (Begin("Debug", (bool*)0,
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoCollapse))
+	{
+		Text("Game Setting");
+		if (Button("Reset All", ImVec2(180.f, 0.f)))
+		{
+			if (nullptr != m_pScene)
+				m_pScene->GameReset();
+		}
+		if (Button("Enemy Turn Start", ImVec2(180.f, 0.f)))
+		{
+			if (nullptr != m_pScene)
+				m_pScene->StartEnemyTurn();
+		}
 
-	if (!ImGui_ImplGlfw_InitForOpenGL(COpenGLDevice::GetInstance()->GetWindow(), true) ||
-		!ImGui_ImplOpenGL3_Init("#version 460"))
-		return PK_ERROR_IMGUI;
-	StyleColorsDark();
+		if (Button("Enemy Turn Stop", ImVec2(180.f, 0.f)))
+		{
+			if (nullptr != m_pScene)
+				m_pScene->StopEnemyTurn();
+		}
 
-	m_pPWorld = pWorld;
+		Separator();
+		Text("Player Animation");
 
-	return PK_NOERROR;
+		if (Button("idle", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_idle");
+		}
+		SameLine(100.f);
+		if (Button("walk", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_walk");
+		}
+
+		if (Button("run", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_run");
+		}
+		SameLine(100.f);
+		if (Button("attack1", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_attack1");
+		}
+
+		if (Button("attack2", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_attack2");
+		}
+		SameLine(100.f);
+		if (Button("grab", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_grab");
+		}
+
+		if (Button("pick up", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_pick_up");
+		}
+		SameLine(100.f);
+		if (Button("hurt", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_hurt");
+		}
+
+		if (Button("death", ImVec2(90.f, 0.f)))
+		{
+			if (nullptr != m_pPlayer)
+				m_pPlayer->ChangeAnimation("true_pumpkin_king_death");
+		}
+		Checkbox("Animation Blending", &m_bAnimBlending);
+		m_pPlayer->SetAnimationBlending(m_bAnimBlending);
+
+		Separator();
+		Text("Show/Hide toggle");
+		Checkbox("Show Deferred Texture", &m_bDeferredTexture);
+		CRenderer::GetInstance()->SetShowDebug(m_bDeferredTexture);
+		Checkbox("Show Health UI", &m_bHPUI);
+		Checkbox("Play BG", &m_bBGPlay);
+		if (m_bBGPlay != m_bBGPlayPrev)
+		{
+			m_bBGPlayPrev = m_bBGPlay;
+			if (m_bBGPlay)
+				CLuaBrain::GetInstance()->RunLuaScript("BG");
+			else
+				CSoundMaster::GetInstance()->StopSound("Background");
+		}
+
+
+		End();
+	}
+}
+
+void UIManager::SetPlayerMoveButtonWindow(_bool bOpen, vec3 vPos)
+{
+	m_bOpenPlayerMoveW = bOpen;
+	m_vecMoveTilePos = vPos;
+}
+
+void UIManager::AddHealthUI(UIHealthInfo* pUI)
+{
+	m_vecHPInfos.push_back(pUI);
+}
+
+_bool UIManager::GetCursorIsOnTheUI()
+{
+	return GetIO().WantCaptureMouse;
 }
 
 void UIManager::RenderRankingPage(_float width, _float height)
@@ -222,6 +373,44 @@ void UIManager::RenderRankingPage(_float width, _float height)
 		if (Button("Close", ImVec2(180.f, 0.f)))
 		{
 			m_bOpenRankingListPage = false;
+		}
+
+		End();
+	}
+}
+
+void UIManager::RenderPlayerMoveButtonWindow(_float width, _float height)
+{
+	mat4x4 matWorld, matView, matProj;
+	matWorld = mat4x4(1.f);
+	matWorld = translate(matWorld, m_vecMoveTilePos);
+	matView = COpenGLDevice::GetInstance()->GetViewMatrix();
+	matProj = COpenGLDevice::GetInstance()->GetProjMatrix();
+	vec4 screenPos = vec4(0.f, 0.f, 0.f, 1.f);
+	screenPos = matProj * matView * matWorld * screenPos;
+	_float screenX = screenPos.x / screenPos.w;
+	_float screenY = screenPos.y / screenPos.w;
+	screenX = (screenX + 1) * 0.5f * width;
+	screenY = (screenY + 1) * 0.5f;
+	screenY = 1 - screenY;
+	screenY = (screenY * height) - 100.f;
+
+	ImVec2 windowSize = ImVec2(200.f, 35.f);
+	SetNextWindowPos(ImVec2(screenX - (windowSize.x / 2.f), screenY - (windowSize.y / 2.f)));
+	SetNextWindowSize(windowSize);
+	if (Begin("Player Move Button Window", (bool*)0,
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoMove))
+	{
+		if (Button("Move", ImVec2(180.f, 0.f)))
+		{
+			if (nullptr != m_pScene)
+			{
+				m_bOpenPlayerMoveW = false;
+				m_pScene->MovePlayer();
+			}
 		}
 
 		End();

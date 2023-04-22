@@ -14,6 +14,7 @@
 #include "..\Headers\AnimationData.h"
 #include "..\Headers\LuaBrain.h"
 #include "..\Headers\SQLiteDBHelper.h"
+#include "..\Headers\TileMaster.h"
 
 #include "..\Headers\Scene.h"
 
@@ -23,7 +24,6 @@ SINGLETON_FUNCTION(CGameMaster)
 CGameMaster::CGameMaster()
 	: m_bGameClose(false)
 {
-	m_pRenderer = CRenderer::GetInstance();
 	m_pCurrentScene = nullptr;
 }
 
@@ -69,8 +69,21 @@ void CGameMaster::Destroy()
 	SafeDestroy(CAnimationData::GetInstance());
 	SafeDestroy(CLuaBrain::GetInstance());
 	SafeDestroy(CSQLiteDBHelper::GetInstance());
+	SafeDestroy(CTileMaster::GetInstance());
 
 	m_pRenderer = nullptr;
+}
+
+// Initialize
+void CGameMaster::Ready()
+{
+	m_pRenderer = CRenderer::GetInstance();
+}
+
+void CGameMaster::SetRenderType(_bool deferred)
+{
+	if (nullptr != m_pRenderer)
+		m_pRenderer->SetRenderDeferred(deferred);
 }
 
 // Set current scene information

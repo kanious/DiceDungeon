@@ -21,7 +21,7 @@ USING(glm)
 USING(std)
 
 BGObject::BGObject()
-	: m_pMesh(nullptr), m_bTransparent(false)
+	: m_pMesh(nullptr)
 {
 	m_bDebug = false;
 }
@@ -38,7 +38,7 @@ void BGObject::Update(const _float& dt)
 		CGameObject::Update(dt);
 
 		if (nullptr != m_pRenderer)
-			m_pRenderer->AddRenderObj(this, m_bTransparent);
+			m_pRenderer->AddRenderObj(this, m_bTransparency);
 	}
 }
 
@@ -60,7 +60,6 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 	SetupGameObject(sTag, lTag, oTag);
 	m_pLayer = pLayer;
 	m_meshName = meshID;
-	m_bTransparent = false;
 
 	//Clone.Mesh
  	m_pMesh = CloneComponent<CMesh*>(meshID);
@@ -73,7 +72,6 @@ RESULT BGObject::Ready(_uint sTag, _uint lTag, _uint oTag, CLayer* pLayer, strin
 			m_pBoundingBox->SetTransform(m_pTransform);
 		m_pMesh->SetWireFrame(false);
 		m_pMesh->SetDebugBox(false);
-		m_pMesh->SetTransparency(m_bTransparent);
 	}
 
 	if (nullptr != m_pTransform)

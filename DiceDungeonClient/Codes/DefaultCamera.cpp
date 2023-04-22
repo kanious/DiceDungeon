@@ -86,14 +86,38 @@ void DefaultCamera::SetCameraTarget(glm::vec3 target)
 	if (nullptr == m_pCamera || nullptr == m_pTransform || nullptr == m_pInputDevice)
 		return;
 
-	vec3 vEye = m_pCamera->GetCameraEye();
-	vec3 vDir = target - vEye;
-	vDir = normalize(vDir);
-	m_pCamera->SetCameraTarget(vEye + vDir);
-	m_pInputDevice->InitMousePos();
+	m_pCamera->SetCameraTarget(target);
 
-	m_fAngleX = m_pTransform->GetRotationX();
-	m_fAngleY = m_pTransform->GetRotationY();
+	//vec3 vEye = m_pCamera->GetCameraEye();
+	//vec3 vDir = target - vEye;
+	//vDir = normalize(vDir);
+	//m_pCamera->SetCameraTarget(vEye + vDir);
+	//m_pInputDevice->InitMousePos();
+
+	//m_fAngleX = m_pTransform->GetRotationX();
+	//m_fAngleY = m_pTransform->GetRotationY();
+}
+
+void DefaultCamera::ResetCameraPos()
+{
+	vec3 vTarget = m_pCamera->GetCameraTarget();
+	vTarget.y += m_iZoomLevel * m_fHeight;
+	switch (m_eCurDir)
+	{
+	case CD_UP:
+		vTarget.z += m_iZoomLevel * m_fDist;
+		break;
+	case CD_DOWN:
+		vTarget.z -= m_iZoomLevel * m_fDist;
+		break;
+	case CD_LEFT:
+		vTarget.x += m_iZoomLevel * m_fDist;
+		break;
+	case CD_RIGHT:
+		vTarget.x -= m_iZoomLevel * m_fDist;
+		break;
+	}
+	m_pCamera->SetCameraEye(vTarget);
 }
 
 // Save shaders to deliver camera information
@@ -113,6 +137,29 @@ void DefaultCamera::KeyCheck(const _float& dt)
 {
 	if (nullptr == m_pInputDevice || nullptr == m_pTransform)
 		return;
+
+	if (m_bFixed)
+	{
+		vec3 vTarget = m_pCamera->GetCameraTarget();
+		vTarget.y += m_iZoomLevel * m_fHeight;
+		switch (m_eCurDir)
+		{
+		case CD_UP:
+			vTarget.z += m_iZoomLevel * m_fDist;
+			break;
+		case CD_DOWN:
+			vTarget.z -= m_iZoomLevel * m_fDist;
+			break;
+		case CD_LEFT:
+			vTarget.x += m_iZoomLevel * m_fDist;
+			break;
+		case CD_RIGHT:
+			vTarget.x -= m_iZoomLevel * m_fDist;
+			break;
+		}
+		m_pCamera->SetCameraEye(vTarget);
+		return;
+	}
 
 	if (m_ePrevDir != m_eCurDir)
 	{
@@ -418,9 +465,11 @@ void DefaultCamera::Update(const _float& dt)
 	CGameObject::Update(dt);
 
 	vec3 vEye = m_pCamera->GetCameraEye();
-
 	for (int i = 0; i < m_vecShaders.size(); ++i)
+	{
+		glUseProgram(m_vecShaders[i]);
 		glUniform4f(m_vecShaders[i], vEye.x, vEye.y, vEye.z, 1.0f);
+	}
 }
 
 // Call instead of destructor to manage class internal data

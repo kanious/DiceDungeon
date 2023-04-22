@@ -23,11 +23,6 @@ USING(std)
 
 Client::Client()
 {
-	m_pGameMaster = CGameMaster::GetInstance();
-	m_pTimer = CTimer::GetInstance(); m_pTimer->AddRefCnt();
-	m_pGraphicDevice = COpenGLDevice::GetInstance(); m_pGraphicDevice->AddRefCnt();
-	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
-
 	m_iFPS = FPS;
 
 	wchar_t path[MAX_PATH] = { 0 };
@@ -99,6 +94,7 @@ void Client::Loop()
 			_float dt = m_pTimer->GetTimeDelta();
 			m_pGameMaster->Update(dt);
 			m_pGameMaster->Render();
+
 			glfwSwapBuffers(m_pGraphicDevice->GetWindow());
 			glfwPollEvents();
 
@@ -123,26 +119,26 @@ RESULT Client::Ready()
 	RESULT result = PK_NOERROR;
 
 	// OpenGL Graphic Device
-	if (nullptr != m_pGraphicDevice)
-	{
-		result = m_pGraphicDevice->CreateOpenGLWindow(1920, 1080, "OpenGL Window", false, false);
-		if (PK_NOERROR != result)
-			return result;
-	}
+	m_pGraphicDevice = COpenGLDevice::GetInstance(); m_pGraphicDevice->AddRefCnt();
+	result = m_pGraphicDevice->CreateOpenGLWindow(1920, 1080, "OpenGL Window", false, false);
+	if (PK_NOERROR != result)
+		return result;
 
 	// Timer
-	if (nullptr != m_pTimer)
-	{
-		m_pTimer->SetFrameRate(m_iFPS);
-	}
+	m_pTimer = CTimer::GetInstance(); m_pTimer->AddRefCnt();
+	m_pTimer->SetFrameRate(m_iFPS);
 
 	// Input Device
-	if (nullptr != m_pInputDevice)
-	{
-		result = m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
-		if (PK_NOERROR != result)
-			return result;
-	}
+	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
+	result = m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
+	if (PK_NOERROR != result)
+		return result;
+
+	// Game Master
+	m_pGameMaster = CGameMaster::GetInstance();
+	m_pGameMaster->SetAssetPath(m_DataPath);
+	m_pGameMaster->Ready();
+	m_pGameMaster->SetRenderType(false);
 
 	// Load Components
 	result = Ready_BasicComponent();
@@ -179,8 +175,10 @@ RESULT Client::Ready_BasicComponent()
 
 	//CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
-	CJsonParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
-	CJsonParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName, true);
+
+	CJsonParser::GetInstance()->SetAssetDataPath(m_DataPath);
+	CJsonParser::GetInstance()->LoadTextureData(m_TextureDataFileName);
+	CJsonParser::GetInstance()->LoadMeshData(m_MeshDataFileName, true);
 
 	return PK_NOERROR;
 }

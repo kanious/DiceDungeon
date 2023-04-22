@@ -28,8 +28,11 @@
     <Filter Include="Default\imgui">
       <UniqueIdentifier>{a5df48aa-8a5a-44f1-a75e-1b56d9fc6d5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.Leaderboard">
+    <Filter Include="06.Leaderboard">
       <UniqueIdentifier>{22d6b9e4-9fb5-49af-9927-f8387df0aa89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.AI">
+      <UniqueIdentifier>{e00df2a2-5c19-4ec7-9e3e-fa73cb1e6832}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -100,13 +103,25 @@
       <Filter>98.Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\PlugIns\include\gen-cpp\Leaderboard.cpp">
-      <Filter>05.Leaderboard</Filter>
+      <Filter>06.Leaderboard</Filter>
     </ClCompile>
     <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_constants.cpp">
-      <Filter>05.Leaderboard</Filter>
+      <Filter>06.Leaderboard</Filter>
     </ClCompile>
     <ClCompile Include="..\PlugIns\include\gen-cpp\leaderboard_types.cpp">
-      <Filter>05.Leaderboard</Filter>
+      <Filter>06.Leaderboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Enemy.cpp">
+      <Filter>02.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\EnemyManager.cpp">
+      <Filter>98.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\StateMachine.cpp">
+      <Filter>05.AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\UIHealthInfo.cpp">
+      <Filter>04.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,13 +201,25 @@
       <Filter>98.Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\PlugIns\include\gen-cpp\Leaderboard.h">
-      <Filter>05.Leaderboard</Filter>
+      <Filter>06.Leaderboard</Filter>
     </ClInclude>
     <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_constants.h">
-      <Filter>05.Leaderboard</Filter>
+      <Filter>06.Leaderboard</Filter>
     </ClInclude>
     <ClInclude Include="..\PlugIns\include\gen-cpp\leaderboard_types.h">
-      <Filter>05.Leaderboard</Filter>
+      <Filter>06.Leaderboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\Enemy.h">
+      <Filter>02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\EnemyManager.h">
+      <Filter>98.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\StateMachine.h">
+      <Filter>05.AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Codes\UIHealthInfo.h">
+      <Filter>04.UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

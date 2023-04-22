@@ -4,16 +4,23 @@
 #include "AnimController.h"
 #include "Enums.h"
 
+namespace Engine
+{
+	class CGameObject;
+}
+class SceneDungeon;
 class Player;
+class Enemy;
 
 // Child class of Animation Controller to manage animations per object
 class Animator : public Engine::CAnimController
 {
 private:
-	Player*			m_pPlayer;
 	std::string		m_currentTag;
 	_bool			m_bBlendingOption;
-
+	SceneDungeon*	m_pScene;
+	Player*			m_pPlayer;
+	Enemy*			m_pEnemy;
 
 private:
 	explicit Animator();
@@ -34,10 +41,10 @@ public:
 
 private:
 	// Initialize
-	RESULT Ready(Player* pPlayer);
+	RESULT Ready(std::string tag, _bool isEnemy, Engine::CGameObject* pObj, SceneDungeon* pScene);
 public:
 	// Create an instance
-	static Animator* Create(Player* pPlayer);
+	static Animator* Create(std::string tag, _bool isEnemy, Engine::CGameObject* pObj, SceneDungeon* pScene);
 };
 
 #endif //_ANIMATOR_H_

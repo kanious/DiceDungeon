@@ -39,6 +39,10 @@ protected:
 	CTransform*							m_pTransform;
 	CBoundingBox*						m_pBoundingBox;
 
+	_int								m_iTileIdx;
+	_int								m_iMaxHealth;
+	_int								m_iCurHealth;
+
 protected:
 	explicit CGameObject();
 	virtual ~CGameObject();
@@ -72,6 +76,9 @@ public:
 	const _bool GetWireFrame()				{ return m_bWireFrame; }
 	const _bool GetSelected()				{ return m_bSelected; }
 	const _bool GetTransparency()			{ return m_bTransparency; }
+	_int GetTileIdx()						{ return m_iTileIdx; }
+	_int GetMaxHP()							{ return m_iMaxHealth; }
+	_int GetCurHP()							{ return m_iCurHealth; }
 	virtual const std::string GetMeshType() { return ""; }
 	CBoundingBox* GetBoundingBox()			{ return m_pBoundingBox; }
 	CTransform* GetTransform()				{ return m_pTransform; }
@@ -101,6 +108,9 @@ public:
 	void SetWireFrame(_bool wire)			{ m_bWireFrame = wire; }
 	void SetSelected(_bool value)			{ m_bSelected = value; }
 	void SetTransparency(_bool value)		{ m_bTransparency = value; }
+	void SetTileIdx(_int value)				{ m_iTileIdx = value; }
+	void SetMaxHP(_int value)				{ m_iMaxHealth = value; }
+	void SetCurHP(_int value)				{ m_iCurHealth = value; }
 	// Set position to the transform component
 	void SetPosition(glm::vec3 vPos);
 	// Set rotation to the transform component

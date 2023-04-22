@@ -91,6 +91,9 @@
     <Filter Include="05.IndependantFunctions\DAO\Core">
       <UniqueIdentifier>{63ab4006-d39d-4f68-a215-2b55c68d3de1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.IndependantFunctions\Tile">
+      <UniqueIdentifier>{68287ec2-65f7-4597-b7db-f824dd26f75f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\Base.h">
@@ -294,6 +297,18 @@
     <ClInclude Include="sqlite\sqlite3ext.h">
       <Filter>05.IndependantFunctions\DAO\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\DeferredFBO.h">
+      <Filter>04.Component\FrameBufferObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\TargetTexture.h">
+      <Filter>04.Component\FrameBufferObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Tile.h">
+      <Filter>05.IndependantFunctions\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\TileMaster.h">
+      <Filter>05.IndependantFunctions\Tile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Codes\Base.cpp">
@@ -460,6 +475,18 @@
     </ClCompile>
     <ClCompile Include="sqlite\sqlite3.c">
       <Filter>05.IndependantFunctions\DAO\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\DeferredFBO.cpp">
+      <Filter>04.Component\FrameBufferObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\TargetTexture.cpp">
+      <Filter>04.Component\FrameBufferObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\Tile.cpp">
+      <Filter>05.IndependantFunctions\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="Codes\TileMaster.cpp">
+      <Filter>05.IndependantFunctions\Tile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

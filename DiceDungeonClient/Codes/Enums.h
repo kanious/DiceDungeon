@@ -60,5 +60,22 @@ enum eEaseType
 	EASE_END
 };
 
+enum eEnemyType
+{
+	ENEMY_DUMMY,
+	ENEMY_SCARECROW,
+	ENEMY_CRAWLER,
+	ENEMY_CLOWN,
+	ENEMY_END
+};
+
+enum eAIState
+{
+	STATE_IDLE,
+	STATE_ATTACK,
+	STATE_CHASE,
+	STATE_END,
+};
+
 
 #endif //_ENUMS_H_

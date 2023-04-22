@@ -14,7 +14,6 @@ class BGObject : public Engine::CGameObject
 {
 private:
 	Engine::CMesh*					m_pMesh;
-	_bool							m_bTransparent;
 
 private:
 	explicit BGObject();

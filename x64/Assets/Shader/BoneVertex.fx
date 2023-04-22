@@ -46,7 +46,6 @@ void main()
 		matFinal += matPrev * (1.f - fBlendFactor);
 	}
 
-	debugColor = vBoneID.x;
 	vec4 position = matFinal * vPos;
 	gl_Position = matProj * matView * matWorld * position;
 		

@@ -45,45 +45,45 @@ void TargetManager::Update(const _float& dt)
 // User Input Check
 void TargetManager::KeyCheck(const _float& dt)
 {
-	static _bool isMouseClicked = false;
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
-	{
-		if (!isMouseClicked)
-		{
-			isMouseClicked = true;
+	//static _bool isMouseClicked = false;
+	//if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
+	//{
+	//	if (!isMouseClicked)
+	//	{
+	//		isMouseClicked = true;
 
-			if (!FindTargetAndSet())
-				MoveTarget(false);
-		}
-	}
-	else
-		isMouseClicked = false;
+	//		if (!FindTargetAndSet())
+	//			MoveTarget(false);
+	//	}
+	//}
+	//else
+	//	isMouseClicked = false;
 
-	static _bool isMouseRightClicked = false;
-	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_2))
-	{
-		if (!isMouseRightClicked)
-		{
-			isMouseRightClicked = true;
+	//static _bool isMouseRightClicked = false;
+	//if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_2))
+	//{
+	//	if (!isMouseRightClicked)
+	//	{
+	//		isMouseRightClicked = true;
 
-			if (!FindTargetAndSet())
-				MoveTarget(true);
-		}
-	}
-	else
-		isMouseRightClicked = false;
+	//		if (!FindTargetAndSet())
+	//			MoveTarget(true);
+	//	}
+	//}
+	//else
+	//	isMouseRightClicked = false;
 
-	static _bool is1Down = false;
-	if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
-	{
-		if (!is1Down)
-		{
-			is1Down = true;
-			ReleaseTarget();
-		}
-	}
-	else
-		is1Down = false;
+	//static _bool is1Down = false;
+	//if (m_pInputDevice->IsKeyDown(GLFW_KEY_1))
+	//{
+	//	if (!is1Down)
+	//	{
+	//		is1Down = true;
+	//		ReleaseTarget();
+	//	}
+	//}
+	//else
+	//	is1Down = false;
 }
 
 // Check if the user's mouse click has selected a character
@@ -136,33 +136,32 @@ _bool TargetManager::FindTargetAndSet()
 // Move the target
 void TargetManager::MoveTarget(_bool bSnap)
 {
-	if (nullptr == m_pTarget)
-		return;
+	//if (nullptr == m_pTarget)
+	//	return;
 
-	vec3 vCameraPos = m_pScene->GetCameraPos();
-	vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
-	vec3 vDest = vec3(0.f);
-	if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
-	{
-		vec3 vPos = m_pTarget->GetPosition();
-		vDest.y = vPos.y;
+	//vec3 vCameraPos = m_pScene->GetCameraPos();
+	//vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+	//vec3 vDest = vec3(0.f);
+	//if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
+	//{
+	//	vec3 vPos = m_pTarget->GetPosition();
+	//	vDest.y = vPos.y;
 
-		if (bSnap)
-		{
-			if (0 > vDest.x)
-				vDest.x = (_int)((vDest.x - 5) / 10) * 10;
-			else
-				vDest.x = (_int)((vDest.x + 5) / 10) * 10;
+	//	if (bSnap)
+	//	{
+	//		if (0 > vDest.x)
+	//			vDest.x = (_int)((vDest.x - 5) / 10) * 10;
+	//		else
+	//			vDest.x = (_int)((vDest.x + 5) / 10) * 10;
 
-			if (0 > vDest.z)
-				vDest.z = (_int)((vDest.z - 5) / 10) * 10;
-			else
-				vDest.z = (_int)((vDest.z + 5) / 10) * 10;
-		}
+	//		if (0 > vDest.z)
+	//			vDest.z = (_int)((vDest.z - 5) / 10) * 10;
+	//		else
+	//			vDest.z = (_int)((vDest.z + 5) / 10) * 10;
+	//	}
 
-		m_pTarget->SetTargetPos(vDest);
-	}
-
+	//	m_pTarget->SetTargetPos(vDest);
+	//}
 }
 
 // Release the target

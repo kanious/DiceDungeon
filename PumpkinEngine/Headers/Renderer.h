@@ -6,7 +6,7 @@
 NAMESPACE_BEGIN(Engine)
 
 class CGameObject;
-
+class CDeferredFBO;
 // Only game objects registered here are rendered
 class ENGINE_API CRenderer : public CBase
 {
@@ -16,6 +16,11 @@ private:
 	std::vector<CGameObject*>		m_vecRenderObj;
 	std::vector<CGameObject*>		m_vecTRenderObj;
 
+	CDeferredFBO*					m_pDeferred;
+
+	_bool							m_bShowDebug;
+	_bool							m_bRenderDeferred;
+
 
 private:
 	explicit CRenderer();
@@ -24,6 +29,11 @@ private:
 public:
 	// Basic Render Function, translucent objects are rendered later than other objects
 	void Render();
+	void RenderForward();
+	void RenderDeferred();
+	void SetShowDebug(_bool value)		{ m_bShowDebug = value; }
+	void ToggleShowDebug()				{ m_bShowDebug = !m_bShowDebug; }
+	void SetRenderDeferred(_bool value) { m_bRenderDeferred = value; }
 
 public:
 	// Register objects that need to be rendered

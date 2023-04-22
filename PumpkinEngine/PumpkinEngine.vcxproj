@@ -186,6 +186,7 @@
     <ClInclude Include="Headers\Contact.h" />
     <ClInclude Include="Headers\ContactResolver.h" />
     <ClInclude Include="Headers\DAO.h" />
+    <ClInclude Include="Headers\DeferredFBO.h" />
     <ClInclude Include="Headers\DSPInfo.h" />
     <ClInclude Include="Headers\EngineFunction.h" />
     <ClInclude Include="Headers\EngineStruct.h" />
@@ -225,7 +226,10 @@
     <ClInclude Include="Headers\Scene.h" />
     <ClInclude Include="Headers\SphereShape.h" />
     <ClInclude Include="Headers\SQLiteDBHelper.h" />
+    <ClInclude Include="Headers\TargetTexture.h" />
     <ClInclude Include="Headers\Texture.h" />
+    <ClInclude Include="Headers\Tile.h" />
+    <ClInclude Include="Headers\TileMaster.h" />
     <ClInclude Include="Headers\Timer.h" />
     <ClInclude Include="Headers\Shader.h" />
     <ClInclude Include="Headers\Transform.h" />
@@ -253,6 +257,7 @@
     <ClCompile Include="Codes\Contact.cpp" />
     <ClCompile Include="Codes\ContactResolver.cpp" />
     <ClCompile Include="Codes\DAO.cpp" />
+    <ClCompile Include="Codes\DeferredFBO.cpp" />
     <ClCompile Include="Codes\DSPInfo.cpp" />
     <ClCompile Include="Codes\FrameBufferObject.cpp" />
     <ClCompile Include="Codes\JsonParser.cpp" />
@@ -282,7 +287,10 @@
     <ClCompile Include="Codes\Scene.cpp" />
     <ClCompile Include="Codes\SphereShape.cpp" />
     <ClCompile Include="Codes\SQLiteDBHelper.cpp" />
+    <ClCompile Include="Codes\TargetTexture.cpp" />
     <ClCompile Include="Codes\Texture.cpp" />
+    <ClCompile Include="Codes\Tile.cpp" />
+    <ClCompile Include="Codes\TileMaster.cpp" />
     <ClCompile Include="Codes\Timer.cpp" />
     <ClCompile Include="Codes\Shader.cpp" />
     <ClCompile Include="Codes\Transform.cpp" />

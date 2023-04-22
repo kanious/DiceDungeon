@@ -51,6 +51,15 @@ void CScene::SetSceneTag(_uint sceneTag)
 	m_tag = sceneTag;
 }
 
+// Sort layers by tag
+void CScene::SortLayer()
+{
+	sort(m_vecLayer.begin(), m_vecLayer.end(), [](CLayer* lhs, CLayer* rhs)
+		{
+			return lhs->GetTag() < rhs->GetTag();
+		});
+}
+
 // Turn on/off the layer
 RESULT CScene::ToggleLayer(_uint layerTag, _bool turn)
 {

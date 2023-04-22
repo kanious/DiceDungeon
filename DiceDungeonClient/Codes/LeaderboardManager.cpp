@@ -31,7 +31,7 @@ void LeaderboardManager::Destroy()
 // Initialize
 RESULT LeaderboardManager::Ready()
 {
-	ConnectWithServer();
+	//ConnectWithServer();
 
 	return PK_NOERROR;
 }

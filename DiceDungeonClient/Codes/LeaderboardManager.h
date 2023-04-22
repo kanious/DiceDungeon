@@ -28,7 +28,7 @@ private:
 
 private:
 	explicit LeaderboardManager();
-	~LeaderboardManager();
+	virtual ~LeaderboardManager();
 public:
 	// Call instead of destructor to manage class internal data
 	void Destroy();

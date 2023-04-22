@@ -17,7 +17,7 @@ private:
 	CScene*				m_pCurrentScene;
 	CRenderer*			m_pRenderer;
 	_bool				m_bGameClose;
-
+	std::string			m_strDataPath;
 
 private:
 	explicit CGameMaster();
@@ -32,13 +32,23 @@ private:
 	void Destroy();
 
 public:
-	CScene* GetCurrentScene()			{ return m_pCurrentScene; }
+	CScene* GetCurrentScene()				{ return m_pCurrentScene; }
 	// Return game close status
-	_bool GetGameClose()				{ return m_bGameClose; }
+	_bool GetGameClose()					{ return m_bGameClose; }
+	// Get asset folder path
+	std::string GetDataPath()				{ return m_strDataPath; }
 	// Set current scene information
 	void SetCurrentScene(CScene* pScene);
 	// Set game close status
-	void SetGameClose(_bool value)		{ m_bGameClose = value; }
+	void SetGameClose(_bool value)			{ m_bGameClose = value; }
+	// Set asset folder path
+	void SetAssetPath(std::string path)		{ m_strDataPath = path; }
+
+public:
+	// Initialize
+	void Ready();
+	// Set RenderType
+	void SetRenderType(_bool deferred);
 };
 
 NAMESPACE_END

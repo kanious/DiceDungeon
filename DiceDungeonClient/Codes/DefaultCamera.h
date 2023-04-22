@@ -48,6 +48,8 @@ private:
 	int								m_iZoomMinLevel;
 	int								m_iZoomMaxLevel;
 
+	_bool							m_bFixed;
+
 private:
 	explicit DefaultCamera();
 	~DefaultCamera();
@@ -61,7 +63,9 @@ public:
 	void SetCameraEye(glm::vec3 eye);
 	void SetCameraRot(glm::vec3 rot);
 	void SetCameraTarget(glm::vec3 target);
+	void SetFixed(_bool value)					{ m_bFixed = value; }
 	void SetPlayer(Player* pPlayer)				{ m_pTarget = pPlayer; }
+	void ResetCameraPos();
 public:
 	// Save shaders to deliver camera information
 	void AddShaderLocation(std::string shaderTag);

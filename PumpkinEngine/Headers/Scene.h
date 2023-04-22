@@ -19,6 +19,7 @@ protected:
 	std::string						m_DataPath;
 	std::string						m_ObjListFileName;
 	std::string						m_LightListFileName;
+	std::string						m_TileFileName;
 
 protected:
 	explicit CScene();
@@ -38,12 +39,16 @@ public:
 	std::string GetDataPath()						{ return m_DataPath; }
 	std::string GetObjListFileName()				{ return m_ObjListFileName; }
 	std::string GetLightListFileName()				{ return m_LightListFileName; }
+	std::string GetTileFileName()					{ return m_TileFileName; }
 	std::vector<CLayer*>& GetLayers()				{ return m_vecLayer; }
 
 	void SetSceneTag(_uint sceneTag);
 	void SetDataPath(std::string path)				{ m_DataPath = path; }
 	void SetObjListFileName(std::string name)		{ m_ObjListFileName = name; }
 	void SetLightListFileName(std::string name)		{ m_LightListFileName = name; }
+
+	// Sort layers by tag
+	void SortLayer();
 
 	// Turn on/off the layer
 	RESULT ToggleLayer(_uint layerTag, _bool turn);

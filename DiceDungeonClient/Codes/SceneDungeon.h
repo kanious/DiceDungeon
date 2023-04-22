@@ -16,8 +16,10 @@ namespace Engine
 class UIManager;
 class DefaultCamera;
 class BGObject;
+class Player;
 class AnimationManager;
 class TargetManager;
+class EnemyManager;
 
 // A game scene class that inherits from the engine's CScene class
 class SceneDungeon : public Engine::CScene
@@ -30,6 +32,7 @@ private:
 	DefaultCamera*				m_pDefaultCamera;
 	AnimationManager*			m_pAnimationManager;
 	TargetManager*				m_pTargetManager;
+	EnemyManager*				m_pEnemyManager;
 
 	glm::vec3					m_vCameraSavedPos;
 	glm::vec3					m_vCameraSavedRot;
@@ -37,6 +40,10 @@ private:
 
 	Engine::iPhysicsFactory*	m_pPFactory;
 	Engine::iPhysicsWorld*		m_pPWorld;
+
+	Player*						m_pPlayer;
+	_int						m_iTileIdx;
+	_bool						m_bPicked;
 
 private:
 	explicit SceneDungeon();
@@ -52,8 +59,19 @@ public:
 public:
 	// Return current camera position
 	glm::vec3 GetCameraPos();
+	_bool GetPlayerPos(glm::vec3& playerPos);
+	_bool GetPlayerTileIdx(_int& tileIdx);
+	Player* GetPlayer()					{ return m_pPlayer; }
+	DefaultCamera* GetCamera()			{ return m_pDefaultCamera; }
 	// Play sound if something collide
 	void CollisionSoundCallback();
+	void ResetPicking();
+	void MovePlayer();
+	void HitPlayer();
+	void StartEnemyTurn();
+	void StopEnemyTurn();
+	void GameOver();
+	void GameReset();
 private:
 	// Check User input
 	void KeyCheck();
@@ -61,6 +79,7 @@ private:
 	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
 	// Reset camera position
 	void ResetDefaultCameraPos();
+	_int TilePicking();
 
 private:
 	// Initialize
@@ -69,6 +88,8 @@ private:
 	RESULT ReadyLayerAndCamera();
 	// Load Objects from json file
 	void LoadObjects();
+	// Load Tile data from json file
+	void LoadTiles();
 	// Initialize Physics World and prepare dice
 	void ReadyPhysicsAndDice();
 public:

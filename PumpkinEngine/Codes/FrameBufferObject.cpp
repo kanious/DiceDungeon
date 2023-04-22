@@ -72,7 +72,7 @@ RESULT CFrameBufferObject::Ready(string ID, _int width, _int height)
 
 RESULT CFrameBufferObject::SetVIBuffer()
 {
-    float quadVertices[] = {
+    _float quadVertices[] = {
         // positions   // texCoords
         -1.0f,  1.0f,  0.0f, 1.0f,
         -1.0f, -1.0f,  0.0f, 0.0f,
@@ -82,28 +82,6 @@ RESULT CFrameBufferObject::SetVIBuffer()
          1.0f, -1.0f,  1.0f, 0.0f,
          1.0f,  1.0f,  1.0f, 1.0f
     };
-
-    //float quadVertices[] = {
-    //    // positions   // texCoords
-    //    -1.0f,  1.0f,  0.0f, 1.0f,
-    //    -1.0f,  0.0f,  0.0f, 0.0f,
-    //     0.0f,  0.0f,  1.0f, 0.0f,
-
-    //    -1.0f,  1.0f,  0.0f, 1.0f,
-    //     0.0f,  0.0f,  1.0f, 0.0f,
-    //     0.0f,  1.0f,  1.0f, 1.0f
-    //};
-    
-    //float quadVertices[] = {
-    //    // positions   // texCoords
-    //    -0.2f,  0.2f,  0.0f, 1.0f,
-    //    -0.2f, -0.2f,  0.0f, 0.0f,
-    //     0.2f, -0.2f,  1.0f, 0.0f,
-
-    //    -0.2f,  0.2f,  0.0f, 1.0f,
-    //     0.2f, -0.2f,  1.0f, 0.0f,
-    //     0.2f,  0.2f,  1.0f, 1.0f
-    //};
 
     glGenVertexArrays(1, &m_iVAO_ID);
     glBindVertexArray(m_iVAO_ID);
@@ -153,8 +131,6 @@ RESULT CFrameBufferObject::SetFrameBuffer()
     glBindRenderbuffer(GL_RENDERBUFFER, m_iRenderBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_iWidth, m_iHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_iRenderBuffer);
-
-
 
     // Check
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

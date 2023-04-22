@@ -24,11 +24,11 @@ CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag,
     case (_uint)LAYER_INTERACTIVE_OBJECT:
     case (_uint)LAYER_EVENT_OBJECT:
     case (_uint)LAYER_UI:
+    case (_uint)LAYER_ENEMY:
         pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
         break;
 
     case (_uint)LAYER_CHARACTER:
-    case (_uint)LAYER_ENEMY:
         pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
         break;
     }

@@ -829,16 +829,17 @@ void MapEditorUI::KeyCheck(const _float& dt)
 			}
 			else
 			{
-				CGameObject* newTarget = m_pScene->GetTarget();
-				if (m_pTarget == newTarget)
-					SetTarget(nullptr);
-				else
-					SetTarget(newTarget);
+				SetTarget(nullptr);
+				//CGameObject* newTarget = m_pScene->GetTarget();
+				//if (m_pTarget == newTarget)
+				//	SetTarget(nullptr);
+				//else
+				//	SetTarget(newTarget);
 			}
 		}
 	}
 	else
-		isMouseLBClicked = false;
+		isMouseLBClicked = false; 
 
 	// Object Snap
 	static _bool is1Down = false;

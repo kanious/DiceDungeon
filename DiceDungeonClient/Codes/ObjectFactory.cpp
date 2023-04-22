@@ -4,8 +4,10 @@
 
 #include "BGObject.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "PhysicsObject.h"
 #include "DefaultCamera.h"
+#include "SceneDungeon.h"
 
 
 USING(Engine)
@@ -13,31 +15,28 @@ USING(glm)
 USING(std)
 
 // Create GameObject
-CGameObject* ObjectFactory::CreateGameObject(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
+CGameObject* ObjectFactory::CreateGameObject(SceneDungeon* pScene, _uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID, glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale)
 {
     CGameObject* pGameObject = nullptr;
 
     switch (lTag)
     {
-    case (_uint)LAYER_CAMERA:
-    case (_uint)LAYER_STATIC_OBJECT:
-    case (_uint)LAYER_TILE:
-    case (_uint)LAYER_INTERACTIVE_OBJECT:
-    case (_uint)LAYER_UI:
-        pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
-        break;
-
     case (_uint)LAYER_CHARACTER:
-        pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, true);
+        pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, pScene);
+        dynamic_cast<Player*>(pGameObject)->SetScene(pScene);
         break;
 
     case (_uint)LAYER_ENEMY:
-        //pGameObject = Player::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
-        pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        pGameObject = Enemy::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale, pScene);
+        dynamic_cast<Enemy*>(pGameObject)->SetScene(pScene);
         break;
 
     case (_uint)LAYER_EVENT_OBJECT:
         pGameObject = PhysicsObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
+        break;
+
+    default:
+        pGameObject = BGObject::Create(sTag, lTag, oTag, pLayer, meshID, vPos, vRot, vScale);
         break;
     }
 

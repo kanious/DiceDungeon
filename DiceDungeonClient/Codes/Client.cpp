@@ -20,6 +20,7 @@
 #include "TargetManager.h"
 #include "ScoreManager.h"
 #include "LeaderboardManager.h"
+#include "EnemyManager.h"
 
 
 USING(Engine)
@@ -27,11 +28,6 @@ USING(std)
 
 Client::Client()
 {
-	m_pGameMaster = CGameMaster::GetInstance();
-	m_pTimer = CTimer::GetInstance(); m_pTimer->AddRefCnt();
-	m_pGraphicDevice = COpenGLDevice::GetInstance(); m_pGraphicDevice->AddRefCnt();
-	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
-
 	m_iFPS = FPS;
 
 	wchar_t path[MAX_PATH] = { 0 };
@@ -42,6 +38,7 @@ Client::Client()
 	stringstream ss;
 	ss << str << "\\..\\Assets\\";
 	m_DataPath = ss.str();
+
 	m_SoundDataFileName = "sound.xml";
 	m_ShaderDataFileName = "shader.xml";
 	m_TextureDataFileName = "texture.json";
@@ -65,6 +62,7 @@ void Client::Destroy()
 	SafeDestroy(TargetManager::GetInstance());
 	SafeDestroy(ScoreManager::GetInstance());
 	SafeDestroy(LeaderboardManager::GetInstance());
+	SafeDestroy(EnemyManager::GetInstance());
 
 	delete this;
 }
@@ -74,6 +72,18 @@ void Client::Loop()
 {
 	_uint iFPS = 0;
 	_float fCheckTime = 0.f;
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glCullFace(GL_BACK);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_MULTISAMPLE);
+
+	//glEnable(GL_STENCIL_TEST);
+	//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	while (true)
 	{
@@ -86,28 +96,18 @@ void Client::Loop()
 
 		if (m_pGameMaster->GetGameClose())
 			break;
-		
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glCullFace(GL_BACK);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		//glEnable(GL_STENCIL_TEST);
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+	
 		m_pTimer->Update();
 		if (m_pTimer->IsUpdateAvailable())
 		{
-			m_pGraphicDevice->GetWindowSize();
-			glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			//m_pGraphicDevice->GetWindowSize();
+			//glViewport(0, 0, m_pGraphicDevice->GetWidthSize(), m_pGraphicDevice->GetHeightSize());
+			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			_float dt = m_pTimer->GetTimeDelta();
 			m_pGameMaster->Update(dt);
 			m_pGameMaster->Render();
+
 			glfwSwapBuffers(m_pGraphicDevice->GetWindow());
 			glfwPollEvents();
 
@@ -133,31 +133,30 @@ RESULT Client::Ready()
 	RESULT result = PK_NOERROR;
 
 	// OpenGL Graphic Device
-	if (nullptr != m_pGraphicDevice)
-	{
-		result = m_pGraphicDevice->CreateOpenGLWindow(1920, 1080, "OpenGL Window", false, false);
-		if (PK_NOERROR != result)
-			return result;
-	}
-
-	// Timer
-	if (nullptr != m_pTimer)
-	{
-		m_pTimer->SetFrameRate(m_iFPS);
-	}
-
-	// Input Device
-	if (nullptr != m_pInputDevice)
-	{
-		result = m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
-		if (PK_NOERROR != result)
-			return result;
-	}
+	m_pGraphicDevice = COpenGLDevice::GetInstance(); m_pGraphicDevice->AddRefCnt();
+	result = m_pGraphicDevice->CreateOpenGLWindow(1920, 1080, "OpenGL Window", false, false);
+	if (PK_NOERROR != result)
+		return result;
 
 	// Load Components
 	result = Ready_BasicComponent();
 	if (PK_NOERROR != result)
 		return result;
+
+	// Timer
+	m_pTimer = CTimer::GetInstance(); m_pTimer->AddRefCnt();
+	m_pTimer->SetFrameRate(m_iFPS);
+
+	// Input Device
+	m_pInputDevice = CInputDevice::GetInstance(); m_pInputDevice->AddRefCnt();
+	result = m_pInputDevice->SetupInputSystem(m_pGraphicDevice->GetWindow(), GLFW_CURSOR_NORMAL);
+	if (PK_NOERROR != result)
+		return result;
+
+	// Game Master
+	m_pGameMaster = CGameMaster::GetInstance();
+	m_pGameMaster->SetAssetPath(m_DataPath);
+	m_pGameMaster->Ready();
 
 	// Load Scene
 	if (nullptr != m_pGameMaster)
@@ -191,8 +190,11 @@ RESULT Client::Ready_BasicComponent()
 
 	CXMLParser::GetInstance()->LoadSoundData(m_DataPath, m_SoundDataFileName);
 	CXMLParser::GetInstance()->LoadShaderData(m_DataPath, m_ShaderDataFileName);
-	CJsonParser::GetInstance()->LoadTextureData(m_DataPath, m_TextureDataFileName);
-	CJsonParser::GetInstance()->LoadMeshData(m_DataPath, m_MeshDataFileName, true);
+
+	CJsonParser::GetInstance()->SetAssetDataPath(m_DataPath);
+	CJsonParser::GetInstance()->LoadTextureData(m_TextureDataFileName);
+	CJsonParser::GetInstance()->LoadMeshData(m_MeshDataFileName, false);
+
 	ScoreManager::GetInstance()->Ready(m_DataPath);
 	LeaderboardManager::GetInstance()->Ready();
 

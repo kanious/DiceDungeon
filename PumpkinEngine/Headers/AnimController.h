@@ -56,7 +56,7 @@ public:
 	void SetNextFrame();
 	void SetPreviousFrame();
 	void SetReverse();
-	void SetPause();
+	void SetPause(_bool value);
 	void StopAnimation();
 	void ResetAnimation();
 public:

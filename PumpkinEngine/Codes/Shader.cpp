@@ -258,7 +258,9 @@ void CShader::SetBool(const std::string& name, _bool value)
 
 void CShader::SetInt(const std::string& name, _int value)
 {
-	glUniform1i(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
+	GLint id = glGetUniformLocation(m_ShaderProgram, name.c_str());
+	//glUniform1i(glGetUniformLocation(m_ShaderProgram, name.c_str()), value);
+	glUniform1i(id, value);
 }
 
 void CShader::SetFloat(const std::string& name, _float value)

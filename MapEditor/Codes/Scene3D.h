@@ -63,6 +63,7 @@ public:
 	void LoadObjects();
 	// Empty all layers
 	void ResetAllLayers();
+	void LoadTiles();
 
 private:
 	// Initialize

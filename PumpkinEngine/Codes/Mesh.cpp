@@ -153,17 +153,16 @@ void CMesh::Render()
     m_pShader->SetSelected(m_bSelected);
     m_pShader->SetTransparency(m_bTransparency);
 
-    // Animation
-    if (m_bHasBone)
-    {
-        vector<mat4x4>* pVec = m_pAnimController->GetMatrix();
-        for (int i = 0; i < pVec->size(); ++i)
-            m_pShader->SetBoneMatrices(i, (*pVec)[i]);
-    }
-
-    // Animation Blending
+    // Animation & Blending
     if (nullptr != m_pAnimController)
     {
+        if (m_bHasBone)
+        {
+            vector<mat4x4>* pVec = m_pAnimController->GetMatrix();
+            for (int i = 0; i < pVec->size(); ++i)
+                m_pShader->SetBoneMatrices(i, (*pVec)[i]);
+        }
+
         if (m_pAnimController->GetBlending())
         {
             vector<mat4x4>* pVec = m_pAnimController->GetPrevMatrix();
@@ -195,10 +194,13 @@ void CMesh::Render()
 
     if (nullptr != m_pNormalTexture)
     {
+        m_pShader->SetBool("isNormal", true);
         m_pShader->SetNormalTextureInfo();
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, m_pNormalTexture->GetTextureID());
     }
+    else
+        m_pShader->SetBool("isNormal", false);
 
 	//if (nullptr != m_pVIBuffer)
     if (0 < m_vecVIBuffers.size())
@@ -260,8 +262,6 @@ void CMesh::Destroy()
     for (int i = 0; i < m_vecVIBuffers.size(); ++i)
         SafeDestroy(m_vecVIBuffers[i]);
     SafeDestroy(m_pBoundingBox);
-    //SafeDestroy(m_pDiffTexture);
-    //SafeDestroy(m_pNormalTexture);
     SafeDestroy(m_pShader);
     m_pParentTransform = nullptr;
     if (nullptr != m_pTriangles)
@@ -498,7 +498,7 @@ RESULT CMesh::Ready_Assimp(std::string filePath, std::string fileName)
 
     if (scene->HasAnimations())
     {
-        CAnimationData::GetInstance()->LoadAnimations(scene, &m_mapBoneInformation);
+        CAnimationData::GetInstance()->LoadAnimations(scene, &m_mapBoneInformation, m_tag);
     }
 
     return PK_NOERROR;

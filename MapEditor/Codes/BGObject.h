@@ -33,11 +33,11 @@ public:
 private:
 	// Initialize
 	RESULT Ready(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _bool transparent);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 public:
 	// Create an instance
 	static BGObject* Create(_uint sTag, _uint lTag, _uint oTag, Engine::CLayer* pLayer, std::string meshID,
-		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale, _bool transparent = false);
+		glm::vec3 vPos, glm::vec3 vRot, glm::vec3 vScale);
 };
 
 #endif //_BGOBJECT_H_

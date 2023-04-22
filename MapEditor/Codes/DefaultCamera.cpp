@@ -203,6 +203,23 @@ void DefaultCamera::KeyCheck(const _float& dt)
 	}
 	else
 		isLeftAltDown = false;
+
+	static _bool isF4Down = false;
+	if (m_pInputDevice->IsKeyDown(GLFW_KEY_F4))
+	{
+		if (!isF4Down)
+		{
+			isF4Down = true;
+
+			vec3 vEye = m_pCamera->GetCameraEye();
+			vec3 vTarget = m_pCamera->GetCameraTarget();
+
+			printf("Eye: %0.2f, %0.2f, %0.2f\n", vEye.x, vEye.y, vEye.z);
+			printf("Target: %0.2f, %0.2f, %0.2f", vTarget.x, vTarget.y, vTarget.z);
+		}
+	}
+	else
+		isF4Down = false;
 }
 
 // Following Target

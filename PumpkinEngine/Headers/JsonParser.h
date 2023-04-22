@@ -60,8 +60,16 @@ class ENGINE_API CJsonParser : public CBase
 		_bool ALPHA;
 	};
 
+	struct sTileData
+	{
+		_uint ID;
+		glm::vec3 POSITION;
+		_int NEIGHBORS[8];
+	};
+
 private:
 	std::string				m_jsonDataPath;
+	std::string				m_assetDataPath;
 	CComponentMaster*		m_pCompMaster;
 
 private:
@@ -71,14 +79,17 @@ private:
 	void Destroy();
 
 public:
-	void LoadCharacterList(std::string assetFolderPath, std::string fileName, std::vector<sCharacterData>& vec);
-	void LoadTextureData(std::string assetFolderPath, std::string fileName);
-	void LoadMeshData(std::string assetFolderPath, std::string fileName, _bool saveMeshList = false);
-	void LoadObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
-	void SaveObjectList(std::string assetFolderPath, std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void SetAssetDataPath(std::string assetFolderPath);
+	void LoadCharacterList(std::string fileName, std::vector<sCharacterData>& vec);
+	void LoadTextureData(std::string fileName);
+	void LoadMeshData(std::string fileName, _bool saveMeshList = false);
+	void LoadObjectList(std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void SaveObjectList(std::string fileName, std::vector<sObjectData>& vec, sObjectData& cameraData);
+	void SaveTileData(std::string fileName, std::vector<sTileData>& vec);
+	void LoadTileData(std::string fileName, std::vector<sTileData>& vec);
 
 private:
-	void LoadDataFromFile(rapidjson::Document& doc, FILE*& file, std::string assetFolderPath, std::string fileName);
+	void LoadDataFromFile(rapidjson::Document& doc, FILE*& file, std::string fileName);
 };
 
 NAMESPACE_END
