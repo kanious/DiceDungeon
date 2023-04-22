@@ -52,6 +52,7 @@ https://drive.google.com/file/d/1VYTI2U0iOVibw4_XtyeabavE4UNiMQ1W/view?usp=share
    - Navigation Mesh (Tile) : Path-Finding / Path-Following
    Code location : StateMachine.cpp in DiceDungeonClient project
                    Tile.cpp / TileMaster.cpp in PumpkinEngine project
+   When you press "Enemy Turn Start" button in the left side of UI, the enemy turn will be started.
 
 3) Physics (Not in this project)
    - Vehicle
