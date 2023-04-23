@@ -62,6 +62,9 @@ SceneDungeon::~SceneDungeon()
 // Call instead of destructor to manage class internal data
 void SceneDungeon::Destroy()
 {
+	TerminateThread(m_hPicking, 1);
+	DeleteCriticalSection(&m_CSKey);
+
 	SafeDestroy(m_pInputDevice);
 	SafeDestroy(m_pUIManager);
 	SafeDestroy(m_pPFactory);
@@ -201,15 +204,6 @@ void SceneDungeon::KeyCheck()
 	if (m_pUIManager->GetCursorIsOnTheUI())
 		return;
 
-	if (!m_bPicked)
-	{
-		if (-1 != m_iTileIdx)
-			CTileMaster::GetInstance()->TileEnable(m_iTileIdx, false);
-		m_iTileIdx = TilePicking();
-		if (-1 != m_iTileIdx)
-			CTileMaster::GetInstance()->TileEnable(m_iTileIdx, true);
-	}
-
 	static _bool isMouseLBClicked = false;
 	if (m_pInputDevice->IsMousePressed(GLFW_MOUSE_BUTTON_1))
 	{
@@ -219,11 +213,12 @@ void SceneDungeon::KeyCheck()
 
 			if (-1 != m_iTileIdx && m_iTileIdx != m_pPlayer->GetTileIdx())
 			{
-				CTileMaster::GetInstance()->PathfindingStart(m_pPlayer->GetTileIdx(), m_iTileIdx);
+				EnterCriticalSection(&m_CSKey);
 				m_bPicked = true;
-
+				CTileMaster::GetInstance()->PathfindingStart(m_pPlayer->GetTileIdx(), m_iTileIdx);
 				vec3 tilePos = CTileMaster::GetInstance()->GetTilePos(m_iTileIdx);
 				UIManager::GetInstance()->SetPlayerMoveButtonWindow(true, tilePos);
+				LeaveCriticalSection(&m_CSKey);
 			}
 		}
 	}
@@ -271,18 +266,87 @@ void SceneDungeon::ResetDefaultCameraPos()
 	}
 }
 
-_int SceneDungeon::TilePicking()
+_ulong __stdcall SceneDungeon::TilePickingThread(LPVOID param)
 {
-	vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
-	vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
-	vec3 vDest = vec3(0.f);
-	if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
+	SceneDungeon* pScene = (SceneDungeon*)param;
+
+	while (true)
 	{
-		return CTileMaster::GetInstance()->FindPickedTile(vDest);
+		Sleep(100);
+
+		if (pScene->m_pEnemyManager->GetEnemyTurn())
+		{
+			if (-1 != pScene->m_iTileIdx)
+			{
+				EnterCriticalSection(&pScene->m_CSKey);
+				CTileMaster::GetInstance()->TileEnable(pScene->m_iTileIdx, false);
+				pScene->m_iTileIdx = -1;
+				LeaveCriticalSection(&pScene->m_CSKey);
+			}
+			continue;
+		}
+
+		if (pScene->m_pUIManager->GetCursorIsOnTheUI())
+			continue;
+
+		if (!pScene->m_bPicked)
+		{
+			EnterCriticalSection(&pScene->m_CSKey);
+			if (-1 != pScene->m_iTileIdx)
+				CTileMaster::GetInstance()->TileEnable(pScene->m_iTileIdx, false);
+
+			// Tile Picking
+			vec3 vCameraPos = pScene->m_pDefaultCamera->GetCameraEye();
+			vec3 vDir = pScene->m_pInputDevice->GetMouseWorldCoord();
+			vec3 vDest = vec3(0.f);
+			if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
+			{
+				pScene->m_iTileIdx = CTileMaster::GetInstance()->FindPickedTile(vDest);
+			}
+			else
+				pScene->m_iTileIdx = -1;
+
+			if (-1 != pScene->m_iTileIdx)
+				CTileMaster::GetInstance()->TileEnable(pScene->m_iTileIdx, true);
+
+			LeaveCriticalSection(&pScene->m_CSKey);
+		}
 	}
 
-	return -1;
+	//if (m_pEnemyManager->GetEnemyTurn())
+	//	return;
+
+	//if (m_pUIManager->GetCursorIsOnTheUI())
+	//	return;
+
+
+	//if (!m_bPicked)
+	//{
+	//	if (-1 != m_iTileIdx)
+	//		CTileMaster::GetInstance()->TileEnable(m_iTileIdx, false);
+	//	m_iTileIdx = TilePicking();
+	//	if (-1 != m_iTileIdx)
+	//		CTileMaster::GetInstance()->TileEnable(m_iTileIdx, true);
+	//}
+
+	//EnterCriticalSection(&pScene->m_CSKey);
+	//LeaveCriticalSection(&pScene->m_CSKey);
+
+	return 0;
 }
+
+//_int SceneDungeon::TilePicking()
+//{
+//	vec3 vCameraPos = m_pDefaultCamera->GetCameraEye();
+//	vec3 vDir = m_pInputDevice->GetMouseWorldCoord();
+//	vec3 vDest = vec3(0.f);
+//	if (CCollisionMaster::GetInstance()->IntersectRayToVirtualPlane(1000.f, vCameraPos, vDir, vDest))
+//	{
+//		return CTileMaster::GetInstance()->FindPickedTile(vDest);
+//	}
+//
+//	return -1;
+//}
 
 // Initialize
 RESULT SceneDungeon::Ready(string dataPath)
@@ -334,6 +398,10 @@ RESULT SceneDungeon::Ready(string dataPath)
 
 	// Enemy Manager
 	m_pEnemyManager->Ready(this);
+
+	// Thread
+	m_hPicking = CreateThread(NULL, 0, TilePickingThread, this, 0, nullptr);
+	InitializeCriticalSection(&m_CSKey);
 
 	//CSoundMaster::GetInstance()->PlaySound("Background");
 

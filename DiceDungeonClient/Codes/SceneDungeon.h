@@ -3,6 +3,8 @@
 
 #include "Scene.h"
 #include "glm\vec3.hpp"
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 namespace Engine
 {
@@ -45,6 +47,10 @@ private:
 	_int						m_iTileIdx;
 	_bool						m_bPicked;
 
+	//Thread
+	HANDLE						m_hPicking;
+	CRITICAL_SECTION			m_CSKey;
+
 private:
 	explicit SceneDungeon();
 	virtual ~SceneDungeon();
@@ -63,6 +69,7 @@ public:
 	_bool GetPlayerTileIdx(_int& tileIdx);
 	Player* GetPlayer()					{ return m_pPlayer; }
 	DefaultCamera* GetCamera()			{ return m_pDefaultCamera; }
+	_int* GetTileIdx()					{ return &m_iTileIdx; }
 	// Play sound if something collide
 	void CollisionSoundCallback();
 	void ResetPicking();
@@ -79,7 +86,10 @@ private:
 	void SetDefaultCameraSavedPosition(glm::vec3 vPos, glm::vec3 vRot, glm::vec3 target);
 	// Reset camera position
 	void ResetDefaultCameraPos();
-	_int TilePicking();
+	//_int TilePicking();
+
+public:
+	static _ulong WINAPI TilePickingThread(LPVOID param);
 
 private:
 	// Initialize
