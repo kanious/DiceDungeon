@@ -131,6 +131,10 @@ RESULT CDeferredFBO::SetShader()
 	m_pShader->SetInt("normalTexture", 1);
 	m_pShader->SetInt("positionTexture", 2);
 
+    // Light
+    CLightMaster::GetInstance()->SetShader(m_pShader->GetShaderProgram());
+    CLightMaster::GetInstance()->LoadLights(dataPath, "lights.xml");
+
     return PK_NOERROR;
 }
 
@@ -181,26 +185,6 @@ RESULT CDeferredFBO::SetFrameBuffer()
     m_pNormalTarget = CTargetTexture::Create("normal", m_iNormalTexture, vec3(0.0f, 0.65f, 0.f));
     m_pPosTarget = CTargetTexture::Create("position", m_iPositionTexture, vec3(0.4f, 0.65f, 0.f));
 
-    // Generate IDs
-    //glGenRenderbuffers(1, &m_iDiffuseID);
-    //glGenRenderbuffers(1, &m_iPositionID);
-    //glGenRenderbuffers(1, &m_iNormalID);
-
-    // Diffuse
-    //glBindRenderbuffer(GL_RENDERBUFFER, m_iDiffuseID);
-    //glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, m_iWidth, m_iHeight);
-    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_iDiffuseID);
-
-    //// Bind Position
-    //glBindRenderbuffer(GL_RENDERBUFFER, m_iPositionID);
-    //glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA32F, m_iWidth, m_iHeight);
-    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_RENDERBUFFER, m_iPositionID);
-
-    //// Bind Normal
-    //glBindRenderbuffer(GL_RENDERBUFFER, m_iNormalID);
-    //glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA16F, m_iWidth, m_iHeight);
-    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_RENDERBUFFER, m_iNormalID);
-
     // Check
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (GL_FRAMEBUFFER_COMPLETE != status)
@@ -239,12 +223,11 @@ void CDeferredFBO::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDisable(GL_DEPTH_TEST);
+
     m_pShader->Use();
-    //CLightMaster::GetInstance()->SetLightInfo();
     mat4x4 matWorld = mat4x4(1.f);
     m_pShader->SetMat4x4("matWorld", matWorld);
-    //m_pShader->SetVec4("eyeLocation", 0.f, 80.f, -60.f, 1.f);
-    //m_pShader->SetVec4("theLights[0].diffuse", 1.f, 1.f, 1.f, 1.f);
+    CLightMaster::GetInstance()->SetLightInfo();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_iDiffuseTexture);

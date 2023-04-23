@@ -97,7 +97,6 @@ void SceneDungeon::Update(const _float& dt)
 	//	m_pTargetManager->Update(dt);
 
 	KeyCheck();
-	CLightMaster::GetInstance()->SetLightInfo();
 	CScene::Update(dt);
 }
 
@@ -366,20 +365,16 @@ RESULT SceneDungeon::Ready(string dataPath)
 	ReadyPhysicsAndDice();
 
 	// Light
-	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
-	_uint shaderID = 0;
-	if (nullptr != shader)
-		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
-	CLightMaster::GetInstance()->SetShader(shaderID);
-	CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
+	//CComponent* shader = CComponentMaster::GetInstance()->FindComponent("DeferredShader");
+	//_uint shaderID = 0;
+	//if (nullptr != shader)
+	//	shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
+	//CLightMaster::GetInstance()->SetShader(shaderID);
+	//CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
 
 	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
-	{
-		m_pDefaultCamera->AddShaderLocation("MeshShader");//DeferredShader
-		m_pDefaultCamera->AddShaderLocation("BoneShader");
 		m_pDefaultCamera->AddShaderLocation("DeferredShader");
-	}
 
 	// UI
 	if (nullptr != m_pUIManager)

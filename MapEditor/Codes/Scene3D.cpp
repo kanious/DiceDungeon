@@ -70,8 +70,6 @@ void Scene3D::Update(const _float& dt)
 
 	KeyCheck();
 
-	CLightMaster::GetInstance()->SetLightInfo();
-
 	CScene::Update(dt);
 }
 
@@ -361,16 +359,16 @@ RESULT Scene3D::Ready(string dataPath)
 		return result;
 
 	// Light
-	CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
-	_uint shaderID = 0;
-	if (nullptr != shader)
-		shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
-	CLightMaster::GetInstance()->SetShader(shaderID);
-	CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
+	//CComponent* shader = CComponentMaster::GetInstance()->FindComponent("MeshShader");
+	//_uint shaderID = 0;
+	//if (nullptr != shader)
+	//	shaderID = dynamic_cast<CShader*>(shader)->GetShaderProgram();
+	//CLightMaster::GetInstance()->SetShader(shaderID);
+	//CLightMaster::GetInstance()->LoadLights(m_DataPath, m_LightListFileName);
 
 	// Set Camera info to Shader
 	if (nullptr != m_pDefaultCamera)
-		m_pDefaultCamera->AddShaderLocation("MeshShader");
+		m_pDefaultCamera->AddShaderLocation("DeferredShader");
 
 	// UI
 	if (nullptr != m_pUIManager)

@@ -6,7 +6,6 @@ in vec2 TexCoords;
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D positionTexture;
-uniform vec4 cameraPosition;
 
 struct sLight
 {
@@ -22,8 +21,9 @@ struct sLight
 const int DIRECTIONAL_LIGHT_TYPE = 0;
 const int POINT_LIGHT_TYPE = 1;
 const int SPOT_LIGHT_TYPE = 2;
-const int NUMBEROFLIGHTS = 20;
+const int NUMBEROFLIGHTS = 1;
 uniform sLight theLights[NUMBEROFLIGHTS];
+uniform vec4 eyeLocation;
 
 vec4 calculateLight(vec3 diffuseColor, vec3 normal, vec3 vtxWorldPos);
 void main()
@@ -31,92 +31,113 @@ void main()
 	vec4 image = texture(diffuseTexture, TexCoords);
 	vec4 normal = texture(normalTexture, TexCoords);
 	vec4 position = texture(positionTexture, TexCoords);
-	//FragColor = image;
-	//return;
 
-	//vec3 FragPos = texture(positionTexture, TexCoords).rgb;
-	//vec3 Normal = texture(normalTexture, TexCoords).rgb;
-	//vec3 Diffuse = texture(diffuseTexture, TexCoords).rgb;
-	//float Specular = texture(diffuseTexture, TexCoords).a;
+	vec3 vDiffuse = image.xyz;
+	vec3 vNormal = normal.xyz;
+	vec3 vPos = position.xyz;
 
-	//vec3 lighting = Diffuse * 0.1f;
-	//vec3 viewDir = normalize(cameraPosition.xyz - FragPos);
+	FragColor = calculateLight(vDiffuse, vNormal, vPos);
+}
 
-	//vec3 lightPos = vec3(50, 100, 50);
-	//vec3 lightDir = normalize(lightPos - FragPos);
-	//vec3 lightDiffuse = vec3(1.f, 1.f, 1.f);
+vec4 calculateLight(vec3 diffuseColor, vec3 normal, vec3 vtxWorldPos)
+{
+	vec4 finalColour = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	//vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * lightDiffuse;
-	//vec3 halfwayDir = normalize(lightDir + viewDir);
-	//float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
-	//vec3 specular = lightDiffuse * spec * Specular;
+	vec3 norm = normalize(normal);
+	for (int i = 0; i < NUMBEROFLIGHTS; ++i)
+	{
+		if (0.0f == theLights[i].param2.x)
+			continue;
 
-	//lighting += diffuse + specular;
-	//FragColor = vec4(lighting, 1.f);
+		int lightType = int(theLights[i].param1.x);
 
-	vec4 lightDiffuse = vec4(1.f, 1.f, 1.f, 1.f);
-	vec3 lightContrib = lightDiffuse.rgb;
-	vec3 directionDir = vec3(0.5f, -1.f, 0.5f);
-	vec3 norm = normal.xyz;
-	norm = normalize(norm);
-	directionDir = normalize(directionDir);
+		//DIRECTIONAL_LIGHT_TYPE
+		if (lightType == DIRECTIONAL_LIGHT_TYPE)
+		{
+			vec3 lightContrib = theLights[i].diffuse.rgb;
+			vec3 directionalDir = theLights[i].direction.xyz;
+			directionalDir = normalize(directionalDir);
+			float dot = dot(-directionalDir, norm);
+			dot = max(0.0f, dot);
+			float ambientPower = theLights[i].diffuse.w * 0.1f;
+			lightContrib *= (dot + ambientPower);
 
-	//vec3 light = vec3(50, 100, 50);
-	//vec3 lightDir = light - position.xyz;
-	//directionDir = normalize(lightDir);
+			float lightPower = theLights[i].diffuse.w;
+			vec3 result = diffuseColor * theLights[i].diffuse.xyz * lightContrib * lightPower;
+			finalColour.xyz += result;
 
-	float dotValue = dot(-directionDir, norm);
-	dotValue = max(0.f, dotValue);
-	float ambientPower = lightDiffuse.w * 0.2f;
-	lightContrib *= (dotValue + ambientPower);
+			continue;
+		}
 
-	float lightPower = lightDiffuse.w;
+		//POINT_LIGHT_TYPE
+		vec3 vLightToVertex = theLights[i].position.xyz - vtxWorldPos;
+		float distanceToLight = length(vLightToVertex);
+		//if (theLights[i].atten.w < distanceToLight)
+		//	continue;
 
-	vec3 result = image.xyz * lightDiffuse.xyz * lightContrib * lightPower;
-	FragColor.xyz = result;
-	FragColor.a = image.a;
+		vec3 lightDir = normalize(vLightToVertex);
+		float dotPoint = dot(lightDir, normal);
+		dotPoint = max(0.0f, dotPoint);
+		float lightPower = theLights[i].diffuse.w;
+		vec3 lightDiffuseContrib = dotPoint * theLights[i].diffuse.rgb * lightPower;
 
-	//-------------------------------------- old light 2
+		//specular
+		vec3 lightSpecularContrib = vec3(0.0f);
+		vec3 vReflect = reflect(-lightDir, norm);
+		vec3 vEye = normalize(eyeLocation.xyz - vtxWorldPos);
+		float specularPower = theLights[i].specular.w;
+		lightSpecularContrib =
+			pow(max(0.0f, dot(vEye, vReflect)), specularPower) *
+			theLights[i].specular.rgb;
 
-	//vec4 lightDiffuse = vec4(1.f, 1.f, 1.f, 1.f);
-	//vec3 lightContrib = lightDiffuse.rgb;
-	//vec3 directionDir = vec3(0.5f, -1.f, 0.5f);
-	//vec3 norm = normal.xyz;
-	//norm = normalize(norm);
-	//directionDir = normalize(directionDir);
+		float attenuation = 1.0f /
+			(theLights[i].atten.x +
+				theLights[i].atten.y * distanceToLight +
+				theLights[i].atten.z * distanceToLight * distanceToLight);
 
-	//vec3 light = vec3(50, 100, 50);
-	//vec3 lightDir = light - position.xyz;
-	//directionDir = normalize(lightDir);
+		lightDiffuseContrib *= attenuation;
+		lightSpecularContrib *= attenuation;
 
-	//float dotValue = dot(directionDir, norm.xyz);
-	//dotValue = max(0.f, dotValue);
-	//lightContrib *= dotValue;
+		if (lightType == SPOT_LIGHT_TYPE)
+		{
+			vec3 vtxToLight = vtxWorldPos - theLights[i].position.xyz;
+			vtxToLight = normalize(vtxToLight);
+			float currentRayAngle =
+				dot(vtxToLight, theLights[i].direction.xyz);
+			currentRayAngle = max(0.0f, currentRayAngle);
 
-	//float lightPower = lightDiffuse.w;
+			float phi = cos(radians(theLights[i].param1.z));
+			float theta = cos(radians(theLights[i].param1.y));
 
-	//vec3 result = image.xyz * lightDiffuse.xyz * lightContrib * lightPower;
-	//FragColor.xyz = result;
-	//FragColor.a = image.a;
+			// outside of outerCone
+			if (currentRayAngle < phi)
+			{
+				lightDiffuseContrib = vec3(0.0f, 0.0f, 0.0f);
+				lightSpecularContrib = vec3(0.0f, 0.0f, 0.0f);
+			}
+			// between innerCone and outerCone
+			else if (currentRayAngle < theta)
+			{
+				//float penumbraRatio = (currentRayAngle - phi) /
+				//	(theta - phi);
 
-	//----------------------- old light
-	//vec3 light = vec3(50, 100, 50);
-	//vec3 lightDir = light - position.xyz;
+				float epsilon = theta - phi;
+				float penumbraRatio = clamp((currentRayAngle - phi) / epsilon, 0.0, 1.0);
 
-	//normal = normalize(normal);
-	//lightDir = normalize(lightDir);
+				lightDiffuseContrib *= penumbraRatio;
+				lightSpecularContrib *= penumbraRatio;
+			}
 
-	//vec3 eyeDir = normalize(cameraPosition.xyz - position.xyz);
-	//vec3 vHalfVector = normalize(lightDir.xyz + eyeDir);
+		}
 
-	//FragColor = max(dot(normal.xyz, lightDir), 0) * image + pow(max(dot(normal.xyz, vHalfVector), 0.0), 100) * 1.5;
+		vec3 result = (diffuseColor * lightDiffuseContrib) + (theLights[i].specular.xyz * lightSpecularContrib);
+		finalColour.xyz += result;
+	}
 
+	//finalColour.r = min(1.0f, finalColour.r);
+	//finalColour.g = min(1.0f, finalColour.g);
+	//finalColour.b = min(1.0f, finalColour.b);
+	finalColour.a = 1.0f;
 
-	//---------------------------------------------------------------------------
-	//FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-	//return;
-
-	//vec3 col = texture(diffuseTexture, TexCoords).rgb;
-	//FragColor = vec4(col, 1.0);
-	//FragColor = vec4(vec3(1.0 - texture(screenTexture, TexCoords)), 1.0);
+	return finalColour;
 }

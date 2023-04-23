@@ -138,7 +138,7 @@ RESULT Client::Ready()
 	m_pGameMaster = CGameMaster::GetInstance();
 	m_pGameMaster->SetAssetPath(m_DataPath);
 	m_pGameMaster->Ready();
-	m_pGameMaster->SetRenderType(false);
+	m_pGameMaster->SetRenderType(true);
 
 	// Load Components
 	result = Ready_BasicComponent();
