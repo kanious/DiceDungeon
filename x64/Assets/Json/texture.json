@@ -293,5 +293,10 @@
    "ID": "wall_A_Tex_N",
    "Path": "Texture\\Lossy\\",
    "FileName": "wall_A_n.png"
+ },
+ {
+   "ID": "noise_Tex",
+   "Path": "Texture\\",
+   "FileName": "noise.png"
  }
 ]

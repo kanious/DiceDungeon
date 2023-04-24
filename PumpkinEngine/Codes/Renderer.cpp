@@ -84,6 +84,34 @@ void CRenderer::RenderDeferred()
 	}
 }
 
+void CRenderer::SetNoiseOption(_bool on)
+{
+	if (nullptr != m_pDeferred)
+		m_pDeferred->SetNoise(on);
+}
+
+void CRenderer::SetNoiseAmount(float amount)
+{
+	if (nullptr != m_pDeferred)
+		m_pDeferred->SetNoiseAmount(amount);
+}
+
+_bool CRenderer::GetNoiseOption()
+{
+	if (nullptr != m_pDeferred)
+		return m_pDeferred->GetNoise();
+
+	return false;
+}
+
+_float CRenderer::GetNoiseAmount()
+{
+	if (nullptr != m_pDeferred)
+		return m_pDeferred->GetNoiseAmount();
+
+	return 0.0f;
+}
+
 // Register objects that need to be rendered
 void CRenderer::AddRenderObj(CGameObject* pInstance, _bool isTransparent)
 {

@@ -29,6 +29,7 @@ UIManager::UIManager()
 	: m_pPWorld(nullptr), m_Message(""), m_iHighScore(0), m_bOpenRankingListPage(false)
 	, m_bOpenPlayerMoveW(false), m_vecMoveTilePos(vec3(0.f)), m_bDeferredTexture(false)
 	, m_bHPUI(true), m_bBGPlay(true), m_bBGPlayPrev(false), m_bAnimBlending(true)
+	, m_bNoise(true), m_fNoiseAmount(0.07f)
 {
 	ZeroMemory(m_char, sizeof(m_char));
 	m_vecHPInfos.clear();
@@ -298,9 +299,7 @@ void UIManager::RenderDebugUI(_float width, _float height)
 		m_pPlayer->SetAnimationBlending(m_bAnimBlending);
 
 		Separator();
-		Text("Show/Hide toggle");
-		Checkbox("Show Deferred Texture", &m_bDeferredTexture);
-		CRenderer::GetInstance()->SetShowDebug(m_bDeferredTexture);
+		Text("Toggle");
 		Checkbox("Show Health UI", &m_bHPUI);
 		Checkbox("Play BG", &m_bBGPlay);
 		if (m_bBGPlay != m_bBGPlayPrev)
@@ -312,6 +311,21 @@ void UIManager::RenderDebugUI(_float width, _float height)
 				CSoundMaster::GetInstance()->StopSound("Background");
 		}
 
+		Separator();
+		Text("Graphics");
+		Checkbox("Show Deferred Texture", &m_bDeferredTexture);
+		CRenderer::GetInstance()->SetShowDebug(m_bDeferredTexture);
+
+		Checkbox("Show Noise Option", &m_bNoise);
+		CRenderer::GetInstance()->SetNoiseOption(m_bNoise);
+
+		stringstream ss;
+		ss << m_fNoiseAmount;
+		strcpy_s(m_char[3], ss.str().length() + 1, ss.str().c_str());
+		Text("Noise Amount :"); SameLine(110.f);
+		SetNextItemWidth(35); InputText("##NoiseAmountInput", m_char[3], sizeof(m_char[3]));
+		m_fNoiseAmount = atof(m_char[3]);
+		CRenderer::GetInstance()->SetNoiseAmount(m_fNoiseAmount);
 
 		End();
 	}

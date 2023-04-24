@@ -7,6 +7,7 @@ NAMESPACE_BEGIN(Engine)
 
 class CShader;
 class CTargetTexture;
+class CTexture;
 // Component for frame buffer object data
 class ENGINE_API CDeferredFBO : public CComponent
 {
@@ -29,6 +30,10 @@ private:
 	CTargetTexture*		m_pNormalTarget;
 	CTargetTexture*		m_pPosTarget;
 
+	CTexture*			m_pNoiseTex;
+	_bool				m_bIsNoise;
+	_float				m_fNoiseAmount;
+
 private:
 	explicit CDeferredFBO();
 	explicit CDeferredFBO(const CDeferredFBO& rhs);
@@ -39,8 +44,12 @@ private:
 	virtual void Destroy();
 
 public:
-	_int GetWidth()					{ return m_iWidth; }
-	_int GetHeight()				{ return m_iHeight; }
+	_int GetWidth()						{ return m_iWidth; }
+	_int GetHeight()					{ return m_iHeight; }
+	_bool GetNoise()					{ return m_bIsNoise; }
+	void SetNoise(_bool value)			{ m_bIsNoise = value; }
+	_float GetNoiseAmount()				{ return m_fNoiseAmount; }
+	void SetNoiseAmount(_float value)	{ m_fNoiseAmount = value; }
 
 private:
 	// Load texture information from file

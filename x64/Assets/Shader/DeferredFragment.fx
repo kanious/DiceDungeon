@@ -6,6 +6,7 @@ in vec2 TexCoords;
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D positionTexture;
+uniform sampler2D noiseTexture;
 
 struct sLight
 {
@@ -24,6 +25,8 @@ const int SPOT_LIGHT_TYPE = 2;
 const int NUMBEROFLIGHTS = 1;
 uniform sLight theLights[NUMBEROFLIGHTS];
 uniform vec4 eyeLocation;
+uniform bool isNoise;
+uniform float noiseAmount;
 
 vec4 calculateLight(vec3 diffuseColor, vec3 normal, vec3 vtxWorldPos);
 void main()
@@ -31,12 +34,25 @@ void main()
 	vec4 image = texture(diffuseTexture, TexCoords);
 	vec4 normal = texture(normalTexture, TexCoords);
 	vec4 position = texture(positionTexture, TexCoords);
-
+	
 	vec3 vDiffuse = image.xyz;
 	vec3 vNormal = normal.xyz;
 	vec3 vPos = position.xyz;
 
-	FragColor = calculateLight(vDiffuse, vNormal, vPos);
+	vec4 lightingColor = calculateLight(vDiffuse, vNormal, vPos);
+
+	//FragColor = lightingColor;
+	//return;
+
+	if (isNoise)
+	{
+		vec4 noise = texture(noiseTexture, TexCoords);
+		float value = noise.r;
+		value = value * 2.f - 1.f;
+		lightingColor.rgb += noiseAmount * value;
+	}
+
+	FragColor = lightingColor;
 }
 
 vec4 calculateLight(vec3 diffuseColor, vec3 normal, vec3 vtxWorldPos)

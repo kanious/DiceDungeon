@@ -34,6 +34,10 @@ public:
 	void SetShowDebug(_bool value)		{ m_bShowDebug = value; }
 	void ToggleShowDebug()				{ m_bShowDebug = !m_bShowDebug; }
 	void SetRenderDeferred(_bool value) { m_bRenderDeferred = value; }
+	void SetNoiseOption(_bool on);
+	void SetNoiseAmount(float amount);
+	_bool GetNoiseOption();
+	_float GetNoiseAmount();
 
 public:
 	// Register objects that need to be rendered

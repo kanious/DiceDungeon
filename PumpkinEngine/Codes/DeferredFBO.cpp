@@ -9,6 +9,7 @@
 #include "../Headers/Shader.h"
 #include "../Headers/TargetTexture.h"
 #include "../Headers/LightMaster.h"
+#include "../Headers/Texture.h"
 
 USING(Engine)
 USING(std)
@@ -20,6 +21,7 @@ CDeferredFBO::CDeferredFBO()
     , m_iWidth(0), m_iHeight(0), m_iVAO_ID(0), m_iVB_ID(0)
     , m_pShader(nullptr)
     , m_pDiffuseTarget(nullptr), m_pPosTarget(nullptr), m_pNormalTarget(nullptr)
+    , m_bIsNoise(false), m_fNoiseAmount(0.1f)
 {
 }
 
@@ -69,6 +71,8 @@ RESULT CDeferredFBO::Ready(string ID, _int width, _int height)
 
     m_iWidth = width;
     m_iHeight = height;
+
+    m_pNoiseTex = CloneComponent<CTexture*>("noise_Tex");
 
     // Set screen quad VAO
     if (PK_NOERROR != SetVIBuffer())
@@ -130,6 +134,7 @@ RESULT CDeferredFBO::SetShader()
 	m_pShader->SetInt("diffuseTexture", 0);
 	m_pShader->SetInt("normalTexture", 1);
 	m_pShader->SetInt("positionTexture", 2);
+	m_pShader->SetInt("noiseTexture", 3);
 
     // Light
     CLightMaster::GetInstance()->SetShader(m_pShader->GetShaderProgram());
@@ -171,8 +176,8 @@ RESULT CDeferredFBO::SetFrameBuffer()
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_iPositionTexture, 0);
 
     // tell to openGL which color attachments we will use of this framebuffer for rendering
-    _uint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3, attachments);
+    _uint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+    glDrawBuffers(4, attachments);
 
     // depth buffer
     glGenRenderbuffers(1, &m_iDepthID);
@@ -227,6 +232,8 @@ void CDeferredFBO::Render()
     m_pShader->Use();
     mat4x4 matWorld = mat4x4(1.f);
     m_pShader->SetMat4x4("matWorld", matWorld);
+    m_pShader->SetBool("isNoise", m_bIsNoise);
+    m_pShader->SetFloat("noiseAmount", m_fNoiseAmount);
     CLightMaster::GetInstance()->SetLightInfo();
 
     glActiveTexture(GL_TEXTURE0);
@@ -237,6 +244,9 @@ void CDeferredFBO::Render()
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_iPositionTexture);
+
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, m_pNoiseTex->GetTextureID());
 
     glBindVertexArray(m_iVAO_ID);
     glDrawArrays(GL_TRIANGLES, 0, 6);

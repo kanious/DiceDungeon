@@ -38,7 +38,7 @@ true_clown01_Tex,Texture\Lossy\,true_clown_diffuse1.png
 true_clown02_Tex,Texture\Lossy\,true_clown_diffuse2.png
 true_clown03_Tex,Texture\Lossy\,true_clown_diffuse3.png
 dice_Tex,Texture\Lossy\,die_texture.png
-tile_Tex,Texture,tile.png
+tile_Tex,Texture\,tile.png
 barrel_A_Tex_N,Texture\Lossy\,barrel_A_n.png
 beam_A_Tex_N,Texture\Lossy\,beam_A_n.png
 ceiling_A_Tex_N,Texture\Lossy\,ceiling_A_n.png
@@ -58,3 +58,4 @@ skull_Tex_N,Texture\Lossy\,skull_n.png
 table_A_Tex_N,Texture\Lossy\,table_A_n.png
 torch_A_Tex_N,Texture\Lossy\,torch_A_n.png
 wall_A_Tex_N,Texture\Lossy\,wall_A_n.png
+noise_Tex,Texture\,noise.png

@@ -22,7 +22,7 @@ private:
 	SceneDungeon*				m_pScene;
 	Player*						m_pPlayer;
 
-	char						m_char[3][128];
+	char						m_char[4][128];
 	_int						m_iHighScore;
 
 	_bool						m_bOpenRankingListPage;
@@ -32,11 +32,14 @@ private:
 
 	std::vector<UIHealthInfo*>	m_vecHPInfos;
 
-	_bool						m_bDeferredTexture;
 	_bool						m_bHPUI;
 	_bool						m_bBGPlay;
 	_bool						m_bBGPlayPrev;
 	_bool						m_bAnimBlending;
+
+	_bool						m_bDeferredTexture;
+	_bool						m_bNoise;
+	_float						m_fNoiseAmount;
 
 private:
 	explicit UIManager();
