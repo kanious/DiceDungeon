@@ -8,9 +8,7 @@
 - If you want to access to the Leaderboard server, execute "x64\Debug\LeaderboardServer.exe" and Press "Connect" button in the right side of UI.
 
 - GitHub Link:
-https://github.com/kanious/DiceDungeon (final tag)
-- UML Diagram file Link:
-https://drive.google.com/file/d/1VYTI2U0iOVibw4_XtyeabavE4UNiMQ1W/view?usp=share_link
+https://github.com/kanious/DiceDungeon
 
 - There are 4 projects.
   DiceDungeonClient : Main game client project.
@@ -35,29 +33,19 @@ https://drive.google.com/file/d/1VYTI2U0iOVibw4_XtyeabavE4UNiMQ1W/view?usp=share
 
 3. Description
 
-* I worked by myself and submitted the last Physics project separately in its dropbox.
+You can see the debug deferred rendering textures if you check the checkbox in the middle of the left side of UI.
 
-< Topics >
-1) Animation
-   - Bone Animation
-   - Skin Mesh Animation
-   - Blended Animation
-   Code location : Mesh.cpp in PumpkinEngine project (Mesh Loading)
-                   Animation.cpp in PumpkinEngine project (Animation data Loading)
-                   Animator.cpp in DiceDungeonClient project (Using animation)
-                   BoneVertex.fx shader in x64/Assets/Shader folder
+Noise screen option is near it as well.
 
-2) A.I
-   - State Machine
-   - Navigation Mesh (Tile) : Path-Finding / Path-Following
-   Code location : StateMachine.cpp in DiceDungeonClient project
-                   Tile.cpp / TileMaster.cpp in PumpkinEngine project
-   When you press "Enemy Turn Start" button in the left side of UI, the enemy turn will be started.
-
-3) Physics (Not in this project)
-   - Vehicle
-   - Character Controller
-
+< Added Functions >
+Deferred rendering
+Deferred lighting
+Thread
+Noise screen effect
+GPU skinning and blending for skinned mesh
+.
+.
+.
 
 
 
